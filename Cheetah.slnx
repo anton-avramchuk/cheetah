@@ -8,6 +8,7 @@
     <Project Path="src/Cheetah.Core.Events/Cheetah.Core.Events.csproj" />
     <Project Path="src/Cheetah.Core.Tenants/Cheetah.Core.Tenants.csproj" />
     <Project Path="src/Cheetah.Core/Cheetah.Core.csproj" />
+    <Project Path="src/Cheetah.CQRS.Dispatcher/Cheetah.CQRS.Dispatcher.csproj" />
     <Project Path="src/Cheetah.Mapping.Core/Cheetah.Mapping.Core.csproj" />
     <Project Path="src/Cheetah.Mapping.Mapster/Cheetah.Mapping.Mapster.csproj" />
   </Folder>

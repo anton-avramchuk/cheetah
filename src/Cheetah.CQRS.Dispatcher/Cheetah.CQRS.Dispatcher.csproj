@@ -7,7 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Cheetah.Core.Events\Cheetah.Core.Events.csproj" />
+      <ProjectReference Include="..\Cheetah.Core.CQRS\Cheetah.Core.CQRS.csproj" />
       <ProjectReference Include="..\Cheetah.Core\Cheetah.Core.csproj" />
     </ItemGroup>
 
