@@ -1,5 +1,6 @@
 <Solution>
   <Folder Name="/Core/">
+    <Project Path="src/Cheetah.AspNetCore/Cheetah.AspNetCore.csproj" />
     <Project Path="src/Cheetah.Core.Cache/Cheetah.Core.Cache.csproj" />
     <Project Path="src/Cheetah.Core.CQRS/Cheetah.Core.CQRS.csproj" />
     <Project Path="src/Cheetah.Core.DataAccess/Cheetah.Core.DataAccess.csproj" />
@@ -11,5 +12,8 @@
     <Project Path="src/Cheetah.CQRS.Dispatcher/Cheetah.CQRS.Dispatcher.csproj" />
     <Project Path="src/Cheetah.Mapping.Core/Cheetah.Mapping.Core.csproj" />
     <Project Path="src/Cheetah.Mapping.Mapster/Cheetah.Mapping.Mapster.csproj" />
+  </Folder>
+  <Folder Name="/Core/Backend/">
+    <Project Path="src/Cheetah.OpenApi/Cheetah.OpenApi.csproj" />
   </Folder>
 </Solution>
