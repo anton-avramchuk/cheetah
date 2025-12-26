@@ -1,9 +1,5 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <OutputType>Library</OutputType>
-        <NoDefaultLaunchSettingsFile>true</NoDefaultLaunchSettingsFile>
-    </PropertyGroup>
     <PropertyGroup>
         <TargetFramework>net10.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
@@ -13,11 +9,11 @@
     <ItemGroup>
       <ProjectReference Include="..\Cheetah.AspNetCore\Cheetah.AspNetCore.csproj" />
       <ProjectReference Include="..\Cheetah.Core\Cheetah.Core.csproj" />
+      <ProjectReference Include="..\Cheetah.OpenApi\Cheetah.OpenApi.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.1" />
-      <PackageReference Include="Microsoft.OpenApi.Readers" Version="1.6.28" />
+      <PackageReference Include="Scalar.AspNetCore" Version="2.11.10" />
     </ItemGroup>
 
 </Project>

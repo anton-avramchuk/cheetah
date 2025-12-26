@@ -15,5 +15,6 @@
   </Folder>
   <Folder Name="/Core/Backend/">
     <Project Path="src/Cheetah.OpenApi/Cheetah.OpenApi.csproj" />
+    <Project Path="src/Cheetah.Scalar/Cheetah.Scalar.csproj" />
   </Folder>
 </Solution>
