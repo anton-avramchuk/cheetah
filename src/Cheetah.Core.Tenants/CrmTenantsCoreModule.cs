@@ -1,6 +1,6 @@
 using Cheetah.Core.Domain;
 using Cheetah.Core.Events;
-using Cheetah.Core.Modules;
+using Cheetah.Core.Modularity;
 
 namespace Cheetah.Core.Tenants;
 

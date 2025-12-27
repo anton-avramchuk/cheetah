@@ -285,7 +285,7 @@ public class BootstrapperGenerator : IIncrementalGenerator
         var code = $@"
                 using System.Collections.Generic;
                 using Microsoft.Extensions.DependencyInjection;
-                using MosaicCRM.Core.Extensions.DependencyInjection;
+                using Cheetah.Core.Extensions.DependencyInjection;
 
                 namespace {classSymbol.ContainingAssembly.Name}
                 {{
@@ -324,7 +324,7 @@ public class BootstrapperGenerator : IIncrementalGenerator
         foreach (var module in sortedModules)
         {
             code.AppendLine(
-                $"            MosaicCRM.Core.Modularity.ModuleInitializer.AddModule<{module.ToDisplayString()}>();");
+                $"            Cheetah.Core.Modularity.ModuleInitializer.AddModule<{module.ToDisplayString()}>();");
         }
 
         code.AppendLine("        }");

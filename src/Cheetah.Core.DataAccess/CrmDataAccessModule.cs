@@ -1,5 +1,5 @@
 using Cheetah.Core.Domain;
-using Cheetah.Core.Modules;
+using Cheetah.Core.Modularity;
 
 namespace Cheetah.Core.DataAccess;
 

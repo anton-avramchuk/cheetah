@@ -1,6 +1,6 @@
 using Cheetah.AspNetCore;
 using Cheetah.Core;
-using Cheetah.Core.Modules;
+using Cheetah.Core.Modularity;
 using Cheetah.Mapping.Mapster;
 using Cheetah.OpenApi;
 using Cheetah.Scalar;

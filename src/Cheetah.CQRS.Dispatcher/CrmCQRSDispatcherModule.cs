@@ -1,5 +1,5 @@
 ﻿using Cheetah.Core.CQRS;
-using Cheetah.Core.Modules;
+using Cheetah.Core.Modularity;
 
 namespace Cheetah.CQRS.Dispatcher;
 [DependsOn(

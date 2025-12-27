@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace Cheetah.Core.Modules;
+namespace Cheetah.Core.Modularity;
 
 public interface ICrmModuleDescriptor
 {

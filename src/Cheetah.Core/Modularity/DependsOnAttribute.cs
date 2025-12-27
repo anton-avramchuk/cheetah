@@ -1,4 +1,4 @@
-namespace Cheetah.Core.Modules;
+namespace Cheetah.Core.Modularity;
 
 /// <summary>
 /// Attribute to declare module dependencies

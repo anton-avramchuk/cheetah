@@ -1,4 +1,4 @@
-using Cheetah.Core.Modules;
+using Cheetah.Core.Modularity;
 using Cheetah.Mapping.Core;
 using Mapster;
 using Microsoft.Extensions.Configuration;
@@ -11,11 +11,11 @@ namespace Cheetah.Mapping.Mapster;
     )]
 public class CrmMapsterModule:CrmModule
 {
-    public override void ConfigureServices(IServiceCollection services, IConfiguration configuration)
-    {
-        services.AddSingleton(TypeAdapterConfig.GlobalSettings);
-        services.AddScoped(AddMapper);
-    }
+    // public override void ConfigureServices(IServiceCollection services, IConfiguration configuration)
+    // {
+    //     services.AddSingleton(TypeAdapterConfig.GlobalSettings);
+    //     services.AddScoped(AddMapper);
+    // }
     
     private IObjectMapper AddMapper(IServiceProvider provider)
     {

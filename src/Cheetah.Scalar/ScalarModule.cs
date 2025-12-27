@@ -1,5 +1,5 @@
 ﻿using Cheetah.AspNetCore;
-using Cheetah.Core.Modules;
+using Cheetah.Core.Modularity;
 using Cheetah.OpenApi;
 
 namespace Cheetah.Scalar;
