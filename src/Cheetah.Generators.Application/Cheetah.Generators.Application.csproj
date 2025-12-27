@@ -27,10 +27,10 @@
         <Compile Include="..\Cheetah.Core\DependencyInjection\LifetimeType.cs">
             <Link>Common\LifetimeType.cs</Link>
         </Compile>
-        <Compile Include="..\Cheetah.Core\Modules\DependsOnAttribute.cs">
+        <Compile Include="..\Cheetah.Core\Modularity\DependsOnAttribute.cs">
             <Link>Common\DependsOnAttribute.cs</Link>
         </Compile>
-        <Compile Include="..\Cheetah.Core\Modules\ICrmModule.cs">
+        <Compile Include="..\Cheetah.Core\Modularity\ICrmModule.cs">
             <Link>Common\ICrmModule.cs</Link>
         </Compile>
         <Compile Include="..\Cheetah.Generators.Core\Constants.cs">

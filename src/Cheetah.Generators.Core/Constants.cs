@@ -1,6 +1,6 @@
 using Cheetah.Core;
 using Cheetah.Core.DependencyInjection;
-using Cheetah.Core.Modules;
+using Cheetah.Core.Modularity;
 
 namespace Cheetah.Generators.Core;
 
