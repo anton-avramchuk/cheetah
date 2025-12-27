@@ -1,0 +1,19 @@
+using Cheetah.AspNetCore;
+using Cheetah.Core;
+using Cheetah.Core.Modules;
+using Cheetah.Mapping.Mapster;
+using Cheetah.OpenApi;
+using Cheetah.Scalar;
+
+namespace Cheetah.Crm;
+
+[Bootstrapper]
+[DependsOn(
+    typeof(CrmAspNetCoreModule),
+    typeof(OpenApiModule),
+    typeof(ScalarModule),
+    typeof(CrmMapsterModule)
+)]
+public class BootstrapperModule : CrmModule
+{
+}

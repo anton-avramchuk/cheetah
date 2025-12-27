@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="$(MsPackageVersion)"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Cheetah.AspNetCore\Cheetah.AspNetCore.csproj" />
+      <ProjectReference Include="..\Cheetah.Core\Cheetah.Core.csproj" />
+      <ProjectReference Include="..\Cheetah.Mapping.Mapster\Cheetah.Mapping.Mapster.csproj" />
+      <ProjectReference Include="..\Cheetah.OpenApi\Cheetah.OpenApi.csproj" />
+      <ProjectReference Include="..\Cheetah.Scalar\Cheetah.Scalar.csproj" />
+    </ItemGroup>
+
+</Project>

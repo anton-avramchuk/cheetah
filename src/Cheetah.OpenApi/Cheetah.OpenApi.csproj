@@ -4,11 +4,6 @@
         <OutputType>Library</OutputType>
         <NoDefaultLaunchSettingsFile>true</NoDefaultLaunchSettingsFile>
     </PropertyGroup>
-    <PropertyGroup>
-        <TargetFramework>net10.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-    </PropertyGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Cheetah.AspNetCore\Cheetah.AspNetCore.csproj" />
@@ -16,7 +11,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.1" />
+      <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="$(MsPackageVersion)" />
       <PackageReference Include="Microsoft.OpenApi.Readers" Version="1.6.28" />
     </ItemGroup>
 
