@@ -2,6 +2,7 @@
   <Folder Name="/CodeGen/">
     <Project Path="src/Cheetah.Generators.Application/Cheetah.Generators.Application.csproj" />
     <Project Path="src/Cheetah.Generators.Core/Cheetah.Generators.Core.csproj" />
+    <Project Path="src/Cheetah.Generators.Module/Cheetah.Generators.Module.csproj" />
   </Folder>
   <Folder Name="/Core/">
     <Project Path="src/Cheetah.AspNetCore/Cheetah.AspNetCore.csproj" />

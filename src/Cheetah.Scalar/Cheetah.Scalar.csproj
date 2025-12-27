@@ -10,4 +10,8 @@
       <PackageReference Include="Scalar.AspNetCore" Version="2.11.10" />
     </ItemGroup>
 
+    <ItemGroup>
+        <ProjectReference Include="..\Cheetah.Generators.Module\Cheetah.Generators.Module.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer"/>
+    </ItemGroup>
+
 </Project>

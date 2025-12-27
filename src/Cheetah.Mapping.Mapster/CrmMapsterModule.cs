@@ -9,13 +9,14 @@ namespace Cheetah.Mapping.Mapster;
 [DependsOn(
     typeof(CrmMappingCoreModule)
     )]
-public class CrmMapsterModule:CrmModule
+public partial class CrmMapsterModule:CrmModule
 {
-    // public override void ConfigureServices(IServiceCollection services, IConfiguration configuration)
-    // {
-    //     services.AddSingleton(TypeAdapterConfig.GlobalSettings);
-    //     services.AddScoped(AddMapper);
-    // }
+    public override void ConfigureServices(ServiceConfigurationContext context)
+    {
+        RegisterServices(context.Services);
+        context.Services.AddSingleton(TypeAdapterConfig.GlobalSettings);
+        context.Services.AddScoped(AddMapper);
+    }
     
     private IObjectMapper AddMapper(IServiceProvider provider)
     {

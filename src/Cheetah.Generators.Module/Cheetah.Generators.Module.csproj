@@ -1,0 +1,58 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <IsPackable>false</IsPackable>
+        <LangVersion>12.0</LangVersion>
+        <Nullable>enable</Nullable>
+        <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+        <IsRoslynComponent>true</IsRoslynComponent>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="$(MsPackageVersion)"/>
+        <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="$(MsPackageVersion)"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="5.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Include="..\Cheetah.Core\BootstrapperAttribute.cs">
+            <Link>Common\BootstrapperAttribute.cs</Link>
+        </Compile>
+        <Compile Include="..\Cheetah.Core\DependencyInjection\ExportAttribute.cs">
+            <Link>Common\ExportAttribute.cs</Link>
+        </Compile>
+        <Compile Include="..\Cheetah.Core\DependencyInjection\LifetimeType.cs">
+            <Link>Common\LifetimeType.cs</Link>
+        </Compile>
+        <Compile Include="..\Cheetah.Core\Modularity\DependsOnAttribute.cs">
+            <Link>Common\DependsOnAttribute.cs</Link>
+        </Compile>
+        <Compile Include="..\Cheetah.Core\Modularity\ICrmModule.cs">
+            <Link>Common\ICrmModule.cs</Link>
+        </Compile>
+        <Compile Include="..\Cheetah.Generators.Core\Constants.cs">
+            <Link>Constants.cs</Link>
+        </Compile>
+        <Compile Include="..\Cheetah.Generators.Core\IsExternalInit.cs">
+            <Link>IsExternalInit.cs</Link>
+        </Compile>
+        <Compile Include="..\Cheetah.Core\Modularity\IDependedTypesProvider.cs">
+            <Link>Common\IDependedTypesProvider.cs</Link>
+        </Compile>
+        <Compile Include="..\Cheetah.Core\Modularity\ServiceConfigurationContext.cs">
+            <Link>Common\ServiceConfigurationContext.cs</Link>
+        </Compile>
+        <Compile Include="..\Cheetah.Core\Extensions\Collections\DictionaryExtensions.cs">
+            <Link>Common\DictionaryExtensions.cs</Link>
+        </Compile>
+    </ItemGroup>
+
+</Project>

@@ -12,8 +12,9 @@ namespace Cheetah.Crm;
     typeof(CrmAspNetCoreModule),
     typeof(OpenApiModule),
     typeof(ScalarModule),
-    typeof(CrmMapsterModule)
+    typeof(CrmMapsterModule),
+    typeof(CoreModule)
 )]
-public class BootstrapperModule : CrmModule
+public partial class BootstrapperModule : CrmModule
 {
 }

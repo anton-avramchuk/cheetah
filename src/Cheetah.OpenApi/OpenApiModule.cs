@@ -1,13 +1,24 @@
 ﻿using Cheetah.AspNetCore;
+using Cheetah.AspNetCore.Extensions;
+using Cheetah.Core;
 using Cheetah.Core.Modularity;
 
 namespace Cheetah.OpenApi;
 
 [DependsOn(typeof(CrmAspNetCoreModule))]
-public class OpenApiModule : CrmModule
+public partial class OpenApiModule : CrmModule
 {
-    // public override void ConfigureServices(IServiceCollection services, IConfiguration configuration)
-    // {
-    //     services.AddOpenApi();
-    // }
+    public override void ConfigureServices(ServiceConfigurationContext context)
+    {
+        RegisterServices(context.Services);
+        context.Services.AddOpenApi();
+    }
+    
+    
+    public override void OnApplicationInitialization(ApplicationInitializationContext context)
+    {
+        var routeBuilder = context.GetRouteBuilder();
+        routeBuilder.MapOpenApi();
+    }
+
 }

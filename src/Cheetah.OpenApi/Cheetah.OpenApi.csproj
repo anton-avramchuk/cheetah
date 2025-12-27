@@ -15,4 +15,8 @@
       <PackageReference Include="Microsoft.OpenApi.Readers" Version="1.6.28" />
     </ItemGroup>
 
+    <ItemGroup>
+        <ProjectReference Include="..\Cheetah.Generators.Module\Cheetah.Generators.Module.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer"/>
+    </ItemGroup>
+
 </Project>
