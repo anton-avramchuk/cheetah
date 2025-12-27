@@ -5,5 +5,5 @@ namespace Cheetah.Core.Modularity;
 /// </summary>
 public interface ICrmModule
 {
-    
+    void ConfigureServices(ServiceConfigurationContext context);
 }

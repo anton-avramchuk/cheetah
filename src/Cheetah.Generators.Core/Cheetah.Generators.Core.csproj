@@ -22,11 +22,20 @@
       <Compile Include="..\Cheetah.Core\DependencyInjection\LifetimeType.cs">
         <Link>Common\LifetimeType.cs</Link>
       </Compile>
+      <Compile Include="..\Cheetah.Core\Extensions\Collections\DictionaryExtensions.cs">
+        <Link>Common\DictionaryExtensions.cs</Link>
+      </Compile>
       <Compile Include="..\Cheetah.Core\Modularity\DependsOnAttribute.cs">
         <Link>Common\DependsOnAttribute.cs</Link>
       </Compile>
       <Compile Include="..\Cheetah.Core\Modularity\ICrmModule.cs">
         <Link>Common\ICrmModule.cs</Link>
+      </Compile>
+      <Compile Include="..\Cheetah.Core\Modularity\IDependedTypesProvider.cs">
+        <Link>Common\IDependedTypesProvider.cs</Link>
+      </Compile>
+      <Compile Include="..\Cheetah.Core\Modularity\ServiceConfigurationContext.cs">
+        <Link>Common\ServiceConfigurationContext.cs</Link>
       </Compile>
     </ItemGroup>
 
