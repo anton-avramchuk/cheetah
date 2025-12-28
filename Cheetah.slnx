@@ -19,11 +19,15 @@
     <Project Path="src/Cheetah.Mapping.Mapster/Cheetah.Mapping.Mapster.csproj" />
   </Folder>
   <Folder Name="/Core/Backend/">
+    <Project Path="src/Cheetah.Backend.CQRS/Cheetah.Backend.CQRS.csproj" />
+    <Project Path="src/Cheetah.Backend.Events.Redis/Cheetah.Backend.Events.Redis.csproj" />
+    <Project Path="src/Cheetah.Backend.Redis/Cheetah.Backend.Redis.csproj" />
     <Project Path="src/Cheetah.OpenApi/Cheetah.OpenApi.csproj" />
     <Project Path="src/Cheetah.Scalar/Cheetah.Scalar.csproj" />
   </Folder>
   <Folder Name="/Modules/" />
   <Folder Name="/Tests/">
+    <Project Path="src/Cheetah.Backend.Redis.Tests/Cheetah.Backend.Redis.Tests.csproj" />
     <Project Path="src/Cheetah.Core.Tests/Cheetah.Core.Tests.csproj" />
   </Folder>
   <Project Path="src/Cheetah.Crm/Cheetah.Crm.csproj" />

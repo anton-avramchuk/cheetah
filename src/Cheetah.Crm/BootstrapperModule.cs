@@ -1,4 +1,6 @@
 using Cheetah.AspNetCore;
+using Cheetah.Backend.CQRS;
+using Cheetah.Backend.Events.Redis;
 using Cheetah.Core;
 using Cheetah.Core.Modularity;
 using Cheetah.Mapping.Mapster;
@@ -13,7 +15,9 @@ namespace Cheetah.Crm;
     typeof(OpenApiModule),
     typeof(ScalarModule),
     typeof(CrmMapsterModule),
-    typeof(CoreModule)
+    typeof(CoreModule),
+    typeof(CrmBackendCQRSModule),
+    typeof(CrmBackendEventsRedisModule)
 )]
 public partial class BootstrapperModule : CrmModule
 {
