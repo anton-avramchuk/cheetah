@@ -25,11 +25,16 @@
     <Project Path="src/Cheetah.OpenApi/Cheetah.OpenApi.csproj" />
     <Project Path="src/Cheetah.Scalar/Cheetah.Scalar.csproj" />
   </Folder>
+  <Folder Name="/Core/Frontend/">
+    <Project Path="src/Cheetah.Frontend.CQRS/Cheetah.Frontend.CQRS.csproj" />
+    <Project Path="src/Cheetah.Frontend.Events/Cheetah.Frontend.Events.csproj" />
+  </Folder>
   <Folder Name="/Modules/" />
   <Folder Name="/Tests/">
     <Project Path="src/Cheetah.Backend.Events.Redis.Tests/Cheetah.Backend.Events.Redis.Tests.csproj" />
     <Project Path="src/Cheetah.Backend.Redis.Tests/Cheetah.Backend.Redis.Tests.csproj" />
     <Project Path="src/Cheetah.Core.Tests/Cheetah.Core.Tests.csproj" />
+    <Project Path="src/Cheetah.Frontend.Events.Tests/Cheetah.Frontend.Events.Tests.csproj" />
   </Folder>
   <Project Path="src/Cheetah.Crm/Cheetah.Crm.csproj" />
 </Solution>
