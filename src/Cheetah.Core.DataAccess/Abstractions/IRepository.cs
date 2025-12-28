@@ -1,6 +1,6 @@
 using Cheetah.Core.Domain;
 
-namespace Cheetah.Core.DataAccess;
+namespace Cheetah.Core.DataAccess.Abstractions;
 
 public interface IRepository<TEntity, TKey> where TEntity : Entity<TKey>
 {

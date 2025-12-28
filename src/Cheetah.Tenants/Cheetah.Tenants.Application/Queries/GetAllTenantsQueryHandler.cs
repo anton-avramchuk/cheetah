@@ -1,5 +1,6 @@
 using Cheetah.Core.CQRS;
 using Cheetah.Core.DataAccess;
+using Cheetah.Core.DataAccess.Abstractions;
 using Cheetah.Core.DependencyInjection;
 using Cheetah.Tenants.Domain.Entities;
 

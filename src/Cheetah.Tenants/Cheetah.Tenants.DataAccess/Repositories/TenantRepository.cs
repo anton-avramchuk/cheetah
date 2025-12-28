@@ -1,4 +1,5 @@
 using Cheetah.Core.DataAccess;
+using Cheetah.Core.DataAccess.Abstractions;
 using Cheetah.Core.DependencyInjection;
 using Cheetah.Tenants.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
