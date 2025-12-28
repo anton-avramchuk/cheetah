@@ -1,0 +1,6 @@
+namespace Cheetah.Core.EntityFramework.DependencyInjection;
+
+public interface IApplicationDbContextRegistrationOptionsBuilder : IApplicationCommonDbContextRegistrationOptionsBuilder
+{
+
+}

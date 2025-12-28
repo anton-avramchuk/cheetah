@@ -1,4 +1,4 @@
-namespace MosaicCRM.Core.Reflection;
+namespace Cheetah.Core.Reflection;
 
 /// <summary>
 /// Used to get types in the application.

@@ -6,7 +6,6 @@ using Cheetah.Core.Reflection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using MosaicCRM.Core.Reflection;
 
 namespace Cheetah.Core.Internal;
 
@@ -47,6 +46,8 @@ internal static class InternalServiceCollectionExtensions
         services.Configure<CrmModuleLifecycleOptions>(options =>
         {
             options.Contributors.Add<OnApplicationInitializationModuleLifecycleContributor>();
+            options.Contributors.Add<OnPreApplicationInitializationModuleLifecycleContributor>();
+            options.Contributors.Add<OnPostApplicationInitializationModuleLifecycleContributor>();
         });
     }
 }

@@ -5,4 +5,8 @@
       <ProjectReference Include="..\Cheetah.Core\Cheetah.Core.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+        <ProjectReference Include="..\Cheetah.Generators.Module\Cheetah.Generators.Module.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer"/>
+    </ItemGroup>
+
 </Project>

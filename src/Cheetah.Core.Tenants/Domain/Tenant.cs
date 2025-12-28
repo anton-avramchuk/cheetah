@@ -8,9 +8,9 @@ public class Tenant : AggregateRoot, ICreateAtEntity, IUpdatedAtEntity,IRemovedA
     public string Name { get; private set; } = default!;
     public string? Description { get; private set; }
     public bool IsActive { get; private set; }
-    public DateTimeOffset? CreatedAt { get; private set; }
+    public DateTimeOffset? CreatedAt { get; set; }
     
-    public DateTimeOffset? UpdatedAt { get; private set; }
+    public DateTimeOffset? UpdatedAt { get; set; }
     
     public DateTimeOffset? RemovedAt { get; private set; }
 
@@ -23,7 +23,6 @@ public class Tenant : AggregateRoot, ICreateAtEntity, IUpdatedAtEntity,IRemovedA
         Name = name;
         Description = description;
         IsActive = true;
-        CreatedAt = DateTimeOffset.UtcNow;
         AddDomainEvent(new TenantCreatedEvent(Id, Name));
     }
 
@@ -32,7 +31,6 @@ public class Tenant : AggregateRoot, ICreateAtEntity, IUpdatedAtEntity,IRemovedA
         Name = name;
         Description = description;
         IsActive = isActive;
-        UpdatedAt = DateTimeOffset.UtcNow;
         AddDomainEvent(new TenantUpdatedEvent(Id, Name, IsActive));
     }
 

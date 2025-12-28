@@ -1,9 +1,13 @@
 using System.Reflection;
 using Cheetah.Core.Exceptions;
+using Cheetah.Core.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Cheetah.Core.Modularity;
 
-public abstract class CrmModule : ICrmModule, IOnApplicationInitialization
+public abstract class CrmModule : ICrmModule, IOnApplicationInitialization, IPreConfigureServices,
+    IPostConfigureServices, IOnPreApplicationInitialization
 {
     internal static void CheckCrmModuleType(Type moduleType)
     {
@@ -28,7 +32,7 @@ public abstract class CrmModule : ICrmModule, IOnApplicationInitialization
         {
             if (_serviceConfigurationContext == null)
             {
-                //throw new CrmException($"{nameof(ServiceConfigurationContext)} is only available in the {nameof(ConfigureServices)}, {nameof(PreConfigureServices)} and {nameof(PostConfigureServices)} methods.");
+                throw new CrmException($"{nameof(ServiceConfigurationContext)} is only available in the {nameof(ConfigureServices)}, {nameof(PreConfigureServices)} and {nameof(PostConfigureServices)} methods.");
             }
 
             return _serviceConfigurationContext;
@@ -50,6 +54,75 @@ public abstract class CrmModule : ICrmModule, IOnApplicationInitialization
 
     public virtual void OnApplicationInitialization(ApplicationInitializationContext context)
     {
+    }
+
+
+    public virtual void PreConfigureServices(ServiceConfigurationContext context)
+    {
         
+    }
+
+    public virtual void PostConfigureServices(ServiceConfigurationContext context)
+    {
+        
+    }
+
+    public virtual Task OnPreApplicationInitializationAsync(ApplicationInitializationContext context)
+    {
+        OnPreApplicationInitialization(context);
+        return Task.CompletedTask;
+        
+    }
+
+    public virtual void OnPreApplicationInitialization(ApplicationInitializationContext context)
+    {
+    }
+    
+    protected void Configure<TOptions>(Action<TOptions> configureOptions)
+        where TOptions : class
+    {
+        ServiceConfigurationContext.Services.Configure(configureOptions);
+    }
+
+    protected void Configure<TOptions>(string name, Action<TOptions> configureOptions)
+        where TOptions : class
+    {
+        ServiceConfigurationContext.Services.Configure(name, configureOptions);
+    }
+
+    protected void Configure<TOptions>(IConfiguration configuration)
+        where TOptions : class
+    {
+        ServiceConfigurationContext.Services.Configure<TOptions>(configuration);
+    }
+
+    protected void Configure<TOptions>(IConfiguration configuration, Action<BinderOptions> configureBinder)
+        where TOptions : class
+    {
+        ServiceConfigurationContext.Services.Configure<TOptions>(configuration, configureBinder);
+    }
+
+    protected void Configure<TOptions>(string name, IConfiguration configuration)
+        where TOptions : class
+    {
+        ServiceConfigurationContext.Services.Configure<TOptions>(name, configuration);
+    }
+
+    protected void PreConfigure<TOptions>(Action<TOptions> configureOptions)
+        where TOptions : class
+    {
+        ServiceConfigurationContext.Services.PreConfigure(configureOptions);
+    }
+
+    protected void PostConfigure<TOptions>(Action<TOptions> configureOptions)
+        where TOptions : class
+    {
+        ServiceConfigurationContext.Services.PostConfigure(configureOptions);
+    }
+
+    protected void PostConfigureAll<TOptions>(Action<TOptions> configureOptions)
+        where TOptions : class
+    {
+        ServiceConfigurationContext.Services.PostConfigureAll(configureOptions);
     }
 }

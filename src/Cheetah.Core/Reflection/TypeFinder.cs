@@ -1,5 +1,3 @@
-using MosaicCRM.Core.Reflection;
-
 namespace Cheetah.Core.Reflection;
 
 public class TypeFinder : ITypeFinder

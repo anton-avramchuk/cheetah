@@ -141,18 +141,18 @@ public abstract class CrmApplicationBase : ICrmApplication
             }
         }
 
-        // //PreConfigureServices
-        // foreach (var module in Modules.Where(m => m.Instance is IPreConfigureServices))
-        // {
-        //     try
-        //     {
-        //         await ((IPreConfigureServices)module.Instance).PreConfigureServicesAsync(context);
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //         throw new CrmExceptionInitialization($"An error occurred during {nameof(IPreConfigureServices.PreConfigureServicesAsync)} phase of the module {module.Type.AssemblyQualifiedName}. See the inner exception for details.", ex);
-        //     }
-        // }
+        //PreConfigureServices
+        foreach (var module in Modules.Where(m => m.Instance is IPreConfigureServices))
+        {
+            try
+            {
+                ((IPreConfigureServices)module.Instance).PreConfigureServices(context);
+            }
+            catch (Exception ex)
+            {
+                throw new CrmExceptionInitialization($"An error occurred during {nameof(IPreConfigureServices.PreConfigureServices)} phase of the module {module.Type.AssemblyQualifiedName}. See the inner exception for details.", ex);
+            }
+        }
 
 
         //ConfigureServices
@@ -168,19 +168,19 @@ public abstract class CrmApplicationBase : ICrmApplication
                 throw new CrmExceptionInitialization($"An error occurred during {nameof(ICrmModule.ConfigureServices)} phase of the module {module.Type.AssemblyQualifiedName}. See the inner exception for details.", ex);
             }
         }
-        //
-        // //PostConfigureServices
-        // foreach (var module in Modules.Where(m => m.Instance is IPostConfigureServices))
-        // {
-        //     try
-        //     {
-        //         await ((IPostConfigureServices)module.Instance).PostConfigureServicesAsync(context);
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //         throw new CrmExceptionInitialization($"An error occurred during {nameof(IPostConfigureServices.PostConfigureServicesAsync)} phase of the module {module.Type.AssemblyQualifiedName}. See the inner exception for details.", ex);
-        //     }
-        // }
+        
+        //PostConfigureServices
+        foreach (var module in Modules.Where(m => m.Instance is IPostConfigureServices))
+        {
+            try
+            {
+                ((IPostConfigureServices)module.Instance).PostConfigureServices(context);
+            }
+            catch (Exception ex)
+            {
+                throw new CrmExceptionInitialization($"An error occurred during {nameof(IPostConfigureServices.PostConfigureServices)} phase of the module {module.Type.AssemblyQualifiedName}. See the inner exception for details.", ex);
+            }
+        }
 
         foreach (var module in Modules)
         {
@@ -220,19 +220,19 @@ public abstract class CrmApplicationBase : ICrmApplication
                 crmModule.ServiceConfigurationContext = context;
             }
         }
-        //
-        // //PreConfigureServices
-        // foreach (var module in Modules.Where(m => m.Instance is IPreConfigureServices))
-        // {
-        //     try
-        //     {
-        //         ((IPreConfigureServices)module.Instance).PreConfigureServices(context);
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //         throw new CrmExceptionInitialization($"An error occurred during {nameof(IPreConfigureServices.PreConfigureServices)} phase of the module {module.Type.AssemblyQualifiedName}. See the inner exception for details.", ex);
-        //     }
-        // }
+        
+        //PreConfigureServices
+        foreach (var module in Modules.Where(m => m.Instance is IPreConfigureServices))
+        {
+            try
+            {
+                ((IPreConfigureServices)module.Instance).PreConfigureServices(context);
+            }
+            catch (Exception ex)
+            {
+                throw new CrmExceptionInitialization($"An error occurred during {nameof(IPreConfigureServices.PreConfigureServices)} phase of the module {module.Type.AssemblyQualifiedName}. See the inner exception for details.", ex);
+            }
+        }
 
 
         //ConfigureServices
@@ -249,18 +249,18 @@ public abstract class CrmApplicationBase : ICrmApplication
             }
         }
 
-        // //PostConfigureServices
-        // foreach (var module in Modules.Where(m => m.Instance is IPostConfigureServices))
-        // {
-        //     try
-        //     {
-        //         ((IPostConfigureServices)module.Instance).PostConfigureServices(context);
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //         throw new CrmExceptionInitialization($"An error occurred during {nameof(IPostConfigureServices.PostConfigureServices)} phase of the module {module.Type.AssemblyQualifiedName}. See the inner exception for details.", ex);
-        //     }
-        // }
+        //PostConfigureServices
+        foreach (var module in Modules.Where(m => m.Instance is IPostConfigureServices))
+        {
+            try
+            {
+                ((IPostConfigureServices)module.Instance).PostConfigureServices(context);
+            }
+            catch (Exception ex)
+            {
+                throw new CrmExceptionInitialization($"An error occurred during {nameof(IPostConfigureServices.PostConfigureServices)} phase of the module {module.Type.AssemblyQualifiedName}. See the inner exception for details.", ex);
+            }
+        }
 
         foreach (var module in Modules)
         {
