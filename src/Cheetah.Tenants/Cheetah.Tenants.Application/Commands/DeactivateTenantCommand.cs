@@ -1,0 +1,5 @@
+using Cheetah.Core.CQRS;
+
+namespace Cheetah.Tenants.Application.Commands;
+
+public record DeactivateTenantCommand(Guid TenantId) : ICommand;

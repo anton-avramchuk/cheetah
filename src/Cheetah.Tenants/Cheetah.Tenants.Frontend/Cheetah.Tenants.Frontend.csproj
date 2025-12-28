@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <ItemGroup>
+    <SupportedPlatform Include="browser" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Cheetah.Tenants.Shared\Cheetah.Tenants.Shared.csproj" />
+    <ProjectReference Include="..\..\Cheetah.Frontend.CQRS\Cheetah.Frontend.CQRS.csproj" />
+    <ProjectReference Include="..\..\Cheetah.Frontend.Events\Cheetah.Frontend.Events.csproj" />
+    <ProjectReference Include="..\..\Cheetah.Core\Cheetah.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="$(MsPackageVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Cheetah.Generators.Module\Cheetah.Generators.Module.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
+  </ItemGroup>
+
+</Project>

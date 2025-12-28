@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\Cheetah.Tenants.Domain\Cheetah.Tenants.Domain.csproj" />
+    <ProjectReference Include="..\Cheetah.Tenants.Application\Cheetah.Tenants.Application.csproj" />
+    <ProjectReference Include="..\..\Cheetah.Core.EntityFramework\Cheetah.Core.EntityFramework.csproj" />
+    <ProjectReference Include="..\..\Cheetah.Core.DataAccess\Cheetah.Core.DataAccess.csproj" />
+    <ProjectReference Include="..\..\Cheetah.Core\Cheetah.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Cheetah.Generators.Module\Cheetah.Generators.Module.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
+  </ItemGroup>
+
+</Project>
