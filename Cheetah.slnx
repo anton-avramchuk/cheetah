@@ -11,6 +11,8 @@
     <Project Path="src/Cheetah.Core.DataAccess/Cheetah.Core.DataAccess.csproj" />
     <Project Path="src/Cheetah.Core.Domain/Cheetah.Core.Domain.csproj" />
     <Project Path="src/Cheetah.Core.EntityFramework.MsSql/Cheetah.Core.EntityFramework.MsSql.csproj" />
+    <Project Path="src/Cheetah.Core.EntityFramework.MySql/Cheetah.Core.EntityFramework.MySql.csproj" />
+    <Project Path="src/Cheetah.Core.EntityFramework.PostgreSql/Cheetah.Core.EntityFramework.PostgreSql.csproj" />
     <Project Path="src/Cheetah.Core.EntityFramework/Cheetah.Core.EntityFramework.csproj" />
     <Project Path="src/Cheetah.Core.Events/Cheetah.Core.Events.csproj" />
     <Project Path="src/Cheetah.Core.Tenants/Cheetah.Core.Tenants.csproj" />
