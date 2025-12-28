@@ -46,7 +46,7 @@ Cheetah.{ModuleName}/
 ├── Cheetah.{ModuleName}.Domain/        # Entities, Events, Value Objects
 ├── Cheetah.{ModuleName}.Application/   # CQRS, Services, Business Logic
 ├── Cheetah.{ModuleName}.DataAccess/    # EF Core, DbContext, Migrations
-├── Cheetah.{ModuleName}.Api/           # Controllers, Endpoints
+├── Cheetah.{ModuleName}.Api/           # Minimal API Endpoints
 ├── Cheetah.{ModuleName}.Shared/        # DTOs, ViewModels (shared with frontend)
 └── Cheetah.{ModuleName}.Frontend/      # Blazor WASM components
 ```
@@ -232,41 +232,99 @@ public partial class MyDataAccessModule : CrmModule
 - ConnectionString is taken from configuration with module name
 - Always use `builder.Ignore(t => t.DomainEvents)`
 
-### 6. Api Layer
+### 6. Api Layer (Minimal API)
 
-**Controller:**
+**IMPORTANT: Use ONLY Minimal API. Controllers are NOT allowed.**
+
+**Endpoint Registration in Module:**
 ```csharp
-[ApiController]
-[Route("api/[controller]")]
-public class TenantsController : ControllerBase
+[DependsOn(typeof(MyApplicationModule))]
+[DependsOn(typeof(CrmMapsterModule))]
+public partial class MyApiModule : CrmModule
 {
-    private readonly IDispatcher _dispatcher;
-
-    public TenantsController(IDispatcher dispatcher)
+    public override void ConfigureServices(ServiceConfigurationContext context)
     {
-        _dispatcher = dispatcher;
+        RegisterServices(context.Services);
     }
 
-    [HttpPost]
-    public async Task<ActionResult<TenantViewModel>> Create(
-        [FromBody] CreateTenantRequest request,
-        CancellationToken ct)
+    public override void OnApplicationInitialization(ApplicationInitializationContext context)
     {
-        var command = new CreateTenantCommand(request.Name, request.Subdomain);
-        var id = await _dispatcher.SendAsync(command, ct);
+        var routeBuilder = context.GetRouteBuilder();
+        var mapper = context.ServiceProvider.GetRequiredService<IObjectMapper>();
 
-        var query = new GetTenantByIdQuery(id);
-        var viewModel = await _dispatcher.SendAsync(query, ct);
+        // POST /api/tenants
+        routeBuilder.MapPost("/api/tenants", async (
+            [FromBody] CreateTenantRequest request,
+            [FromServices] IDispatcher dispatcher,
+            CancellationToken ct) =>
+        {
+            var command = mapper.Map<CreateTenantCommand>(request);
+            var id = await dispatcher.SendAsync(command, ct);
 
-        return CreatedAtAction(nameof(GetById), new { id }, viewModel);
+            var query = new GetTenantByIdQuery(id);
+            var viewModel = await dispatcher.SendAsync(query, ct);
+
+            return Results.Created($"/api/tenants/{id}", viewModel);
+        })
+        .WithName("CreateTenant")
+        .WithOpenApi();
+
+        // GET /api/tenants/{id}
+        routeBuilder.MapGet("/api/tenants/{id:guid}", async (
+            [FromRoute] Guid id,
+            [FromServices] IDispatcher dispatcher,
+            CancellationToken ct) =>
+        {
+            var query = new GetTenantByIdQuery(id);
+            var viewModel = await dispatcher.SendAsync(query, ct);
+
+            return viewModel is not null
+                ? Results.Ok(viewModel)
+                : Results.NotFound();
+        })
+        .WithName("GetTenantById")
+        .WithOpenApi();
+    }
+}
+```
+
+**Object Mapping with Mapster:**
+```csharp
+// Module must depend on CrmMapsterModule
+[DependsOn(typeof(CrmMapsterModule))]
+public partial class MyApiModule : CrmModule
+{
+    // Mapper is available via DI as IObjectMapper
+}
+
+// Mapping configuration (optional, in Api project)
+public class TenantMappingProfile : IMapsterMappingProfile
+{
+    public void Configure(TypeAdapterConfig config)
+    {
+        config.NewConfig<CreateTenantRequest, CreateTenantCommand>()
+            .Map(dest => dest.Name, src => src.Name.Trim());
+
+        config.NewConfig<Tenant, TenantViewModel>()
+            .Map(dest => dest.ConnectionStrings,
+                 src => src.ConnectionStrings.Adapt<List<TenantConnectionStringViewModel>>());
     }
 }
 ```
 
 **Important:**
+- **Use ONLY Minimal API** - no Controllers allowed
+- All endpoints must be registered in `OnApplicationInitialization` method
+- Use `context.GetRouteBuilder()` to get route builder
 - API works only with Dispatcher (mediator)
+- Use `CrmMapsterModule` for object mapping
+- Always inject `IObjectMapper` for mapping between DTOs
 - Use Request/Response from Shared project
 - Always return ViewModels, not Domain entities
+- Use `.WithName()` for endpoint naming (useful for link generation)
+- Use `.WithOpenApi()` for OpenAPI documentation
+- Use `[FromServices]` attribute for injected dependencies in endpoints
+- Use `[FromRoute]`, `[FromBody]`, `[FromQuery]` for parameter binding
 
 ### 7. Shared Layer
 
@@ -595,24 +653,76 @@ var tenants = await _dispatcher.SendAsync(query);
 var response = await _httpClient.GetAsync("/api/tenants");
 ```
 
+### 7. Minimal API Usage
+```csharp
+// ✅ CORRECT: Endpoints in OnApplicationInitialization
+public override void OnApplicationInitialization(ApplicationInitializationContext context)
+{
+    var routeBuilder = context.GetRouteBuilder();
+
+    routeBuilder.MapGet("/api/tenants", async (IDispatcher dispatcher, CancellationToken ct) =>
+    {
+        var query = new GetAllTenantsQuery();
+        return await dispatcher.SendAsync(query, ct);
+    })
+    .WithName("GetAllTenants")
+    .WithOpenApi();
+}
+
+// ❌ WRONG: Using Controllers
+[ApiController] // NEVER use Controllers
+public class TenantsController : ControllerBase { }
+
+// ❌ WRONG: Registering endpoints in ConfigureServices
+public override void ConfigureServices(ServiceConfigurationContext context)
+{
+    // Don't register endpoints here
+}
+```
+
+### 8. Object Mapping with Mapster
+```csharp
+// ✅ CORRECT: Using IObjectMapper from CrmMapsterModule
+public override void OnApplicationInitialization(ApplicationInitializationContext context)
+{
+    var routeBuilder = context.GetRouteBuilder();
+    var mapper = context.ServiceProvider.GetRequiredService<IObjectMapper>();
+
+    routeBuilder.MapPost("/api/tenants", async (
+        [FromBody] CreateTenantRequest request,
+        [FromServices] IDispatcher dispatcher,
+        CancellationToken ct) =>
+    {
+        var command = mapper.Map<CreateTenantCommand>(request);
+        return await dispatcher.SendAsync(command, ct);
+    })
+    .WithName("CreateTenant")
+    .WithOpenApi();
+}
+
+// ❌ WRONG: Manual mapping
+var command = new CreateTenantCommand(request.Name, request.Subdomain);
+```
+
 ## 🚀 Common Tasks
 
 ### Creating a New Module
 1. Create folder structure (Domain, Application, DataAccess, Api, Shared, Frontend)
-2. Create Module classes with `[DependsOn]` attributes
+2. Create Module classes with `[DependsOn]` attributes (ensure Api module depends on `CrmMapsterModule`)
 3. Define Domain models in Domain project
 4. Create DbContext in DataAccess
 5. Implement Commands/Queries in Application
-6. Create Controllers in Api
+6. Register Minimal API endpoints in Api module's `OnApplicationInitialization`
 7. Add ViewModels to Shared
-8. Create Blazor components in Frontend
-9. Add all projects to Solution
+8. Create mapping profiles in Api (implement `IMapsterMappingProfile`)
+9. Create Blazor components in Frontend
+10. Add all projects to Solution
 
 ### Adding a New Feature
 1. Define Domain Event (if needed)
 2. Create Command/Query in Application
 3. Create Handler in Application
-4. Create Endpoint in Api
+4. Register Minimal API endpoint in Api module's `OnApplicationInitialization`
 5. Create ViewModel in Shared
 6. Publish event after execution
 7. Create Blazor component in Frontend
@@ -650,15 +760,19 @@ var response = await _httpClient.GetAsync("/api/tenants");
 
 ## ⚠️ Important Constraints
 
-1. **Don't use direct references between modules** - only via events
-2. **Don't expose Domain entities** - only ViewModels from Shared
-3. **Don't forget ClearDomainEvents()** after publishing events
-4. **Don't use Task.Run** in handlers - blocks event loop
-5. **Always use CancellationToken** for async operations
-6. **Don't use static for services** - only via DI
-7. **Module classes are always partial** - for Source Generators to work
-8. **Don't skip Entity.DomainEvents ignore in EF config** - will cause errors
-9. **Blazor WASM cannot directly work with DB** - only via API
+1. **Use ONLY Minimal API** - Controllers are strictly forbidden
+2. **All endpoints must be registered in OnApplicationInitialization** - not in ConfigureServices
+3. **Always use CrmMapsterModule** - for object mapping between DTOs (inject `IObjectMapper`)
+4. **Use [FromServices], [FromRoute], [FromBody], [FromQuery]** - for parameter binding in Minimal API
+5. **Don't use direct references between modules** - only via events
+6. **Don't expose Domain entities** - only ViewModels from Shared
+7. **Don't forget ClearDomainEvents()** after publishing events
+8. **Don't use Task.Run** in handlers - blocks event loop
+9. **Always use CancellationToken** for async operations
+10. **Don't use static for services** - only via DI
+11. **Module classes are always partial** - for Source Generators to work
+12. **Don't skip Entity.DomainEvents ignore in EF config** - will cause errors
+13. **Blazor WASM cannot directly work with DB** - only via API
 
 ## 🎯 Current Development Focus
 
