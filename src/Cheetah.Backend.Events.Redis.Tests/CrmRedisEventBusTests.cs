@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Moq;
 
-namespace Cheetah.Backend.Redis.Tests;
+namespace Cheetah.Backend.Events.Redis.Tests;
 
 public class CrmRedisEventBusTests
 {

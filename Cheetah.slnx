@@ -27,6 +27,7 @@
   </Folder>
   <Folder Name="/Modules/" />
   <Folder Name="/Tests/">
+    <Project Path="src/Cheetah.Backend.Events.Redis.Tests/Cheetah.Backend.Events.Redis.Tests.csproj" />
     <Project Path="src/Cheetah.Backend.Redis.Tests/Cheetah.Backend.Redis.Tests.csproj" />
     <Project Path="src/Cheetah.Core.Tests/Cheetah.Core.Tests.csproj" />
   </Folder>

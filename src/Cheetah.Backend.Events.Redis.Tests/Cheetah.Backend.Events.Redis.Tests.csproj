@@ -10,6 +10,7 @@
   <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.4" />
     <PackageReference Include="FluentAssertions" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.1" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="10.0.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
     <PackageReference Include="Moq" Version="4.20.72" />
@@ -18,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Cheetah.Backend.Redis\Cheetah.Backend.Redis.csproj" />
+    <ProjectReference Include="..\Cheetah.Backend.Events.Redis\Cheetah.Backend.Events.Redis.csproj" />
   </ItemGroup>
 
   <ItemGroup>
