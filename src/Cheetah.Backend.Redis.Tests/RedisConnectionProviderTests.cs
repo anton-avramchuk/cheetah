@@ -28,7 +28,8 @@ public class RedisConnectionProviderTests : IDisposable
         };
     }
 
-    [Fact(Skip = "Requires Redis server running")]
+    [Fact]
+    [Trait("Category", "Integration")]
     public void GetConnection_WithDefaultInstance_ShouldReturnConnection()
     {
         // Arrange
@@ -42,7 +43,8 @@ public class RedisConnectionProviderTests : IDisposable
         act.Should().NotThrow();
     }
 
-    [Fact(Skip = "Requires Redis server running")]
+    [Fact]
+    [Trait("Category", "Integration")]
     public void GetConnection_WithNamedInstance_ShouldReturnConnection()
     {
         // Arrange
@@ -71,7 +73,8 @@ public class RedisConnectionProviderTests : IDisposable
             .WithMessage("*nonexistent*");
     }
 
-    [Fact(Skip = "Requires Redis server running")]
+    [Fact]
+    [Trait("Category", "Integration")]
     public void GetDatabase_WithDefaultInstance_ShouldReturnDatabase()
     {
         // Arrange
@@ -85,7 +88,8 @@ public class RedisConnectionProviderTests : IDisposable
         act.Should().NotThrow();
     }
 
-    [Fact(Skip = "Requires Redis server running")]
+    [Fact]
+    [Trait("Category", "Integration")]
     public void GetDatabase_WithNamedInstance_ShouldReturnDatabase()
     {
         // Arrange
@@ -113,7 +117,8 @@ public class RedisConnectionProviderTests : IDisposable
         act.Should().Throw<InvalidOperationException>();
     }
 
-    [Fact(Skip = "Requires Redis server running")]
+    [Fact]
+    [Trait("Category", "Integration")]
     public void GetConnection_CalledMultipleTimes_ShouldReturnSameInstance()
     {
         // Arrange

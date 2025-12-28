@@ -11,7 +11,9 @@ Unit тесты для модуля Cheetah.Backend.Redis.
 - Проверка обработки несуществующих инстансов
 - Проверка переиспользования подключений
 
-**Примечание:** Некоторые тесты помечены как `[Fact(Skip = "Requires Redis server running")]` и требуют запущенного сервера Redis для выполнения.
+**Примечание:** Тесты делятся на две категории:
+- **Unit тесты** - используют моки, не требуют Redis сервера
+- **Интеграционные тесты** - помечены `[Trait("Category", "Integration")]`, требуют запущенного Redis сервера
 
 ### RedisClientTests
 Unit тесты для клиента Redis с использованием моков:
@@ -34,14 +36,17 @@ Unit тесты для шины событий Redis с использовани
 ## Запуск тестов
 
 ```bash
-# Запустить все тесты
+# Запустить только unit тесты (рекомендуется для CI/CD)
+dotnet test --filter "Category!=Integration"
+
+# Запустить все тесты (включая интеграционные, требуется Redis)
 dotnet test
+
+# Запустить только интеграционные тесты
+dotnet test --filter "Category=Integration"
 
 # Запустить с подробным выводом
 dotnet test --logger "console;verbosity=normal"
-
-# Запустить только unit тесты (без интеграционных)
-dotnet test --filter "FullyQualifiedName!~RedisConnectionProviderTests"
 ```
 
 ## Интеграционные тесты
@@ -53,7 +58,19 @@ dotnet test --filter "FullyQualifiedName!~RedisConnectionProviderTests"
 docker run -d -p 6379:6379 redis:latest
 
 # Запустить все тесты (включая интеграционные)
-dotnet test --filter "FullyQualifiedName~RedisConnectionProviderTests"
+dotnet test
+
+# Или только интеграционные
+dotnet test --filter "Category=Integration"
+```
+
+## GitHub Actions / CI
+
+В CI/CD пайплайнах рекомендуется запускать только unit тесты:
+
+```yaml
+- name: Run tests
+  run: dotnet test --filter "Category!=Integration"
 ```
 
 ## Покрытие кода
@@ -75,8 +92,16 @@ dotnet test --filter "FullyQualifiedName~RedisConnectionProviderTests"
 
 ## Результаты
 
+**Unit тесты (без Redis сервера):**
 ```
-Total tests: 25
+dotnet test --filter "Category!=Integration"
+Total tests: 20
      Passed: 20
-    Skipped: 5 (интеграционные тесты)
+```
+
+**Все тесты (с Redis сервером):**
+```
+dotnet test
+Total tests: 25
+     Passed: 25
 ```
