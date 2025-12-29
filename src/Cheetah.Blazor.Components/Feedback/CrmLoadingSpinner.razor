@@ -1,0 +1,124 @@
+@namespace Cheetah.Blazor.Components.Feedback
+
+@* Loading spinner with optional message *@
+
+<div class="@GetContainerClass()">
+    <div class="@GetSpinnerClass()" role="status">
+        <span class="visually-hidden">@(Message ?? "Loading...")</span>
+    </div>
+    @if (!string.IsNullOrEmpty(Message))
+    {
+        <div class="@GetMessageClass()">@Message</div>
+    }
+</div>
+
+@code {
+    /// <summary>
+    /// Loading message to display
+    /// </summary>
+    [Parameter]
+    public string? Message { get; set; }
+
+    /// <summary>
+    /// Spinner size (Small, Normal, Large)
+    /// </summary>
+    [Parameter]
+    public SpinnerSize Size { get; set; } = SpinnerSize.Normal;
+
+    /// <summary>
+    /// Spinner variant (Border, Grow)
+    /// </summary>
+    [Parameter]
+    public SpinnerVariant Variant { get; set; } = SpinnerVariant.Border;
+
+    /// <summary>
+    /// Spinner color (Primary, Secondary, Success, etc.)
+    /// </summary>
+    [Parameter]
+    public SpinnerColor Color { get; set; } = SpinnerColor.Primary;
+
+    /// <summary>
+    /// Center the spinner horizontally and vertically
+    /// </summary>
+    [Parameter]
+    public bool Center { get; set; } = true;
+
+    /// <summary>
+    /// Additional CSS classes for container
+    /// </summary>
+    [Parameter]
+    public string? CssClass { get; set; }
+
+    private string GetContainerClass()
+    {
+        var classes = new List<string>();
+
+        if (Center)
+            classes.Add("text-center");
+
+        if (!string.IsNullOrEmpty(CssClass))
+            classes.Add(CssClass);
+
+        return string.Join(" ", classes);
+    }
+
+    private string GetSpinnerClass()
+    {
+        var classes = new List<string>();
+
+        // Type
+        classes.Add(Variant == SpinnerVariant.Border ? "spinner-border" : "spinner-grow");
+
+        // Size
+        if (Size == SpinnerSize.Small)
+            classes.Add(Variant == SpinnerVariant.Border ? "spinner-border-sm" : "spinner-grow-sm");
+
+        // Color
+        classes.Add($"text-{GetColorName()}");
+
+        return string.Join(" ", classes);
+    }
+
+    private string GetMessageClass()
+    {
+        return Size == SpinnerSize.Small ? "mt-1" : "mt-2";
+    }
+
+    private string GetColorName() => Color switch
+    {
+        SpinnerColor.Primary => "primary",
+        SpinnerColor.Secondary => "secondary",
+        SpinnerColor.Success => "success",
+        SpinnerColor.Danger => "danger",
+        SpinnerColor.Warning => "warning",
+        SpinnerColor.Info => "info",
+        SpinnerColor.Light => "light",
+        SpinnerColor.Dark => "dark",
+        _ => "primary"
+    };
+
+    public enum SpinnerSize
+    {
+        Small,
+        Normal,
+        Large
+    }
+
+    public enum SpinnerVariant
+    {
+        Border,
+        Grow
+    }
+
+    public enum SpinnerColor
+    {
+        Primary,
+        Secondary,
+        Success,
+        Danger,
+        Warning,
+        Info,
+        Light,
+        Dark
+    }
+}

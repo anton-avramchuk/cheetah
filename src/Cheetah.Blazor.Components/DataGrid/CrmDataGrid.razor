@@ -1,0 +1,154 @@
+@namespace Cheetah.Blazor.Components.DataGrid
+
+@* Generic data grid component *@
+@typeparam TItem
+
+<div class="@GetContainerClass()">
+    @if (IsLoading)
+    {
+        <div class="text-center py-4">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">@LoadingMessage</span>
+            </div>
+            <div class="mt-2">@LoadingMessage</div>
+        </div>
+    }
+    else if (ErrorMessage != null)
+    {
+        <div class="alert alert-danger" role="alert">
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            @ErrorMessage
+        </div>
+    }
+    else if (Items == null || !Items.Any())
+    {
+        <div class="alert alert-info" role="alert">
+            <i class="bi bi-info-circle me-2"></i>
+            @EmptyMessage
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="@GetTableClass()">
+                <thead>
+                    <tr>
+                        @Columns
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Items)
+                    {
+                        <tr>
+                            @RowTemplate(item)
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+@code {
+    /// <summary>
+    /// Items to display
+    /// </summary>
+    [Parameter]
+    public IEnumerable<TItem>? Items { get; set; }
+
+    /// <summary>
+    /// Column headers template
+    /// </summary>
+    [Parameter]
+    public RenderFragment? Columns { get; set; }
+
+    /// <summary>
+    /// Row template
+    /// </summary>
+    [Parameter]
+    public RenderFragment<TItem>? RowTemplate { get; set; }
+
+    /// <summary>
+    /// Is grid loading
+    /// </summary>
+    [Parameter]
+    public bool IsLoading { get; set; }
+
+    /// <summary>
+    /// Error message
+    /// </summary>
+    [Parameter]
+    public string? ErrorMessage { get; set; }
+
+    /// <summary>
+    /// Message when no items
+    /// </summary>
+    [Parameter]
+    public string EmptyMessage { get; set; } = "No items to display";
+
+    /// <summary>
+    /// Loading message
+    /// </summary>
+    [Parameter]
+    public string LoadingMessage { get; set; } = "Loading...";
+
+    /// <summary>
+    /// Striped rows
+    /// </summary>
+    [Parameter]
+    public bool Striped { get; set; } = true;
+
+    /// <summary>
+    /// Hoverable rows
+    /// </summary>
+    [Parameter]
+    public bool Hover { get; set; } = true;
+
+    /// <summary>
+    /// Bordered table
+    /// </summary>
+    [Parameter]
+    public bool Bordered { get; set; }
+
+    /// <summary>
+    /// Small table
+    /// </summary>
+    [Parameter]
+    public bool Small { get; set; }
+
+    /// <summary>
+    /// Additional CSS classes for container
+    /// </summary>
+    [Parameter]
+    public string? ContainerCssClass { get; set; }
+
+    /// <summary>
+    /// Additional CSS classes for table
+    /// </summary>
+    [Parameter]
+    public string? TableCssClass { get; set; }
+
+    private string GetContainerClass()
+    {
+        return !string.IsNullOrEmpty(ContainerCssClass) ? ContainerCssClass : "";
+    }
+
+    private string GetTableClass()
+    {
+        var classes = new List<string> { "table" };
+
+        if (Striped)
+            classes.Add("table-striped");
+        if (Hover)
+            classes.Add("table-hover");
+        if (Bordered)
+            classes.Add("table-bordered");
+        if (Small)
+            classes.Add("table-sm");
+
+        if (!string.IsNullOrEmpty(TableCssClass))
+            classes.Add(TableCssClass);
+
+        return string.Join(" ", classes);
+    }
+}

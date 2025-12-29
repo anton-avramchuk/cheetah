@@ -1,4 +1,6 @@
 @page "/tenants/create"
+@using Cheetah.Blazor.Components.Buttons
+@using Cheetah.Blazor.Components.Forms
 @inject ITenantApiClient TenantApiClient
 @inject NavigationManager Navigation
 
@@ -12,42 +14,38 @@
 
             @if (errorMessage != null)
             {
-                <div class="alert alert-danger" role="alert">
-                    <i class="bi bi-exclamation-triangle"></i> @errorMessage
-                </div>
+                <CrmAlert Variant="CrmAlert.AlertVariant.Danger"
+                          Message="@errorMessage"
+                          Icon="exclamation-triangle"
+                          Dismissible="true"
+                          @bind-IsVisible="@showError" />
             }
 
-            <div class="mb-3">
-                <label for="name" class="form-label">Tenant Name *</label>
-                <InputText id="name" class="form-control" @bind-Value="request.Name" placeholder="Enter tenant name" />
-                <ValidationMessage For="@(() => request.Name)" />
-            </div>
+            <CrmTextInput @bind-Value="request.Name"
+                          Label="Tenant Name"
+                          Placeholder="Enter tenant name"
+                          Required="true"
+                          HelpText="The name will be used to identify this tenant."
+                          ValidationFor="@(() => request.Name)" />
+
+            <CrmTextInput @bind-Value="request.Subdomain"
+                          Label="Subdomain"
+                          Placeholder="Enter subdomain (optional)"
+                          HelpText="The subdomain will be used for tenant-specific URLs (e.g., subdomain.yourapp.com)"
+                          ValidationFor="@(() => request.Subdomain)" />
 
             <div class="mb-3">
-                <label for="subdomain" class="form-label">Subdomain</label>
-                <InputText id="subdomain" class="form-control" @bind-Value="request.Subdomain" placeholder="Enter subdomain (optional)" />
-                <div class="form-text">
-                    The subdomain will be used for tenant-specific URLs (e.g., subdomain.yourapp.com)
-                </div>
-                <ValidationMessage For="@(() => request.Subdomain)" />
-            </div>
-
-            <div class="mb-3">
-                <button type="submit" class="btn btn-primary" disabled="@isSubmitting">
-                    @if (isSubmitting)
-                    {
-                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                        <span> Creating...</span>
-                    }
-                    else
-                    {
-                        <i class="bi bi-check-circle"></i>
-                        <span> Create Tenant</span>
-                    }
-                </button>
-                <button type="button" class="btn btn-secondary" @onclick="Cancel" disabled="@isSubmitting">
-                    <i class="bi bi-x-circle"></i> Cancel
-                </button>
+                <CrmButton Text="Create Tenant"
+                           Icon="check-circle"
+                           Type="submit"
+                           Variant="CrmButton.ButtonVariant.Primary"
+                           IsLoading="@isSubmitting"
+                           Disabled="@isSubmitting" />
+                <CrmButton Text="Cancel"
+                           Icon="x-circle"
+                           Variant="CrmButton.ButtonVariant.Secondary"
+                           Disabled="@isSubmitting"
+                           OnClick="@Cancel" />
             </div>
         </EditForm>
     </div>
@@ -56,6 +54,7 @@
 @code {
     private CreateTenantRequest request = new() { Name = string.Empty };
     private bool isSubmitting = false;
+    private bool showError = true;
     private string? errorMessage;
 
     private async Task HandleSubmit()
@@ -71,6 +70,7 @@
         catch (Exception ex)
         {
             errorMessage = $"Failed to create tenant: {ex.Message}";
+            showError = true;
         }
         finally
         {

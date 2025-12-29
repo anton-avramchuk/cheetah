@@ -3,7 +3,8 @@
     "allow": [
       "Bash(mkdir:*)",
       "Bash(dotnet sln:*)",
-      "Bash(dotnet build:*)"
+      "Bash(dotnet build:*)",
+      "Bash(Remove-Item -Path \"E:\\\\Projects\\\\cheetah\\\\src\\\\Cheetah.Frontend.Components\" -Recurse -Force)"
     ]
   }
 }

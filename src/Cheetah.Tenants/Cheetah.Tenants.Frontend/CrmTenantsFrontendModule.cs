@@ -2,6 +2,7 @@ using Cheetah.Core;
 using Cheetah.Core.Modularity;
 using Cheetah.Frontend.CQRS;
 using Cheetah.Frontend.Events;
+using Cheetah.Blazor.Components;
 using Cheetah.Tenants.ApiClient;
 
 namespace Cheetah.Tenants.Frontend;
@@ -13,6 +14,7 @@ namespace Cheetah.Tenants.Frontend;
 [DependsOn(typeof(CoreModule))]
 [DependsOn(typeof(CrmFrontendCQRSModule))]
 [DependsOn(typeof(CrmFrontendEventsModule))]
+[DependsOn(typeof(CrmBlazorComponentsModule))]
 [DependsOn(typeof(CrmTenantsApiClientModule))]
 public partial class CrmTenantsFrontendModule : CrmModule
 {

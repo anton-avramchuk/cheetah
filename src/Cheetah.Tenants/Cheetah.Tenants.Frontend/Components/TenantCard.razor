@@ -1,29 +1,25 @@
 @inject NavigationManager Navigation
 
-<div class="card mb-3">
-    <div class="card-body">
+<CrmCard>
+    <Header>
         <div class="d-flex justify-content-between align-items-start">
             <div>
-                <h5 class="card-title">@Tenant.Name</h5>
+                <h5 class="mb-0">@Tenant.Name</h5>
                 @if (!string.IsNullOrEmpty(Tenant.Subdomain))
                 {
-                    <p class="card-text text-muted">
+                    <small class="text-muted">
                         <i class="bi bi-globe"></i> @Tenant.Subdomain
-                    </p>
+                    </small>
                 }
             </div>
             <div>
-                @if (Tenant.IsActive)
-                {
-                    <span class="badge bg-success">Active</span>
-                }
-                else
-                {
-                    <span class="badge bg-secondary">Inactive</span>
-                }
+                <CrmBadge Text="@(Tenant.IsActive ? "Active" : "Inactive")"
+                          Variant="@(Tenant.IsActive ? CrmBadge.BadgeVariant.Success : CrmBadge.BadgeVariant.Secondary)" />
             </div>
         </div>
+    </Header>
 
+    <ChildContent>
         @if (Tenant.CreatedAt.HasValue)
         {
             <p class="card-text">
@@ -36,16 +32,21 @@
         @if (ShowActions)
         {
             <div class="d-flex gap-2 mt-3">
-                <button class="btn btn-sm btn-primary" @onclick="ViewDetails">
-                    <i class="bi bi-eye"></i> View
-                </button>
-                <button class="btn btn-sm btn-outline-secondary" @onclick="Edit">
-                    <i class="bi bi-pencil"></i> Edit
-                </button>
+                <CrmButton Text="View"
+                           Icon="eye"
+                           Size="CrmButton.ButtonSize.Small"
+                           Variant="CrmButton.ButtonVariant.Primary"
+                           OnClick="@ViewDetails" />
+                <CrmButton Text="Edit"
+                           Icon="pencil"
+                           Size="CrmButton.ButtonSize.Small"
+                           Variant="CrmButton.ButtonVariant.Warning"
+                           Outline="true"
+                           OnClick="@Edit" />
             </div>
         }
-    </div>
-</div>
+    </ChildContent>
+</CrmCard>
 
 @code {
     [Parameter, EditorRequired]

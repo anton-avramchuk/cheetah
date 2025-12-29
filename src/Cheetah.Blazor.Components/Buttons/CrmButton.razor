@@ -1,0 +1,162 @@
+@namespace Cheetah.Blazor.Components.Buttons
+
+@* Universal button component *@
+
+<button type="@Type" class="@GetCssClass()" disabled="@(Disabled || IsLoading)" @onclick="HandleClick">
+    @if (IsLoading)
+    {
+        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+    }
+    else if (!string.IsNullOrEmpty(Icon))
+    {
+        <i class="bi bi-@Icon me-1"></i>
+    }
+
+    @if (ChildContent != null)
+    {
+        @ChildContent
+    }
+    else if (!string.IsNullOrEmpty(Text))
+    {
+        @Text
+    }
+</button>
+
+@code {
+    /// <summary>
+    /// Button text
+    /// </summary>
+    [Parameter]
+    public string? Text { get; set; }
+
+    /// <summary>
+    /// Button content (alternative to Text)
+    /// </summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>
+    /// Bootstrap icon name (without 'bi-' prefix)
+    /// </summary>
+    [Parameter]
+    public string? Icon { get; set; }
+
+    /// <summary>
+    /// Button variant (Primary, Secondary, Success, Danger, Warning, Info, Light, Dark)
+    /// </summary>
+    [Parameter]
+    public ButtonVariant Variant { get; set; } = ButtonVariant.Primary;
+
+    /// <summary>
+    /// Button size (Small, Normal, Large)
+    /// </summary>
+    [Parameter]
+    public ButtonSize Size { get; set; } = ButtonSize.Normal;
+
+    /// <summary>
+    /// Button type (button, submit, reset)
+    /// </summary>
+    [Parameter]
+    public string Type { get; set; } = "button";
+
+    /// <summary>
+    /// Is button disabled
+    /// </summary>
+    [Parameter]
+    public bool Disabled { get; set; }
+
+    /// <summary>
+    /// Is button in loading state
+    /// </summary>
+    [Parameter]
+    public bool IsLoading { get; set; }
+
+    /// <summary>
+    /// Outline style
+    /// </summary>
+    [Parameter]
+    public bool Outline { get; set; }
+
+    /// <summary>
+    /// Block level button (full width)
+    /// </summary>
+    [Parameter]
+    public bool Block { get; set; }
+
+    /// <summary>
+    /// Additional CSS classes
+    /// </summary>
+    [Parameter]
+    public string? CssClass { get; set; }
+
+    /// <summary>
+    /// Click event handler
+    /// </summary>
+    [Parameter]
+    public EventCallback OnClick { get; set; }
+
+    private async Task HandleClick()
+    {
+        if (!Disabled && !IsLoading)
+        {
+            await OnClick.InvokeAsync();
+        }
+    }
+
+    private string GetCssClass()
+    {
+        var classes = new List<string> { "btn" };
+
+        // Variant
+        var variantName = GetVariantName();
+        classes.Add(Outline ? $"btn-outline-{variantName}" : $"btn-{variantName}");
+
+        // Size
+        if (Size == ButtonSize.Small)
+            classes.Add("btn-sm");
+        else if (Size == ButtonSize.Large)
+            classes.Add("btn-lg");
+
+        // Block
+        if (Block)
+            classes.Add("w-100");
+
+        // Custom classes
+        if (!string.IsNullOrEmpty(CssClass))
+            classes.Add(CssClass);
+
+        return string.Join(" ", classes);
+    }
+
+    private string GetVariantName() => Variant switch
+    {
+        ButtonVariant.Primary => "primary",
+        ButtonVariant.Secondary => "secondary",
+        ButtonVariant.Success => "success",
+        ButtonVariant.Danger => "danger",
+        ButtonVariant.Warning => "warning",
+        ButtonVariant.Info => "info",
+        ButtonVariant.Light => "light",
+        ButtonVariant.Dark => "dark",
+        _ => "primary"
+    };
+
+    public enum ButtonVariant
+    {
+        Primary,
+        Secondary,
+        Success,
+        Danger,
+        Warning,
+        Info,
+        Light,
+        Dark
+    }
+
+    public enum ButtonSize
+    {
+        Small,
+        Normal,
+        Large
+    }
+}

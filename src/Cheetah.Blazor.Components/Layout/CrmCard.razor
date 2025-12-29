@@ -1,0 +1,74 @@
+@namespace Cheetah.Blazor.Components.Layout
+
+@* Card component with header, content, and footer *@
+
+<div class="@GetCssClass()">
+    @if (Header != null)
+    {
+        <div class="card-header">
+            @Header
+        </div>
+    }
+    else if (!string.IsNullOrEmpty(Title))
+    {
+        <div class="card-header">
+            <h5 class="card-title mb-0">@Title</h5>
+        </div>
+    }
+
+    <div class="card-body">
+        @if (ChildContent != null)
+        {
+            @ChildContent
+        }
+    </div>
+
+    @if (Footer != null)
+    {
+        <div class="card-footer">
+            @Footer
+        </div>
+    }
+</div>
+
+@code {
+    /// <summary>
+    /// Card title
+    /// </summary>
+    [Parameter]
+    public string? Title { get; set; }
+
+    /// <summary>
+    /// Card header content
+    /// </summary>
+    [Parameter]
+    public RenderFragment? Header { get; set; }
+
+    /// <summary>
+    /// Card body content
+    /// </summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>
+    /// Card footer content
+    /// </summary>
+    [Parameter]
+    public RenderFragment? Footer { get; set; }
+
+    /// <summary>
+    /// Additional CSS classes
+    /// </summary>
+    [Parameter]
+    public string? CssClass { get; set; }
+
+    private string GetCssClass()
+    {
+        var classes = new List<string> { "card" };
+
+        if (!string.IsNullOrEmpty(CssClass))
+            classes.Add(CssClass);
+
+        return string.Join(" ", classes);
+    }
+}
