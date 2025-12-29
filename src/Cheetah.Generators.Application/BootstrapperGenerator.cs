@@ -323,8 +323,11 @@ public class BootstrapperGenerator : IIncrementalGenerator
 
         foreach (var module in sortedModules)
         {
+            var fullyQualifiedName = module.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)
+                .Replace("global::", ""); // Remove global:: prefix
+
             code.AppendLine(
-                $"            Cheetah.Core.Modularity.ModuleInitializer.AddModule<{module.ToDisplayString()}>();");
+                $"            Cheetah.Core.Modularity.ModuleInitializer.AddModule<{fullyQualifiedName}>();");
         }
 
         code.AppendLine("        }");

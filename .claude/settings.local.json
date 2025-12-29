@@ -9,7 +9,23 @@
       "Bash(dotnet add:*)",
       "Bash(dotnet new:*)",
       "Bash(ls:*)",
-      "Bash(dotnet ef migrations:*)"
+      "Bash(dotnet ef migrations:*)",
+      "Bash(dotnet clean:*)",
+      "Bash(timeout 30 tail:*)",
+      "Bash(Select-String -Pattern \"Build succeeded|Build FAILED\" -CaseSensitive)",
+      "Bash(Remove-Item -Path \"E:\\\\Projects\\\\cheetah\\\\nul\" -Force)",
+      "Bash(rm:*)",
+      "Bash(Select-String -Pattern \"error|warning\" -Context 0,2)",
+      "Bash(docker-compose ps:*)",
+      "Bash(docker logs:*)",
+      "Bash(docker-compose up:*)",
+      "Bash(docker exec:*)",
+      "Bash(docker-compose restart:*)",
+      "Bash(docker-compose stop:*)",
+      "Bash(docker-compose rm:*)",
+      "Bash(docker system prune:*)",
+      "Bash(docker-compose build:*)",
+      "Bash(curl:*)"
     ]
   }
 }

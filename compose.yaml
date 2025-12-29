@@ -24,7 +24,7 @@
     image: dpage/pgadmin4:latest
     container_name: cheetah-pgadmin
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@cheetah.local
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
       PGADMIN_DEFAULT_PASSWORD: admin123
       PGADMIN_CONFIG_SERVER_MODE: 'False'
     ports:

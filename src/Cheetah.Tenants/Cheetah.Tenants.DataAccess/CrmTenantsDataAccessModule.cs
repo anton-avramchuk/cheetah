@@ -21,11 +21,12 @@ public partial class CrmTenantsDataAccessModule : CrmModule
 
         context.Services.AddApplicationDbContext<TenantsDbContext>();
 
-        context.Services.Configure<CrmDbContextOptions>(options =>
+        Configure<CrmDbContextOptions>(options =>
         {
             options.UseNpgsql<TenantsDbContext>();
         });
 
+        
         // Register database migrator for automatic migrations
         context.Services.AddDatabaseMigrator<TenantsDbContext>();
     }
