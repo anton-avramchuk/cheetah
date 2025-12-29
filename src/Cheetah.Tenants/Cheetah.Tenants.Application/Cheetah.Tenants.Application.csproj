@@ -2,6 +2,7 @@
 
 
   <ItemGroup>
+    <ProjectReference Include="..\Cheetah.Tenants.Events\Cheetah.Tenants.Events.csproj" />
     <ProjectReference Include="..\Cheetah.Tenants.Domain\Cheetah.Tenants.Domain.csproj" />
     <ProjectReference Include="..\Cheetah.Tenants.DataAccess\Cheetah.Tenants.DataAccess.csproj" />
     <ProjectReference Include="..\..\Cheetah.Core.CQRS\Cheetah.Core.CQRS.csproj" />

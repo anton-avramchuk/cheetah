@@ -3,7 +3,7 @@ using Cheetah.Core.DataAccess.Abstractions;
 using Cheetah.Core.Events;
 using Cheetah.Tenants.Application.Commands;
 using Cheetah.Tenants.Domain.Entities;
-using Cheetah.Tenants.Domain.Events;
+using Cheetah.Tenants.Events;
 using FluentAssertions;
 using Moq;
 
@@ -64,7 +64,7 @@ public class CreateTenantCommandHandlerTests
             x => x.PublishAsync(
                 It.Is<IEvent>(e =>
                     (e as TenantCreatedEvent) != null &&
-                    (e as TenantCreatedEvent)!.TenantName == "Test Tenant" &&
+                    (e as TenantCreatedEvent)!.Name == "Test Tenant" &&
                     (e as TenantCreatedEvent)!.Subdomain == "test-subdomain"),
                 It.IsAny<CancellationToken>()),
             Times.Once);

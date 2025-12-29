@@ -39,11 +39,12 @@ public partial class MyModule : CrmModule
 
 ### 2. Large Module Structure
 
-Each large module (Tenants, Features, Permissions, Identity) consists of 8 assemblies:
+Each large module (Tenants, Features, Permissions, Identity) consists of 9 assemblies:
 
 ```
 Cheetah.{ModuleName}/
-├── Cheetah.{ModuleName}.Domain/        # Entities, Events, Value Objects
+├── Cheetah.{ModuleName}.Events/        # Domain Events (contracts for other modules)
+├── Cheetah.{ModuleName}.Domain/        # Entities, Value Objects
 ├── Cheetah.{ModuleName}.Application/   # CQRS, Services, Business Logic
 ├── Cheetah.{ModuleName}.DataAccess/    # EF Core, DbContext, Migrations
 ├── Cheetah.{ModuleName}.Api/           # Minimal API Endpoints
@@ -56,20 +57,30 @@ Cheetah.{ModuleName}/
     └── Cheetah.{ModuleName}.Frontend.Client.Tests/  # Tests for frontend client
 ```
 
+**Why separate Events project?**
+- Events are contracts between modules
+- Other modules can subscribe to events without depending on entire Domain layer
+- Reduces coupling between modules
+- Events project has no dependencies (pure data contracts)
+
 **Layer Dependencies:**
 ```
-Api → Application → Domain
-DataAccess → Domain
+Api → Application → Domain → Events
+DataAccess → Domain → Events
+Application → Events (for publishing)
 Shared (independent)
 Frontend → Shared (Blazor WASM uses Shared DTOs)
 Client → Shared (Backend integration uses Shared DTOs)
 Frontend.Client → Shared (Blazor client uses Shared DTOs)
+
+Other modules can depend on Events project to subscribe to events
 ```
 
 **Solution Organization:**
 All projects (including tests) must be included in the solution inside a folder structure:
 ```xml
 <Folder Name="/Modules/{ModuleName}/">
+  <Project Path="src\Cheetah.{ModuleName}.Events\Cheetah.{ModuleName}.Events.csproj" />
   <Project Path="src\Cheetah.{ModuleName}.Domain\Cheetah.{ModuleName}.Domain.csproj" />
   <Project Path="src\Cheetah.{ModuleName}.Application\Cheetah.{ModuleName}.Application.csproj" />
   <Project Path="src\Cheetah.{ModuleName}.DataAccess\Cheetah.{ModuleName}.DataAccess.csproj" />
@@ -661,14 +672,35 @@ public class GetTenantByIdQueryHandlerTests
 
 ### 10. Event-Driven Architecture
 
-**Event Definition (in Domain):**
+**Event Definition (in separate Events project):**
+
+Events are defined in `Cheetah.{ModuleName}.Events` project as pure data contracts:
+
 ```csharp
+// File: Cheetah.Tenants.Events/TenantCreatedEvent.cs
+namespace Cheetah.Tenants.Events;
+
 public record TenantCreatedEvent(
     Guid TenantId,
     string Name,
     string? Subdomain
 ) : EventBase;
 ```
+
+**Events Project Structure:**
+```
+Cheetah.Tenants.Events/
+├── TenantCreatedEvent.cs
+├── TenantActivatedEvent.cs
+├── TenantDeactivatedEvent.cs
+└── CrmTenantsEventsModule.cs
+```
+
+**Important:**
+- Events project has NO dependencies (except base EventBase from Core)
+- Events are pure data contracts (records)
+- Other modules depend ONLY on Events project to subscribe
+- Domain entities reference Events project to raise events
 
 **Publishing Event (in Application):**
 ```csharp
@@ -681,7 +713,13 @@ tenant.ClearDomainEvents();
 ```
 
 **Handling Event (in another module):**
+
+Another module depends on `Cheetah.Tenants.Events` project:
+
 ```csharp
+// File: Cheetah.Features/Cheetah.Features.Application/EventHandlers/TenantCreatedEventHandler.cs
+using Cheetah.Tenants.Events; // Only depends on Events project!
+
 [Export(LifetimeType.Scoped, typeof(TenantCreatedEventHandler))]
 public class TenantCreatedEventHandler : IEventHandler<TenantCreatedEvent>
 {
@@ -695,7 +733,9 @@ public class TenantCreatedEventHandler : IEventHandler<TenantCreatedEvent>
 
 **Event Subscription (in module):**
 ```csharp
-public class MyModule : CrmModule
+// File: Cheetah.Features.Application/CrmFeaturesApplicationModule.cs
+[DependsOn(typeof(CrmTenantsEventsModule))] // Depend on Events module
+public class CrmFeaturesApplicationModule : CrmModule
 {
     public override void OnApplicationInitialization(ApplicationInitializationContext context)
     {
@@ -780,16 +820,22 @@ public interface ITenantStore
 
 ### Folder Structure
 ```
+Cheetah.Tenants.Events/
+├── TenantCreatedEvent.cs
+├── TenantActivatedEvent.cs
+├── TenantDeactivatedEvent.cs
+└── CrmTenantsEventsModule.cs
+
 Cheetah.Tenants.Domain/
 ├── Entities/           # Tenant.cs, TenantConnectionString.cs
-├── Events/             # TenantCreatedEvent.cs
-├── ValueObjects/       # Email.cs, Address.cs
+├── ValueObjects/       # Subdomain.cs, Email.cs
 └── CrmTenantsDomainModule.cs
 
 Cheetah.Tenants.Application/
 ├── Commands/           # CreateTenantCommand.cs, CreateTenantCommandHandler.cs
 ├── Queries/            # GetTenantByIdQuery.cs, GetTenantByIdQueryHandler.cs
 ├── Services/           # ITenantResolver.cs, TenantResolver.cs
+├── EventHandlers/      # Event handlers for events from OTHER modules
 └── CrmTenantsApplicationModule.cs
 ```
 
@@ -1059,31 +1105,45 @@ var command = new CreateTenantCommand(request.Name, request.Subdomain);
 - This allows centralized version management across the entire solution
 
 ### Creating a New Module
-1. Create folder structure (Domain, Application, DataAccess, Api, Shared, Frontend, Client, Frontend.Client, and Tests)
-2. Create Module classes with `[DependsOn]` attributes:
-   - DataAccess module must depend on `CrmEntityFrameworkModule` and `CrmEntityFrameworkPostgreSqlModule`
-   - Api module must depend on `CrmMapsterModule`
-   - Client module must depend on Shared module
-   - Frontend.Client module must depend on Client module and `CrmFrontendCQRSModule`
-3. Define Domain models in Domain project
-4. Create DbContext in DataAccess with PostgreSQL provider
-5. Implement Commands/Queries in Application
-6. Register Minimal API endpoints in Api module's `OnApplicationInitialization`
-7. Add ViewModels and Request DTOs to Shared
-8. Create mapping profiles in Api (implement `IMapsterMappingProfile`)
-9. Create Backend Client (Client project):
+1. Create folder structure (Events, Domain, Application, DataAccess, Api, Shared, Frontend, Client, Frontend.Client, and Tests)
+2. **Create Events project FIRST:**
+   - Create `Cheetah.{ModuleName}.Events` project
+   - Define all domain events as records inheriting from `EventBase`
+   - Create `CrmEventsModule.cs` with NO dependencies
+   - This project should have no other dependencies except Core
+3. Create Module classes with `[DependsOn]` attributes:
+   - **Events module** - no dependencies (pure contracts)
+   - **Domain module** must depend on Events module
+   - **DataAccess module** must depend on `CrmEntityFrameworkModule` and `CrmEntityFrameworkPostgreSqlModule`
+   - **Api module** must depend on `CrmMapsterModule`
+   - **Client module** must depend on Shared module
+   - **Frontend.Client module** must depend on Client module and `CrmFrontendCQRSModule`
+   - **Other modules subscribing to events** must depend ONLY on Events module
+4. Define Domain models in Domain project (Entities, Value Objects)
+5. Create DbContext in DataAccess with PostgreSQL provider
+6. Implement Commands/Queries in Application
+7. Register Minimal API endpoints in Api module's `OnApplicationInitialization`
+8. Add ViewModels and Request DTOs to Shared
+9. Create mapping profiles in Api (implement `IMapsterMappingProfile`)
+10. Create Backend Client (Client project):
    - Define client interface with typed API methods
    - Implement client with HttpClient
    - Create module class
-10. Create Frontend Client (Frontend.Client project):
+11. Create Frontend Client (Frontend.Client project):
    - Create CQRS Queries/Commands
    - Create Handlers that use Backend Client
    - Create module class
-11. Write tests for both client libraries:
+12. Write tests for both client libraries:
    - Backend Client Tests (test HTTP calls, error handling)
    - Frontend Client Tests (test CQRS handlers)
-12. Create Blazor components in Frontend
-13. Add all projects to Solution inside `/Modules/{ModuleName}/` folder
+13. Create Blazor components in Frontend
+14. Add all projects to Solution inside `/Modules/{ModuleName}/` folder
+
+**Important Notes:**
+- Events project ALWAYS comes first and has no dependencies
+- Domain project depends on Events to raise events
+- Other modules depend ONLY on Events project to subscribe to events
+- This architecture reduces coupling between modules
 
 ### Adding a New Feature
 1. Define Domain Event (if needed)
@@ -1133,19 +1193,22 @@ var command = new CreateTenantCommand(request.Name, request.Subdomain);
 4. **Use [FromServices], [FromRoute], [FromBody], [FromQuery]** - for parameter binding in Minimal API
 5. **MUST use CrmEntityFrameworkModule** - for all DataAccess modules
 6. **MUST use PostgreSQL** - default DBMS (use `CrmEntityFrameworkPostgreSqlModule` and `UseNpgsql()`)
-7. **MUST create 2 client libraries** - Backend Client and Frontend Client for each large module
-8. **ALL client libraries MUST have tests** - comprehensive test coverage required
-9. **ALL projects MUST be in solution** - including tests, organized in `/Modules/{ModuleName}/` folders
-10. **Target performance: 10,000+ RPS** - use `ValueTask`, `AsNoTracking()`, compiled queries, minimize allocations
-11. **Don't use direct references between modules** - only via events or client libraries
-12. **Don't expose Domain entities** - only ViewModels from Shared
-13. **Don't forget ClearDomainEvents()** after publishing events
-14. **Don't use Task.Run** in handlers - blocks event loop
-15. **Always use CancellationToken** for async operations
-16. **Don't use static for services** - only via DI
-17. **Module classes are always partial** - for Source Generators to work
-18. **Don't skip Entity.DomainEvents ignore in EF config** - will cause errors
-19. **Blazor WASM cannot directly work with DB** - only via API through Client libraries
+7. **MUST create separate Events project** - Domain events in `Cheetah.{ModuleName}.Events` project with NO dependencies
+8. **MUST create 2 client libraries** - Backend Client and Frontend Client for each large module
+9. **ALL client libraries MUST have tests** - comprehensive test coverage required
+10. **ALL projects MUST be in solution** - including Events and tests, organized in `/Modules/{ModuleName}/` folders
+11. **Target performance: 10,000+ RPS** - use `ValueTask`, `AsNoTracking()`, compiled queries, minimize allocations
+12. **Don't use direct references between modules** - only via Events project or client libraries
+13. **Events project has NO dependencies** - except base EventBase from Core
+14. **Other modules depend ONLY on Events project** - not on Domain/Application for event subscriptions
+15. **Don't expose Domain entities** - only ViewModels from Shared
+16. **Don't forget ClearDomainEvents()** after publishing events
+17. **Don't use Task.Run** in handlers - blocks event loop
+18. **Always use CancellationToken** for async operations
+19. **Don't use static for services** - only via DI
+20. **Module classes are always partial** - for Source Generators to work
+21. **Don't skip Entity.DomainEvents ignore in EF config** - will cause errors
+22. **Blazor WASM cannot directly work with DB** - only via API through Client libraries
 
 ## 🎯 Current Development Focus
 

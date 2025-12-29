@@ -31,7 +31,8 @@
       "Bash(Select-Object -First 10)",
       "Bash(netstat:*)",
       "Bash(findstr:*)",
-      "Bash(docker ps:*)"
+      "Bash(docker ps:*)",
+      "Bash(Select-String -Pattern \"error|warning|succeeded|failed\" -CaseSensitive)"
     ]
   }
 }

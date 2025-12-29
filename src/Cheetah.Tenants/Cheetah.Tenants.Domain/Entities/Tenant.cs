@@ -1,5 +1,5 @@
 using Cheetah.Core.Domain;
-using Cheetah.Tenants.Domain.Events;
+using Cheetah.Tenants.Events;
 
 namespace Cheetah.Tenants.Domain.Entities;
 
@@ -29,7 +29,11 @@ public class Tenant : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEntity
             CreatedAt = DateTimeOffset.UtcNow
         };
 
-        tenant.AddDomainEvent(new TenantCreatedEvent(tenant.Id, tenant.Name, tenant.Subdomain));
+        tenant.AddDomainEvent(new TenantCreatedEvent(
+            tenant.Id,
+            tenant.Name,
+            tenant.Subdomain,
+            DateTime.UtcNow));
         return tenant;
     }
 
@@ -40,7 +44,7 @@ public class Tenant : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEntity
 
         IsActive = true;
         UpdatedAt = DateTimeOffset.UtcNow;
-        AddDomainEvent(new TenantActivatedEvent(Id));
+        AddDomainEvent(new TenantActivatedEvent(Id, DateTime.UtcNow));
     }
 
     public void Deactivate()
@@ -50,7 +54,7 @@ public class Tenant : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEntity
 
         IsActive = false;
         UpdatedAt = DateTimeOffset.UtcNow;
-        AddDomainEvent(new TenantDeactivatedEvent(Id));
+        AddDomainEvent(new TenantDeactivatedEvent(Id, DateTime.UtcNow));
     }
 
     public void AddConnectionString(string name, string connectionString, bool isDefault = false)

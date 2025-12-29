@@ -2,8 +2,8 @@
 
 
   <ItemGroup>
+    <ProjectReference Include="..\Cheetah.Tenants.Events\Cheetah.Tenants.Events.csproj" />
     <ProjectReference Include="..\..\Cheetah.Core.Domain\Cheetah.Core.Domain.csproj" />
-    <ProjectReference Include="..\..\Cheetah.Core.Events\Cheetah.Core.Events.csproj" />
     <ProjectReference Include="..\..\Cheetah.Core\Cheetah.Core.csproj" />
   </ItemGroup>
 

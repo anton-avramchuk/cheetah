@@ -45,6 +45,7 @@
         <Project Path="src/Cheetah.Tenants/Cheetah.Tenants.DataAccess/Cheetah.Tenants.DataAccess.csproj" />
         <Project Path="src/Cheetah.Tenants/Cheetah.Tenants.Api/Cheetah.Tenants.Api.csproj" />
         <Project Path="src/Cheetah.Tenants/Cheetah.Tenants.Shared/Cheetah.Tenants.Shared.csproj" />
+        <Project Path="src/Cheetah.Tenants/Cheetah.Tenants.Events/Cheetah.Tenants.Events.csproj" />
         <Project Path="src/Cheetah.Tenants/Cheetah.Tenants.Frontend/Cheetah.Tenants.Frontend.csproj" />
     </Folder>
     <Folder Name="/Solution Items/">

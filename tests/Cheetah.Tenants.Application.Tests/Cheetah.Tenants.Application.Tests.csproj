@@ -22,6 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Cheetah.Tenants\Cheetah.Tenants.Events\Cheetah.Tenants.Events.csproj" />
     <ProjectReference Include="..\..\src\Cheetah.Tenants\Cheetah.Tenants.Application\Cheetah.Tenants.Application.csproj" />
   </ItemGroup>
 

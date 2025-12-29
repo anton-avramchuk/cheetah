@@ -23,6 +23,7 @@ public class CreateTenantCommandHandler(
         {
             await eventBus.PublishAsync(domainEvent, cancellationToken);
         }
+        tenant.ClearDomainEvents();
 
         return tenant.Id;
     }

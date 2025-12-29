@@ -26,5 +26,6 @@ public class ActivateTenantCommandHandler(
         {
             await eventBus.PublishAsync(domainEvent, cancellationToken);
         }
+        tenant.ClearDomainEvents();
     }
 }

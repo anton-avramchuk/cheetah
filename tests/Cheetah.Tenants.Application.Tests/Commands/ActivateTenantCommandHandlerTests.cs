@@ -3,7 +3,7 @@ using Cheetah.Core.DataAccess.Abstractions;
 using Cheetah.Core.Events;
 using Cheetah.Tenants.Application.Commands;
 using Cheetah.Tenants.Domain.Entities;
-using Cheetah.Tenants.Domain.Events;
+using Cheetah.Tenants.Events;
 using FluentAssertions;
 using Moq;
 

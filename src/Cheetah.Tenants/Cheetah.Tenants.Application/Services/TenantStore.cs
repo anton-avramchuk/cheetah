@@ -22,4 +22,20 @@ public class TenantStore(IDispatcher dispatcher) : ITenantStore
     {
         return await dispatcher.QueryAsync<GetAllTenantsQuery, IReadOnlyList<Tenant>>(new GetAllTenantsQuery(), cancellationToken);
     }
+
+    public async Task<string?> GetConnectionStringAsync(Guid tenantId, string name = "Default", CancellationToken ct = default)
+    {
+        var tenant = await FindByIdAsync(tenantId, ct);
+        if (tenant == null)
+            return null;
+
+        var connectionString = tenant.ConnectionStrings.FirstOrDefault(cs => cs.Name == name);
+        return connectionString?.ConnectionString;
+    }
+
+    public async Task<List<Tenant>> GetAllActiveTenantsAsync(CancellationToken ct = default)
+    {
+        var tenants = await GetAllAsync(ct);
+        return tenants.Where(t => t.IsActive).ToList();
+    }
 }

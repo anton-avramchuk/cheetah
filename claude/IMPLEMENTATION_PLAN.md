@@ -31,31 +31,81 @@ Phase 4: Features (feature flags)
 ### Задача 1.1.1: Создать структуру папок
 ```
 src/Cheetah.Tenants/
+├── Cheetah.Tenants.Events/              # Domain Events (pure contracts)
 ├── Cheetah.Tenants.Domain/
 ├── Cheetah.Tenants.Application/
 ├── Cheetah.Tenants.DataAccess/
 ├── Cheetah.Tenants.Api/
 ├── Cheetah.Tenants.Shared/
 ├── Cheetah.Tenants.Client/              # Backend client (IDispatcher)
-├── Cheetah.Tenants.ApiClient/           # Frontend client (HTTP)
+├── Cheetah.Tenants.Frontend.Client/     # Frontend client (HTTP)
 ├── Cheetah.Tenants.Frontend/
 ├── Cheetah.Tenants.Client.Tests/        # Тесты для Client
-└── Cheetah.Tenants.ApiClient.Tests/     # Тесты для ApiClient
+└── Cheetah.Tenants.Frontend.Client.Tests/ # Тесты для Frontend.Client
 ```
 
 **Действия:**
 - [ ] Создать папку `src/Cheetah.Tenants/`
-- [ ] Создать 10 подпапок для каждого слоя
+- [ ] Создать 11 подпапок для каждого слоя (включая Events)
 - [ ] Создать `.csproj` файлы для каждого проекта
 - [ ] Добавить проекты в `Cheetah.slnx`
+
+**Время:** 50 минут
+
+---
+
+## 1.2 Events Layer (CRITICAL - Create FIRST!)
+
+### Задача 1.2.1: Создать Events проект
+
+**Зачем отдельный проект:**
+- События - это контракты между модулями
+- Другие модули могут подписаться на события без зависимости от всего Domain
+- Уменьшает coupling между модулями
+- Events проект не имеет зависимостей (чистые контракты)
+
+**Файлы:**
+- `TenantCreatedEvent.cs`
+- `TenantActivatedEvent.cs`
+- `TenantDeactivatedEvent.cs`
+- `TenantDatabaseCreatedEvent.cs`
+- `CrmTenantsEventsModule.cs`
+
+**TenantCreatedEvent.cs:**
+```csharp
+namespace Cheetah.Tenants.Events;
+
+public record TenantCreatedEvent(
+    Guid TenantId,
+    string Name,
+    string? Subdomain
+) : EventBase;
+```
+
+**CrmTenantsEventsModule.cs:**
+```csharp
+public partial class CrmTenantsEventsModule : CrmModule
+{
+    // NO dependencies! Pure contracts
+}
+```
+
+**Действия:**
+- [ ] Создать `Cheetah.Tenants.Events` проект
+- [ ] Создать все события как `record` inheriting from `EventBase`
+- [ ] Создать `CrmTenantsEventsModule` с NO dependencies
+- [ ] Добавить проект в solution
 
 **Время:** 45 минут
 
 ---
 
-## 1.2 Domain Layer
+## 1.3 Domain Layer
 
-### Задача 1.2.1: Создать Domain модели
+### Задача 1.3.1: Создать Domain модели
+
+**Зависимости:**
+- Domain зависит от Events проекта (для raise событий)
 
 **Файлы:**
 - `Entities/Tenant.cs`
@@ -64,6 +114,8 @@ src/Cheetah.Tenants/
 
 **Tenant.cs:**
 ```csharp
+using Cheetah.Tenants.Events; // Depend on Events
+
 public class Tenant : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEntity
 {
     public string Name { get; private set; }
@@ -76,7 +128,20 @@ public class Tenant : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEntity
 
     public List<TenantConnectionString> ConnectionStrings { get; private set; }
 
-    public static Tenant Create(string name, string? subdomain = null);
+    public static Tenant Create(string name, string? subdomain = null)
+    {
+        var tenant = new Tenant
+        {
+            Id = Guid.NewGuid(),
+            Name = name,
+            Subdomain = subdomain
+        };
+
+        // Raise event from Events project
+        tenant.AddDomainEvent(new TenantCreatedEvent(tenant.Id, name, subdomain));
+        return tenant;
+    }
+
     public void Activate();
     public void Deactivate();
     public void AddConnectionString(string name, string connectionString);
@@ -88,31 +153,31 @@ public class Tenant : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEntity
 - [ ] Создать `TenantConnectionString` entity
 - [ ] Добавить валидацию в методы
 - [ ] Добавить private конструктор для EF Core
+- [ ] Raise события из Events проекта
 
-**Время:** 1 час
+**Время:** 1.5 часа
 
-### Задача 1.2.2: Создать Domain Events
-
-**Файлы:**
-- `Events/TenantCreatedEvent.cs`
-- `Events/TenantActivatedEvent.cs`
-- `Events/TenantDeactivatedEvent.cs`
-- `Events/TenantDatabaseCreatedEvent.cs`
-
-**Действия:**
-- [ ] Создать все события как `record`
-- [ ] Наследовать от `EventBase`
-- [ ] Добавить необходимые свойства
-
-**Время:** 30 минут
-
-### Задача 1.2.3: Создать Module класс
+### Задача 1.3.2: Создать Module класс
 
 **Файл:** `CrmTenantsDomainModule.cs`
 
 **Действия:**
 - [ ] Создать partial class наследующийся от `CrmModule`
 - [ ] Добавить `[DependsOn(typeof(CrmDomainModule))]`
+- [ ] Добавить `[DependsOn(typeof(CrmTenantsEventsModule))]` - зависимость от Events!
+
+**Пример:**
+```csharp
+[DependsOn(typeof(CrmDomainModule))]
+[DependsOn(typeof(CrmTenantsEventsModule))]
+public partial class CrmTenantsDomainModule : CrmModule
+{
+    public override void ConfigureServices(ServiceConfigurationContext context)
+    {
+        RegisterServices(context.Services);
+    }
+}
+```
 
 **Время:** 15 минут
 
@@ -216,7 +281,7 @@ public interface ITenantDatabaseManager
 
 **Время:** 1 час
 
-### Задача 1.3.5: Создать Module класс
+### Задача 1.3.5: Создать Module класс и Event Handlers
 
 **Файл:** `CrmTenantsApplicationModule.cs`
 
@@ -224,8 +289,35 @@ public interface ITenantDatabaseManager
 - [ ] Создать module с зависимостями
 - [ ] `[DependsOn(typeof(CrmTenantsDomainModule))]`
 - [ ] `[DependsOn(typeof(CrmBackendCQRSModule))]`
+- [ ] `[DependsOn(typeof(CrmTenantsEventsModule))]` - для публикации событий
 
-**Время:** 15 минут
+**Примечание:** Application может также содержать EventHandlers для событий из ДРУГИХ модулей. Для этого нужно зависеть от их Events проектов.
+
+**Пример:**
+```csharp
+[DependsOn(typeof(CrmTenantsDomainModule))]
+[DependsOn(typeof(CrmBackendCQRSModule))]
+[DependsOn(typeof(CrmTenantsEventsModule))]
+// Если нужно подписаться на события другого модуля:
+// [DependsOn(typeof(CrmIdentityEventsModule))]
+public partial class CrmTenantsApplicationModule : CrmModule
+{
+    public override void ConfigureServices(ServiceConfigurationContext context)
+    {
+        RegisterServices(context.Services);
+    }
+
+    public override void OnApplicationInitialization(ApplicationInitializationContext context)
+    {
+        var eventBus = context.ServiceProvider.GetRequiredService<IEventBus>();
+
+        // Подписка на события из других модулей (если нужно)
+        // eventBus.Subscribe<UserCreatedEvent, UserCreatedEventHandler>();
+    }
+}
+```
+
+**Время:** 20 минут
 
 ---
 
@@ -656,7 +748,240 @@ src/Cheetah.Tenants.Tests/
 
 ---
 
-## 1.10 Documentation
+## 1.10 Database Migration Management (КРИТИЧНО для multi-tenancy!)
+
+### Задача 1.10.1: Создать DatabaseMigrationManager
+
+**Зачем это нужно:**
+- Каждый тенант имеет свою БД (tenant-per-database)
+- При создании нового тенанта нужно создавать БД для ВСЕХ модулей (Tenants, Identity, Features, Permissions)
+- При старте приложения нужно мигрировать ВСЕ существующие БД тенантов
+- Каждый модуль управляет своими миграциями независимо
+
+**Файл:** `Services/IDatabaseMigrationManager.cs`
+
+```csharp
+public interface IDatabaseMigrationManager
+{
+    /// <summary>
+    /// Мигрировать БД конкретного тенанта для этого модуля
+    /// </summary>
+    Task MigrateTenantDatabaseAsync(Guid tenantId, CancellationToken ct = default);
+
+    /// <summary>
+    /// Создать БД для нового тенанта (создание + миграция)
+    /// </summary>
+    Task CreateTenantDatabaseAsync(Guid tenantId, CancellationToken ct = default);
+
+    /// <summary>
+    /// Мигрировать БД всех тенантов при старте приложения
+    /// </summary>
+    Task MigrateAllTenantsAsync(CancellationToken ct = default);
+}
+```
+
+**Реализация:**
+```csharp
+[Export(LifetimeType.Scoped, typeof(IDatabaseMigrationManager))]
+public class TenantsDatabaseMigrationManager : IDatabaseMigrationManager
+{
+    private readonly ITenantStore _tenantStore;
+    private readonly IServiceProvider _serviceProvider;
+
+    public async Task MigrateTenantDatabaseAsync(Guid tenantId, CancellationToken ct = default)
+    {
+        var connectionString = await _tenantStore.GetConnectionStringAsync(tenantId, "Default", ct);
+        if (string.IsNullOrEmpty(connectionString))
+            throw new InvalidOperationException($"Connection string for tenant {tenantId} not found");
+
+        // Создать DbContext с connection string тенанта
+        var optionsBuilder = new DbContextOptionsBuilder<TenantsDbContext>();
+        optionsBuilder.UseNpgsql(connectionString);
+
+        using var dbContext = new TenantsDbContext(optionsBuilder.Options);
+
+        // Выполнить миграции
+        await dbContext.Database.MigrateAsync(ct);
+    }
+
+    public async Task CreateTenantDatabaseAsync(Guid tenantId, CancellationToken ct = default)
+    {
+        // 1. Получить connection string из мастер БД
+        var connectionString = await _tenantStore.GetConnectionStringAsync(tenantId, "Default", ct);
+
+        // 2. Создать БД (если не существует) и мигрировать
+        await MigrateTenantDatabaseAsync(tenantId, ct);
+
+        // 3. Seed начальные данные (опционально)
+        await SeedInitialDataAsync(tenantId, ct);
+    }
+
+    public async Task MigrateAllTenantsAsync(CancellationToken ct = default)
+    {
+        // Получить все активные тенанты из мастер БД
+        var tenants = await _tenantStore.GetAllActiveTenantsAsync(ct);
+
+        foreach (var tenant in tenants)
+        {
+            try
+            {
+                await MigrateTenantDatabaseAsync(tenant.Id, ct);
+            }
+            catch (Exception ex)
+            {
+                // Логировать ошибку, но продолжить миграцию других тенантов
+                _logger.LogError(ex, "Failed to migrate database for tenant {TenantId}", tenant.Id);
+            }
+        }
+    }
+
+    private async Task SeedInitialDataAsync(Guid tenantId, CancellationToken ct)
+    {
+        // Создать начальные данные для нового тенанта
+        // (например, дефолтные настройки)
+    }
+}
+```
+
+**Действия:**
+- [ ] Создать интерфейс `IDatabaseMigrationManager`
+- [ ] Реализовать `TenantsDatabaseMigrationManager`
+- [ ] Добавить методы для создания БД тенанта
+- [ ] Добавить метод для миграции всех тенантов
+- [ ] Добавить логирование ошибок
+- [ ] Протестировать на нескольких тенантах
+
+**Время:** 2.5 часа
+
+### Задача 1.10.2: Создать Startup Migration Service
+
+**Файл:** `Services/IStartupMigrationService.cs`
+
+```csharp
+public interface IStartupMigrationService
+{
+    Task MigrateAllModulesAsync(CancellationToken ct = default);
+}
+
+[Export(LifetimeType.Singleton, typeof(IStartupMigrationService))]
+public class StartupMigrationService : IStartupMigrationService
+{
+    private readonly IEnumerable<IDatabaseMigrationManager> _migrationManagers;
+    private readonly ILogger<StartupMigrationService> _logger;
+
+    public StartupMigrationService(
+        IEnumerable<IDatabaseMigrationManager> migrationManagers,
+        ILogger<StartupMigrationService> logger)
+    {
+        _migrationManagers = migrationManagers;
+        _logger = logger;
+    }
+
+    public async Task MigrateAllModulesAsync(CancellationToken ct = default)
+    {
+        _logger.LogInformation("Starting database migrations for all modules and tenants...");
+
+        foreach (var manager in _migrationManagers)
+        {
+            var moduleName = manager.GetType().Name;
+            _logger.LogInformation("Migrating module: {ModuleName}", moduleName);
+
+            try
+            {
+                await manager.MigrateAllTenantsAsync(ct);
+                _logger.LogInformation("Successfully migrated {ModuleName}", moduleName);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to migrate {ModuleName}", moduleName);
+                throw; // Прервать запуск приложения при ошибке миграции
+            }
+        }
+
+        _logger.LogInformation("All database migrations completed successfully");
+    }
+}
+```
+
+**Регистрация в Program.cs:**
+```csharp
+// После app.Build()
+var migrationService = app.Services.GetRequiredService<IStartupMigrationService>();
+await migrationService.MigrateAllModulesAsync();
+
+app.Run();
+```
+
+**Действия:**
+- [ ] Создать `IStartupMigrationService`
+- [ ] Реализовать централизованную миграцию всех модулей
+- [ ] Добавить в Program.cs вызов миграции при старте
+- [ ] Протестировать последовательность миграций
+
+**Время:** 1.5 часа
+
+### Задача 1.10.3: Event Handler для TenantCreatedEvent
+
+**Важно:** Этот handler будет вызываться когда создается новый тенант. Он должен создать БД для модуля Tenants.
+
+**Файл:** `EventHandlers/TenantCreatedEventHandler.cs`
+
+```csharp
+using Cheetah.Tenants.Events;
+
+[Export(LifetimeType.Scoped, typeof(TenantCreatedEventHandler))]
+public class TenantCreatedEventHandler : IEventHandler<TenantCreatedEvent>
+{
+    private readonly IDatabaseMigrationManager _migrationManager;
+    private readonly ILogger<TenantCreatedEventHandler> _logger;
+
+    public async ValueTask HandleAsync(TenantCreatedEvent @event, CancellationToken ct)
+    {
+        _logger.LogInformation("Creating database for new tenant {TenantId}", @event.TenantId);
+
+        try
+        {
+            // Создать БД для нового тенанта
+            await _migrationManager.CreateTenantDatabaseAsync(@event.TenantId, ct);
+
+            _logger.LogInformation("Successfully created database for tenant {TenantId}", @event.TenantId);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to create database for tenant {TenantId}", @event.TenantId);
+            throw;
+        }
+    }
+}
+```
+
+**Подписка в Module:**
+```csharp
+public partial class CrmTenantsApplicationModule : CrmModule
+{
+    public override void OnApplicationInitialization(ApplicationInitializationContext context)
+    {
+        var eventBus = context.ServiceProvider.GetRequiredService<IEventBus>();
+
+        // Подписаться на собственное событие для создания БД
+        eventBus.Subscribe<TenantCreatedEvent, TenantCreatedEventHandler>();
+    }
+}
+```
+
+**Действия:**
+- [ ] Создать `TenantCreatedEventHandler`
+- [ ] Подписаться на событие в модуле
+- [ ] Протестировать создание БД для нового тенанта
+- [ ] Убедиться что миграции выполняются корректно
+
+**Время:** 1 час
+
+**Время для всего раздела 1.10:** 5 часов
+
+---
+
+## 1.11 Documentation
 
 ### Задача 1.10.1: Создать README
 
@@ -956,21 +1281,152 @@ public interface ITokenService
 
 ---
 
-## 2.8 Event Handlers
+## 2.8 Database Migration Management (КРИТИЧНО!)
 
-### Задача 2.8.1: Подписаться на события Tenants
+### Задача 2.8.1: Создать DatabaseMigrationManager для Identity
+
+**ВАЖНО:** Identity модуль зависит от Tenants и должен создавать свою БД для каждого тенанта!
+
+**Зависимости модуля:**
+```csharp
+[DependsOn(typeof(CrmIdentityDomainModule))]
+[DependsOn(typeof(CrmBackendCQRSModule))]
+[DependsOn(typeof(CrmIdentityEventsModule))]
+[DependsOn(typeof(CrmTenantsEventsModule))] // ← ЗАВИСИМОСТЬ ОТ TENANTS EVENTS!
+public partial class CrmIdentityApplicationModule : CrmModule
+```
+
+**Файл:** `Services/IdentityDatabaseMigrationManager.cs`
+
+```csharp
+[Export(LifetimeType.Scoped, typeof(IDatabaseMigrationManager))]
+public class IdentityDatabaseMigrationManager : IDatabaseMigrationManager
+{
+    private readonly ITenantStore _tenantStore;
+    private readonly ILogger<IdentityDatabaseMigrationManager> _logger;
+
+    public async Task MigrateTenantDatabaseAsync(Guid tenantId, CancellationToken ct = default)
+    {
+        var connectionString = await _tenantStore.GetConnectionStringAsync(tenantId, "Identity", ct);
+        if (string.IsNullOrEmpty(connectionString))
+            throw new InvalidOperationException($"Identity connection string for tenant {tenantId} not found");
+
+        var optionsBuilder = new DbContextOptionsBuilder<IdentityDbContext>();
+        optionsBuilder.UseNpgsql(connectionString);
+
+        using var dbContext = new IdentityDbContext(optionsBuilder.Options);
+        await dbContext.Database.MigrateAsync(ct);
+    }
+
+    public async Task CreateTenantDatabaseAsync(Guid tenantId, CancellationToken ct = default)
+    {
+        await MigrateTenantDatabaseAsync(tenantId, ct);
+        // Seed admin user
+        await SeedAdminUserAsync(tenantId, ct);
+    }
+
+    public async Task MigrateAllTenantsAsync(CancellationToken ct = default)
+    {
+        var tenants = await _tenantStore.GetAllActiveTenantsAsync(ct);
+        foreach (var tenant in tenants)
+        {
+            try
+            {
+                await MigrateTenantDatabaseAsync(tenant.Id, ct);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to migrate Identity database for tenant {TenantId}", tenant.Id);
+            }
+        }
+    }
+
+    private async Task SeedAdminUserAsync(Guid tenantId, CancellationToken ct)
+    {
+        // Создать admin пользователя для нового тенанта
+        var connectionString = await _tenantStore.GetConnectionStringAsync(tenantId, "Identity", ct);
+        var optionsBuilder = new DbContextOptionsBuilder<IdentityDbContext>();
+        optionsBuilder.UseNpgsql(connectionString);
+
+        using var dbContext = new IdentityDbContext(optionsBuilder.Options);
+
+        // Проверить если admin уже существует
+        var adminExists = await dbContext.Users.AnyAsync(u => u.Email == "admin@example.com", ct);
+        if (adminExists) return;
+
+        // Создать admin
+        var admin = User.Create("admin@example.com", passwordHash: "...");
+        dbContext.Users.Add(admin);
+        await dbContext.SaveChangesAsync(ct);
+    }
+}
+```
+
+**Действия:**
+- [ ] Создать `IdentityDatabaseMigrationManager`
+- [ ] Реализовать миграцию БД для Identity модуля
+- [ ] Добавить seed для admin пользователя
+- [ ] Добавить зависимость от `CrmTenantsEventsModule`
+
+**Время:** 2 часа
+
+### Задача 2.8.2: Event Handler для TenantCreatedEvent
 
 **Файл:** `EventHandlers/TenantCreatedEventHandler.cs`
 
-**Действия:**
-- [ ] При создании тенанта создавать admin пользователя
-- [ ] Подписаться на TenantCreatedEvent
+```csharp
+using Cheetah.Tenants.Events; // Зависимость от Tenants.Events!
 
-**Время:** 1 час
+[Export(LifetimeType.Scoped, typeof(TenantCreatedEventHandler))]
+public class TenantCreatedEventHandler : IEventHandler<TenantCreatedEvent>
+{
+    private readonly IDatabaseMigrationManager _migrationManager;
+    private readonly ILogger<TenantCreatedEventHandler> _logger;
+
+    public async ValueTask HandleAsync(TenantCreatedEvent @event, CancellationToken ct)
+    {
+        _logger.LogInformation("Creating Identity database for new tenant {TenantId}", @event.TenantId);
+
+        try
+        {
+            // Создать БД Identity для нового тенанта
+            await _migrationManager.CreateTenantDatabaseAsync(@event.TenantId, ct);
+
+            _logger.LogInformation("Successfully created Identity database for tenant {TenantId}", @event.TenantId);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to create Identity database for tenant {TenantId}", @event.TenantId);
+            throw;
+        }
+    }
+}
+```
+
+**Подписка в Module:**
+```csharp
+public override void OnApplicationInitialization(ApplicationInitializationContext context)
+{
+    var eventBus = context.ServiceProvider.GetRequiredService<IEventBus>();
+
+    // Подписаться на TenantCreatedEvent для создания БД
+    eventBus.Subscribe<TenantCreatedEvent, TenantCreatedEventHandler>();
+}
+```
+
+**Действия:**
+- [ ] Создать `TenantCreatedEventHandler` в Identity модуле
+- [ ] Подписаться на событие из Tenants.Events
+- [ ] Протестировать создание БД при создании нового тенанта
+- [ ] Протестировать создание admin пользователя
+
+**Время:** 1.5 часа
+
+**Время для всего раздела 2.8:** 3.5 часа
 
 ---
 
-**Итого Phase 2: ~43-48 часов работы** (с учетом клиентских библиотек, тестов и полноценного CRUD)
+**Итого Phase 2: ~46-51 час работы** (с учетом клиентских библиотек, тестов, CRUD и Database Migration)
 
 **Примечание:** Для Phase 2 также требуется:
 - Создать Cheetah.Identity.Client (backend client с IDispatcher)
@@ -1170,19 +1626,189 @@ public static class SystemPermissions
 
 ---
 
-## 3.8 Event Handlers
+## 3.8 Database Migration Management (КРИТИЧНО!)
 
-### Задача 3.8.1: Подписаться на события
+### Задача 3.8.1: Создать DatabaseMigrationManager для Permissions
 
-**EventHandlers:**
-- `TenantCreatedEventHandler` - создать дефолтные роли (Admin, User)
-- `UserCreatedEventHandler` - назначить роль User по умолчанию
+**ВАЖНО:** Permissions модуль зависит от Tenants и должен создавать свою БД для каждого тенанта!
 
-**Время:** 1.5 часа
+**Зависимости модуля:**
+```csharp
+[DependsOn(typeof(CrmPermissionsDomainModule))]
+[DependsOn(typeof(CrmBackendCQRSModule))]
+[DependsOn(typeof(CrmPermissionsEventsModule))]
+[DependsOn(typeof(CrmTenantsEventsModule))] // ← ЗАВИСИМОСТЬ ОТ TENANTS EVENTS!
+[DependsOn(typeof(CrmIdentityEventsModule))] // Для подписки на UserCreatedEvent
+public partial class CrmPermissionsApplicationModule : CrmModule
+```
+
+**Файл:** `Services/PermissionsDatabaseMigrationManager.cs`
+
+```csharp
+[Export(LifetimeType.Scoped, typeof(IDatabaseMigrationManager))]
+public class PermissionsDatabaseMigrationManager : IDatabaseMigrationManager
+{
+    private readonly ITenantStore _tenantStore;
+    private readonly ILogger<PermissionsDatabaseMigrationManager> _logger;
+
+    public async Task MigrateTenantDatabaseAsync(Guid tenantId, CancellationToken ct = default)
+    {
+        var connectionString = await _tenantStore.GetConnectionStringAsync(tenantId, "Permissions", ct);
+        if (string.IsNullOrEmpty(connectionString))
+            throw new InvalidOperationException($"Permissions connection string for tenant {tenantId} not found");
+
+        var optionsBuilder = new DbContextOptionsBuilder<PermissionsDbContext>();
+        optionsBuilder.UseNpgsql(connectionString);
+
+        using var dbContext = new PermissionsDbContext(optionsBuilder.Options);
+        await dbContext.Database.MigrateAsync(ct);
+    }
+
+    public async Task CreateTenantDatabaseAsync(Guid tenantId, CancellationToken ct = default)
+    {
+        await MigrateTenantDatabaseAsync(tenantId, ct);
+        // Seed default roles and permissions
+        await SeedDefaultRolesAsync(tenantId, ct);
+    }
+
+    public async Task MigrateAllTenantsAsync(CancellationToken ct = default)
+    {
+        var tenants = await _tenantStore.GetAllActiveTenantsAsync(ct);
+        foreach (var tenant in tenants)
+        {
+            try
+            {
+                await MigrateTenantDatabaseAsync(tenant.Id, ct);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to migrate Permissions database for tenant {TenantId}", tenant.Id);
+            }
+        }
+    }
+
+    private async Task SeedDefaultRolesAsync(Guid tenantId, CancellationToken ct)
+    {
+        var connectionString = await _tenantStore.GetConnectionStringAsync(tenantId, "Permissions", ct);
+        var optionsBuilder = new DbContextOptionsBuilder<PermissionsDbContext>();
+        optionsBuilder.UseNpgsql(connectionString);
+
+        using var dbContext = new PermissionsDbContext(optionsBuilder.Options);
+
+        // Создать дефолтные роли: Admin, User
+        var adminRole = Role.Create("Admin", tenantId, isSystem: true);
+        var userRole = Role.Create("User", tenantId, isSystem: true);
+
+        dbContext.Roles.AddRange(adminRole, userRole);
+        await dbContext.SaveChangesAsync(ct);
+
+        // Создать дефолтные permissions
+        var permissions = new[]
+        {
+            Permission.Create("Users.Create", "Create Users", "Users", tenantId),
+            Permission.Create("Users.Read", "Read Users", "Users", tenantId),
+            Permission.Create("Users.Update", "Update Users", "Users", tenantId),
+            Permission.Create("Users.Delete", "Delete Users", "Users", tenantId),
+        };
+
+        dbContext.Permissions.AddRange(permissions);
+        await dbContext.SaveChangesAsync(ct);
+
+        // Назначить все permissions роли Admin
+        foreach (var permission in permissions)
+        {
+            adminRole.GrantPermission(permission.Id);
+        }
+
+        await dbContext.SaveChangesAsync(ct);
+    }
+}
+```
+
+**Действия:**
+- [ ] Создать `PermissionsDatabaseMigrationManager`
+- [ ] Реализовать миграцию БД для Permissions модуля
+- [ ] Добавить seed для дефолтных ролей (Admin, User)
+- [ ] Добавить seed для дефолтных permissions
+- [ ] Добавить зависимости от `CrmTenantsEventsModule` и `CrmIdentityEventsModule`
+
+**Время:** 2.5 часа
+
+### Задача 3.8.2: Event Handler для TenantCreatedEvent
+
+**Файл:** `EventHandlers/TenantCreatedEventHandler.cs`
+
+```csharp
+using Cheetah.Tenants.Events;
+
+[Export(LifetimeType.Scoped, typeof(TenantCreatedEventHandler))]
+public class TenantCreatedEventHandler : IEventHandler<TenantCreatedEvent>
+{
+    private readonly IDatabaseMigrationManager _migrationManager;
+    private readonly ILogger<TenantCreatedEventHandler> _logger;
+
+    public async ValueTask HandleAsync(TenantCreatedEvent @event, CancellationToken ct)
+    {
+        _logger.LogInformation("Creating Permissions database for new tenant {TenantId}", @event.TenantId);
+
+        try
+        {
+            await _migrationManager.CreateTenantDatabaseAsync(@event.TenantId, ct);
+            _logger.LogInformation("Successfully created Permissions database for tenant {TenantId}", @event.TenantId);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to create Permissions database for tenant {TenantId}", @event.TenantId);
+            throw;
+        }
+    }
+}
+```
+
+**Время:** 1 час
+
+### Задача 3.8.3: Event Handler для UserCreatedEvent
+
+**Файл:** `EventHandlers/UserCreatedEventHandler.cs`
+
+```csharp
+using Cheetah.Identity.Events;
+
+[Export(LifetimeType.Scoped, typeof(UserCreatedEventHandler))]
+public class UserCreatedEventHandler : IEventHandler<UserCreatedEvent>
+{
+    private readonly IDispatcher _dispatcher;
+
+    public async ValueTask HandleAsync(UserCreatedEvent @event, CancellationToken ct)
+    {
+        // Назначить роль "User" новому пользователю
+        var command = new AssignRoleToUserCommand(@event.UserId, "User");
+        await _dispatcher.SendAsync(command, ct);
+    }
+}
+```
+
+**Подписка в Module:**
+```csharp
+public override void OnApplicationInitialization(ApplicationInitializationContext context)
+{
+    var eventBus = context.ServiceProvider.GetRequiredService<IEventBus>();
+
+    // Подписаться на TenantCreatedEvent для создания БД
+    eventBus.Subscribe<TenantCreatedEvent, TenantCreatedEventHandler>();
+
+    // Подписаться на UserCreatedEvent для назначения роли
+    eventBus.Subscribe<UserCreatedEvent, UserCreatedEventHandler>();
+}
+```
+
+**Время:** 1 час
+
+**Время для всего раздела 3.8:** 4.5 часа
 
 ---
 
-**Итого Phase 3: ~37-41 час работы** (с учетом клиентских библиотек, тестов и полноценного CRUD)
+**Итого Phase 3: ~41-45 часов работы** (с учетом клиентских библиотек, тестов, CRUD и Database Migration)
 
 **Примечание:** Для Phase 3 также требуется:
 - Создать Cheetah.Permissions.Client (backend client с IDispatcher)
@@ -1354,18 +1980,162 @@ public static class SystemFeatures
 
 ---
 
-## 4.8 Event Handlers
+## 4.8 Database Migration Management (КРИТИЧНО!)
 
-### Задача 4.8.1: Подписаться на события
+### Задача 4.8.1: Создать DatabaseMigrationManager для Features
 
-**EventHandlers:**
-- `TenantCreatedEventHandler` - включить базовые фичи для нового тенанта
+**ВАЖНО:** Features модуль зависит от Tenants и должен создавать свою БД для каждого тенанта!
+
+**Зависимости модуля:**
+```csharp
+[DependsOn(typeof(CrmFeaturesDomainModule))]
+[DependsOn(typeof(CrmBackendCQRSModule))]
+[DependsOn(typeof(CrmFeaturesEventsModule))]
+[DependsOn(typeof(CrmTenantsEventsModule))] // ← ЗАВИСИМОСТЬ ОТ TENANTS EVENTS!
+public partial class CrmFeaturesApplicationModule : CrmModule
+```
+
+**Файл:** `Services/FeaturesDatabaseMigrationManager.cs`
+
+```csharp
+[Export(LifetimeType.Scoped, typeof(IDatabaseMigrationManager))]
+public class FeaturesDatabaseMigrationManager : IDatabaseMigrationManager
+{
+    private readonly ITenantStore _tenantStore;
+    private readonly ILogger<FeaturesDatabaseMigrationManager> _logger;
+
+    public async Task MigrateTenantDatabaseAsync(Guid tenantId, CancellationToken ct = default)
+    {
+        var connectionString = await _tenantStore.GetConnectionStringAsync(tenantId, "Features", ct);
+        if (string.IsNullOrEmpty(connectionString))
+            throw new InvalidOperationException($"Features connection string for tenant {tenantId} not found");
+
+        var optionsBuilder = new DbContextOptionsBuilder<FeaturesDbContext>();
+        optionsBuilder.UseNpgsql(connectionString);
+
+        using var dbContext = new FeaturesDbContext(optionsBuilder.Options);
+        await dbContext.Database.MigrateAsync(ct);
+    }
+
+    public async Task CreateTenantDatabaseAsync(Guid tenantId, CancellationToken ct = default)
+    {
+        await MigrateTenantDatabaseAsync(tenantId, ct);
+        // Seed default features
+        await SeedDefaultFeaturesAsync(tenantId, ct);
+    }
+
+    public async Task MigrateAllTenantsAsync(CancellationToken ct = default)
+    {
+        var tenants = await _tenantStore.GetAllActiveTenantsAsync(ct);
+        foreach (var tenant in tenants)
+        {
+            try
+            {
+                await MigrateTenantDatabaseAsync(tenant.Id, ct);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to migrate Features database for tenant {TenantId}", tenant.Id);
+            }
+        }
+    }
+
+    private async Task SeedDefaultFeaturesAsync(Guid tenantId, CancellationToken ct)
+    {
+        var connectionString = await _tenantStore.GetConnectionStringAsync(tenantId, "Features", ct);
+        var optionsBuilder = new DbContextOptionsBuilder<FeaturesDbContext>();
+        optionsBuilder.UseNpgsql(connectionString);
+
+        using var dbContext = new FeaturesDbContext(optionsBuilder.Options);
+
+        // Создать дефолтные фичи
+        var features = new[]
+        {
+            Feature.Create(SystemFeatures.UsersExport, "Export Users", enabledByDefault: true),
+            Feature.Create(SystemFeatures.ReportsAdvanced, "Advanced Reports", enabledByDefault: false),
+            Feature.Create(SystemFeatures.ApiAccess, "API Access", enabledByDefault: true),
+        };
+
+        dbContext.Features.AddRange(features);
+        await dbContext.SaveChangesAsync(ct);
+
+        // Включить дефолтные фичи для тенанта
+        foreach (var feature in features.Where(f => f.IsEnabledByDefault))
+        {
+            var tenantFeature = new TenantFeature
+            {
+                Id = Guid.NewGuid(),
+                TenantId = tenantId,
+                FeatureId = feature.Id,
+                IsEnabled = true,
+                EnabledAt = DateTime.UtcNow
+            };
+            dbContext.TenantFeatures.Add(tenantFeature);
+        }
+
+        await dbContext.SaveChangesAsync(ct);
+    }
+}
+```
+
+**Действия:**
+- [ ] Создать `FeaturesDatabaseMigrationManager`
+- [ ] Реализовать миграцию БД для Features модуля
+- [ ] Добавить seed для дефолтных фич
+- [ ] Автоматически включить базовые фичи для нового тенанта
+- [ ] Добавить зависимость от `CrmTenantsEventsModule`
+
+**Время:** 2 часа
+
+### Задача 4.8.2: Event Handler для TenantCreatedEvent
+
+**Файл:** `EventHandlers/TenantCreatedEventHandler.cs`
+
+```csharp
+using Cheetah.Tenants.Events;
+
+[Export(LifetimeType.Scoped, typeof(TenantCreatedEventHandler))]
+public class TenantCreatedEventHandler : IEventHandler<TenantCreatedEvent>
+{
+    private readonly IDatabaseMigrationManager _migrationManager;
+    private readonly ILogger<TenantCreatedEventHandler> _logger;
+
+    public async ValueTask HandleAsync(TenantCreatedEvent @event, CancellationToken ct)
+    {
+        _logger.LogInformation("Creating Features database for new tenant {TenantId}", @event.TenantId);
+
+        try
+        {
+            await _migrationManager.CreateTenantDatabaseAsync(@event.TenantId, ct);
+            _logger.LogInformation("Successfully created Features database for tenant {TenantId}", @event.TenantId);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to create Features database for tenant {TenantId}", @event.TenantId);
+            throw;
+        }
+    }
+}
+```
+
+**Подписка в Module:**
+```csharp
+public override void OnApplicationInitialization(ApplicationInitializationContext context)
+{
+    var eventBus = context.ServiceProvider.GetRequiredService<IEventBus>();
+
+    // Подписаться на TenantCreatedEvent для создания БД
+    eventBus.Subscribe<TenantCreatedEvent, TenantCreatedEventHandler>();
+}
+```
 
 **Время:** 1 час
 
+**Время для всего раздела 4.8:** 3 часа
+
 ---
 
-**Итого Phase 4: ~30-33 часа работы** (с учетом клиентских библиотек, тестов и полноценного CRUD)
+**Итого Phase 4: ~33-36 часов работы** (с учетом клиентских библиотек, тестов, CRUD и Database Migration)
 
 **Примечание:** Для Phase 4 также требуется:
 - Создать Cheetah.Features.Client (backend client с IDispatcher)
@@ -1382,18 +2152,37 @@ public static class SystemFeatures
 
 | Phase | Модуль | Время (часы) | Приоритет | Изменения |
 |-------|--------|--------------|-----------|-----------|
-| 1 | Tenants | 39-44 | 🔴 Критичный | +2 Client libs, +2 Tests, CRUD UI |
-| 2 | Identity | 43-48 | 🔴 Критичный | +2 Client libs, +2 Tests, CRUD UI |
-| 3 | Permissions | 37-41 | 🟡 Высокий | +2 Client libs, +2 Tests, CRUD UI |
-| 4 | Features | 30-33 | 🟢 Средний | +2 Client libs, +2 Tests, CRUD UI |
-| **ИТОГО** | | **149-166 часов** | | **(было 93-107 часов)** |
+| 1 | Tenants | 45-50 | 🔴 Критичный | +Events, +DB Migration, +2 Client libs, +2 Tests, CRUD UI |
+| 2 | Identity | 46-51 | 🔴 Критичный | +Events, +DB Migration, +2 Client libs, +2 Tests, CRUD UI |
+| 3 | Permissions | 41-45 | 🟡 Высокий | +Events, +DB Migration, +2 Client libs, +2 Tests, CRUD UI |
+| 4 | Features | 33-36 | 🟢 Средний | +Events, +DB Migration, +2 Client libs, +2 Tests, CRUD UI |
+| **ИТОГО** | | **165-182 часа** | | **(было 93-107 часов)** |
 
 **Увеличение времени обусловлено:**
-- Добавлением 2 клиентских библиотек на каждый модуль (Client + ApiClient)
+- **Добавлением отдельного Events проекта для каждого модуля** (чистые контракты между модулями)
+- **Реализацией Database Migration Management** (критично для multi-tenancy!)
+  - DatabaseMigrationManager для каждого модуля
+  - StartupMigrationService для автоматической миграции всех тенантов при старте
+  - Event Handlers для создания БД при создании нового тенанта
+- Добавлением 2 клиентских библиотек на каждый модуль (Client + Frontend.Client)
 - Написанием тестов для каждой клиентской библиотеки
 - Полноценным CRUD UI в Blazor с использованием Cheetah.Blazor.Components
 - Использованием Minimal API (требует больше времени на настройку)
 - Использованием PostgreSQL + Mapster
+
+**Преимущества архитектуры:**
+
+1. **Отдельный Events проект:**
+   - Снижение coupling между модулями
+   - Другие модули зависят ТОЛЬКО от Events, а не от всего Domain
+   - События становятся явными контрактами
+   - Упрощается тестирование и развертывание
+
+2. **Database Migration Management:**
+   - Автоматическое создание БД для всех модулей при создании нового тенанта
+   - Автоматическая миграция всех существующих тенантов при старте приложения
+   - Независимое управление схемами БД для каждого модуля
+   - Поддержка tenant-per-database архитектуры
 
 ---
 
