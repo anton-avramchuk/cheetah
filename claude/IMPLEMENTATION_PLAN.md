@@ -36,16 +36,20 @@ src/Cheetah.Tenants/
 ├── Cheetah.Tenants.DataAccess/
 ├── Cheetah.Tenants.Api/
 ├── Cheetah.Tenants.Shared/
-└── Cheetah.Tenants.Frontend/
+├── Cheetah.Tenants.Client/              # Backend client (IDispatcher)
+├── Cheetah.Tenants.ApiClient/           # Frontend client (HTTP)
+├── Cheetah.Tenants.Frontend/
+├── Cheetah.Tenants.Client.Tests/        # Тесты для Client
+└── Cheetah.Tenants.ApiClient.Tests/     # Тесты для ApiClient
 ```
 
 **Действия:**
 - [ ] Создать папку `src/Cheetah.Tenants/`
-- [ ] Создать 6 подпапок для каждого слоя
+- [ ] Создать 10 подпапок для каждого слоя
 - [ ] Создать `.csproj` файлы для каждого проекта
 - [ ] Добавить проекты в `Cheetah.slnx`
 
-**Время:** 30 минут
+**Время:** 45 минут
 
 ---
 
@@ -269,7 +273,29 @@ public interface ITenantDatabaseManager
 - [ ] Создать module с регистрацией DbContext
 - [ ] Настроить ConnectionString из конфигурации
 - [ ] `[DependsOn(typeof(CrmTenantsDomainModule))]`
-- [ ] `[DependsOn(typeof(CrmEntityFrameworkMsSqlModule))]`
+- [ ] `[DependsOn(typeof(CrmEntityFrameworkModule))]`
+- [ ] `[DependsOn(typeof(CrmEntityFrameworkPostgreSqlModule))]`
+
+**Пример:**
+```csharp
+[DependsOn(typeof(CrmTenantsDomainModule))]
+[DependsOn(typeof(CrmEntityFrameworkModule))]
+[DependsOn(typeof(CrmEntityFrameworkPostgreSqlModule))]
+public partial class CrmTenantsDataAccessModule : CrmModule
+{
+    public override void ConfigureServices(ServiceConfigurationContext context)
+    {
+        RegisterServices(context.Services);
+
+        context.Services.AddDbContext<TenantsDbContext>(options =>
+        {
+            var connectionString = context.Services.GetConfiguration()
+                .GetConnectionString("Tenants");
+            options.UseNpgsql(connectionString);
+        });
+    }
+}
+```
 
 **Время:** 30 минут
 
@@ -314,11 +340,149 @@ public interface ITenantDatabaseManager
 
 ---
 
-## 1.6 Api Layer
+## 1.6 Client Libraries
 
-### Задача 1.6.1: Создать Controller
+### Задача 1.6.1: Создать Backend Client (Cheetah.Tenants.Client)
 
-**Файл:** `Controllers/TenantsController.cs`
+**Файл:** `Implementation/TenantClientService.cs`
+
+**Интерфейс:**
+```csharp
+public interface ITenantClientService
+{
+    Task<TenantViewModel?> GetByIdAsync(Guid tenantId, CancellationToken ct = default);
+    Task<TenantViewModel?> GetBySubdomainAsync(string subdomain, CancellationToken ct = default);
+    Task<IReadOnlyList<TenantViewModel>> GetAllActiveAsync(CancellationToken ct = default);
+    Task<string?> GetConnectionStringAsync(Guid tenantId, string name = "Default", CancellationToken ct = default);
+    Task<bool> IsActiveAsync(Guid tenantId, CancellationToken ct = default);
+    Task<bool> ExistsAsync(Guid tenantId, CancellationToken ct = default);
+}
+```
+
+**Реализация:**
+```csharp
+[Export(LifetimeType.Scoped, typeof(ITenantClientService))]
+public class TenantClientService : ITenantClientService
+{
+    private readonly IDispatcher _dispatcher;
+    private readonly ITenantStore _tenantStore;
+
+    public async Task<TenantViewModel?> GetByIdAsync(Guid tenantId, CancellationToken ct = default)
+    {
+        var query = new GetTenantByIdQuery(tenantId);
+        var tenant = await _dispatcher.QueryAsync<GetTenantByIdQuery, Tenant?>(query, ct);
+        return tenant != null ? new TenantViewModel { Id = tenant.Id, Name = tenant.Name } : null;
+    }
+    // ... остальные методы
+}
+```
+
+**Действия:**
+- [ ] Создать интерфейс ITenantClientService
+- [ ] Создать реализацию TenantClientService с [Export] атрибутом
+- [ ] Использовать IDispatcher для запросов
+- [ ] Использовать ITenantStore для connection strings
+- [ ] Создать Module класс с зависимостью от Application
+
+**Время:** 2 часа
+
+### Задача 1.6.2: Создать Frontend Client (Cheetah.Tenants.ApiClient)
+
+**Файл:** `Implementation/TenantApiClient.cs`
+
+**Интерфейс:**
+```csharp
+public interface ITenantApiClient
+{
+    Task<IReadOnlyList<TenantViewModel>> GetAllAsync(CancellationToken ct = default);
+    Task<TenantViewModel?> GetByIdAsync(Guid id, CancellationToken ct = default);
+    Task<TenantViewModel> CreateAsync(CreateTenantRequest request, CancellationToken ct = default);
+    Task<TenantViewModel> UpdateAsync(Guid id, UpdateTenantRequest request, CancellationToken ct = default);
+    Task ActivateAsync(Guid id, CancellationToken ct = default);
+    Task DeactivateAsync(Guid id, CancellationToken ct = default);
+    Task DeleteAsync(Guid id, CancellationToken ct = default);
+}
+```
+
+**Реализация:**
+```csharp
+[Export(LifetimeType.Scoped, typeof(ITenantApiClient))]
+public class TenantApiClient : ITenantApiClient
+{
+    private readonly HttpClient _httpClient;
+
+    public async Task<IReadOnlyList<TenantViewModel>> GetAllAsync(CancellationToken ct = default)
+    {
+        var response = await _httpClient.GetAsync("/api/tenants", ct);
+        response.EnsureSuccessStatusCode();
+        return await response.Content.ReadFromJsonAsync<List<TenantViewModel>>(ct)
+            ?? new List<TenantViewModel>();
+    }
+    // ... остальные методы
+}
+```
+
+**Действия:**
+- [ ] Создать интерфейс ITenantApiClient
+- [ ] Создать реализацию TenantApiClient с [Export] атрибутом
+- [ ] Использовать HttpClient для HTTP запросов
+- [ ] Обрабатывать HTTP статусы и ошибки
+- [ ] Создать Module класс с зависимостью от Shared
+
+**Время:** 2 часа
+
+### Задача 1.6.3: Создать тесты для Client
+
+**Файл:** `Cheetah.Tenants.Client.Tests/Implementation/TenantClientServiceTests.cs`
+
+**Тесты:**
+- [ ] GetByIdAsync - успешный кейс
+- [ ] GetByIdAsync - тенант не найден
+- [ ] GetBySubdomainAsync - успешный кейс
+- [ ] GetBySubdomainAsync - тенант не найден
+- [ ] GetAllActiveAsync - фильтрация активных
+- [ ] GetConnectionStringAsync - успешный кейс
+- [ ] GetConnectionStringAsync - тенант/connection string не найден
+- [ ] IsActiveAsync - активный/неактивный
+- [ ] ExistsAsync - существует/не существует
+- [ ] Проверка передачи CancellationToken
+
+**Технологии:**
+- xUnit для тестов
+- Moq для мока IDispatcher и ITenantStore
+- FluentAssertions для проверок
+
+**Время:** 2.5 часа
+
+### Задача 1.6.4: Создать тесты для ApiClient
+
+**Файл:** `Cheetah.Tenants.ApiClient.Tests/Implementation/TenantApiClientTests.cs`
+
+**Тесты:**
+- [ ] GetAllAsync - успешный кейс
+- [ ] GetAllAsync - пустой список
+- [ ] GetByIdAsync - успешный кейс
+- [ ] GetByIdAsync - 404 Not Found
+- [ ] CreateAsync - успешный кейс
+- [ ] CreateAsync - 400 Bad Request
+- [ ] UpdateAsync, ActivateAsync, DeactivateAsync, DeleteAsync
+- [ ] Проверка правильности HTTP методов и URL
+- [ ] Проверка передачи CancellationToken
+
+**Технологии:**
+- xUnit для тестов
+- HttpMessageHandler mock для мока HTTP запросов
+- FluentAssertions для проверок
+
+**Время:** 2.5 часа
+
+---
+
+## 1.7 Api Layer
+
+### Задача 1.7.1: Создать Minimal API Endpoints
+
+**Файл:** `CrmTenantsApiModule.cs` (OnApplicationInitialization method)
 
 **Endpoints:**
 - `POST /api/tenants` - создать тенант
@@ -330,14 +494,15 @@ public interface ITenantDatabaseManager
 - `DELETE /api/tenants/{id}` - удалить (soft delete)
 
 **Действия:**
-- [ ] Создать TenantsController
-- [ ] Реализовать все endpoints через Dispatcher
-- [ ] Добавить Swagger атрибуты
-- [ ] Добавить валидацию
+- [ ] Создать все endpoints в OnApplicationInitialization
+- [ ] Использовать IDispatcher для обработки запросов
+- [ ] Использовать IObjectMapper (Mapster) для маппинга Request → Command
+- [ ] Добавить `.WithName()` и `.WithOpenApi()` для каждого endpoint
+- [ ] Обрабатывать ошибки и возвращать правильные HTTP статусы
 
-**Время:** 2 часа
+**Время:** 3 часа
 
-### Задача 1.6.2: Создать Module класс
+### Задача 1.7.2: Создать Module класс
 
 **Файл:** `CrmTenantsApiModule.cs`
 
@@ -345,35 +510,111 @@ public interface ITenantDatabaseManager
 - [ ] Создать module
 - [ ] `[DependsOn(typeof(CrmTenantsApplicationModule))]`
 - [ ] `[DependsOn(typeof(CrmTenantsDataAccessModule))]`
+- [ ] `[DependsOn(typeof(CrmMapsterModule))]`
 - [ ] `[DependsOn(typeof(CrmAspNetCoreModule))]`
 - [ ] Настроить middleware для tenant resolving
+- [ ] Реализовать все endpoints в OnApplicationInitialization
 
 **Время:** 30 минут
 
 ---
 
-## 1.7 Frontend Layer
+## 1.8 Frontend Layer (Blazor WASM - полноценный CRUD)
 
-### Задача 1.7.1: Создать Blazor компоненты
+### Задача 1.8.1: Создать страницу списка (TenantList.razor)
+
+**Файл:** `Pages/TenantList.razor`
+
+**Компоненты из Cheetah.Blazor.Components:**
+- `CrmDataGrid<TenantViewModel>` - таблица с данными
+- `CrmButton` - кнопки действий
+- `CrmBadge` - статус (активный/неактивный)
+- `CrmLoadingSpinner` - индикатор загрузки
+- `CrmPagination` - пагинация
+- `CrmAlert` - сообщения об ошибках
+
+**Функционал:**
+- [ ] Отображение списка тенантов в CrmDataGrid
+- [ ] Столбцы: Name, Subdomain, Status, Actions
+- [ ] Кнопка "Создать тенант" → навигация на TenantCreate
+- [ ] Кнопки действий: Edit, Activate/Deactivate, Delete
+- [ ] Поиск/фильтрация по имени
+- [ ] Пагинация через CrmPagination
+- [ ] Обработка ошибок с CrmAlert
+
+**Время:** 3 часа
+
+### Задача 1.8.2: Создать страницу создания (TenantCreate.razor)
+
+**Файл:** `Pages/TenantCreate.razor`
+
+**Компоненты из Cheetah.Blazor.Components:**
+- `CrmCard` - обертка формы
+- `CrmTextInput` - поля ввода
+- `CrmButton` - кнопки Save/Cancel
+- `CrmAlert` - валидационные ошибки
+
+**Функционал:**
+- [ ] Форма с полями: Name, Subdomain
+- [ ] Валидация на клиенте (required, length)
+- [ ] Кнопка "Save" - вызов ITenantApiClient.CreateAsync
+- [ ] Кнопка "Cancel" - навигация назад
+- [ ] Отображение ошибок валидации
+- [ ] После успешного создания → редирект на список
+
+**Время:** 2 часа
+
+### Задача 1.8.3: Создать страницу редактирования (TenantEdit.razor)
+
+**Файл:** `Pages/TenantEdit.razor`
+
+**Компоненты из Cheetah.Blazor.Components:**
+- `CrmCard` - обертка формы
+- `CrmTextInput` - поля ввода
+- `CrmButton` - кнопки Save/Cancel/Delete
+- `CrmAlert` - ошибки
+- `CrmLoadingSpinner` - загрузка данных
+
+**Функционал:**
+- [ ] Загрузка тенанта по ID через ITenantApiClient.GetByIdAsync
+- [ ] Форма с полями: Name, Subdomain
+- [ ] Кнопка "Save" - вызов ITenantApiClient.UpdateAsync
+- [ ] Кнопка "Activate/Deactivate"
+- [ ] Кнопка "Delete" с подтверждением
+- [ ] Отображение ошибок
+- [ ] После успешного обновления → редирект на список
+
+**Время:** 2.5 часа
+
+### Задача 1.8.4: Создать компонент удаления (DeleteTenantDialog)
+
+**Файл:** `Components/DeleteTenantDialog.razor`
+
+**Компоненты из Cheetah.Blazor.Components:**
+- `CrmCard` - диалог
+- `CrmButton` - кнопки Confirm/Cancel
+- `CrmAlert` - предупреждение
+
+**Функционал:**
+- [ ] Модальное окно подтверждения удаления
+- [ ] Отображение имени удаляемого тенанта
+- [ ] Кнопка "Confirm" - вызов ITenantApiClient.DeleteAsync
+- [ ] Кнопка "Cancel" - закрытие диалога
+
+**Время:** 1 час
+
+### Задача 1.8.5: Создать дополнительные компоненты
 
 **Файлы:**
-- `Pages/TenantList.razor`
-- `Pages/TenantCreate.razor`
-- `Pages/TenantEdit.razor`
-- `Pages/TenantDetails.razor`
-- `Components/TenantCard.razor`
-- `Components/TenantSelector.razor`
+- `Components/TenantSelector.razor` - dropdown для выбора тенанта
+- `Components/TenantStatusBadge.razor` - бейдж статуса
 
-**Действия:**
-- [ ] Создать страницу списка тенантов
-- [ ] Создать форму создания тенанта
-- [ ] Создать форму редактирования
-- [ ] Создать компонент для выбора тенанта (dropdown)
-- [ ] Добавить навигацию
+**Компоненты из Cheetah.Blazor.Components:**
+- `CrmBadge` - для статуса
 
-**Время:** 4 часа
+**Время:** 1.5 часа
 
-### Задача 1.7.2: Создать Module класс
+### Задача 1.8.6: Создать Module класс
 
 **Файл:** `CrmTenantsFrontendModule.cs`
 
@@ -381,14 +622,17 @@ public interface ITenantDatabaseManager
 - [ ] Создать module
 - [ ] `[DependsOn(typeof(CrmFrontendEventsModule))]`
 - [ ] `[DependsOn(typeof(CrmFrontendCQRSModule))]`
+- [ ] `[DependsOn(typeof(CrmTenantsApiClientModule))]`
+- [ ] `[DependsOn(typeof(CrmBlazorComponentsModule))]`
+- [ ] Настроить навигацию в меню
 
-**Время:** 15 минут
+**Время:** 30 минут
 
 ---
 
-## 1.8 Testing
+## 1.9 Testing (Domain & Application)
 
-### Задача 1.8.1: Создать тестовый проект
+### Задача 1.9.1: Создать тестовый проект
 
 **Структура:**
 ```
@@ -406,42 +650,58 @@ src/Cheetah.Tenants.Tests/
 - [ ] Написать unit тесты для Services
 - [ ] Написать integration тесты для API
 
+**Примечание:** Тесты для Client и ApiClient уже созданы в задачах 1.6.3 и 1.6.4
+
 **Время:** 6 часов
 
 ---
 
-## 1.9 Documentation
+## 1.10 Documentation
 
-### Задача 1.9.1: Создать README
+### Задача 1.10.1: Создать README
 
 **Файл:** `src/Cheetah.Tenants/README.md`
 
 **Действия:**
 - [ ] Описать модуль
-- [ ] Добавить примеры использования
+- [ ] Добавить примеры использования клиентских библиотек
 - [ ] Описать API endpoints
 - [ ] Добавить диаграммы
+- [ ] Описать Blazor компоненты
 
-**Время:** 1 час
+**Время:** 1.5 часа
 
 ---
 
-## 1.10 Configuration
+## 1.11 Configuration
 
-### Задача 1.10.1: Настроить appsettings
+### Задача 1.11.1: Настроить appsettings
 
 **Файл:** `src/Cheetah.Crm/appsettings.json`
 
 **Действия:**
-- [ ] Добавить ConnectionString для Tenants DB
+- [ ] Добавить ConnectionString для Tenants DB (PostgreSQL)
 - [ ] Добавить настройки для TenantResolver
 - [ ] Добавить template для tenant databases
+
+**Пример:**
+```json
+{
+  "ConnectionStrings": {
+    "Tenants": "Host=localhost;Database=CheetahTenants;Username=postgres;Password=***"
+  },
+  "TenantResolver": {
+    "DefaultSubdomain": "default",
+    "SubdomainPattern": "^[a-z0-9-]+$"
+  }
+}
+```
 
 **Время:** 30 минут
 
 ---
 
-**Итого Phase 1: ~25-30 часов работы**
+**Итого Phase 1: ~39-44 часа работы** (с учетом клиентских библиотек, тестов и полноценного CRUD)
 
 ---
 
@@ -710,7 +970,16 @@ public interface ITokenService
 
 ---
 
-**Итого Phase 2: ~29-33 часа работы**
+**Итого Phase 2: ~43-48 часов работы** (с учетом клиентских библиотек, тестов и полноценного CRUD)
+
+**Примечание:** Для Phase 2 также требуется:
+- Создать Cheetah.Identity.Client (backend client с IDispatcher)
+- Создать Cheetah.Identity.ApiClient (frontend client с HttpClient)
+- Создать тесты для обеих клиентских библиотек
+- Реализовать полноценный CRUD в Blazor с использованием Cheetah.Blazor.Components
+- Использовать CrmEntityFrameworkModule + CrmEntityFrameworkPostgreSqlModule
+- Использовать Minimal API вместо Controllers
+- Использовать CrmMapsterModule для маппинга
 
 ---
 
@@ -913,7 +1182,16 @@ public static class SystemPermissions
 
 ---
 
-**Итого Phase 3: ~23-26 часов работы**
+**Итого Phase 3: ~37-41 час работы** (с учетом клиентских библиотек, тестов и полноценного CRUD)
+
+**Примечание:** Для Phase 3 также требуется:
+- Создать Cheetah.Permissions.Client (backend client с IDispatcher)
+- Создать Cheetah.Permissions.ApiClient (frontend client с HttpClient)
+- Создать тесты для обеих клиентских библиотек
+- Реализовать полноценный CRUD в Blazor с использованием Cheetah.Blazor.Components
+- Использовать CrmEntityFrameworkModule + CrmEntityFrameworkPostgreSqlModule
+- Использовать Minimal API вместо Controllers
+- Использовать CrmMapsterModule для маппинга
 
 ---
 
@@ -1087,47 +1365,66 @@ public static class SystemFeatures
 
 ---
 
-**Итого Phase 4: ~16-18 часов работы**
+**Итого Phase 4: ~30-33 часа работы** (с учетом клиентских библиотек, тестов и полноценного CRUD)
+
+**Примечание:** Для Phase 4 также требуется:
+- Создать Cheetah.Features.Client (backend client с IDispatcher)
+- Создать Cheetah.Features.ApiClient (frontend client с HttpClient)
+- Создать тесты для обеих клиентских библиотек
+- Реализовать полноценный CRUD в Blazor с использованием Cheetah.Blazor.Components
+- Использовать CrmEntityFrameworkModule + CrmEntityFrameworkPostgreSqlModule
+- Использовать Minimal API вместо Controllers
+- Использовать CrmMapsterModule для маппинга
 
 ---
 
 # 🎯 Сводная таблица
 
-| Phase | Модуль | Время (часы) | Приоритет |
-|-------|--------|--------------|-----------|
-| 1 | Tenants | 25-30 | 🔴 Критичный |
-| 2 | Identity | 29-33 | 🔴 Критичный |
-| 3 | Permissions | 23-26 | 🟡 Высокий |
-| 4 | Features | 16-18 | 🟢 Средний |
-| **ИТОГО** | | **93-107 часов** | |
+| Phase | Модуль | Время (часы) | Приоритет | Изменения |
+|-------|--------|--------------|-----------|-----------|
+| 1 | Tenants | 39-44 | 🔴 Критичный | +2 Client libs, +2 Tests, CRUD UI |
+| 2 | Identity | 43-48 | 🔴 Критичный | +2 Client libs, +2 Tests, CRUD UI |
+| 3 | Permissions | 37-41 | 🟡 Высокий | +2 Client libs, +2 Tests, CRUD UI |
+| 4 | Features | 30-33 | 🟢 Средний | +2 Client libs, +2 Tests, CRUD UI |
+| **ИТОГО** | | **149-166 часов** | | **(было 93-107 часов)** |
+
+**Увеличение времени обусловлено:**
+- Добавлением 2 клиентских библиотек на каждый модуль (Client + ApiClient)
+- Написанием тестов для каждой клиентской библиотеки
+- Полноценным CRUD UI в Blazor с использованием Cheetah.Blazor.Components
+- Использованием Minimal API (требует больше времени на настройку)
+- Использованием PostgreSQL + Mapster
 
 ---
 
 # 📅 Рекомендуемый график
 
 **При работе 8 часов в день:**
-- Phase 1 (Tenants): 3-4 дня
-- Phase 2 (Identity): 4-5 дней
-- Phase 3 (Permissions): 3-4 дня
-- Phase 4 (Features): 2-3 дня
+- Phase 1 (Tenants): 5-6 дней
+- Phase 2 (Identity): 5-6 дней
+- Phase 3 (Permissions): 5-6 дней
+- Phase 4 (Features): 4-5 дней
 
-**Общее время: 12-16 рабочих дней (2.5-3 недели)**
+**Общее время: 19-23 рабочих дня (~4-4.5 недели)**
 
 **При работе 4 часа в день:**
-- Phase 1: 6-8 дней
-- Phase 2: 7-9 дней
-- Phase 3: 6-7 дней
-- Phase 4: 4-5 дней
+- Phase 1: 10-11 дней
+- Phase 2: 11-12 дней
+- Phase 3: 9-11 дней
+- Phase 4: 8-9 дней
 
-**Общее время: 23-29 рабочих дней (4.5-6 недель)**
+**Общее время: 38-43 рабочих дня (~7-8.5 недель)**
 
 ---
 
 # ✅ Чеклист перед началом
 
 - [ ] Убедиться что Core модули работают корректно
-- [ ] Настроить БД (SQL Server, PostgreSQL или MySQL)
-- [ ] Настроить Redis для событий
+- [ ] Установить и настроить PostgreSQL
+- [ ] Установить и настроить Redis для событий (backend)
+- [ ] Убедиться что CrmEntityFrameworkModule и CrmEntityFrameworkPostgreSqlModule работают
+- [ ] Убедиться что CrmMapsterModule настроен
+- [ ] Убедиться что Cheetah.Blazor.Components готовы к использованию
 - [ ] Подготовить тестовые данные
 - [ ] Настроить CI/CD (опционально)
 - [ ] Создать Git ветки для каждой фазы
@@ -1137,24 +1434,37 @@ public static class SystemFeatures
 # 🚀 Порядок работы (рекомендуемый)
 
 1. **Phase 1: Tenants**
-   - Начать с Domain → Application → DataAccess → Api → Shared → Frontend
+   - Порядок разработки: Domain → Application → DataAccess (PostgreSQL) → Shared → Client (backend) → ApiClient (frontend) → Api (Minimal API) → Frontend (Blazor CRUD)
+   - Сразу после Client/ApiClient писать тесты для них
    - Тестировать каждый слой перед переходом к следующему
-   - Создать первый тенант и убедиться что резолвинг работает
+   - Создать первый тенант через API и убедиться что резолвинг работает
+   - Протестировать CRUD UI в Blazor
 
 2. **Phase 2: Identity**
+   - Аналогичный порядок разработки
    - Реализовать регистрацию и логин
+   - Создать Client и ApiClient
    - Интегрировать с Tenants (связь User-Tenant)
    - Протестировать JWT аутентификацию
+   - Протестировать CRUD UI
 
 3. **Phase 3: Permissions**
+   - Аналогичный порядок разработки
    - Создать базовые роли и права
+   - Создать Client и ApiClient
    - Интегрировать с Identity (UserRole)
    - Протестировать проверку прав
+   - Протестировать CRUD UI
 
 4. **Phase 4: Features**
+   - Аналогичный порядок разработки
    - Создать базовые фичи
+   - Создать Client и ApiClient
    - Интегрировать с Tenants
    - Протестировать включение/выключение
+   - Протестировать CRUD UI
+
+**Важно:** На каждом этапе использовать Cheetah.Blazor.Components для UI, PostgreSQL для БД, и Minimal API вместо Controllers.
 
 ---
 
@@ -1180,12 +1490,39 @@ public static class SystemFeatures
 
 # 📝 Примечания
 
-1. **Тестирование:** После каждой фазы запускать все тесты
-2. **Документация:** Обновлять README после завершения каждой фазы
-3. **События:** Убедиться что Redis настроен корректно для межмодульной коммуникации
-4. **Миграции:** Создавать отдельные миграции для каждого модуля
-5. **API:** Тестировать endpoints через Swagger/Postman
-6. **Frontend:** Тестировать в Blazor WASM после каждого модуля
+1. **Тестирование:**
+   - После каждой фазы запускать все тесты
+   - Обязательно тестировать Client и ApiClient
+   - Тестировать CRUD UI в Blazor
+
+2. **Документация:**
+   - Обновлять README после завершения каждой фазы
+   - Документировать клиентские библиотеки с примерами использования
+
+3. **События:**
+   - Убедиться что Redis настроен корректно для межмодульной коммуникации (backend)
+   - Frontend использует In-Memory Event Bus
+
+4. **Миграции:**
+   - Создавать отдельные миграции для каждого модуля
+   - Использовать PostgreSQL вместо SQL Server
+
+5. **API:**
+   - Использовать ТОЛЬКО Minimal API (не Controllers)
+   - Регистрировать endpoints в OnApplicationInitialization
+   - Использовать Mapster для маппинга Request → Command
+   - Тестировать endpoints через Swagger/Postman
+
+6. **Frontend:**
+   - Использовать Cheetah.Blazor.Components для всех UI элементов
+   - Реализовать полноценный CRUD (Create, Read, Update, Delete)
+   - Использовать ApiClient для HTTP запросов
+   - Тестировать в Blazor WASM после каждого модуля
+
+7. **Клиентские библиотеки:**
+   - Client (backend) использует IDispatcher для CQRS
+   - ApiClient (frontend) использует HttpClient для HTTP запросов
+   - Обе библиотеки должны иметь comprehensive тесты
 
 ---
 
@@ -1200,3 +1537,42 @@ public static class SystemFeatures
 7. **Следуй соглашениям:** Придерживайся naming conventions из Claude.md
 
 Удачи в реализации! 🚀
+
+---
+
+# 🔧 Технологический стек
+
+## Backend
+- **.NET 10.0** - основной фреймворк
+- **ASP.NET Core** - веб-фреймворк
+- **Minimal API** - для endpoints (вместо Controllers)
+- **Entity Framework Core** - ORM
+- **PostgreSQL** - база данных
+- **Redis** - для event bus (межмодульная коммуникация)
+- **Mapster** - object mapping
+- **xUnit** - тестирование
+- **Moq** - моки для тестов
+- **FluentAssertions** - assertion библиотека
+
+## Frontend
+- **Blazor WebAssembly** - клиентский фреймворк
+- **Cheetah.Blazor.Components** - библиотека UI компонентов
+- **HttpClient** - для API запросов
+- **In-Memory Event Bus** - для frontend событий
+
+## Архитектурные паттерны
+- **CQRS** - разделение команд и запросов
+- **DDD** - domain-driven design
+- **Event-Driven Architecture** - межмодульная коммуникация через события
+- **Repository Pattern** - доступ к данным
+- **Dependency Injection** - через Source Generators
+
+## Ключевые модули
+- **CrmEntityFrameworkModule** - базовый модуль для EF Core
+- **CrmEntityFrameworkPostgreSqlModule** - PostgreSQL провайдер
+- **CrmMapsterModule** - маппинг объектов
+- **CrmBlazorComponentsModule** - UI компоненты
+- **CrmBackendCQRSModule** - CQRS для backend
+- **CrmFrontendCQRSModule** - CQRS для frontend
+- **CrmBackendEventsModule** - события для backend (Redis)
+- **CrmFrontendEventsModule** - события для frontend (In-Memory)
