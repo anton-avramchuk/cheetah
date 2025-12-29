@@ -48,6 +48,19 @@
         <Project Path="src/Cheetah.Tenants/Cheetah.Tenants.Events/Cheetah.Tenants.Events.csproj" />
         <Project Path="src/Cheetah.Tenants/Cheetah.Tenants.Frontend/Cheetah.Tenants.Frontend.csproj" />
     </Folder>
+    <Folder Name="/Modules/Identity/">
+        <Project Path="src/Cheetah.Identity/Cheetah.Identity.Events/Cheetah.Identity.Events.csproj" />
+        <Project Path="src/Cheetah.Identity/Cheetah.Identity.Domain/Cheetah.Identity.Domain.csproj" />
+        <Project Path="src/Cheetah.Identity/Cheetah.Identity.Application/Cheetah.Identity.Application.csproj" />
+        <Project Path="src/Cheetah.Identity/Cheetah.Identity.DataAccess/Cheetah.Identity.DataAccess.csproj" />
+        <Project Path="src/Cheetah.Identity/Cheetah.Identity.Api/Cheetah.Identity.Api.csproj" />
+        <Project Path="src/Cheetah.Identity/Cheetah.Identity.Shared/Cheetah.Identity.Shared.csproj" />
+        <Project Path="src/Cheetah.Identity/Cheetah.Identity.Frontend/Cheetah.Identity.Frontend.csproj" />
+        <Project Path="src/Cheetah.Identity/Cheetah.Identity.Client/Cheetah.Identity.Client.csproj" />
+        <Project Path="src/Cheetah.Identity/Cheetah.Identity.Frontend.Client/Cheetah.Identity.Frontend.Client.csproj" />
+        <Project Path="tests/Cheetah.Identity.Client.Tests/Cheetah.Identity.Client.Tests.csproj" />
+        <Project Path="tests/Cheetah.Identity.Frontend.Client.Tests/Cheetah.Identity.Frontend.Client.Tests.csproj" />
+    </Folder>
     <Folder Name="/Solution Items/">
         <File Path="compose.yaml" />
         <File Path="nginx.conf" />
