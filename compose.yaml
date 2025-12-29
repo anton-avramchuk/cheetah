@@ -36,6 +36,36 @@
     depends_on:
       - postgres
 
+  # Redis - In-Memory Data Store & Event Bus
+  redis:
+    image: redis:7-alpine
+    container_name: cheetah-redis
+    command: redis-server --appendonly yes
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - cheetah-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # RedisInsight - Web Admin for Redis
+  redisinsight:
+    image: redis/redisinsight:latest
+    container_name: cheetah-redisinsight
+    ports:
+      - "5540:5540"
+    volumes:
+      - redisinsight_data:/data
+    networks:
+      - cheetah-network
+    depends_on:
+      - redis
+
   # Cheetah CRM API
   api:
     image: cheetah.crm
@@ -48,11 +78,31 @@
       ASPNETCORE_URLS: http://+:8080
       ConnectionStrings__Master: "Host=postgres;Port=5432;Database=cheetah_master;Username=cheetah;Password=cheetah123"
       ConnectionStrings__Tenants: "Host=postgres;Port=5432;Database=cheetah_tenants;Username=cheetah;Password=cheetah123"
+      Redis__Instances__Default__ConnectionString: "redis:6379"
+      Redis__Instances__Default__Database: "0"
     networks:
       - cheetah-network
     depends_on:
       postgres:
         condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  # Cheetah Blazor Web App
+  web:
+    image: cheetah.web
+    container_name: cheetah-web
+    build:
+      context: .
+      dockerfile: src/Cheetah.Crm.Web.Server/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      ApiBaseUrl: http://api:8080
+    networks:
+      - cheetah-network
+    depends_on:
+      - api
 
   # Nginx - Reverse Proxy
   nginx:
@@ -67,11 +117,16 @@
       - cheetah-network
     depends_on:
       - api
+      - web
 
 volumes:
   postgres_data:
     driver: local
   pgadmin_data:
+    driver: local
+  redis_data:
+    driver: local
+  redisinsight_data:
     driver: local
 
 networks:

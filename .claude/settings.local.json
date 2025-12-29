@@ -25,7 +25,13 @@
       "Bash(docker-compose rm:*)",
       "Bash(docker system prune:*)",
       "Bash(docker-compose build:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(Select-String -Pattern \"location / \" -Context 0,10)",
+      "Bash(Start-Sleep -Seconds 3)",
+      "Bash(Select-Object -First 10)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(docker ps:*)"
     ]
   }
 }

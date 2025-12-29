@@ -19,15 +19,8 @@ public partial class ScalarModule: CrmModule
     public override void OnApplicationInitialization(ApplicationInitializationContext context)
     {
         var routeBuilder = context.GetRouteBuilder();
-        routeBuilder.MapGet("/", httpContext =>
-        {
-            httpContext.Response.Redirect("/scalar", permanent: false);
-            return Task.CompletedTask;
-        });
-
 
         var options = context.GetOptions<ScalarModuleOptions>();
-
 
         routeBuilder.MapScalarApiReference(w =>
         {

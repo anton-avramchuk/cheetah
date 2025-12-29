@@ -57,5 +57,7 @@
         <Project Path="src/Cheetah.Core.Tests/Cheetah.Core.Tests.csproj" />
         <Project Path="src/Cheetah.Frontend.Events.Tests/Cheetah.Frontend.Events.Tests.csproj" />
     </Folder>
+    <Project Path="src/Cheetah.Crm.Web.Client/Cheetah.Crm.Web.Client.csproj" />
+    <Project Path="src/Cheetah.Crm.Web.Server/Cheetah.Crm.Web.csproj" />
     <Project Path="src/Cheetah.Crm/Cheetah.Crm.csproj" />
 </Solution>
