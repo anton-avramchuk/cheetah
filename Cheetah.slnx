@@ -32,13 +32,19 @@
     <Project Path="src/Cheetah.Frontend.CQRS/Cheetah.Frontend.CQRS.csproj" />
     <Project Path="src/Cheetah.Frontend.Events/Cheetah.Frontend.Events.csproj" />
   </Folder>
+  <Folder Name="/Modules/" />
   <Folder Name="/Modules/Tenants/">
   <Project Path="src/Cheetah.Tenants/Cheetah.Tenants.Domain/Cheetah.Tenants.Domain.csproj" />
       <Project Path="src/Cheetah.Tenants/Cheetah.Tenants.Application/Cheetah.Tenants.Application.csproj" />
+    <Project Path="src/Cheetah.Tenants/Cheetah.Tenants.Client/Cheetah.Tenants.Client.csproj" />
       <Project Path="src/Cheetah.Tenants/Cheetah.Tenants.DataAccess/Cheetah.Tenants.DataAccess.csproj" />
       <Project Path="src/Cheetah.Tenants/Cheetah.Tenants.Api/Cheetah.Tenants.Api.csproj" />
       <Project Path="src/Cheetah.Tenants/Cheetah.Tenants.Shared/Cheetah.Tenants.Shared.csproj" />
       <Project Path="src/Cheetah.Tenants/Cheetah.Tenants.Frontend/Cheetah.Tenants.Frontend.csproj" />
+  </Folder>
+  <Folder Name="/src/" />
+  <Folder Name="/src/Cheetah.Tenants/">
+    <Project Path="src/Cheetah.Tenants/Cheetah.Tenants.ApiClient/Cheetah.Tenants.ApiClient.csproj" />
   </Folder>
   <Folder Name="/Tests/">
     <Project Path="src/Cheetah.Backend.Events.Redis.Tests/Cheetah.Backend.Events.Redis.Tests.csproj" />

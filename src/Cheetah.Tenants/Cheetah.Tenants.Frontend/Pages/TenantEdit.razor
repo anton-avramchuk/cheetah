@@ -1,0 +1,131 @@
+@page "/tenants/{TenantId:guid}/edit"
+@inject ITenantApiClient TenantApiClient
+@inject NavigationManager Navigation
+
+<h3>Edit Tenant</h3>
+
+@if (isLoading)
+{
+    <div class="text-center">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+}
+else if (errorMessage != null)
+{
+    <div class="alert alert-danger" role="alert">
+        <i class="bi bi-exclamation-triangle"></i> @errorMessage
+    </div>
+    <button class="btn btn-secondary" @onclick="Cancel">
+        <i class="bi bi-arrow-left"></i> Back
+    </button>
+}
+else if (tenant == null)
+{
+    <div class="alert alert-warning" role="alert">
+        Tenant not found.
+    </div>
+    <button class="btn btn-secondary" @onclick="Cancel">
+        <i class="bi bi-arrow-left"></i> Back to List
+    </button>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-8">
+            <div class="alert alert-info" role="alert">
+                <i class="bi bi-info-circle"></i>
+                <strong>Note:</strong> Update functionality will be implemented once the backend Update endpoint is added.
+                Currently, you can only view tenant information here.
+            </div>
+
+            <EditForm Model="@tenant" OnValidSubmit="HandleSubmit">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="mb-3">
+                    <label for="name" class="form-label">Tenant Name</label>
+                    <InputText id="name" class="form-control" @bind-Value="tenant.Name" disabled />
+                </div>
+
+                <div class="mb-3">
+                    <label for="subdomain" class="form-label">Subdomain</label>
+                    <InputText id="subdomain" class="form-control" @bind-Value="tenant.Subdomain" disabled />
+                    <div class="form-text">
+                        The subdomain cannot be changed after creation.
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Status</label>
+                    <div>
+                        @if (tenant.IsActive)
+                        {
+                            <span class="badge bg-success">Active</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">Inactive</span>
+                        }
+                    </div>
+                    <div class="form-text">
+                        Use Activate/Deactivate buttons on the details page to change status.
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <button type="button" class="btn btn-secondary" @onclick="Cancel">
+                        <i class="bi bi-arrow-left"></i> Back to Details
+                    </button>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public Guid TenantId { get; set; }
+
+    private TenantViewModel? tenant;
+    private bool isLoading = true;
+    private string? errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadTenantAsync();
+    }
+
+    private async Task LoadTenantAsync()
+    {
+        isLoading = true;
+        errorMessage = null;
+
+        try
+        {
+            tenant = await TenantApiClient.GetByIdAsync(TenantId);
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Failed to load tenant: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private Task HandleSubmit()
+    {
+        // TODO: Implement update when backend endpoint is ready
+        // Will need to create UpdateTenantCommand, UpdateTenantCommandHandler,
+        // UpdateTenantRequest, and add PUT /api/tenants/{id} endpoint
+        return Task.CompletedTask;
+    }
+
+    private void Cancel()
+    {
+        Navigation.NavigateTo($"/tenants/{TenantId}");
+    }
+}

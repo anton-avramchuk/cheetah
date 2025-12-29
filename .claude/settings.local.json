@@ -1,12 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(dotnet build:*)",
-      "Bash(dotnet new:*)",
-      "Bash(dotnet restore:*)",
-      "Bash(dotnet test)",
-      "Bash(dotnet test:*)",
-      "Bash(findstr:*)",
+      "Bash(mkdir:*)",
+      "Bash(dotnet sln:*)",
+      "Bash(dotnet build:*)"
     ]
   }
 }

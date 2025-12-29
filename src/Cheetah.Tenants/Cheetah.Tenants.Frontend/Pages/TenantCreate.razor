@@ -1,0 +1,85 @@
+@page "/tenants/create"
+@inject ITenantApiClient TenantApiClient
+@inject NavigationManager Navigation
+
+<h3>Create New Tenant</h3>
+
+<div class="row">
+    <div class="col-md-8">
+        <EditForm Model="@request" OnValidSubmit="HandleSubmit">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            @if (errorMessage != null)
+            {
+                <div class="alert alert-danger" role="alert">
+                    <i class="bi bi-exclamation-triangle"></i> @errorMessage
+                </div>
+            }
+
+            <div class="mb-3">
+                <label for="name" class="form-label">Tenant Name *</label>
+                <InputText id="name" class="form-control" @bind-Value="request.Name" placeholder="Enter tenant name" />
+                <ValidationMessage For="@(() => request.Name)" />
+            </div>
+
+            <div class="mb-3">
+                <label for="subdomain" class="form-label">Subdomain</label>
+                <InputText id="subdomain" class="form-control" @bind-Value="request.Subdomain" placeholder="Enter subdomain (optional)" />
+                <div class="form-text">
+                    The subdomain will be used for tenant-specific URLs (e.g., subdomain.yourapp.com)
+                </div>
+                <ValidationMessage For="@(() => request.Subdomain)" />
+            </div>
+
+            <div class="mb-3">
+                <button type="submit" class="btn btn-primary" disabled="@isSubmitting">
+                    @if (isSubmitting)
+                    {
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        <span> Creating...</span>
+                    }
+                    else
+                    {
+                        <i class="bi bi-check-circle"></i>
+                        <span> Create Tenant</span>
+                    }
+                </button>
+                <button type="button" class="btn btn-secondary" @onclick="Cancel" disabled="@isSubmitting">
+                    <i class="bi bi-x-circle"></i> Cancel
+                </button>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    private CreateTenantRequest request = new() { Name = string.Empty };
+    private bool isSubmitting = false;
+    private string? errorMessage;
+
+    private async Task HandleSubmit()
+    {
+        isSubmitting = true;
+        errorMessage = null;
+
+        try
+        {
+            var tenantId = await TenantApiClient.CreateAsync(request);
+            Navigation.NavigateTo($"/tenants/{tenantId}");
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Failed to create tenant: {ex.Message}";
+        }
+        finally
+        {
+            isSubmitting = false;
+        }
+    }
+
+    private void Cancel()
+    {
+        Navigation.NavigateTo("/tenants");
+    }
+}

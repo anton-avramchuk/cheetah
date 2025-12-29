@@ -1,0 +1,86 @@
+@inject NavigationManager Navigation
+
+<div class="card mb-3">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start">
+            <div>
+                <h5 class="card-title">@Tenant.Name</h5>
+                @if (!string.IsNullOrEmpty(Tenant.Subdomain))
+                {
+                    <p class="card-text text-muted">
+                        <i class="bi bi-globe"></i> @Tenant.Subdomain
+                    </p>
+                }
+            </div>
+            <div>
+                @if (Tenant.IsActive)
+                {
+                    <span class="badge bg-success">Active</span>
+                }
+                else
+                {
+                    <span class="badge bg-secondary">Inactive</span>
+                }
+            </div>
+        </div>
+
+        @if (Tenant.CreatedAt.HasValue)
+        {
+            <p class="card-text">
+                <small class="text-muted">
+                    <i class="bi bi-calendar"></i> Created: @Tenant.CreatedAt.Value.ToString("yyyy-MM-dd")
+                </small>
+            </p>
+        }
+
+        @if (ShowActions)
+        {
+            <div class="d-flex gap-2 mt-3">
+                <button class="btn btn-sm btn-primary" @onclick="ViewDetails">
+                    <i class="bi bi-eye"></i> View
+                </button>
+                <button class="btn btn-sm btn-outline-secondary" @onclick="Edit">
+                    <i class="bi bi-pencil"></i> Edit
+                </button>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public TenantViewModel Tenant { get; set; } = null!;
+
+    [Parameter]
+    public bool ShowActions { get; set; } = true;
+
+    [Parameter]
+    public EventCallback<Guid> OnViewDetails { get; set; }
+
+    [Parameter]
+    public EventCallback<Guid> OnEdit { get; set; }
+
+    private async Task ViewDetails()
+    {
+        if (OnViewDetails.HasDelegate)
+        {
+            await OnViewDetails.InvokeAsync(Tenant.Id);
+        }
+        else
+        {
+            Navigation.NavigateTo($"/tenants/{Tenant.Id}");
+        }
+    }
+
+    private async Task Edit()
+    {
+        if (OnEdit.HasDelegate)
+        {
+            await OnEdit.InvokeAsync(Tenant.Id);
+        }
+        else
+        {
+            Navigation.NavigateTo($"/tenants/{Tenant.Id}/edit");
+        }
+    }
+}
