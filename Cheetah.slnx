@@ -1,56 +1,56 @@
 <Solution>
-  <Folder Name="/CodeGen/">
-    <Project Path="src/Cheetah.Generators.Application/Cheetah.Generators.Application.csproj" />
-    <Project Path="src/Cheetah.Generators.Core/Cheetah.Generators.Core.csproj" />
-    <Project Path="src/Cheetah.Generators.Module/Cheetah.Generators.Module.csproj" />
-  </Folder>
-  <Folder Name="/Core/">
-    <Project Path="src/Cheetah.AspNetCore/Cheetah.AspNetCore.csproj" />
-    <Project Path="src/Cheetah.Core.Cache/Cheetah.Core.Cache.csproj" />
-    <Project Path="src/Cheetah.Core.CQRS/Cheetah.Core.CQRS.csproj" />
-    <Project Path="src/Cheetah.Core.DataAccess/Cheetah.Core.DataAccess.csproj" />
-    <Project Path="src/Cheetah.Core.Domain/Cheetah.Core.Domain.csproj" />
-    <Project Path="src/Cheetah.Core.EntityFramework.MsSql/Cheetah.Core.EntityFramework.MsSql.csproj" />
-    <Project Path="src/Cheetah.Core.EntityFramework.MySql/Cheetah.Core.EntityFramework.MySql.csproj" />
-    <Project Path="src/Cheetah.Core.EntityFramework.PostgreSql/Cheetah.Core.EntityFramework.PostgreSql.csproj" />
-    <Project Path="src/Cheetah.Core.EntityFramework/Cheetah.Core.EntityFramework.csproj" />
-    <Project Path="src/Cheetah.Core.Events/Cheetah.Core.Events.csproj" />
-    <Project Path="src/Cheetah.Core.Tenants/Cheetah.Core.Tenants.csproj" />
-    <Project Path="src/Cheetah.Core/Cheetah.Core.csproj" />
-    <Project Path="src/Cheetah.CQRS.Dispatcher/Cheetah.CQRS.Dispatcher.csproj" />
-    <Project Path="src/Cheetah.Mapping.Core/Cheetah.Mapping.Core.csproj" />
-    <Project Path="src/Cheetah.Mapping.Mapster/Cheetah.Mapping.Mapster.csproj" />
-  </Folder>
-  <Folder Name="/Core/Backend/">
-    <Project Path="src/Cheetah.Backend.CQRS/Cheetah.Backend.CQRS.csproj" />
-    <Project Path="src/Cheetah.Backend.Events.Redis/Cheetah.Backend.Events.Redis.csproj" />
-    <Project Path="src/Cheetah.Backend.Redis/Cheetah.Backend.Redis.csproj" />
-    <Project Path="src/Cheetah.OpenApi/Cheetah.OpenApi.csproj" />
-    <Project Path="src/Cheetah.Scalar/Cheetah.Scalar.csproj" />
-  </Folder>
-  <Folder Name="/Core/Frontend/">
-    <Project Path="src/Cheetah.Blazor.Components/Cheetah.Blazor.Components.csproj" />
-    <Project Path="src/Cheetah.Frontend.CQRS/Cheetah.Frontend.CQRS.csproj" />
-    <Project Path="src/Cheetah.Frontend.Events/Cheetah.Frontend.Events.csproj" />
-  </Folder>
-  <Folder Name="/Modules/" />
-  <Folder Name="/Modules/Tenants/">
-  <Project Path="src/Cheetah.Tenants/Cheetah.Tenants.Domain/Cheetah.Tenants.Domain.csproj" />
-    <Project Path="src/Cheetah.Tenants/Cheetah.Tenants.ApiClient.Tests/Cheetah.Tenants.ApiClient.Tests.csproj" />
-    <Project Path="src/Cheetah.Tenants/Cheetah.Tenants.ApiClient/Cheetah.Tenants.ApiClient.csproj" />
-      <Project Path="src/Cheetah.Tenants/Cheetah.Tenants.Application/Cheetah.Tenants.Application.csproj" />
-    <Project Path="src/Cheetah.Tenants/Cheetah.Tenants.Client.Tests/Cheetah.Tenants.Client.Tests.csproj" />
-    <Project Path="src/Cheetah.Tenants/Cheetah.Tenants.Client/Cheetah.Tenants.Client.csproj" />
-      <Project Path="src/Cheetah.Tenants/Cheetah.Tenants.DataAccess/Cheetah.Tenants.DataAccess.csproj" />
-      <Project Path="src/Cheetah.Tenants/Cheetah.Tenants.Api/Cheetah.Tenants.Api.csproj" />
-      <Project Path="src/Cheetah.Tenants/Cheetah.Tenants.Shared/Cheetah.Tenants.Shared.csproj" />
-      <Project Path="src/Cheetah.Tenants/Cheetah.Tenants.Frontend/Cheetah.Tenants.Frontend.csproj" />
-  </Folder>
-  <Folder Name="/Tests/">
-    <Project Path="src/Cheetah.Backend.Events.Redis.Tests/Cheetah.Backend.Events.Redis.Tests.csproj" />
-    <Project Path="src/Cheetah.Backend.Redis.Tests/Cheetah.Backend.Redis.Tests.csproj" />
-    <Project Path="src/Cheetah.Core.Tests/Cheetah.Core.Tests.csproj" />
-    <Project Path="src/Cheetah.Frontend.Events.Tests/Cheetah.Frontend.Events.Tests.csproj" />
-  </Folder>
-  <Project Path="src/Cheetah.Crm/Cheetah.Crm.csproj" />
+    <Folder Name="/CodeGen/">
+        <Project Path="src/Cheetah.Generators.Application/Cheetah.Generators.Application.csproj"/>
+        <Project Path="src/Cheetah.Generators.Core/Cheetah.Generators.Core.csproj"/>
+        <Project Path="src/Cheetah.Generators.Module/Cheetah.Generators.Module.csproj"/>
+    </Folder>
+    <Folder Name="/Core/">
+        <Project Path="src/Cheetah.AspNetCore/Cheetah.AspNetCore.csproj"/>
+        <Project Path="src/Cheetah.Core.Cache/Cheetah.Core.Cache.csproj"/>
+        <Project Path="src/Cheetah.Core.CQRS/Cheetah.Core.CQRS.csproj"/>
+        <Project Path="src/Cheetah.Core.DataAccess/Cheetah.Core.DataAccess.csproj"/>
+        <Project Path="src/Cheetah.Core.Domain/Cheetah.Core.Domain.csproj"/>
+        <Project Path="src/Cheetah.Core.EntityFramework.MsSql/Cheetah.Core.EntityFramework.MsSql.csproj"/>
+        <Project Path="src/Cheetah.Core.EntityFramework.MySql/Cheetah.Core.EntityFramework.MySql.csproj"/>
+        <Project Path="src/Cheetah.Core.EntityFramework.PostgreSql/Cheetah.Core.EntityFramework.PostgreSql.csproj"/>
+        <Project Path="src/Cheetah.Core.EntityFramework/Cheetah.Core.EntityFramework.csproj"/>
+        <Project Path="src/Cheetah.Core.Events/Cheetah.Core.Events.csproj"/>
+        <Project Path="src/Cheetah.Core.Tenants/Cheetah.Core.Tenants.csproj"/>
+        <Project Path="src/Cheetah.Core/Cheetah.Core.csproj"/>
+        <Project Path="src/Cheetah.CQRS.Dispatcher/Cheetah.CQRS.Dispatcher.csproj"/>
+        <Project Path="src/Cheetah.Mapping.Core/Cheetah.Mapping.Core.csproj"/>
+        <Project Path="src/Cheetah.Mapping.Mapster/Cheetah.Mapping.Mapster.csproj"/>
+    </Folder>
+    <Folder Name="/Core/Backend/">
+        <Project Path="src/Cheetah.Backend.CQRS/Cheetah.Backend.CQRS.csproj"/>
+        <Project Path="src/Cheetah.Backend.Events.Redis/Cheetah.Backend.Events.Redis.csproj"/>
+        <Project Path="src/Cheetah.Backend.Redis/Cheetah.Backend.Redis.csproj"/>
+        <Project Path="src/Cheetah.OpenApi/Cheetah.OpenApi.csproj"/>
+        <Project Path="src/Cheetah.Scalar/Cheetah.Scalar.csproj"/>
+    </Folder>
+    <Folder Name="/Core/Frontend/">
+        <Project Path="src/Cheetah.Blazor.Components/Cheetah.Blazor.Components.csproj"/>
+        <Project Path="src/Cheetah.Frontend.CQRS/Cheetah.Frontend.CQRS.csproj"/>
+        <Project Path="src/Cheetah.Frontend.Events/Cheetah.Frontend.Events.csproj"/>
+    </Folder>
+    <Folder Name="/Modules/"/>
+    <Folder Name="/Modules/Tenants/">
+        <Project Path="src/Cheetah.Tenants/Cheetah.Tenants.Domain/Cheetah.Tenants.Domain.csproj"/>
+        <Project Path="src/Cheetah.Tenants/Cheetah.Tenants.ApiClient.Tests/Cheetah.Tenants.ApiClient.Tests.csproj"/>
+        <Project Path="src/Cheetah.Tenants/Cheetah.Tenants.ApiClient/Cheetah.Tenants.ApiClient.csproj"/>
+        <Project Path="src/Cheetah.Tenants/Cheetah.Tenants.Application/Cheetah.Tenants.Application.csproj"/>
+        <Project Path="src/Cheetah.Tenants/Cheetah.Tenants.Client.Tests/Cheetah.Tenants.Client.Tests.csproj"/>
+        <Project Path="src/Cheetah.Tenants/Cheetah.Tenants.Client/Cheetah.Tenants.Client.csproj"/>
+        <Project Path="src/Cheetah.Tenants/Cheetah.Tenants.DataAccess/Cheetah.Tenants.DataAccess.csproj"/>
+        <Project Path="src/Cheetah.Tenants/Cheetah.Tenants.Api/Cheetah.Tenants.Api.csproj"/>
+        <Project Path="src/Cheetah.Tenants/Cheetah.Tenants.Shared/Cheetah.Tenants.Shared.csproj"/>
+        <Project Path="src/Cheetah.Tenants/Cheetah.Tenants.Frontend/Cheetah.Tenants.Frontend.csproj"/>
+    </Folder>
+    <Folder Name="/Tests/">
+        <Project Path="src/Cheetah.Backend.Events.Redis.Tests/Cheetah.Backend.Events.Redis.Tests.csproj"/>
+        <Project Path="src/Cheetah.Backend.Redis.Tests/Cheetah.Backend.Redis.Tests.csproj"/>
+        <Project Path="src/Cheetah.Core.Tests/Cheetah.Core.Tests.csproj"/>
+        <Project Path="src/Cheetah.Frontend.Events.Tests/Cheetah.Frontend.Events.Tests.csproj"/>
+    </Folder>
+    <Project Path="src/Cheetah.Crm/Cheetah.Crm.csproj"/>
 </Solution>

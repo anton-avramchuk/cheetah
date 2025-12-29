@@ -39,7 +39,7 @@ public partial class MyModule : CrmModule
 
 ### 2. Large Module Structure
 
-Each large module (Tenants, Features, Permissions, Identity) consists of 6 assemblies:
+Each large module (Tenants, Features, Permissions, Identity) consists of 8 assemblies:
 
 ```
 Cheetah.{ModuleName}/
@@ -48,7 +48,12 @@ Cheetah.{ModuleName}/
 ├── Cheetah.{ModuleName}.DataAccess/    # EF Core, DbContext, Migrations
 ├── Cheetah.{ModuleName}.Api/           # Minimal API Endpoints
 ├── Cheetah.{ModuleName}.Shared/        # DTOs, ViewModels (shared with frontend)
-└── Cheetah.{ModuleName}.Frontend/      # Blazor WASM components
+├── Cheetah.{ModuleName}.Frontend/      # Blazor WASM components
+├── Cheetah.{ModuleName}.Client/        # Client library for integration from other backend modules
+├── Cheetah.{ModuleName}.Frontend.Client/  # Client library for Blazor application
+└── Tests/
+    ├── Cheetah.{ModuleName}.Client.Tests/           # Tests for backend client
+    └── Cheetah.{ModuleName}.Frontend.Client.Tests/  # Tests for frontend client
 ```
 
 **Layer Dependencies:**
@@ -57,6 +62,25 @@ Api → Application → Domain
 DataAccess → Domain
 Shared (independent)
 Frontend → Shared (Blazor WASM uses Shared DTOs)
+Client → Shared (Backend integration uses Shared DTOs)
+Frontend.Client → Shared (Blazor client uses Shared DTOs)
+```
+
+**Solution Organization:**
+All projects (including tests) must be included in the solution inside a folder structure:
+```xml
+<Folder Name="/Modules/{ModuleName}/">
+  <Project Path="src\Cheetah.{ModuleName}.Domain\Cheetah.{ModuleName}.Domain.csproj" />
+  <Project Path="src\Cheetah.{ModuleName}.Application\Cheetah.{ModuleName}.Application.csproj" />
+  <Project Path="src\Cheetah.{ModuleName}.DataAccess\Cheetah.{ModuleName}.DataAccess.csproj" />
+  <Project Path="src\Cheetah.{ModuleName}.Api\Cheetah.{ModuleName}.Api.csproj" />
+  <Project Path="src\Cheetah.{ModuleName}.Shared\Cheetah.{ModuleName}.Shared.csproj" />
+  <Project Path="src\Cheetah.{ModuleName}.Frontend\Cheetah.{ModuleName}.Frontend.csproj" />
+  <Project Path="src\Cheetah.{ModuleName}.Client\Cheetah.{ModuleName}.Client.csproj" />
+  <Project Path="src\Cheetah.{ModuleName}.Frontend.Client\Cheetah.{ModuleName}.Frontend.Client.csproj" />
+  <Project Path="tests\Cheetah.{ModuleName}.Client.Tests\Cheetah.{ModuleName}.Client.Tests.csproj" />
+  <Project Path="tests\Cheetah.{ModuleName}.Frontend.Client.Tests\Cheetah.{ModuleName}.Frontend.Client.Tests.csproj" />
+</Folder>
 ```
 
 ### 3. Domain Layer (DDD)
@@ -207,10 +231,32 @@ public class TenantConfiguration : IEntityTypeConfiguration<Tenant>
 }
 ```
 
-**Module Registration:**
+**Module Registration (PostgreSQL - Recommended):**
 ```csharp
 [DependsOn(typeof(MyDomainModule))]
 [DependsOn(typeof(CrmEntityFrameworkModule))]
+[DependsOn(typeof(CrmEntityFrameworkPostgreSqlModule))]
+public partial class MyDataAccessModule : CrmModule
+{
+    public override void ConfigureServices(ServiceConfigurationContext context)
+    {
+        RegisterServices(context.Services);
+
+        context.Services.AddDbContext<MyDbContext>(options =>
+        {
+            var connectionString = context.Services.GetConfiguration()
+                .GetConnectionString("MyModule");
+            options.UseNpgsql(connectionString);
+        });
+    }
+}
+```
+
+**Alternative Module Registration (SQL Server):**
+```csharp
+[DependsOn(typeof(MyDomainModule))]
+[DependsOn(typeof(CrmEntityFrameworkModule))]
+[DependsOn(typeof(CrmEntityFrameworkSqlServerModule))]
 public partial class MyDataAccessModule : CrmModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)
@@ -228,6 +274,9 @@ public partial class MyDataAccessModule : CrmModule
 ```
 
 **Important:**
+- **MUST depend on `CrmEntityFrameworkModule`** - base EF Core infrastructure
+- **For PostgreSQL (Recommended):** Also depend on `CrmEntityFrameworkPostgreSqlModule` and use `UseNpgsql()`
+- **For SQL Server:** Also depend on `CrmEntityFrameworkSqlServerModule` and use `UseSqlServer()`
 - Each module has its own DB and DbContext
 - ConnectionString is taken from configuration with module name
 - Always use `builder.Ignore(t => t.DomainEvents)`
@@ -405,7 +454,212 @@ else
 - Uses the same CQRS pattern as backend
 - Frontend Dispatcher makes HTTP requests to API
 
-### 9. Event-Driven Architecture
+### 9. Client Libraries
+
+Each large module provides two client libraries for integration:
+
+#### 9.1. Backend Client (`Cheetah.{ModuleName}.Client`)
+
+Used for integration from other backend modules (server-to-server communication).
+
+**Purpose:**
+- Provides typed API for inter-module communication
+- Encapsulates HTTP calls to module's API
+- Simplifies integration between backend modules
+
+**Example:**
+```csharp
+// Client interface
+public interface ITenantClient
+{
+    ValueTask<TenantViewModel?> GetByIdAsync(Guid id, CancellationToken ct = default);
+    ValueTask<List<TenantViewModel>> GetAllAsync(CancellationToken ct = default);
+    ValueTask<Guid> CreateAsync(CreateTenantRequest request, CancellationToken ct = default);
+}
+
+// Client implementation
+[Export(LifetimeType.Scoped, typeof(ITenantClient))]
+public class TenantClient : ITenantClient
+{
+    private readonly HttpClient _httpClient;
+
+    public TenantClient(IHttpClientFactory httpClientFactory)
+    {
+        _httpClient = httpClientFactory.CreateClient("CheetahAPI");
+    }
+
+    public async ValueTask<TenantViewModel?> GetByIdAsync(Guid id, CancellationToken ct = default)
+    {
+        var response = await _httpClient.GetAsync($"/api/tenants/{id}", ct);
+        if (response.StatusCode == HttpStatusCode.NotFound)
+            return null;
+
+        response.EnsureSuccessStatusCode();
+        return await response.Content.ReadFromJsonAsync<TenantViewModel>(ct);
+    }
+
+    public async ValueTask<Guid> CreateAsync(CreateTenantRequest request, CancellationToken ct = default)
+    {
+        var response = await _httpClient.PostAsJsonAsync("/api/tenants", request, ct);
+        response.EnsureSuccessStatusCode();
+        var result = await response.Content.ReadFromJsonAsync<TenantViewModel>(ct);
+        return result!.Id;
+    }
+}
+```
+
+**Module Configuration:**
+```csharp
+[DependsOn(typeof(CrmTenantsSharedModule))]
+public partial class CrmTenantsClientModule : CrmModule
+{
+    public override void ConfigureServices(ServiceConfigurationContext context)
+    {
+        RegisterServices(context.Services);
+    }
+}
+```
+
+#### 9.2. Frontend Client (`Cheetah.{ModuleName}.Frontend.Client`)
+
+Used by Blazor WASM application for UI interactions.
+
+**Purpose:**
+- Provides CQRS queries/commands for Blazor components
+- Works with Frontend Dispatcher
+- Handles HTTP communication with backend API
+
+**Example:**
+```csharp
+// Query
+public record GetTenantByIdQuery(Guid Id) : IQuery<TenantViewModel?>;
+
+// Query Handler
+[Export(LifetimeType.Scoped, typeof(IQueryHandler<GetTenantByIdQuery, TenantViewModel?>))]
+public class GetTenantByIdQueryHandler : IQueryHandler<GetTenantByIdQuery, TenantViewModel?>
+{
+    private readonly ITenantClient _tenantClient;
+
+    public GetTenantByIdQueryHandler(ITenantClient tenantClient)
+    {
+        _tenantClient = tenantClient;
+    }
+
+    public async ValueTask<TenantViewModel?> HandleAsync(GetTenantByIdQuery query, CancellationToken ct)
+    {
+        return await _tenantClient.GetByIdAsync(query.Id, ct);
+    }
+}
+
+// Command
+public record CreateTenantCommand(string Name, string? Subdomain) : ICommand<Guid>;
+
+// Command Handler
+[Export(LifetimeType.Scoped, typeof(ICommandHandler<CreateTenantCommand, Guid>))]
+public class CreateTenantCommandHandler : ICommandHandler<CreateTenantCommand, Guid>
+{
+    private readonly ITenantClient _tenantClient;
+
+    public CreateTenantCommandHandler(ITenantClient tenantClient)
+    {
+        _tenantClient = tenantClient;
+    }
+
+    public async ValueTask<Guid> HandleAsync(CreateTenantCommand command, CancellationToken ct)
+    {
+        var request = new CreateTenantRequest
+        {
+            Name = command.Name,
+            Subdomain = command.Subdomain
+        };
+        return await _tenantClient.CreateAsync(request, ct);
+    }
+}
+```
+
+**Module Configuration:**
+```csharp
+[DependsOn(typeof(CrmTenantsClientModule))]
+[DependsOn(typeof(CrmFrontendCQRSModule))]
+public partial class CrmTenantsFrontendClientModule : CrmModule
+{
+    public override void ConfigureServices(ServiceConfigurationContext context)
+    {
+        RegisterServices(context.Services);
+    }
+}
+```
+
+#### 9.3. Client Testing
+
+**Both client libraries MUST have tests:**
+
+**Backend Client Tests (`Cheetah.{ModuleName}.Client.Tests`):**
+```csharp
+public class TenantClientTests
+{
+    private readonly Mock<IHttpClientFactory> _httpClientFactoryMock;
+    private readonly TenantClient _client;
+
+    [Fact]
+    public async Task GetByIdAsync_WhenTenantExists_ReturnsTenant()
+    {
+        // Arrange
+        var tenantId = Guid.NewGuid();
+        // ... setup mock HTTP responses
+
+        // Act
+        var result = await _client.GetByIdAsync(tenantId);
+
+        // Assert
+        result.Should().NotBeNull();
+        result!.Id.Should().Be(tenantId);
+    }
+
+    [Fact]
+    public async Task GetByIdAsync_WhenTenantNotFound_ReturnsNull()
+    {
+        // Arrange & Act & Assert
+        // ... test 404 handling
+    }
+}
+```
+
+**Frontend Client Tests (`Cheetah.{ModuleName}.Frontend.Client.Tests`):**
+```csharp
+public class GetTenantByIdQueryHandlerTests
+{
+    private readonly Mock<ITenantClient> _tenantClientMock;
+    private readonly GetTenantByIdQueryHandler _handler;
+
+    [Fact]
+    public async Task HandleAsync_WhenTenantExists_ReturnsTenant()
+    {
+        // Arrange
+        var query = new GetTenantByIdQuery(Guid.NewGuid());
+        var expected = new TenantViewModel { Id = query.Id, Name = "Test" };
+        _tenantClientMock.Setup(x => x.GetByIdAsync(query.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(expected);
+
+        // Act
+        var result = await _handler.HandleAsync(query, CancellationToken.None);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.Should().BeEquivalentTo(expected);
+    }
+}
+```
+
+**Important:**
+- **Backend Client** - Direct HTTP API calls, typed interfaces, server-to-server
+- **Frontend Client** - CQRS handlers using Backend Client, Blazor integration
+- **Both clients depend on Shared project** for DTOs
+- **All clients MUST have comprehensive tests** covering success and error scenarios
+- Frontend Client handlers delegate to Backend Client
+- Use `ValueTask<T>` for all async operations
+
+### 10. Event-Driven Architecture
 
 **Event Definition (in Domain):**
 ```csharp
@@ -457,7 +711,7 @@ public class MyModule : CrmModule
 - Used for inter-module communication
 - Backend uses Redis Pub/Sub, Frontend uses In-Memory
 
-### 10. Dependency Injection
+### 11. Dependency Injection
 
 **Automatic Registration:**
 ```csharp
@@ -482,7 +736,7 @@ public class MyRepository : IMyRepository
 **Source Generator:**
 Automatically generates `RegisterServices()` method in partial module class.
 
-### 11. Multi-tenancy
+### 12. Multi-tenancy
 
 **Principles:**
 - Tenant per Database - each tenant has its own DB
@@ -559,13 +813,84 @@ Cheetah.Tenants.Application/
 - Moq
 
 **Databases:**
-- SQL Server (primary)
+- PostgreSQL (primary, recommended)
+- SQL Server
 - MySQL
-- PostgreSQL
 
 ## ⚡ Best Practices
 
-### 1. Working with Events
+### 1. Performance Requirements
+
+**Target:** Minimum 10,000 requests per second (RPS)
+
+**Key Optimizations:**
+```csharp
+// ✅ CORRECT: Use ValueTask for hot paths
+public ValueTask<User?> GetByIdAsync(Guid id, CancellationToken ct);
+
+// ✅ CORRECT: Use AsNoTracking for read-only queries
+public async ValueTask<List<UserViewModel>> GetAllAsync(CancellationToken ct)
+{
+    return await _dbContext.Users
+        .AsNoTracking()
+        .Select(u => new UserViewModel { Id = u.Id, Name = u.Name })
+        .ToListAsync(ct);
+}
+
+// ✅ CORRECT: Use compiled queries for frequently executed queries
+private static readonly Func<MyDbContext, Guid, Task<User?>> GetUserById =
+    EF.CompileAsyncQuery((MyDbContext db, Guid id) =>
+        db.Users.FirstOrDefault(u => u.Id == id));
+
+// ✅ CORRECT: Use connection pooling (automatic with DbContext)
+// ✅ CORRECT: Use ArrayPool for large allocations
+var buffer = ArrayPool<byte>.Shared.Rent(size);
+try
+{
+    // Use buffer
+}
+finally
+{
+    ArrayPool<byte>.Shared.Return(buffer);
+}
+
+// ✅ CORRECT: Avoid boxing and unnecessary allocations
+// Use struct instead of class where appropriate (ValueObjects)
+public readonly struct Money : IEquatable<Money>
+{
+    public decimal Amount { get; }
+    public string Currency { get; }
+    // ...
+}
+
+// ❌ WRONG: Tracking entities when not needed
+var users = await _dbContext.Users.ToListAsync(); // Uses tracking
+
+// ❌ WRONG: N+1 query problem
+foreach (var user in users)
+{
+    var role = await _dbContext.Roles.FindAsync(user.RoleId); // N queries
+}
+
+// ✅ CORRECT: Use Include for eager loading
+var users = await _dbContext.Users
+    .Include(u => u.Role)
+    .ToListAsync();
+```
+
+**Performance Best Practices:**
+- Always use `AsNoTracking()` for read-only queries
+- Use `ValueTask<T>` instead of `Task<T>` for hot paths
+- Minimize allocations (use `ArrayPool`, `Span<T>`, `Memory<T>`)
+- Use compiled queries for frequently executed queries
+- Avoid N+1 queries - use `Include()` or projection
+- Use projection (Select) instead of loading full entities
+- Cache frequently accessed data (Redis)
+- Use connection pooling (enabled by default in EF Core)
+- Profile and measure - use BenchmarkDotNet
+- Use bulk operations for mass inserts/updates (EF Core bulk extensions)
+
+### 2. Working with Events
 ```csharp
 // ✅ CORRECT: Publish after saving
 await _dbContext.SaveChangesAsync(ct);
@@ -578,7 +903,7 @@ await _eventBus.PublishAsync(new SomeEvent());
 await _dbContext.SaveChangesAsync(ct);
 ```
 
-### 2. Return Types
+### 3. Return Types
 ```csharp
 // ✅ CORRECT: ValueTask for hot paths (CQRS handlers)
 public ValueTask<User?> HandleAsync(GetUserQuery query, CancellationToken ct);
@@ -590,7 +915,7 @@ public Task InitializeAsync();
 public Task<User> HandleAsync(...); // Should be ValueTask
 ```
 
-### 3. Domain Methods
+### 4. Domain Methods
 ```csharp
 // ✅ CORRECT: Factory method + private set
 public class Tenant : AggregateRoot<Guid>
@@ -611,7 +936,7 @@ public class Tenant : AggregateRoot<Guid>
 public string Name { get; set; } // Breaks encapsulation
 ```
 
-### 4. Permission Checks
+### 5. Permission Checks
 ```csharp
 // ✅ CORRECT: At the beginning of handler
 public async ValueTask HandleAsync(DeleteUserCommand cmd, CancellationToken ct)
@@ -624,7 +949,7 @@ public async ValueTask HandleAsync(DeleteUserCommand cmd, CancellationToken ct)
 [Authorize(Policy = "Users.Delete")] // Don't do this, use IPermissionChecker
 ```
 
-### 5. EF Core Configuration
+### 6. EF Core Configuration
 ```csharp
 // ✅ CORRECT: IEntityTypeConfiguration
 public class TenantConfiguration : IEntityTypeConfiguration<Tenant>
@@ -643,7 +968,7 @@ protected override void OnModelCreating(ModelBuilder modelBuilder)
 }
 ```
 
-### 6. Blazor WASM Communication
+### 7. Blazor WASM Communication
 ```csharp
 // ✅ CORRECT: Via CQRS Dispatcher (which makes HTTP calls)
 var query = new GetTenantsQuery();
@@ -653,7 +978,7 @@ var tenants = await _dispatcher.SendAsync(query);
 var response = await _httpClient.GetAsync("/api/tenants");
 ```
 
-### 7. Minimal API Usage
+### 8. Minimal API Usage
 ```csharp
 // ✅ CORRECT: Endpoints in OnApplicationInitialization
 public override void OnApplicationInitialization(ApplicationInitializationContext context)
@@ -680,7 +1005,7 @@ public override void ConfigureServices(ServiceConfigurationContext context)
 }
 ```
 
-### 8. Object Mapping with Mapster
+### 9. Object Mapping with Mapster
 ```csharp
 // ✅ CORRECT: Using IObjectMapper from CrmMapsterModule
 public override void OnApplicationInitialization(ApplicationInitializationContext context)
@@ -706,17 +1031,59 @@ var command = new CreateTenantCommand(request.Name, request.Subdomain);
 
 ## 🚀 Common Tasks
 
+### Project Configuration
+
+**All projects inherit common properties from `src/Directory.Build.props`:**
+- Target Framework: `net10.0`
+- Implicit Usings: enabled
+- Nullable Reference Types: enabled
+- Microsoft Package Version: `10.0.*`
+
+**When creating new projects:**
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <!-- ✅ CORRECT: Use $(MsPackageVersion) for Microsoft packages -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="$(MsPackageVersion)" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="$(MsPackageVersion)" />
+
+    <!-- ❌ WRONG: Don't hardcode Microsoft package versions -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.0" />
+  </ItemGroup>
+</Project>
+```
+
+**Important:**
+- Always use `$(MsPackageVersion)` for Microsoft packages to ensure version consistency
+- The version is defined in `src/Directory.Build.props` and inherited by all projects
+- This allows centralized version management across the entire solution
+
 ### Creating a New Module
-1. Create folder structure (Domain, Application, DataAccess, Api, Shared, Frontend)
-2. Create Module classes with `[DependsOn]` attributes (ensure Api module depends on `CrmMapsterModule`)
+1. Create folder structure (Domain, Application, DataAccess, Api, Shared, Frontend, Client, Frontend.Client, and Tests)
+2. Create Module classes with `[DependsOn]` attributes:
+   - DataAccess module must depend on `CrmEntityFrameworkModule` and `CrmEntityFrameworkPostgreSqlModule`
+   - Api module must depend on `CrmMapsterModule`
+   - Client module must depend on Shared module
+   - Frontend.Client module must depend on Client module and `CrmFrontendCQRSModule`
 3. Define Domain models in Domain project
-4. Create DbContext in DataAccess
+4. Create DbContext in DataAccess with PostgreSQL provider
 5. Implement Commands/Queries in Application
 6. Register Minimal API endpoints in Api module's `OnApplicationInitialization`
-7. Add ViewModels to Shared
+7. Add ViewModels and Request DTOs to Shared
 8. Create mapping profiles in Api (implement `IMapsterMappingProfile`)
-9. Create Blazor components in Frontend
-10. Add all projects to Solution
+9. Create Backend Client (Client project):
+   - Define client interface with typed API methods
+   - Implement client with HttpClient
+   - Create module class
+10. Create Frontend Client (Frontend.Client project):
+   - Create CQRS Queries/Commands
+   - Create Handlers that use Backend Client
+   - Create module class
+11. Write tests for both client libraries:
+   - Backend Client Tests (test HTTP calls, error handling)
+   - Frontend Client Tests (test CQRS handlers)
+12. Create Blazor components in Frontend
+13. Add all projects to Solution inside `/Modules/{ModuleName}/` folder
 
 ### Adding a New Feature
 1. Define Domain Event (if needed)
@@ -764,15 +1131,21 @@ var command = new CreateTenantCommand(request.Name, request.Subdomain);
 2. **All endpoints must be registered in OnApplicationInitialization** - not in ConfigureServices
 3. **Always use CrmMapsterModule** - for object mapping between DTOs (inject `IObjectMapper`)
 4. **Use [FromServices], [FromRoute], [FromBody], [FromQuery]** - for parameter binding in Minimal API
-5. **Don't use direct references between modules** - only via events
-6. **Don't expose Domain entities** - only ViewModels from Shared
-7. **Don't forget ClearDomainEvents()** after publishing events
-8. **Don't use Task.Run** in handlers - blocks event loop
-9. **Always use CancellationToken** for async operations
-10. **Don't use static for services** - only via DI
-11. **Module classes are always partial** - for Source Generators to work
-12. **Don't skip Entity.DomainEvents ignore in EF config** - will cause errors
-13. **Blazor WASM cannot directly work with DB** - only via API
+5. **MUST use CrmEntityFrameworkModule** - for all DataAccess modules
+6. **MUST use PostgreSQL** - default DBMS (use `CrmEntityFrameworkPostgreSqlModule` and `UseNpgsql()`)
+7. **MUST create 2 client libraries** - Backend Client and Frontend Client for each large module
+8. **ALL client libraries MUST have tests** - comprehensive test coverage required
+9. **ALL projects MUST be in solution** - including tests, organized in `/Modules/{ModuleName}/` folders
+10. **Target performance: 10,000+ RPS** - use `ValueTask`, `AsNoTracking()`, compiled queries, minimize allocations
+11. **Don't use direct references between modules** - only via events or client libraries
+12. **Don't expose Domain entities** - only ViewModels from Shared
+13. **Don't forget ClearDomainEvents()** after publishing events
+14. **Don't use Task.Run** in handlers - blocks event loop
+15. **Always use CancellationToken** for async operations
+16. **Don't use static for services** - only via DI
+17. **Module classes are always partial** - for Source Generators to work
+18. **Don't skip Entity.DomainEvents ignore in EF config** - will cause errors
+19. **Blazor WASM cannot directly work with DB** - only via API through Client libraries
 
 ## 🎯 Current Development Focus
 
@@ -782,4 +1155,10 @@ Creating 4 base modules:
 3. **Cheetah.Permissions** - RBAC permission system
 4. **Cheetah.Identity** - users, authentication (JWT)
 
-Each module follows the structure: Domain → Application → DataAccess → Api → Shared → Frontend.
+Each module follows the structure:
+- **Core:** Domain → Application → DataAccess (with PostgreSQL) → Api → Shared
+- **Clients:** Client (backend) + Frontend.Client (Blazor)
+- **Tests:** Client.Tests + Frontend.Client.Tests
+- **UI:** Frontend (Blazor components)
+
+All projects organized in solution under `/Modules/{ModuleName}/` folder.
