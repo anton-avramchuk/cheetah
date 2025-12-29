@@ -1,0 +1,80 @@
+﻿services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:17-alpine
+    container_name: cheetah-postgres
+    environment:
+      POSTGRES_USER: cheetah
+      POSTGRES_PASSWORD: cheetah123
+      POSTGRES_DB: cheetah_master
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - cheetah-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cheetah"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # pgAdmin - Web Admin for PostgreSQL
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: cheetah-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@cheetah.local
+      PGADMIN_DEFAULT_PASSWORD: admin123
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    networks:
+      - cheetah-network
+    depends_on:
+      - postgres
+
+  # Cheetah CRM API
+  api:
+    image: cheetah.crm
+    container_name: cheetah-api
+    build:
+      context: .
+      dockerfile: src/Cheetah.Crm/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__Master: "Host=postgres;Port=5432;Database=cheetah_master;Username=cheetah;Password=cheetah123"
+      ConnectionStrings__Tenants: "Host=postgres;Port=5432;Database=cheetah_tenants;Username=cheetah;Password=cheetah123"
+    networks:
+      - cheetah-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # Nginx - Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    container_name: cheetah-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - cheetah-network
+    depends_on:
+      - api
+
+volumes:
+  postgres_data:
+    driver: local
+  pgadmin_data:
+    driver: local
+
+networks:
+  cheetah-network:
+    driver: bridge
+

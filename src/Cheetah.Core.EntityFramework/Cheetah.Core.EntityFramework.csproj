@@ -8,6 +8,7 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="$(MsPackageVersion)" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="$(MsPackageVersion)" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="$(MsPackageVersion)" />
         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="$(MsPackageVersion)" />
     </ItemGroup>

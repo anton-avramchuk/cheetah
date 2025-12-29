@@ -6,6 +6,7 @@ using Cheetah.Core.Modularity;
 using Cheetah.Mapping.Mapster;
 using Cheetah.OpenApi;
 using Cheetah.Scalar;
+using Cheetah.Tenants.Api;
 
 namespace Cheetah.Crm;
 
@@ -17,7 +18,8 @@ namespace Cheetah.Crm;
     typeof(CrmMapsterModule),
     typeof(CoreModule),
     typeof(CrmBackendCQRSModule),
-    typeof(CrmBackendEventsRedisModule)
+    typeof(CrmBackendEventsRedisModule),
+    typeof(CrmTenantsApiModule)
 )]
 public partial class BootstrapperModule : CrmModule
 {

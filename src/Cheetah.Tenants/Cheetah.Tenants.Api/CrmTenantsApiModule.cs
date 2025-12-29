@@ -11,7 +11,6 @@ using Cheetah.Tenants.Application.Queries;
 using Cheetah.Tenants.Domain.Entities;
 using Cheetah.Tenants.Shared.Requests;
 using Cheetah.Tenants.Shared.ViewModels;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Cheetah.Tenants.Api;
