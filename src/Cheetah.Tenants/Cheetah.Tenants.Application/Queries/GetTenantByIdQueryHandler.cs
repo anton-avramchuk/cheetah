@@ -6,7 +6,7 @@ using Cheetah.Tenants.Domain.Entities;
 
 namespace Cheetah.Tenants.Application.Queries;
 
-[Export(LifetimeType.Scoped)]
+[Export(LifetimeType.Scoped, typeof(IQueryHandler<GetTenantByIdQuery, Tenant?>))]
 public class GetTenantByIdQueryHandler(
     IReadOnlyRepository<Tenant, Guid> repository
 ) : IQueryHandler<GetTenantByIdQuery, Tenant?>

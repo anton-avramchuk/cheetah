@@ -1,9 +1,10 @@
+using Cheetah.Core.EntityFramework;
 using Cheetah.Tenants.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Cheetah.Tenants.DataAccess;
 
-public class TenantsDbContext : DbContext
+public class TenantsDbContext : CrmDbContext<TenantsDbContext>
 {
     public DbSet<Tenant> Tenants => Set<Tenant>();
     public DbSet<TenantConnectionString> TenantConnectionStrings => Set<TenantConnectionString>();

@@ -5,7 +5,10 @@
       "Bash(dotnet sln:*)",
       "Bash(dotnet build:*)",
       "Bash(Remove-Item -Path \"E:\\\\Projects\\\\cheetah\\\\src\\\\Cheetah.Frontend.Components\" -Recurse -Force)",
-      "Bash(dotnet test:*)"
+      "Bash(dotnet test:*)",
+      "Bash(dotnet add:*)",
+      "Bash(dotnet new:*)",
+      "Bash(ls:*)"
     ]
   }
 }

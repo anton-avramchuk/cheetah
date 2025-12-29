@@ -7,7 +7,7 @@ using Cheetah.Tenants.Domain.Entities;
 
 namespace Cheetah.Tenants.Application.Commands;
 
-[Export(LifetimeType.Scoped)]
+[Export(LifetimeType.Scoped, typeof(ICommandHandler<ActivateTenantCommand>))]
 public class ActivateTenantCommandHandler(
     IRepository<Tenant, Guid> repository,
     IEventBus eventBus

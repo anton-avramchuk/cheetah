@@ -3,6 +3,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Cheetah.Tenants.Domain\Cheetah.Tenants.Domain.csproj" />
+    <ProjectReference Include="..\Cheetah.Tenants.DataAccess\Cheetah.Tenants.DataAccess.csproj" />
     <ProjectReference Include="..\..\Cheetah.Core.CQRS\Cheetah.Core.CQRS.csproj" />
     <ProjectReference Include="..\..\Cheetah.Core.Events\Cheetah.Core.Events.csproj" />
     <ProjectReference Include="..\..\Cheetah.Core.DataAccess\Cheetah.Core.DataAccess.csproj" />

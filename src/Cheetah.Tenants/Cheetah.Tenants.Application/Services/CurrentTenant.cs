@@ -2,7 +2,7 @@ using Cheetah.Core.DependencyInjection;
 
 namespace Cheetah.Tenants.Application.Services;
 
-[Export(LifetimeType.Scoped)]
+[Export(LifetimeType.Scoped, typeof(ICurrentTenant))]
 public class CurrentTenant : ICurrentTenant
 {
     private Guid? _tenantId;

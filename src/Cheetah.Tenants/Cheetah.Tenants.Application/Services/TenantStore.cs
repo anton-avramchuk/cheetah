@@ -5,7 +5,7 @@ using Cheetah.Tenants.Domain.Entities;
 
 namespace Cheetah.Tenants.Application.Services;
 
-[Export(LifetimeType.Scoped)]
+[Export(LifetimeType.Scoped, typeof(ITenantStore))]
 public class TenantStore(IDispatcher dispatcher) : ITenantStore
 {
     public async Task<Tenant?> FindByIdAsync(Guid tenantId, CancellationToken cancellationToken = default)

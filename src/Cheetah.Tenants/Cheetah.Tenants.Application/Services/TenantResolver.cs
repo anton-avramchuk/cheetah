@@ -6,11 +6,10 @@ using Microsoft.AspNetCore.Http;
 
 namespace Cheetah.Tenants.Application.Services;
 
-[Export(LifetimeType.Scoped)]
+[Export(LifetimeType.Scoped, typeof(ITenantResolver))]
 public class TenantResolver(IDispatcher dispatcher) : ITenantResolver
 {
     private const string TenantIdHeaderName = "X-Tenant-Id";
-    private const string TenantSubdomainHeaderName = "X-Tenant-Subdomain";
 
     public async Task<Guid?> ResolveTenantIdAsync(HttpContext httpContext)
     {
@@ -19,17 +18,6 @@ public class TenantResolver(IDispatcher dispatcher) : ITenantResolver
             Guid.TryParse(tenantIdValue, out var tenantId))
         {
             return tenantId;
-        }
-
-        // Try to resolve from X-Tenant-Subdomain header
-        if (httpContext.Request.Headers.TryGetValue(TenantSubdomainHeaderName, out var subdomain) &&
-            !string.IsNullOrWhiteSpace(subdomain))
-        {
-            var tenant = await dispatcher.QueryAsync<GetTenantBySubdomainQuery, Tenant?>(new GetTenantBySubdomainQuery(subdomain!));
-            if (tenant != null)
-            {
-                return tenant.Id;
-            }
         }
 
         // Try to resolve from subdomain in Host header
