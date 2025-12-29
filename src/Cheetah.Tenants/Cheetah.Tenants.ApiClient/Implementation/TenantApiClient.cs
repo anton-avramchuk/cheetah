@@ -11,19 +11,13 @@ namespace Cheetah.Tenants.ApiClient.Implementation;
 /// Used by Blazor WASM to communicate with backend.
 /// </summary>
 [Export(LifetimeType.Scoped, typeof(ITenantApiClient))]
-public class TenantApiClient : ITenantApiClient
+public class TenantApiClient(HttpClient httpClient) : ITenantApiClient
 {
-    private readonly HttpClient _httpClient;
     private const string BaseUrl = "/api/tenants";
-
-    public TenantApiClient(HttpClient httpClient)
-    {
-        _httpClient = httpClient;
-    }
 
     public async Task<List<TenantViewModel>> GetAllAsync(CancellationToken ct = default)
     {
-        var response = await _httpClient.GetAsync(BaseUrl, ct);
+        var response = await httpClient.GetAsync(BaseUrl, ct);
         response.EnsureSuccessStatusCode();
 
         var tenants = await response.Content.ReadFromJsonAsync<List<TenantViewModel>>(ct);
@@ -32,7 +26,7 @@ public class TenantApiClient : ITenantApiClient
 
     public async Task<TenantViewModel?> GetByIdAsync(Guid id, CancellationToken ct = default)
     {
-        var response = await _httpClient.GetAsync($"{BaseUrl}/{id}", ct);
+        var response = await httpClient.GetAsync($"{BaseUrl}/{id}", ct);
 
         if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
             return null;
@@ -44,7 +38,7 @@ public class TenantApiClient : ITenantApiClient
 
     public async Task<Guid> CreateAsync(CreateTenantRequest request, CancellationToken ct = default)
     {
-        var response = await _httpClient.PostAsJsonAsync(BaseUrl, request, ct);
+        var response = await httpClient.PostAsJsonAsync(BaseUrl, request, ct);
         response.EnsureSuccessStatusCode();
 
         var tenantId = await response.Content.ReadFromJsonAsync<Guid>(ct);
@@ -53,13 +47,13 @@ public class TenantApiClient : ITenantApiClient
 
     public async Task ActivateAsync(Guid id, CancellationToken ct = default)
     {
-        var response = await _httpClient.PostAsync($"{BaseUrl}/{id}/activate", null, ct);
+        var response = await httpClient.PostAsync($"{BaseUrl}/{id}/activate", null, ct);
         response.EnsureSuccessStatusCode();
     }
 
     public async Task DeactivateAsync(Guid id, CancellationToken ct = default)
     {
-        var response = await _httpClient.PostAsync($"{BaseUrl}/{id}/deactivate", null, ct);
+        var response = await httpClient.PostAsync($"{BaseUrl}/{id}/deactivate", null, ct);
         response.EnsureSuccessStatusCode();
     }
 }
