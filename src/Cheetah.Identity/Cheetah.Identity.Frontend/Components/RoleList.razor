@@ -1,0 +1,100 @@
+@using Cheetah.Core.CQRS
+@using Cheetah.Identity.Frontend.Client.Queries
+@using Cheetah.Identity.Shared.ViewModels
+@inject IDispatcher Dispatcher
+
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h3>Roles</h3>
+        <button class="btn btn-primary btn-sm" @onclick="LoadRoles">
+            <i class="bi bi-arrow-clockwise"></i> Refresh
+        </button>
+    </div>
+    <div class="card-body">
+        @if (_isLoading)
+        {
+            <div class="text-center">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        }
+        else if (_errorMessage != null)
+        {
+            <div class="alert alert-danger">@_errorMessage</div>
+        }
+        else if (_roles == null || !_roles.Any())
+        {
+            <p class="text-muted">No roles found.</p>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var role in _roles)
+                        {
+                            <tr>
+                                <td><strong>@role.Name</strong></td>
+                                <td>@role.Description</td>
+                                <td>@role.CreatedAt.ToString()</td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary" @onclick="() => ViewRoleDetails(role.Id)">
+                                        <i class="bi bi-eye"></i> View
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    private List<RoleViewModel>? _roles;
+    private bool _isLoading;
+    private string? _errorMessage;
+
+    [Parameter]
+    public EventCallback<Guid> OnRoleSelected { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadRoles();
+    }
+
+    private async Task LoadRoles()
+    {
+        try
+        {
+            _isLoading = true;
+            _errorMessage = null;
+
+            var query = new GetAllRolesQuery();
+            _roles = await Dispatcher.QueryAsync<GetAllRolesQuery,List<RoleViewModel>>(query);
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = $"Error loading roles: {ex.Message}";
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+
+    private async Task ViewRoleDetails(Guid roleId)
+    {
+        await OnRoleSelected.InvokeAsync(roleId);
+    }
+}

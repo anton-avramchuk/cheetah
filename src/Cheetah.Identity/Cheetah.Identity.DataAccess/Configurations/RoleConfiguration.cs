@@ -1,0 +1,44 @@
+using Cheetah.Identity.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace Cheetah.Identity.DataAccess.Configurations;
+
+public class RoleConfiguration : IEntityTypeConfiguration<Role>
+{
+    public void Configure(EntityTypeBuilder<Role> builder)
+    {
+        builder.ToTable("Roles");
+
+        builder.HasKey(r => r.Id);
+
+        builder.Property(r => r.Name)
+            .IsRequired()
+            .HasMaxLength(100);
+
+        builder.Property(r => r.NormalizedName)
+            .IsRequired()
+            .HasMaxLength(100);
+
+        builder.HasIndex(r => r.NormalizedName)
+            .IsUnique();
+
+        builder.Property(r => r.Description)
+            .HasMaxLength(500);
+
+        builder.Property(r => r.CreatedAt)
+            .IsRequired(false);
+
+        builder.Property(r => r.UpdatedAt)
+            .IsRequired(false);
+
+        // Ignore DomainEvents (not persisted)
+        builder.Ignore(r => r.DomainEvents);
+
+        // Relationships
+        builder.HasMany(r => r.Claims)
+            .WithOne()
+            .HasForeignKey(rc => rc.RoleId)
+            .OnDelete(DeleteBehavior.Cascade);
+    }
+}

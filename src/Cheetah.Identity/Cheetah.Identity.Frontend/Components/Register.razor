@@ -1,0 +1,125 @@
+@using Cheetah.Core.CQRS
+@using Cheetah.Identity.Frontend.Client.Commands
+@using Cheetah.Identity.Shared.ViewModels
+@using Microsoft.AspNetCore.Components.Forms
+@inject IDispatcher Dispatcher
+
+<div class="card">
+    <div class="card-header">
+        <h3>Register New User</h3>
+    </div>
+    <div class="card-body">
+        @if (!string.IsNullOrEmpty(_errorMessage))
+        {
+            <div class="alert alert-danger">@_errorMessage</div>
+        }
+
+        @if (_successMessage != null)
+        {
+            <div class="alert alert-success">
+                @_successMessage
+                <a href="/login">Go to Login</a>
+            </div>
+        }
+        else
+        {
+            <EditForm Model="@_model" OnValidSubmit="@HandleRegister">
+                <DataAnnotationsValidator/>
+                <ValidationSummary/>
+
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <InputText id="email" class="form-control" @bind-Value="_model.Email"/>
+                </div>
+
+                <div class="mb-3">
+                    <label for="firstName" class="form-label">First Name</label>
+                    <InputText id="firstName" class="form-control" @bind-Value="_model.FirstName"/>
+                </div>
+
+                <div class="mb-3">
+                    <label for="lastName" class="form-label">Last Name</label>
+                    <InputText id="lastName" class="form-control" @bind-Value="_model.LastName"/>
+                </div>
+
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <InputText type="password" id="password" class="form-control" @bind-Value="_model.Password"/>
+                </div>
+
+                <div class="mb-3">
+                    <label for="confirmPassword" class="form-label">Confirm Password</label>
+                    <InputText type="password" id="confirmPassword" class="form-control"
+                               @bind-Value="_model.ConfirmPassword"/>
+                </div>
+
+                <button type="submit" class="btn btn-primary" disabled="@_isSubmitting">
+                    @if (_isSubmitting)
+                    {
+                        <span class="spinner-border spinner-border-sm me-2"></span>
+                    }
+                    Register
+                </button>
+            </EditForm>
+        }
+    </div>
+</div>
+
+@code {
+    private RegisterModel _model = new();
+    private string? _errorMessage;
+    private string? _successMessage;
+    private bool _isSubmitting;
+
+    private async Task HandleRegister()
+    {
+        if (_model.Password != _model.ConfirmPassword)
+        {
+            _errorMessage = "Passwords do not match";
+            return;
+        }
+
+        try
+        {
+            _isSubmitting = true;
+            _errorMessage = null;
+
+            var command = new RegisterUserCommand(
+                Email: _model.Email,
+                Password: _model.Password,
+                FirstName: _model.FirstName,
+                LastName: _model.LastName
+            );
+
+            var user = await Dispatcher.SendAsync<RegisterUserCommand, UserViewModel?>(command);
+
+            if (user != null)
+            {
+                _successMessage = $"User {user.Email} registered successfully! Please check your email to confirm.";
+                _model = new(); // Reset form
+            }
+            else
+            {
+                _errorMessage = "Registration failed. Please try again.";
+            }
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = $"Error: {ex.Message}";
+        }
+        finally
+        {
+            _isSubmitting = false;
+        }
+    }
+
+    private class RegisterModel
+    {
+        public string Email { get; set; } = string.Empty;
+        public string FirstName { get; set; } = string.Empty;
+        public string LastName { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+        public string ConfirmPassword { get; set; } = string.Empty;
+    }
+
+}

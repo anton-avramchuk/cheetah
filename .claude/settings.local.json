@@ -32,7 +32,9 @@
       "Bash(netstat:*)",
       "Bash(findstr:*)",
       "Bash(docker ps:*)",
-      "Bash(Select-String -Pattern \"error|warning|succeeded|failed\" -CaseSensitive)"
+      "Bash(Select-String -Pattern \"error|warning|succeeded|failed\" -CaseSensitive)",
+      "Bash([ -f \"E:\\\\Projects\\\\cheetah\\\\nul\" ])",
+      "Bash(dotnet restore:*)"
     ]
   }
 }

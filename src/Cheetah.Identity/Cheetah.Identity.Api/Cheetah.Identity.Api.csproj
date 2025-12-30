@@ -6,4 +6,17 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\Cheetah.AspNetCore\Cheetah.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\Cheetah.Core\Cheetah.Core.csproj" />
+    <ProjectReference Include="..\..\Cheetah.Core.CQRS\Cheetah.Core.CQRS.csproj" />
+    <ProjectReference Include="..\..\Cheetah.Mapping.Mapster\Cheetah.Mapping.Mapster.csproj" />
+    <ProjectReference Include="..\Cheetah.Identity.Application\Cheetah.Identity.Application.csproj" />
+    <ProjectReference Include="..\Cheetah.Identity.Shared\Cheetah.Identity.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Cheetah.Generators.Module\Cheetah.Generators.Module.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
+  </ItemGroup>
+
 </Project>
