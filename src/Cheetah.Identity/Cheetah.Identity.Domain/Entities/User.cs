@@ -25,6 +25,9 @@ public class User : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEntity
     private readonly List<UserRole> _roles = [];
     public IReadOnlyList<UserRole> Roles => _roles.AsReadOnly();
 
+    private readonly List<UserClaim> _claims = [];
+    public IReadOnlyCollection<UserClaim> Claims => _claims.AsReadOnly();
+
     private User() { } // For EF Core
 
     /// <summary>
@@ -179,5 +182,82 @@ public class User : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEntity
     {
         FirstName = firstName?.Trim();
         LastName = lastName?.Trim();
+    }
+
+    /// <summary>
+    /// Add a personal permission to user
+    /// </summary>
+    public void AddPermission(string permission)
+    {
+        if (string.IsNullOrWhiteSpace(permission))
+            throw new ArgumentException("Permission cannot be empty", nameof(permission));
+
+        // Check if permission already exists
+        if (_claims.Any(c => c.ClaimType == "Permission" && c.ClaimValue == permission))
+            return; // Already has this permission
+
+        var userClaim = UserClaim.CreatePermission(Id, permission);
+        _claims.Add(userClaim);
+    }
+
+    /// <summary>
+    /// Remove a personal permission from user
+    /// </summary>
+    public void RemovePermission(string permission)
+    {
+        var claim = _claims.FirstOrDefault(c => c.ClaimType == "Permission" && c.ClaimValue == permission);
+        if (claim != null)
+        {
+            _claims.Remove(claim);
+        }
+    }
+
+    /// <summary>
+    /// Add a custom claim to user
+    /// </summary>
+    public void AddClaim(string claimType, string claimValue)
+    {
+        if (string.IsNullOrWhiteSpace(claimType))
+            throw new ArgumentException("Claim type cannot be empty", nameof(claimType));
+
+        if (string.IsNullOrWhiteSpace(claimValue))
+            throw new ArgumentException("Claim value cannot be empty", nameof(claimValue));
+
+        // Check if claim already exists
+        if (_claims.Any(c => c.ClaimType == claimType && c.ClaimValue == claimValue))
+            return;
+
+        var userClaim = UserClaim.Create(Id, claimType, claimValue);
+        _claims.Add(userClaim);
+    }
+
+    /// <summary>
+    /// Remove a claim from user
+    /// </summary>
+    public void RemoveClaim(string claimType, string claimValue)
+    {
+        var claim = _claims.FirstOrDefault(c => c.ClaimType == claimType && c.ClaimValue == claimValue);
+        if (claim != null)
+        {
+            _claims.Remove(claim);
+        }
+    }
+
+    /// <summary>
+    /// Get all personal permissions for this user (does NOT include role permissions)
+    /// </summary>
+    public IEnumerable<string> GetPersonalPermissions()
+    {
+        return _claims
+            .Where(c => c.ClaimType == "Permission")
+            .Select(c => c.ClaimValue);
+    }
+
+    /// <summary>
+    /// Check if user has a specific personal permission (does NOT check role permissions)
+    /// </summary>
+    public bool HasPersonalPermission(string permission)
+    {
+        return _claims.Any(c => c.ClaimType == "Permission" && c.ClaimValue == permission);
     }
 }
