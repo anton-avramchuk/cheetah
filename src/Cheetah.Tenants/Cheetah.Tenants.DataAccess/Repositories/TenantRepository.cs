@@ -6,8 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Cheetah.Tenants.DataAccess.Repositories;
 
-[Export(LifetimeType.Scoped, typeof(IRepository<Tenant, Guid>), typeof(IReadOnlyRepository<Tenant, Guid>))]
-public class TenantRepository : IRepository<Tenant, Guid>, IReadOnlyRepository<Tenant, Guid>
+[Export(LifetimeType.Scoped, typeof(IRepository<Tenant, Guid>), typeof(IReadOnlyRepository<Tenant, Guid>),
+    typeof(ITenantRepository))]
+public class TenantRepository : ITenantRepository
 {
     private readonly TenantsDbContext _context;
 
@@ -23,7 +24,8 @@ public class TenantRepository : IRepository<Tenant, Guid>, IReadOnlyRepository<T
             .FirstOrDefaultAsync(t => t.Id == id, cancellationToken);
     }
 
-    public async Task<Tenant?> FirstOrDefaultAsync(System.Linq.Expressions.Expression<Func<Tenant, bool>> predicate, CancellationToken cancellationToken = default)
+    public async Task<Tenant?> FirstOrDefaultAsync(System.Linq.Expressions.Expression<Func<Tenant, bool>> predicate,
+        CancellationToken cancellationToken = default)
     {
         return await _context.Tenants
             .Include(t => t.ConnectionStrings)
@@ -35,6 +37,13 @@ public class TenantRepository : IRepository<Tenant, Guid>, IReadOnlyRepository<T
         return await _context.Tenants
             .Include(t => t.ConnectionStrings)
             .ToListAsync(cancellationToken);
+    }
+
+    public async Task<Tenant?> GetByIdAsync(Guid key, CancellationToken cancellationToken = default)
+    {
+        return await _context.Tenants
+            .Include(t => t.ConnectionStrings)
+            .FirstOrDefaultAsync(x => x.Id == key, cancellationToken);
     }
 
     public async Task InsertAsync(Tenant entity, CancellationToken cancellationToken = default)

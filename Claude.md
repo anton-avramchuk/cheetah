@@ -210,6 +210,94 @@ public partial class CrmTenantsFrontendClientModule : CrmModule { }
 
 **Both MUST have comprehensive tests.**
 
+### Tenant-Based Modules & Database Provisioning
+
+Each tenant-based module (Identity, Features, etc.) has its own database per tenant. Connection strings are automatically generated and managed.
+
+**Step 1: Register Module Connection String Provider**
+
+Every module that needs a tenant-specific database MUST register `IModuleConnectionStringProvider`:
+
+```csharp
+// Cheetah.Identity.Application/CrmIdentityApplicationModule.cs
+[DependsOn(typeof(CrmIdentityDomainModule))]
+public partial class CrmIdentityApplicationModule : CrmModule
+{
+    public override void ConfigureServices(ServiceConfigurationContext context)
+    {
+        RegisterServices(context.Services);
+
+        // Register connection string provider
+        context.Services.AddSingleton<IModuleConnectionStringProvider>(
+            new DefaultModuleConnectionStringProvider("Identity"));
+    }
+}
+```
+
+**Step 2: Register Tenant-Based DbContext Provider**
+
+Create a provider that implements `ITenantBasedDbContext<TenantCreatedEvent>`:
+
+```csharp
+// Cheetah.Identity.DataAccess/IdentityTenantDbContextProvider.cs
+[Export(LifetimeType.Singleton, typeof(ITenantBasedDbContext<TenantCreatedEvent>))]
+public class IdentityTenantDbContextProvider : ITenantBasedDbContext<TenantCreatedEvent>
+{
+    public string ModuleName => "Identity";
+
+    public ITenantBasedDbContext<TenantCreatedEvent> CreateForTenant(string connectionString)
+    {
+        var optionsBuilder = new DbContextOptionsBuilder<IdentityDbContext>();
+        optionsBuilder.UseNpgsql(connectionString);
+        var dbContext = new IdentityDbContext(optionsBuilder.Options);
+        return new TenantIdentityDbContext(dbContext);
+    }
+}
+```
+
+**Step 3: Configuration (appsettings.json)**
+
+```json
+{
+  "ConnectionStrings": {
+    "TenantTemplate": "Host=localhost;Port=5432;Username=postgres;Password=postgres;Database=template"
+  }
+}
+```
+
+**Automatic Workflow:**
+
+1. User creates tenant: `POST /api/tenants { "name": "Acme Corp" }`
+2. `CreateTenantCommandHandler` creates `Tenant` entity and publishes `TenantCreatedEvent`
+3. `GenerateTenantConnectionStringsEventHandler` automatically:
+   - Discovers all `IModuleConnectionStringProvider` instances
+   - Generates connection strings for each module:
+     - Identity: `"Host=...;Database=tenant_123abc_identity"`
+     - Features: `"Host=...;Database=tenant_123abc_features"`
+   - Adds `TenantConnectionString` records to tenant
+4. `TenantCreatedEventHandler` automatically:
+   - Discovers all `ITenantBasedDbContext<TenantCreatedEvent>` instances
+   - For each module: creates database and runs migrations using `TenantDatabaseMigrationManager`
+
+**Result:** Each tenant gets separate databases for each module with automatic provisioning.
+
+**Custom Connection String Generation:**
+
+```csharp
+public class CustomConnectionStringProvider : IModuleConnectionStringProvider
+{
+    public string ModuleName => "Identity";
+
+    public string GenerateConnectionString(Guid tenantId, string tenantName, string baseConnectionString)
+    {
+        var sanitizedName = tenantName.ToLowerInvariant().Replace(" ", "_");
+        var builder = new DbConnectionStringBuilder { ConnectionString = baseConnectionString };
+        builder["Database"] = $"{sanitizedName}_identity";
+        return builder.ConnectionString;
+    }
+}
+```
+
 ### Dependency Injection
 
 ```csharp
@@ -272,6 +360,13 @@ Use `$(MsPackageVersion)` for Microsoft packages (defined in `src/Directory.Buil
 10. Tests (Client.Tests + Frontend.Client.Tests)
 11. Add ALL projects to solution in `/Modules/{ModuleName}/` folder
 
+**For Tenant-Based Modules (with separate database per tenant):**
+
+12. In Application module: Register `IModuleConnectionStringProvider` with module name
+13. In DataAccess module: Create and register `ITenantBasedDbContext<TenantCreatedEvent>` provider
+14. Connection strings will be auto-generated on tenant creation
+15. Databases will be auto-created and migrated via `TenantDatabaseMigrationManager`
+
 ## ⚠️ Critical Constraints
 
 1. **ONLY Minimal API** - Controllers forbidden
@@ -289,6 +384,7 @@ Use `$(MsPackageVersion)` for Microsoft packages (defined in `src/Directory.Buil
 13. **Always use `[FromServices]`, `[FromRoute]`, `[FromBody]`, `[FromQuery]`**
 14. **Blazor WASM via API only** - through Client libraries
 15. **Project references MUST match module dependencies** - When adding a `<ProjectReference>` to project B from project A, you MUST add `[DependsOn(typeof(BModule))]` to AModule. Module dependency graph must mirror project reference graph.
+16. **Tenant-based modules MUST register providers** - Modules with tenant-specific databases MUST register both `IModuleConnectionStringProvider` (in Application) and `ITenantBasedDbContext<TenantCreatedEvent>` (in DataAccess) for automatic database provisioning.
 
 ## 📚 Key Files
 
@@ -296,6 +392,13 @@ Use `$(MsPackageVersion)` for Microsoft packages (defined in `src/Directory.Buil
 - CQRS: `src/Cheetah.Core.CQRS/IDispatcher.cs`
 - Events: `src/Cheetah.Core.Events/IEventBus.cs`
 - Domain: `src/Cheetah.Core.Domain/AggregateRoot.cs`
+- Tenant System: `src/Cheetah.Core.Tenants/`
+  - `Services/IModuleConnectionStringProvider.cs` - Module database registration
+  - `Services/ITenantMigrationService.cs` - Tenant info for migrations
+- Tenant Database: `src/Cheetah.Core.EntityFramework.Tenants/`
+  - `ITenantBasedDbContext.cs` - Tenant-specific DbContext interface
+  - `Migrations/TenantDatabaseMigrationManager.cs` - Automatic multi-tenant migrations
+  - `Configurations/TenantEntityConfiguration.cs` - Base configuration for tenant entities
 
 ## 🎯 Current Modules
 
