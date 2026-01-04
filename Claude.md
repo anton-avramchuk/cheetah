@@ -288,6 +288,7 @@ Use `$(MsPackageVersion)` for Microsoft packages (defined in `src/Directory.Buil
 12. **Module classes are `partial`** - for Source Generators
 13. **Always use `[FromServices]`, `[FromRoute]`, `[FromBody]`, `[FromQuery]`**
 14. **Blazor WASM via API only** - through Client libraries
+15. **Project references MUST match module dependencies** - When adding a `<ProjectReference>` to project B from project A, you MUST add `[DependsOn(typeof(BModule))]` to AModule. Module dependency graph must mirror project reference graph.
 
 ## 📚 Key Files
 

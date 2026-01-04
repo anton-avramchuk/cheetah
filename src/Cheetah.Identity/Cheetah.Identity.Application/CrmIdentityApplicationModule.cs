@@ -1,7 +1,9 @@
 using Cheetah.Core;
 using Cheetah.Core.CQRS;
+using Cheetah.Core.EntityFramework.Tenants;
 using Cheetah.Core.Events;
 using Cheetah.Core.Modularity;
+using Cheetah.Core.Tenants;
 using Cheetah.Identity.Application.EventHandlers;
 using Cheetah.Identity.DataAccess;
 using Cheetah.Identity.Domain;
@@ -18,6 +20,8 @@ namespace Cheetah.Identity.Application;
 [DependsOn(typeof(CrmIdentityEventsModule))]
 [DependsOn(typeof(CrmTenantsEventsModule))]
 [DependsOn(typeof(CrmTenantsClientModule))]
+[DependsOn(typeof(CrmEntityFrameworkTenantsModule))]
+[DependsOn(typeof(CrmTenantsCoreModule))]
 public partial class CrmIdentityApplicationModule : CrmModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)

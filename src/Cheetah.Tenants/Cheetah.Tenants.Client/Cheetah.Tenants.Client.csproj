@@ -3,6 +3,7 @@
     <ItemGroup>
         <ProjectReference Include="..\..\Cheetah.Core.CQRS\Cheetah.Core.CQRS.csproj" />
         <ProjectReference Include="..\..\Cheetah.Core\Cheetah.Core.csproj" />
+        <ProjectReference Include="..\..\Cheetah.Core.Tenants\Cheetah.Core.Tenants.csproj" />
         <ProjectReference Include="..\Cheetah.Tenants.Shared\Cheetah.Tenants.Shared.csproj" />
         <ProjectReference Include="..\Cheetah.Tenants.Application\Cheetah.Tenants.Application.csproj" />
     </ItemGroup>

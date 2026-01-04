@@ -1,5 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+    <ItemGroup>
+      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="$(MsPackageVersion)" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="$(MsPackageVersion)" />
+      <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="$(MsPackageVersion)" />
+    </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Cheetah.Core.EntityFramework\Cheetah.Core.EntityFramework.csproj" />

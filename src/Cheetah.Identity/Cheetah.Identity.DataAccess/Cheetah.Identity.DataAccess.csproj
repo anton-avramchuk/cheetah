@@ -8,7 +8,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Cheetah.Core\Cheetah.Core.csproj" />
+    <ProjectReference Include="..\..\Cheetah.Core.Tenants\Cheetah.Core.Tenants.csproj" />
     <ProjectReference Include="..\..\Cheetah.Core.EntityFramework\Cheetah.Core.EntityFramework.csproj" />
+    <ProjectReference Include="..\..\Cheetah.Core.EntityFramework.Tenants\Cheetah.Core.EntityFramework.Tenants.csproj" />
     <ProjectReference Include="..\..\Cheetah.Core.EntityFramework.PostgreSql\Cheetah.Core.EntityFramework.PostgreSql.csproj" />
     <ProjectReference Include="..\Cheetah.Identity.Domain\Cheetah.Identity.Domain.csproj" />
   </ItemGroup>

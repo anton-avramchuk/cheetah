@@ -1,4 +1,5 @@
 using Cheetah.Core.Modularity;
+using Cheetah.Core.Tenants;
 using Cheetah.Tenants.Application;
 
 namespace Cheetah.Tenants.Client;
@@ -8,6 +9,7 @@ namespace Cheetah.Tenants.Client;
 /// This abstraction allows switching between direct access and HTTP client for microservices.
 /// </summary>
 [DependsOn(typeof(CrmTenantsApplicationModule))]
+[DependsOn(typeof(CrmTenantsCoreModule))]
 public partial class CrmTenantsClientModule : CrmModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)
