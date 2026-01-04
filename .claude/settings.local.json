@@ -34,7 +34,13 @@
       "Bash(docker ps:*)",
       "Bash(Select-String -Pattern \"error|warning|succeeded|failed\" -CaseSensitive)",
       "Bash([ -f \"E:\\\\Projects\\\\cheetah\\\\nul\" ])",
-      "Bash(dotnet restore:*)"
+      "Bash(dotnet restore:*)",
+      "Bash(Get-ChildItem -Path \"E:\\\\Projects\\\\cheetah\" -Filter \"nul\" -Recurse -File -ErrorAction SilentlyContinue)",
+      "Bash(if [ -f \"E:\\\\Projects\\\\cheetah\\\\nul\" ])",
+      "Bash(then echo \"nul file exists\")",
+      "Bash(else echo \"no nul file\")",
+      "Bash(fi)",
+      "Bash(timeout 30 dotnet build:*)"
     ]
   }
 }

@@ -2,6 +2,10 @@ using Cheetah.Core.Events;
 
 namespace Cheetah.Core.Tenants.Events;
 
-public record TenantCreatedEvent(Guid TenantId, string Name) : EventBase;
-public record TenantUpdatedEvent(Guid TenantId, string Name, bool IsActive) : EventBase;
-public record TenantDeletedEvent(Guid TenantId) : EventBase;
+public abstract record TenantCreatedEvent(Guid TenantId, string Name) : EventBase;
+
+public abstract record TenantUpdatedEvent(Guid TenantId, string Name) : EventBase;
+
+public abstract record TenantDeactivatedEvent(Guid TenantId) : EventBase;
+
+public abstract record TenantActivatedEvent(Guid TenantId) : EventBase;

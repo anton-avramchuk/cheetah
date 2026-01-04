@@ -1,0 +1,10 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+
+    <ItemGroup>
+      <ProjectReference Include="..\Cheetah.Core.EntityFramework\Cheetah.Core.EntityFramework.csproj" />
+      <ProjectReference Include="..\Cheetah.Core.Tenants\Cheetah.Core.Tenants.csproj" />
+      <ProjectReference Include="..\Cheetah.Core\Cheetah.Core.csproj" />
+    </ItemGroup>
+
+</Project>

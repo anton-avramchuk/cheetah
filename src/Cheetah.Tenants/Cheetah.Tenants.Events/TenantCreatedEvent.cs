@@ -1,4 +1,4 @@
-using Cheetah.Core.Events;
+using Cheetah.Core.Tenants.Events;
 
 namespace Cheetah.Tenants.Events;
 
@@ -10,4 +10,4 @@ public record TenantCreatedEvent(
     string Name,
     string? Subdomain,
     DateTime CreatedAt
-) : EventBase;
+) : Core.Tenants.Events.TenantCreatedEvent(TenantId, Name);

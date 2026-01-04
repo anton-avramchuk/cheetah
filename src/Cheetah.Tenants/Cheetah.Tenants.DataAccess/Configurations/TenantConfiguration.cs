@@ -1,47 +1,49 @@
+using Cheetah.Core.EntityFramework.Tenants.Configurations;
 using Cheetah.Tenants.Domain.Entities;
+using Cheetah.Tenants.Events;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Cheetah.Tenants.DataAccess.Configurations;
 
-public class TenantConfiguration : IEntityTypeConfiguration<Tenant>
+public class TenantConfiguration : TenantEntityConfiguration<Tenant, TenantCreatedEvent, TenantUpdatedEvent, TenantDeactivatedEvent, TenantActivatedEvent>
 {
-    public void Configure(EntityTypeBuilder<Tenant> builder)
+    protected override TenantEntityConfigurationOptions Options { get; } = new()
     {
-        builder.ToTable("Tenants");
+        TableName = "Tenants",
+        NameMaxLength = 256,
+        DescriptionMaxLength = 2000,
+        NameIndexName = "IX_Tenants_Name",
+        IsActiveIndexName = "IX_Tenants_IsActive",
+        CreatedAtIndexName = "IX_Tenants_CreatedAt",
+        CreateNameUniqueIndex = true,
+        CreateIsActiveIndex = true,
+        CreateCreatedAtIndex = true
+    };
 
-        builder.HasKey(t => t.Id);
-
-        builder.Property(t => t.Name)
-            .IsRequired()
-            .HasMaxLength(256);
-
+    protected override void ConfigureAdditionalProperties(EntityTypeBuilder<Tenant> builder)
+    {
+        // NormalizedName - required, unique
         builder.Property(t => t.NormalizedName)
             .IsRequired()
             .HasMaxLength(256);
 
         builder.HasIndex(t => t.NormalizedName)
-            .IsUnique();
+            .IsUnique()
+            .HasDatabaseName("IX_Tenants_NormalizedName");
 
+        // Subdomain - optional, unique when not null
         builder.Property(t => t.Subdomain)
             .HasMaxLength(128);
 
         builder.HasIndex(t => t.Subdomain)
-            .IsUnique();
+            .IsUnique()
+            .HasDatabaseName("IX_Tenants_Subdomain");
 
-        builder.Property(t => t.IsActive)
-            .IsRequired();
-
-        builder.Property(t => t.CreatedAt)
-            .IsRequired();
-
-        builder.Property(t => t.UpdatedAt);
-
+        // ConnectionStrings relationship
         builder.HasMany(t => t.ConnectionStrings)
             .WithOne()
             .HasForeignKey(cs => cs.TenantId)
             .OnDelete(DeleteBehavior.Cascade);
-
-        builder.Ignore(t => t.DomainEvents);
     }
 }

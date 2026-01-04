@@ -13,6 +13,7 @@
         <Project Path="src/Cheetah.Core.EntityFramework.MsSql/Cheetah.Core.EntityFramework.MsSql.csproj" />
         <Project Path="src/Cheetah.Core.EntityFramework.MySql/Cheetah.Core.EntityFramework.MySql.csproj" />
         <Project Path="src/Cheetah.Core.EntityFramework.PostgreSql/Cheetah.Core.EntityFramework.PostgreSql.csproj" />
+        <Project Path="src/Cheetah.Core.EntityFramework.Tenants/Cheetah.Core.EntityFramework.Tenants.csproj" />
         <Project Path="src/Cheetah.Core.EntityFramework/Cheetah.Core.EntityFramework.csproj" />
         <Project Path="src/Cheetah.Core.Events/Cheetah.Core.Events.csproj" />
         <Project Path="src/Cheetah.Core.Tenants/Cheetah.Core.Tenants.csproj" />
@@ -28,6 +29,7 @@
         <Project Path="src/Cheetah.OpenApi/Cheetah.OpenApi.csproj" />
         <Project Path="src/Cheetah.Scalar/Cheetah.Scalar.csproj" />
     </Folder>
+    <Folder Name="/Core/Backend/Identity/" />
     <Folder Name="/Core/Frontend/">
         <Project Path="src/Cheetah.Blazor.Components/Cheetah.Blazor.Components.csproj" />
         <Project Path="src/Cheetah.Frontend.CQRS/Cheetah.Frontend.CQRS.csproj" />

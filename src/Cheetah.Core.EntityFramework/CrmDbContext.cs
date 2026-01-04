@@ -1,9 +1,11 @@
+using Cheetah.Core.DependencyInjection;
 using Cheetah.Core.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Cheetah.Core.EntityFramework;
 
+[Export(LifetimeType.Scoped)]
 public abstract class CrmDbContext<TDbContext> : DbContext, ICrmDbContext
     where TDbContext : DbContext
 {

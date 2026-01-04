@@ -1,40 +1,52 @@
 using Cheetah.Core.Domain;
+using Cheetah.Core.Tenants.Domain;
 using Cheetah.Tenants.Events;
 
 namespace Cheetah.Tenants.Domain.Entities;
 
-public class Tenant : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEntity
+public class Tenant : TenantEntity<TenantCreatedEvent, TenantUpdatedEvent, TenantDeactivatedEvent, TenantActivatedEvent>
 {
-    public string Name { get; private set; } = null!;
     public string NormalizedName { get; private set; } = null!;
     public string? Subdomain { get; private set; }
-    public bool IsActive { get; private set; }
-    public DateTimeOffset? CreatedAt { get; set; }
-    public DateTimeOffset? UpdatedAt { get; set; }
 
     private readonly List<TenantConnectionString> _connectionStrings = new();
     public IReadOnlyCollection<TenantConnectionString> ConnectionStrings => _connectionStrings.AsReadOnly();
 
-    private Tenant() { }
+    private Tenant() : base()
+    { }
 
     public static Tenant Create(string name, string? subdomain = null)
     {
-        var tenant = new Tenant
-        {
-            Id = Guid.NewGuid(),
-            Name = name,
-            NormalizedName = name.ToUpperInvariant(),
-            Subdomain = subdomain?.ToLowerInvariant(),
-            IsActive = false,
-            CreatedAt = DateTimeOffset.UtcNow
-        };
+        var tenant = new Tenant();
+        tenant.Id = Guid.NewGuid();
+        tenant.Name = name;
+        tenant.NormalizedName = name.ToUpperInvariant();
+        tenant.Subdomain = subdomain?.ToLowerInvariant();
+        tenant.IsActive = false;
+        tenant.CreatedAt = DateTimeOffset.UtcNow;
 
-        tenant.AddDomainEvent(new TenantCreatedEvent(
-            tenant.Id,
-            tenant.Name,
-            tenant.Subdomain,
-            DateTime.UtcNow));
+        tenant.AddDomainEvent(tenant.CreateTenantCreatedEvent(tenant.Id, tenant.Name));
         return tenant;
+    }
+
+    protected override TenantCreatedEvent CreateTenantCreatedEvent(Guid tenantId, string name)
+    {
+        return new TenantCreatedEvent(tenantId, name, Subdomain, DateTime.UtcNow);
+    }
+
+    protected override TenantUpdatedEvent CreateTenantUpdatedEvent(Guid tenantId, string name)
+    {
+        return new TenantUpdatedEvent(tenantId, name, IsActive, DateTime.UtcNow);
+    }
+
+    protected override TenantDeactivatedEvent CreateTenantDeactivatedEvent(Guid tenantId)
+    {
+        return new TenantDeactivatedEvent(tenantId, DateTime.UtcNow);
+    }
+
+    protected override TenantActivatedEvent CreateTenantActivatedEvent(Guid tenantId)
+    {
+        return new TenantActivatedEvent(tenantId, DateTime.UtcNow);
     }
 
     public void Activate()
@@ -44,7 +56,7 @@ public class Tenant : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEntity
 
         IsActive = true;
         UpdatedAt = DateTimeOffset.UtcNow;
-        AddDomainEvent(new TenantActivatedEvent(Id, DateTime.UtcNow));
+        AddDomainEvent(CreateTenantActivatedEvent(Id));
     }
 
     public void Deactivate()
@@ -54,7 +66,7 @@ public class Tenant : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEntity
 
         IsActive = false;
         UpdatedAt = DateTimeOffset.UtcNow;
-        AddDomainEvent(new TenantDeactivatedEvent(Id, DateTime.UtcNow));
+        AddDomainEvent(CreateTenantDeactivatedEvent(Id));
     }
 
     public void AddConnectionString(string name, string connectionString, bool isDefault = false)

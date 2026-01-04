@@ -1,4 +1,4 @@
-using Cheetah.Core.Events;
+using Cheetah.Core.Tenants.Events;
 
 namespace Cheetah.Tenants.Events;
 
@@ -8,4 +8,4 @@ namespace Cheetah.Tenants.Events;
 public record TenantActivatedEvent(
     Guid TenantId,
     DateTime ActivatedAt
-) : EventBase;
+) : Core.Tenants.Events.TenantActivatedEvent(TenantId);
