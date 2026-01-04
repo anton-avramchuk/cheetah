@@ -73,10 +73,7 @@ public class IdentityDatabaseMigrationManager : IDatabaseMigrationManager
 
         // Create database if it doesn't exist and apply migrations
         await dbContext.Database.MigrateAsync(ct);
-
-        // Seed initial data (Admin and User roles)
-        await SeedInitialDataAsync(dbContext, ct);
-
+        
         var databaseName = dbContext.Database.GetDbConnection().Database;
         _logger.LogInformation("Successfully created Identity database '{DatabaseName}' for tenant {TenantId}",
             databaseName, tenantId);
@@ -105,63 +102,5 @@ public class IdentityDatabaseMigrationManager : IDatabaseMigrationManager
         }
 
         _logger.LogInformation("Identity module migration completed");
-    }
-
-    /// <summary>
-    /// Seeds initial roles and admin user for new tenant database
-    /// </summary>
-    private async Task SeedInitialDataAsync(IdentityDbContext dbContext, CancellationToken ct)
-    {
-        // Check if data already seeded
-        if (await dbContext.Roles.AnyAsync(ct))
-        {
-            _logger.LogInformation("Identity database already seeded, skipping seed");
-            return;
-        }
-
-        _logger.LogInformation("Seeding initial Identity data...");
-
-        // Create Admin role with all permissions
-        var adminRole = Domain.Entities.Role.Create("Admin", "System Administrator");
-        adminRole.AddPermission("Users.Create");
-        adminRole.AddPermission("Users.Edit");
-        adminRole.AddPermission("Users.Delete");
-        adminRole.AddPermission("Users.View");
-        adminRole.AddPermission("Roles.Create");
-        adminRole.AddPermission("Roles.Edit");
-        adminRole.AddPermission("Roles.Delete");
-        adminRole.AddPermission("Roles.View");
-        adminRole.AddPermission("Permissions.Assign");
-        adminRole.AddPermission("System.Configure");
-
-        dbContext.Roles.Add(adminRole);
-
-        // Create User role with basic permissions
-        var userRole = Domain.Entities.Role.Create("User", "Standard User");
-        userRole.AddPermission("Users.View");
-
-        dbContext.Roles.Add(userRole);
-
-        // Create default admin user
-        var adminUser = Domain.Entities.User.Create(
-            email: "admin@cheetah.local",
-            passwordHash: _passwordHasher.HashPassword("Admin@123"),
-            firstName: "System",
-            lastName: "Administrator"
-        );
-        adminUser.ConfirmEmail();
-        adminUser.Activate();
-
-        dbContext.Users.Add(adminUser);
-
-        await dbContext.SaveChangesAsync(ct);
-
-        // Assign Admin role to admin user
-        var userRole1 = Domain.Entities.UserRole.Create(adminUser.Id, adminRole.Id);
-        dbContext.UserRoles.Add(userRole1);
-
-        await dbContext.SaveChangesAsync(ct);
-
-        _logger.LogInformation("Successfully seeded initial Identity data (2 roles, 1 admin user)");
     }
 }
