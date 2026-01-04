@@ -8,29 +8,21 @@ namespace Cheetah.Tenants.Application.Services;
 /// Service for generating tenant connection strings for all modules
 /// </summary>
 [Export(LifetimeType.Scoped, typeof(ITenantConnectionStringService))]
-public class TenantConnectionStringService : ITenantConnectionStringService
+public class TenantConnectionStringService(
+    IEnumerable<IModuleConnectionStringProvider> providers,
+    IConfiguration configuration)
+    : ITenantConnectionStringService
 {
-    private readonly IEnumerable<IModuleConnectionStringProvider> _providers;
-    private readonly IConfiguration _configuration;
-
-    public TenantConnectionStringService(
-        IEnumerable<IModuleConnectionStringProvider> providers,
-        IConfiguration _configuration)
-    {
-        _providers = providers;
-        this._configuration = _configuration;
-    }
-
     public Task<Dictionary<string, string>> GenerateAllConnectionStringsAsync(Guid tenantId, string tenantName)
     {
         var result = new Dictionary<string, string>();
 
         // Get base connection string from configuration
-        var baseConnectionString = _configuration.GetConnectionString("TenantTemplate")
+        var baseConnectionString = configuration.GetConnectionString("TenantTemplate")
             ?? throw new InvalidOperationException("TenantTemplate connection string is not configured");
 
         // Generate connection string for each registered module
-        foreach (var provider in _providers)
+        foreach (var provider in providers)
         {
             var connectionString = provider.GenerateConnectionString(tenantId, tenantName, baseConnectionString);
             result[provider.ModuleName] = connectionString;
