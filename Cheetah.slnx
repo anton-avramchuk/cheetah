@@ -60,6 +60,7 @@
         <Project Path="src/Cheetah.Features/Cheetah.Features.Api/Cheetah.Features.Api.csproj" />
         <Project Path="src/Cheetah.Features/Cheetah.Features.Application/Cheetah.Features.Application.csproj" />
         <Project Path="src/Cheetah.Features/Cheetah.Features.Client/Cheetah.Features.Client.csproj" />
+        <Project Path="src/Cheetah.Features/Cheetah.Features.Contracts/Cheetah.Features.Contracts.csproj" />
         <Project Path="src/Cheetah.Features/Cheetah.Features.DataAccess/Cheetah.Features.DataAccess.csproj" />
         <Project Path="src/Cheetah.Features/Cheetah.Features.Domain/Cheetah.Features.Domain.csproj" />
         <Project Path="src/Cheetah.Features/Cheetah.Features.Events/Cheetah.Features.Events.csproj" />

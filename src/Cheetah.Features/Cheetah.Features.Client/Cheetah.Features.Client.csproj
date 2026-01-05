@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <ProjectReference Include="..\Cheetah.Features.Contracts\Cheetah.Features.Contracts.csproj" />
     <ProjectReference Include="..\Cheetah.Features.Shared\Cheetah.Features.Shared.csproj" />
     <ProjectReference Include="..\Cheetah.Features.Application\Cheetah.Features.Application.csproj" />
     <ProjectReference Include="..\..\Cheetah.Core.CQRS\Cheetah.Core.CQRS.csproj" />

@@ -1,4 +1,5 @@
 using Cheetah.Core.Modularity;
+using Cheetah.Features.Contracts;
 using Cheetah.Features.Shared;
 using Cheetah.Frontend.CQRS;
 
@@ -9,6 +10,7 @@ namespace Cheetah.Features.Frontend.Client;
 /// </summary>
 [DependsOn(typeof(CrmFrontendCQRSModule))]
 [DependsOn(typeof(CrmFeaturesSharedModule))]
+[DependsOn(typeof(CrmFeaturesContractsModule))]
 public partial class CrmFeaturesFrontendClientModule : CrmModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)

@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Cheetah.Features.Shared.Requests;
+namespace Cheetah.Features.Contracts.Requests;
 
 public class EnableFeatureRequest
 {

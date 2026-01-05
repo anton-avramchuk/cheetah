@@ -3,8 +3,8 @@ using Cheetah.Core.DependencyInjection;
 using Cheetah.Features.Application.Commands;
 using Cheetah.Features.Application.Queries;
 using Cheetah.Features.Client.Interfaces;
+using Cheetah.Features.Contracts.ViewModels;
 using Cheetah.Features.Domain.Entities;
-using Cheetah.Features.Shared.ViewModels;
 
 namespace Cheetah.Features.Client.Implementation;
 

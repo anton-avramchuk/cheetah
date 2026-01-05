@@ -1,4 +1,4 @@
-using Cheetah.Features.Shared.ViewModels;
+using Cheetah.Features.Contracts.ViewModels;
 
 namespace Cheetah.Features.Client.Interfaces;
 

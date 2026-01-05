@@ -1,8 +1,9 @@
+using System.Net;
 using System.Net.Http.Json;
 using Cheetah.Core.DependencyInjection;
+using Cheetah.Features.Contracts.Requests;
+using Cheetah.Features.Contracts.ViewModels;
 using Cheetah.Features.Frontend.Client.Interfaces;
-using Cheetah.Features.Shared.Requests;
-using Cheetah.Features.Shared.ViewModels;
 
 namespace Cheetah.Features.Frontend.Client.Implementation;
 
@@ -28,7 +29,7 @@ public class FeatureApiClient(HttpClient httpClient) : IFeatureApiClient
     {
         var response = await httpClient.GetAsync($"{BaseUrl}/{id}", ct);
 
-        if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+        if (response.StatusCode == HttpStatusCode.NotFound)
             return null;
 
         response.EnsureSuccessStatusCode();

@@ -6,11 +6,12 @@ using Cheetah.Core.Modularity;
 using Cheetah.Features.Application;
 using Cheetah.Features.Application.Commands;
 using Cheetah.Features.Application.Queries;
+using Cheetah.Features.Contracts;
+using Cheetah.Features.Contracts.Requests;
+using Cheetah.Features.Contracts.ViewModels;
 using Cheetah.Features.DataAccess;
 using Cheetah.Features.Domain.Entities;
 using Cheetah.Features.Shared;
-using Cheetah.Features.Shared.Requests;
-using Cheetah.Features.Shared.ViewModels;
 using Cheetah.Mapping.Core;
 using Cheetah.Mapping.Mapster;
 using Microsoft.AspNetCore.Builder;
@@ -25,6 +26,7 @@ namespace Cheetah.Features.Api;
 [DependsOn(typeof(CrmAspNetCoreModule))]
 [DependsOn(typeof(CrmMapsterModule))]
 [DependsOn(typeof(CrmFeaturesSharedModule))]
+[DependsOn(typeof(CrmFeaturesContractsModule))]
 public partial class CrmFeaturesApiModule : CrmModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)

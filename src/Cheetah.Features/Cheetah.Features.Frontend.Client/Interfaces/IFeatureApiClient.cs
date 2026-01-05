@@ -1,5 +1,5 @@
-using Cheetah.Features.Shared.Requests;
-using Cheetah.Features.Shared.ViewModels;
+using Cheetah.Features.Contracts.Requests;
+using Cheetah.Features.Contracts.ViewModels;
 
 namespace Cheetah.Features.Frontend.Client.Interfaces;
 

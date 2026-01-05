@@ -1,4 +1,4 @@
-namespace Cheetah.Features.Shared.ViewModels;
+namespace Cheetah.Features.Contracts.ViewModels;
 
 public class TenantFeatureViewModel
 {
