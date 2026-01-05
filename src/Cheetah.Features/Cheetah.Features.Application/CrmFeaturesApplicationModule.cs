@@ -1,9 +1,11 @@
 using Cheetah.Backend.CQRS;
 using Cheetah.Core.Modularity;
 using Cheetah.Core.Tenants;
+using Cheetah.Core.Tenants.Services;
 using Cheetah.Features.Domain;
 using Cheetah.Features.Events;
 using Cheetah.Tenants.Events;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Cheetah.Features.Application;
 

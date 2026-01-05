@@ -1,5 +1,6 @@
 using Cheetah.AspNetCore;
 using Cheetah.AspNetCore.Extensions;
+using Cheetah.Core;
 using Cheetah.Core.CQRS;
 using Cheetah.Core.Modularity;
 using Cheetah.Features.Application;
@@ -11,7 +12,10 @@ using Cheetah.Features.Shared.Requests;
 using Cheetah.Features.Shared.ViewModels;
 using Cheetah.Mapping.Core;
 using Cheetah.Mapping.Mapster;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Cheetah.Features.Api;
 

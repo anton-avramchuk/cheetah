@@ -25,7 +25,7 @@ public class FeatureChecker(
 
         // Query from database
         var query = new CheckFeatureQuery(tenantId, featureId);
-        var isEnabled = await dispatcher.QueryAsync(query, cancellationToken);
+        var isEnabled = await dispatcher.QueryAsync<CheckFeatureQuery, bool>(query, cancellationToken);
 
         // Cache result
         await cacheService.SetAsync(cacheKey, isEnabled, TimeSpan.FromMinutes(CacheExpirationMinutes), cancellationToken);
