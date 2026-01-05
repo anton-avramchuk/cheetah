@@ -8,6 +8,7 @@ using Cheetah.Features.Application.Commands;
 using Cheetah.Features.Application.Queries;
 using Cheetah.Features.DataAccess;
 using Cheetah.Features.Domain.Entities;
+using Cheetah.Features.Shared;
 using Cheetah.Features.Shared.Requests;
 using Cheetah.Features.Shared.ViewModels;
 using Cheetah.Mapping.Core;
@@ -23,6 +24,7 @@ namespace Cheetah.Features.Api;
 [DependsOn(typeof(CrmFeaturesDataAccessModule))]
 [DependsOn(typeof(CrmAspNetCoreModule))]
 [DependsOn(typeof(CrmMapsterModule))]
+[DependsOn(typeof(CrmFeaturesSharedModule))]
 public partial class CrmFeaturesApiModule : CrmModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)

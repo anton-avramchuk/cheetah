@@ -4,6 +4,7 @@ using Cheetah.Core.EntityFramework.Tenants;
 using Cheetah.Core.Modularity;
 using Cheetah.Features.Domain;
 using Cheetah.Features.Events;
+using Cheetah.Features.Shared;
 using Cheetah.Tenants.Events;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -18,6 +19,7 @@ namespace Cheetah.Features.DataAccess;
 [DependsOn(typeof(CrmEntityFrameworkModule))]
 [DependsOn(typeof(CrmEntityFrameworkPostgreSqlModule))]
 [DependsOn(typeof(CrmEntityFrameworkTenantsModule))]
+[DependsOn(typeof(CrmFeaturesSharedModule))]
 public partial class CrmFeaturesDataAccessModule : CrmModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)

@@ -4,6 +4,7 @@ using Cheetah.Frontend.CQRS;
 using Cheetah.Frontend.Events;
 using Cheetah.Blazor.Components;
 using Cheetah.Features.Frontend.Client;
+using Cheetah.Features.Shared;
 
 namespace Cheetah.Features.Frontend;
 
@@ -16,6 +17,7 @@ namespace Cheetah.Features.Frontend;
 [DependsOn(typeof(CrmFrontendEventsModule))]
 [DependsOn(typeof(CrmBlazorComponentsModule))]
 [DependsOn(typeof(CrmFeaturesFrontendClientModule))]
+[DependsOn(typeof(CrmFeaturesSharedModule))]
 public partial class CrmFeaturesFrontendModule : CrmModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)
