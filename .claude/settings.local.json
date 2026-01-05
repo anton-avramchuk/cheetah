@@ -40,7 +40,9 @@
       "Bash(then echo \"nul file exists\")",
       "Bash(else echo \"no nul file\")",
       "Bash(fi)",
-      "Bash(timeout 30 dotnet build:*)"
+      "Bash(timeout 30 dotnet build:*)",
+      "Bash(dotnet ef:*)",
+      "Bash(taskkill:*)"
     ]
   }
 }

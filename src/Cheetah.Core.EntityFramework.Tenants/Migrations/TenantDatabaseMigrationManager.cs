@@ -13,7 +13,6 @@ namespace Cheetah.Core.EntityFramework.Tenants.Migrations;
 /// </summary>
 /// <typeparam name="TTenantCreatedEvent">Type of tenant created event</typeparam>
 public class TenantDatabaseMigrationManager<TTenantCreatedEvent>(
-    ITenantMigrationService tenantService,
     IServiceProvider serviceProvider,
     ILogger<TenantDatabaseMigrationManager<TTenantCreatedEvent>> logger)
     : IEventHandler<TTenantCreatedEvent>
@@ -50,6 +49,8 @@ public class TenantDatabaseMigrationManager<TTenantCreatedEvent>(
     /// </summary>
     public async Task MigrateTenantDatabasesAsync(Guid tenantId, CancellationToken ct = default)
     {
+        using var scope = serviceProvider.CreateScope();
+        var tenantService = scope.ServiceProvider.GetRequiredService<ITenantMigrationService>();
         var dbContexts = serviceProvider.GetServices<ITenantBasedDbContext<TTenantCreatedEvent>>();
 
         foreach (var dbContextPrototype in dbContexts)
@@ -95,6 +96,8 @@ public class TenantDatabaseMigrationManager<TTenantCreatedEvent>(
     /// </summary>
     public async Task CreateTenantDatabasesAsync(Guid tenantId, CancellationToken ct = default)
     {
+        using var scope = serviceProvider.CreateScope();
+        var tenantService = scope.ServiceProvider.GetRequiredService<ITenantMigrationService>();
         var dbContexts = serviceProvider.GetServices<ITenantBasedDbContext<TTenantCreatedEvent>>();
 
         foreach (var dbContextPrototype in dbContexts)
@@ -143,6 +146,9 @@ public class TenantDatabaseMigrationManager<TTenantCreatedEvent>(
     public async Task MigrateAllTenantsAsync(CancellationToken ct = default)
     {
         logger.LogInformation("Migrating all tenant-based modules for all active tenants...");
+
+        using var scope = serviceProvider.CreateScope();
+        var tenantService = scope.ServiceProvider.GetRequiredService<ITenantMigrationService>();
 
         var tenants = await tenantService.GetAllActiveTenantsAsync(ct);
         logger.LogInformation("Found {TenantCount} active tenants to migrate", tenants.Count);

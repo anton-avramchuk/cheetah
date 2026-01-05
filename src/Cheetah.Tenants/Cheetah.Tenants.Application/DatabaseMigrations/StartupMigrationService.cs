@@ -1,4 +1,5 @@
 using Cheetah.Core.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace Cheetah.Tenants.Application.DatabaseMigrations;
@@ -9,14 +10,14 @@ namespace Cheetah.Tenants.Application.DatabaseMigrations;
 [Export(LifetimeType.Singleton, typeof(IStartupMigrationService))]
 public class StartupMigrationService : IStartupMigrationService
 {
-    private readonly IEnumerable<IDatabaseMigrationManager> _migrationManagers;
+    private readonly IServiceProvider _serviceProvider;
     private readonly ILogger<StartupMigrationService> _logger;
 
     public StartupMigrationService(
-        IEnumerable<IDatabaseMigrationManager> migrationManagers,
+        IServiceProvider serviceProvider,
         ILogger<StartupMigrationService> logger)
     {
-        _migrationManagers = migrationManagers;
+        _serviceProvider = serviceProvider;
         _logger = logger;
     }
 
@@ -24,7 +25,10 @@ public class StartupMigrationService : IStartupMigrationService
     {
         _logger.LogInformation("Starting database migrations for all modules...");
 
-        foreach (var manager in _migrationManagers)
+        using var scope = _serviceProvider.CreateScope();
+        var migrationManagers = scope.ServiceProvider.GetServices<IDatabaseMigrationManager>();
+
+        foreach (var manager in migrationManagers)
         {
             try
             {

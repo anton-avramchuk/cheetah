@@ -9,13 +9,11 @@ namespace Cheetah.Tenants.DataAccess;
 
 [ConnectionStringName("Tenants")]
 [Export(LifetimeType.Scoped)]
-public class TenantsDbContext : CrmTenantsDbContext<TenantsDbContext, Tenant, TenantCreatedEvent, TenantUpdatedEvent, TenantDeactivatedEvent, TenantActivatedEvent>
+public class TenantsDbContext(DbContextOptions<TenantsDbContext> options)
+    : CrmTenantsDbContext<TenantsDbContext, Tenant, TenantCreatedEvent, TenantUpdatedEvent, TenantDeactivatedEvent,
+        TenantActivatedEvent>(options)
 {
     public DbSet<TenantConnectionString> TenantConnectionStrings => Set<TenantConnectionString>();
-
-    public TenantsDbContext(DbContextOptions<TenantsDbContext> options) : base(options)
-    {
-    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

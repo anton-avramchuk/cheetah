@@ -78,6 +78,7 @@
       ASPNETCORE_URLS: http://+:8080
       ConnectionStrings__Master: "Host=postgres;Port=5432;Database=cheetah_master;Username=cheetah;Password=cheetah123"
       ConnectionStrings__Tenants: "Host=postgres;Port=5432;Database=cheetah_tenants;Username=cheetah;Password=cheetah123"
+      ConnectionStrings__TenantTemplate: "Host=postgres;Port=5432;Database=database;Username=cheetah;Password=cheetah123"
       Redis__Instances__Default__ConnectionString: "redis:6379"
       Redis__Instances__Default__Database: "0"
     networks:
