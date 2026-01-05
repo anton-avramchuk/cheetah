@@ -29,7 +29,10 @@
         <Project Path="src/Cheetah.OpenApi/Cheetah.OpenApi.csproj" />
         <Project Path="src/Cheetah.Scalar/Cheetah.Scalar.csproj" />
     </Folder>
-    <Folder Name="/Core/Backend/Identity/" />
+    <Folder Name="/Core/Backend/Identity/">
+        <Project Path="src/Cheetah.Backend.IdentityCore.DataAccess/Cheetah.Backend.IdentityCore.DataAccess.csproj" />
+        <Project Path="src/Cheetah.Backend.IdentityCore.Domain/Cheetah.Backend.IdentityCore.Domain.csproj" />
+    </Folder>
     <Folder Name="/Core/Frontend/">
         <Project Path="src/Cheetah.Blazor.Components/Cheetah.Blazor.Components.csproj" />
         <Project Path="src/Cheetah.Frontend.CQRS/Cheetah.Frontend.CQRS.csproj" />
