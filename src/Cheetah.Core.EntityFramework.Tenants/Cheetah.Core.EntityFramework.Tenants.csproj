@@ -2,8 +2,10 @@
 
     <ItemGroup>
       <PackageReference Include="Microsoft.EntityFrameworkCore" Version="$(MsPackageVersion)" />
-      <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="$(MsPackageVersion)" />
-      <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="$(MsPackageVersion)" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <FrameworkReference Include="Microsoft.AspNetCore.App" />
     </ItemGroup>
 
     <ItemGroup>
@@ -11,6 +13,10 @@
       <ProjectReference Include="..\Cheetah.Core.Events\Cheetah.Core.Events.csproj" />
       <ProjectReference Include="..\Cheetah.Core.Tenants\Cheetah.Core.Tenants.csproj" />
       <ProjectReference Include="..\Cheetah.Core\Cheetah.Core.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Cheetah.Generators.Module\Cheetah.Generators.Module.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer"/>
     </ItemGroup>
 
 </Project>

@@ -1,4 +1,5 @@
 using Cheetah.AspNetCore;
+using Cheetah.AspNetCore.Extensions;
 using Cheetah.Backend.CQRS;
 using Cheetah.Backend.Events.Redis;
 using Cheetah.Core;
@@ -35,5 +36,12 @@ public partial class BootstrapperModule : CrmModule
         // Register TenantDatabaseMigrationManager as singleton
         // It will automatically subscribe to TenantCreatedEvent
         context.Services.AddTenantDatabaseMigrationManager<TenantCreatedEvent>();
+    }
+
+    public override async Task OnApplicationInitializationAsync(ApplicationInitializationContext context)
+    {
+        await base.OnApplicationInitializationAsync(context);
+        
+        context.GetApplicationBuilder().MigrateTenantDatabases<TenantCreatedEvent>();
     }
 }

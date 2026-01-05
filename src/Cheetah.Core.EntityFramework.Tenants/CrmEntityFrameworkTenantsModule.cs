@@ -7,6 +7,10 @@ namespace Cheetah.Core.EntityFramework.Tenants;
 [DependsOn(typeof(CrmEntityFrameworkModule))]
 [DependsOn(typeof(CrmEventsCoreModule))]
 [DependsOn(typeof(CrmTenantsCoreModule))]
-public class CrmEntityFrameworkTenantsModule : CrmModule
+public partial class CrmEntityFrameworkTenantsModule : CrmModule
 {
+    public override void ConfigureServices(ServiceConfigurationContext context)
+    {
+        RegisterServices(context.Services);
+    }
 }
