@@ -1,3 +1,4 @@
+using Cheetah.Core.Events;
 using Cheetah.Core.Tenants.Events;
 using Cheetah.Core.Tenants.Services;
 using Microsoft.EntityFrameworkCore;
@@ -7,15 +8,16 @@ using Microsoft.Extensions.Logging;
 namespace Cheetah.Core.EntityFramework.Tenants.Migrations;
 
 /// <summary>
-/// Base class for managing database migrations across multiple tenants
+/// Manages database migrations across multiple tenants for all registered tenant-based modules
+/// Automatically subscribes to TenantCreatedEvent and creates/migrates databases
 /// </summary>
 /// <typeparam name="TTenantCreatedEvent">Type of tenant created event</typeparam>
-public class TenantDatabaseMigrationManager<TTenantCreatedEvent>
+public class TenantDatabaseMigrationManager<TTenantCreatedEvent> : IEventHandler<TTenantCreatedEvent>
     where TTenantCreatedEvent : TenantCreatedEvent
 {
     private readonly ITenantMigrationService _tenantService;
     private readonly IServiceProvider _serviceProvider;
-    private readonly ILogger _logger;
+    private readonly ILogger<TenantDatabaseMigrationManager<TTenantCreatedEvent>> _logger;
 
     public TenantDatabaseMigrationManager(
         ITenantMigrationService tenantService,
@@ -25,6 +27,32 @@ public class TenantDatabaseMigrationManager<TTenantCreatedEvent>
         _tenantService = tenantService;
         _serviceProvider = serviceProvider;
         _logger = logger;
+    }
+
+    /// <summary>
+    /// Event handler implementation - automatically called when tenant is created
+    /// </summary>
+    public async ValueTask HandleAsync(TTenantCreatedEvent @event, CancellationToken ct = default)
+    {
+        _logger.LogInformation(
+            "Creating and migrating databases for tenant {TenantId} ({TenantName})",
+            @event.TenantId, @event.Name);
+
+        try
+        {
+            await CreateTenantDatabasesAsync(@event.TenantId, ct);
+
+            _logger.LogInformation(
+                "Successfully created and migrated all databases for tenant {TenantId}",
+                @event.TenantId);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex,
+                "Failed to create/migrate databases for tenant {TenantId}",
+                @event.TenantId);
+            throw;
+        }
     }
 
     /// <summary>

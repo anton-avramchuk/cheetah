@@ -8,6 +8,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Cheetah.Core.EntityFramework\Cheetah.Core.EntityFramework.csproj" />
+      <ProjectReference Include="..\Cheetah.Core.Events\Cheetah.Core.Events.csproj" />
       <ProjectReference Include="..\Cheetah.Core.Tenants\Cheetah.Core.Tenants.csproj" />
       <ProjectReference Include="..\Cheetah.Core\Cheetah.Core.csproj" />
     </ItemGroup>

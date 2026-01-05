@@ -1,4 +1,5 @@
 using Cheetah.Core.DependencyInjection;
+using Cheetah.Core.EntityFramework.Tenants.Migrations;
 using Cheetah.Core.Events;
 using Cheetah.Identity.Application.Services;
 using Cheetah.Tenants.Events;

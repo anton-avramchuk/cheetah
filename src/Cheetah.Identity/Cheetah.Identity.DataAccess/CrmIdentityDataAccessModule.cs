@@ -25,7 +25,4 @@ public partial class CrmIdentityDataAccessModule : CrmModule
         });
 
     }
-
-    // Note: Migrations and seeding are handled per-tenant via IdentityDatabaseMigrationManager
-    // when TenantCreatedEvent is received
 }

@@ -1,5 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Cheetah.Core.EntityFramework.Extensions;
+using Cheetah.Core.EntityFramework.Tenants.Migrations;
+using Cheetah.Core.Events;
 using Cheetah.Core.Tenants.Domain;
 using Cheetah.Core.Tenants.Events;
 
@@ -17,6 +19,24 @@ public static class ServiceCollectionExtensions
         where TTenantActivatedEvent : TenantActivatedEvent
     {
         services.AddApplicationDbContext<TDbContext>();
+
+        return services;
+    }
+
+    /// <summary>
+    /// Registers TenantDatabaseMigrationManager as singleton and subscribes it to TenantCreatedEvent
+    /// Call this ONCE in the main application module
+    /// </summary>
+    public static IServiceCollection AddTenantDatabaseMigrationManager<TTenantCreatedEvent>(
+        this IServiceCollection services)
+        where TTenantCreatedEvent : TenantCreatedEvent
+    {
+        // Register as singleton
+        services.AddSingleton<TenantDatabaseMigrationManager<TTenantCreatedEvent>>();
+
+        // Register as event handler
+        services.AddSingleton<IEventHandler<TTenantCreatedEvent>>(sp =>
+            sp.GetRequiredService<TenantDatabaseMigrationManager<TTenantCreatedEvent>>());
 
         return services;
     }
