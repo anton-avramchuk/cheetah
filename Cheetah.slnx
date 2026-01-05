@@ -16,6 +16,7 @@
         <Project Path="src/Cheetah.Core.EntityFramework.Tenants/Cheetah.Core.EntityFramework.Tenants.csproj" />
         <Project Path="src/Cheetah.Core.EntityFramework/Cheetah.Core.EntityFramework.csproj" />
         <Project Path="src/Cheetah.Core.Events/Cheetah.Core.Events.csproj" />
+        <Project Path="src/Cheetah.Core.Security/Cheetah.Core.Security.csproj" />
         <Project Path="src/Cheetah.Core.Tenants/Cheetah.Core.Tenants.csproj" />
         <Project Path="src/Cheetah.Core/Cheetah.Core.csproj" />
         <Project Path="src/Cheetah.CQRS.Dispatcher/Cheetah.CQRS.Dispatcher.csproj" />
@@ -30,8 +31,10 @@
         <Project Path="src/Cheetah.Scalar/Cheetah.Scalar.csproj" />
     </Folder>
     <Folder Name="/Core/Backend/Identity/">
-        <Project Path="src/Cheetah.Backend.IdentityCore.DataAccess/Cheetah.Backend.IdentityCore.DataAccess.csproj" />
+        <Project Path="src/Cheetah.Backend.IdentityCore.Events/Cheetah.Backend.IdentityCore.Events.csproj" />
         <Project Path="src/Cheetah.Backend.IdentityCore.Domain/Cheetah.Backend.IdentityCore.Domain.csproj" />
+        <Project Path="src/Cheetah.Backend.IdentityCore.DataAccess/Cheetah.Backend.IdentityCore.DataAccess.csproj" />
+        <Project Path="src/Cheetah.Backend.IdentityCore.Shared/Cheetah.Backend.IdentityCore.Shared.csproj" />
     </Folder>
     <Folder Name="/Core/Frontend/">
         <Project Path="src/Cheetah.Blazor.Components/Cheetah.Blazor.Components.csproj" />

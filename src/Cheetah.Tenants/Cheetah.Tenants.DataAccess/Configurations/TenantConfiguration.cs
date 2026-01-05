@@ -1,6 +1,7 @@
 using Cheetah.Core.EntityFramework.Tenants.Configurations;
 using Cheetah.Tenants.Domain.Entities;
 using Cheetah.Tenants.Events;
+using Cheetah.Tenants.Shared.Constants;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -11,8 +12,8 @@ public class TenantConfiguration : TenantEntityConfiguration<Tenant, TenantCreat
     protected override TenantEntityConfigurationOptions Options { get; } = new()
     {
         TableName = "Tenants",
-        NameMaxLength = 256,
-        DescriptionMaxLength = 2000,
+        NameMaxLength = TenantConstants.MaxNameLength,
+        DescriptionMaxLength = TenantConstants.MaxDescriptionLength,
         NameIndexName = "IX_Tenants_Name",
         IsActiveIndexName = "IX_Tenants_IsActive",
         CreatedAtIndexName = "IX_Tenants_CreatedAt",
@@ -26,7 +27,7 @@ public class TenantConfiguration : TenantEntityConfiguration<Tenant, TenantCreat
         // NormalizedName - required, unique
         builder.Property(t => t.NormalizedName)
             .IsRequired()
-            .HasMaxLength(256);
+            .HasMaxLength(TenantConstants.MaxNormalizedNameLength);
 
         builder.HasIndex(t => t.NormalizedName)
             .IsUnique()
@@ -34,7 +35,7 @@ public class TenantConfiguration : TenantEntityConfiguration<Tenant, TenantCreat
 
         // Subdomain - optional, unique when not null
         builder.Property(t => t.Subdomain)
-            .HasMaxLength(128);
+            .HasMaxLength(TenantConstants.MaxSubdomainLength);
 
         builder.HasIndex(t => t.Subdomain)
             .IsUnique()

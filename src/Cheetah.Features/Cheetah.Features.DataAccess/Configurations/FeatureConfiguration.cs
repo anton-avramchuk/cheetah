@@ -1,4 +1,5 @@
 using Cheetah.Features.Domain.Entities;
+using Cheetah.Features.Shared.Constants;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -14,22 +15,22 @@ public class FeatureConfiguration : IEntityTypeConfiguration<Feature>
         builder.HasKey(f => f.Id);
         builder.Property(f => f.Id)
             .IsRequired()
-            .HasMaxLength(128);
+            .HasMaxLength(FeatureConstants.FeatureIdMaxLength);
 
         // Properties
         builder.Property(f => f.Name)
             .IsRequired()
-            .HasMaxLength(128);
+            .HasMaxLength(FeatureConstants.FeatureIdMaxLength);
 
         builder.Property(f => f.DisplayName)
             .IsRequired()
-            .HasMaxLength(256);
+            .HasMaxLength(FeatureConstants.DisplayNameMaxLength);
 
         builder.Property(f => f.Description)
-            .HasMaxLength(1000);
+            .HasMaxLength(FeatureConstants.DescriptionMaxLength);
 
         builder.Property(f => f.Group)
-            .HasMaxLength(128);
+            .HasMaxLength(FeatureConstants.GroupMaxLength);
 
         builder.Property(f => f.IsEnabledByDefault)
             .IsRequired();

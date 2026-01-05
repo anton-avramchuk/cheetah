@@ -7,6 +7,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Cheetah.Backend.IdentityCore.Events\Cheetah.Backend.IdentityCore.Events.csproj" />
+      <ProjectReference Include="..\Cheetah.Core.Domain\Cheetah.Core.Domain.csproj" />
       <ProjectReference Include="..\Cheetah.Core\Cheetah.Core.csproj" />
     </ItemGroup>
 

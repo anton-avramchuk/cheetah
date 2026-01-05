@@ -1,4 +1,5 @@
 using Cheetah.Tenants.Domain.Entities;
+using Cheetah.Tenants.Shared.Constants;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -17,11 +18,11 @@ public class TenantConnectionStringConfiguration : IEntityTypeConfiguration<Tena
 
         builder.Property(cs => cs.Name)
             .IsRequired()
-            .HasMaxLength(128);
+            .HasMaxLength(TenantConstants.MaxConnectionStringNameLength);
 
         builder.Property(cs => cs.ConnectionString)
             .IsRequired()
-            .HasMaxLength(1024);
+            .HasMaxLength(TenantConstants.MaxConnectionStringLength);
 
         builder.Property(cs => cs.IsDefault)
             .IsRequired();

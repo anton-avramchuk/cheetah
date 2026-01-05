@@ -1,4 +1,5 @@
 using Cheetah.Features.Domain.Entities;
+using Cheetah.Features.Shared.Constants;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -19,7 +20,7 @@ public class TenantFeatureConfiguration : IEntityTypeConfiguration<TenantFeature
 
         builder.Property(tf => tf.FeatureId)
             .IsRequired()
-            .HasMaxLength(128);
+            .HasMaxLength(FeatureConstants.FeatureIdMaxLength);
 
         builder.Property(tf => tf.IsEnabled)
             .IsRequired();

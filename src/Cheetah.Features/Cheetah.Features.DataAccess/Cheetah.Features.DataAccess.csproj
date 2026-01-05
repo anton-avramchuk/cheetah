@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Cheetah.Features.Domain\Cheetah.Features.Domain.csproj" />
+    <ProjectReference Include="..\Cheetah.Features.Shared\Cheetah.Features.Shared.csproj" />
     <ProjectReference Include="..\..\Cheetah.Core.EntityFramework\Cheetah.Core.EntityFramework.csproj" />
     <ProjectReference Include="..\..\Cheetah.Core.EntityFramework.PostgreSql\Cheetah.Core.EntityFramework.PostgreSql.csproj" />
     <ProjectReference Include="..\..\Cheetah.Core.EntityFramework.Tenants\Cheetah.Core.EntityFramework.Tenants.csproj" />

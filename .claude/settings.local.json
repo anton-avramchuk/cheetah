@@ -42,7 +42,13 @@
       "Bash(fi)",
       "Bash(timeout 30 dotnet build:*)",
       "Bash(dotnet ef:*)",
-      "Bash(taskkill:*)"
+      "Bash(taskkill:*)",
+      "Bash(dir:*)",
+      "Bash(timeout 60 dotnet build:*)",
+      "Bash(timeout 90 dotnet build:*)",
+      "Bash(find:*)",
+      "Bash(Get-ChildItem -Path \"E:\\\\Projects\\\\cheetah\" -Filter \"*.sln\")",
+      "Bash(git add:*)"
     ]
   }
 }

@@ -1,14 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFramework>net10.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-    </PropertyGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Cheetah.Backend.IdentityCore.Domain\Cheetah.Backend.IdentityCore.Domain.csproj" />
+      <ProjectReference Include="..\Cheetah.Backend.IdentityCore.Shared\Cheetah.Backend.IdentityCore.Shared.csproj" />
+      <ProjectReference Include="..\Cheetah.Core.EntityFramework\Cheetah.Core.EntityFramework.csproj" />
+      <ProjectReference Include="..\Cheetah.Core.Security\Cheetah.Core.Security.csproj" />
       <ProjectReference Include="..\Cheetah.Core\Cheetah.Core.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="$(MsPackageVersion)" />
+        <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="$(MsPackageVersion)" />
     </ItemGroup>
 
 </Project>

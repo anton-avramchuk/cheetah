@@ -1,7 +1,11 @@
-﻿using Cheetah.Core.Modularity;
+﻿using Cheetah.Backend.IdentityCore.Events;
+using Cheetah.Core.Domain;
+using Cheetah.Core.Modularity;
 
 namespace Cheetah.Backend.IdentityCore.Domain;
 
-public class IdentityCoreDomainModule : CrmModule
+[DependsOn(typeof(CrmDomainModule))]
+[DependsOn(typeof(CrmIdentityCoreEventsModule))]
+public partial class IdentityCoreDomainModule : CrmModule
 {
 }
