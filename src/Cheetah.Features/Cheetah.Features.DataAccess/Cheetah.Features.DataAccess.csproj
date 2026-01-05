@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\Cheetah.Features.Domain\Cheetah.Features.Domain.csproj" />
+    <ProjectReference Include="..\..\Cheetah.Core.EntityFramework\Cheetah.Core.EntityFramework.csproj" />
+    <ProjectReference Include="..\..\Cheetah.Core.EntityFramework.PostgreSql\Cheetah.Core.EntityFramework.PostgreSql.csproj" />
+    <ProjectReference Include="..\..\Cheetah.Core.EntityFramework.Tenants\Cheetah.Core.EntityFramework.Tenants.csproj" />
+    <ProjectReference Include="..\..\Cheetah.Core\Cheetah.Core.csproj" />
+    <ProjectReference Include="..\..\Cheetah.Tenants\Cheetah.Tenants.Events\Cheetah.Tenants.Events.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="$(MsPackageVersion)" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="$(MsPackageVersion)">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="$(MsPackageVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Cheetah.Generators.Module\Cheetah.Generators.Module.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
+  </ItemGroup>
+
+</Project>

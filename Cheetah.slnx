@@ -67,11 +67,26 @@
         <File Path="compose.yaml" />
         <File Path="nginx.conf" />
     </Folder>
+    <Folder Name="/src/" />
+    <Folder Name="/src/Cheetah.Features/">
+        <Project Path="src/Cheetah.Features/Cheetah.Features.Api/Cheetah.Features.Api.csproj" />
+        <Project Path="src/Cheetah.Features/Cheetah.Features.Application/Cheetah.Features.Application.csproj" />
+        <Project Path="src/Cheetah.Features/Cheetah.Features.Client/Cheetah.Features.Client.csproj" />
+        <Project Path="src/Cheetah.Features/Cheetah.Features.DataAccess/Cheetah.Features.DataAccess.csproj" />
+        <Project Path="src/Cheetah.Features/Cheetah.Features.Domain/Cheetah.Features.Domain.csproj" />
+        <Project Path="src/Cheetah.Features/Cheetah.Features.Events/Cheetah.Features.Events.csproj" />
+        <Project Path="src/Cheetah.Features/Cheetah.Features.Frontend.Client/Cheetah.Features.Frontend.Client.csproj" />
+        <Project Path="src/Cheetah.Features/Cheetah.Features.Frontend/Cheetah.Features.Frontend.csproj" />
+        <Project Path="src/Cheetah.Features/Cheetah.Features.Shared/Cheetah.Features.Shared.csproj" />
+    </Folder>
+    <Folder Name="/src/Cheetah.Tenants/" />
     <Folder Name="/Tests/">
         <Project Path="src/Cheetah.Backend.Events.Redis.Tests/Cheetah.Backend.Events.Redis.Tests.csproj" />
         <Project Path="src/Cheetah.Backend.Redis.Tests/Cheetah.Backend.Redis.Tests.csproj" />
         <Project Path="src/Cheetah.Core.Tests/Cheetah.Core.Tests.csproj" />
         <Project Path="src/Cheetah.Frontend.Events.Tests/Cheetah.Frontend.Events.Tests.csproj" />
+        <Project Path="tests/Cheetah.Features.Client.Tests/Cheetah.Features.Client.Tests.csproj" />
+        <Project Path="tests/Cheetah.Features.Frontend.Client.Tests/Cheetah.Features.Frontend.Client.Tests.csproj" />
     </Folder>
     <Project Path="src/Cheetah.Crm.Web.Client/Cheetah.Crm.Web.Client.csproj" />
     <Project Path="src/Cheetah.Crm.Web.Server/Cheetah.Crm.Web.csproj" />
