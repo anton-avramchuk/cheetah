@@ -3,7 +3,7 @@ using Cheetah.Core.Modularity;
 
 namespace Cheetah.Backend.IdentityCore.Contracts;
 
-[DependsOn(typeof(CrmIdentityCoreSharedModule))]
-public class CrmIdentityCoreContractsModule : CrmModule
+[DependsOn(typeof(IdentityCoreSharedModule))]
+public class IdentityCoreContractsModule : CrmModule
 {
 }

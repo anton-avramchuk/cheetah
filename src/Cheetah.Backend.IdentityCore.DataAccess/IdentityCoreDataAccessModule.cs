@@ -9,7 +9,7 @@ namespace Cheetah.Backend.IdentityCore.DataAccess;
 [DependsOn(typeof(IdentityCoreDomainModule))]
 [DependsOn(typeof(CrmEntityFrameworkModule))]
 [DependsOn(typeof(CrmCoreSecurityModule))]
-[DependsOn(typeof(CrmIdentityCoreSharedModule))]
+[DependsOn(typeof(IdentityCoreSharedModule))]
 public class IdentityCoreDataAccessModule : CrmModule
 {
 }

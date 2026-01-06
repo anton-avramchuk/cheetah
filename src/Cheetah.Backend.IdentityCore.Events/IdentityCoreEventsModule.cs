@@ -9,11 +9,4 @@ namespace Cheetah.Backend.IdentityCore.Events;
 /// Other modules can depend on this to subscribe to identity events
 /// </summary>
 [DependsOn(typeof(CrmEventsCoreModule))]
-public partial class CrmIdentityCoreEventsModule : CrmModule
-{
-    public override void ConfigureServices(ServiceConfigurationContext context)
-    {
-        // Events project has no services to register
-        // It only contains event contracts (records)
-    }
-}
+public partial class IdentityCoreEventsModule : CrmModule;

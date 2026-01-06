@@ -1,3 +1,4 @@
+using Cheetah.Backend.IdentityCore.Domain;
 using Cheetah.Core.Domain;
 using Cheetah.Core.Modularity;
 using Cheetah.Identity.Events;
@@ -9,10 +10,7 @@ namespace Cheetah.Identity.Domain;
 /// </summary>
 [DependsOn(typeof(CrmDomainModule))]
 [DependsOn(typeof(CrmIdentityEventsModule))]
-public partial class CrmIdentityDomainModule : CrmModule
+[DependsOn(typeof(IdentityCoreDomainModule))]
+public class CrmIdentityDomainModule : CrmModule
 {
-    public override void ConfigureServices(ServiceConfigurationContext context)
-    {
-        RegisterServices(context.Services);
-    }
 }
