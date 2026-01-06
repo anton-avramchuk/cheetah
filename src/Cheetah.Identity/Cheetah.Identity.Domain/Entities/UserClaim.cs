@@ -1,3 +1,4 @@
+using Cheetah.Backend.IdentityCore.Domain;
 using Cheetah.Core.Domain;
 
 namespace Cheetah.Identity.Domain.Entities;
@@ -6,16 +7,13 @@ namespace Cheetah.Identity.Domain.Entities;
 /// User claim - represents a personal permission or attribute assigned to a user
 /// Example: ClaimType = "Permission", ClaimValue = "Reports.ViewAll"
 /// </summary>
-public class UserClaim : Claim
+public class UserClaim : IdentityUserClaim
 {
-    public Guid UserId { get; private set; }
-
-    private UserClaim() { } // For EF Core
+    
 
     private UserClaim(Guid userId, string claimType, string claimValue)
-        : base(claimType, claimValue)
+        : base(userId, claimType, claimValue)
     {
-        UserId = userId;
     }
 
     /// <summary>

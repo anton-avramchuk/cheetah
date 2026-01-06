@@ -30,10 +30,10 @@ public class IdentityUser<TIdentityRole> : AggregateRoot<Guid>, ICreateAtEntity,
 
     public DateTimeOffset? UpdatedAt { get; set; }
 
-    private readonly List<IdentityUserRole<TIdentityRole>> _roles = new();
+    protected readonly List<IdentityUserRole<TIdentityRole>> _roles = new();
     public IReadOnlyCollection<IdentityUserRole<TIdentityRole>> Roles => _roles;
 
-    private readonly List<IdentityUserClaim> _claims = new();
+    protected readonly List<IdentityUserClaim> _claims = new();
     public IReadOnlyCollection<IdentityUserClaim> Claims => _claims;
 
     /// <summary>
@@ -44,9 +44,9 @@ public class IdentityUser<TIdentityRole> : AggregateRoot<Guid>, ICreateAtEntity,
     }
 
     /// <summary>
-    /// Private constructor for domain logic
+    /// Protected constructor for domain logic
     /// </summary>
-    private IdentityUser(string userName, string email) : base(Guid.NewGuid())
+    protected IdentityUser(string userName, string email) : base(Guid.NewGuid())
     {
         if (string.IsNullOrWhiteSpace(userName))
             throw new ArgumentException("User name cannot be empty", nameof(userName));

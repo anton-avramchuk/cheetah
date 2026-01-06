@@ -1,7 +1,7 @@
 using System.Text.RegularExpressions;
 using Cheetah.Core.Domain;
 
-namespace Cheetah.Identity.Domain.ValueObjects;
+namespace Cheetah.Backend.IdentityCore.Domain.ValueObjects;
 
 /// <summary>
 /// Email value object with validation

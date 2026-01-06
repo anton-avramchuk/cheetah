@@ -29,7 +29,7 @@ public class AssignRoleToUserCommandHandler : ICommandHandler<AssignRoleToUserCo
             throw new InvalidOperationException($"Role {command.RoleId} not found");
 
         // Assign role to user
-        user.AddRole(command.RoleId);
+        user.AddRole(role);
 
         await _dbContext.SaveChangesAsync(ct);
 

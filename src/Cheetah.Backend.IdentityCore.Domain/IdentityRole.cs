@@ -3,7 +3,7 @@ using Cheetah.Core.Domain;
 
 namespace Cheetah.Backend.IdentityCore.Domain;
 
-public class IdentityRole : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEntity
+public abstract class IdentityRole : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEntity
 {
     public string Name { get; private set; } = null!;
 
@@ -13,7 +13,7 @@ public class IdentityRole : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEnti
 
     public DateTimeOffset? UpdatedAt { get; set; }
 
-    private readonly List<IdentityRoleClaim> _claims = new();
+    protected readonly List<IdentityRoleClaim> _claims = new();
     public IReadOnlyCollection<IdentityRoleClaim> Claims => _claims;
 
     /// <summary>
@@ -26,7 +26,7 @@ public class IdentityRole : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEnti
     /// <summary>
     /// Private constructor for domain logic
     /// </summary>
-    private IdentityRole(string name) : base(Guid.NewGuid())
+    protected internal IdentityRole(string name) : base(Guid.NewGuid())
     {
         if (string.IsNullOrWhiteSpace(name))
             throw new ArgumentException("Role name cannot be empty", nameof(name));
@@ -38,7 +38,7 @@ public class IdentityRole : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEnti
     /// <summary>
     /// Private constructor for domain logic with specific ID
     /// </summary>
-    private IdentityRole(Guid id, string name) : base(id)
+    protected internal IdentityRole(Guid id, string name) : base(id)
     {
         if (string.IsNullOrWhiteSpace(name))
             throw new ArgumentException("Role name cannot be empty", nameof(name));
@@ -47,31 +47,6 @@ public class IdentityRole : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEnti
         NormalizedName = name.ToUpperInvariant();
     }
 
-    /// <summary>
-    /// Factory method to create a new role
-    /// </summary>
-    public static IdentityRole Create(string name)
-    {
-        var role = new IdentityRole(name);
-        role.AddDomainEvent(new Backend.IdentityCore.Events.RoleCreatedEvent(
-            role.Id,
-            name
-        ));
-        return role;
-    }
-
-    /// <summary>
-    /// Factory method to create a new role with specific ID
-    /// </summary>
-    public static IdentityRole Create(Guid id, string name)
-    {
-        var role = new IdentityRole(id, name);
-        role.AddDomainEvent(new Backend.IdentityCore.Events.RoleCreatedEvent(
-            role.Id,
-            name
-        ));
-        return role;
-    }
 
     public void ChangeName(string name)
     {

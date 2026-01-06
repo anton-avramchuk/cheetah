@@ -19,14 +19,14 @@ public class IdentityUserRole<TIdentityRole> : Entity where TIdentityRole : Iden
     /// <summary>
     /// Protected constructor for EF Core
     /// </summary>
-    private IdentityUserRole()
+    protected IdentityUserRole()
     {
     }
 
     /// <summary>
     /// Constructor for creating a new user-role relationship
     /// </summary>
-    public IdentityUserRole(Guid userId, TIdentityRole role)
+    protected internal IdentityUserRole(Guid userId, TIdentityRole role)
     {
         if (role == null)
             throw new ArgumentNullException(nameof(role));

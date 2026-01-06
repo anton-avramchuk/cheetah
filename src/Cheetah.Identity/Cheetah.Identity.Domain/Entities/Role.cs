@@ -1,3 +1,4 @@
+using Cheetah.Backend.IdentityCore.Domain;
 using Cheetah.Core.Domain;
 using Cheetah.Identity.Events;
 
@@ -7,18 +8,16 @@ namespace Cheetah.Identity.Domain.Entities;
 /// Role aggregate root
 /// Represents a role with permissions (via RoleClaims)
 /// </summary>
-public class Role : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEntity
+public class Role : IdentityRole, ICreateAtEntity, IUpdatedAtEntity
 {
-    public string Name { get; private set; } = null!;
-    public string NormalizedName { get; private set; } = null!;
     public string? Description { get; private set; }
-    public DateTimeOffset? CreatedAt { get; set; }
-    public DateTimeOffset? UpdatedAt { get; set; }
-
-    private readonly List<RoleClaim> _claims = [];
-    public IReadOnlyCollection<RoleClaim> Claims => _claims.AsReadOnly();
 
     private Role() { } // For EF Core
+
+    private Role(string name, string? description = null) : base(name)
+    {
+        Description = description?.Trim();
+    }
 
     /// <summary>
     /// Creates a new role
@@ -28,13 +27,7 @@ public class Role : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEntity
         if (string.IsNullOrWhiteSpace(name))
             throw new ArgumentException("Role name cannot be empty", nameof(name));
 
-        var role = new Role
-        {
-            Id = Guid.NewGuid(),
-            Name = name.Trim(),
-            NormalizedName = name.Trim().ToUpperInvariant(),
-            Description = description?.Trim()
-        };
+        var role = new Role(name.Trim(), description);
 
         role.AddDomainEvent(new RoleCreatedEvent(
             role.Id,
@@ -125,11 +118,7 @@ public class Role : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEntity
     /// </summary>
     public void Update(string name, string? description = null)
     {
-        if (string.IsNullOrWhiteSpace(name))
-            throw new ArgumentException("Role name cannot be empty", nameof(name));
-
-        Name = name.Trim();
-        NormalizedName = name.Trim().ToUpperInvariant();
+        ChangeName(name.Trim());
         Description = description?.Trim();
     }
 

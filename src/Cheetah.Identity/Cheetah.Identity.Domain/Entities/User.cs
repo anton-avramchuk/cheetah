@@ -1,6 +1,7 @@
+using Cheetah.Backend.IdentityCore.Domain;
 using Cheetah.Core.Domain;
-using Cheetah.Identity.Domain.ValueObjects;
 using Cheetah.Identity.Events;
+using EmailVO = Cheetah.Backend.IdentityCore.Domain.ValueObjects.Email;
 
 namespace Cheetah.Identity.Domain.Entities;
 
@@ -9,26 +10,22 @@ namespace Cheetah.Identity.Domain.Entities;
 /// NOTE: In tenant-per-database architecture, User is stored in tenant-specific DB
 /// User existence in a tenant DB = membership in that tenant (no need for UserTenant junction)
 /// </summary>
-public class User : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEntity
+public class User : IdentityUser<Role>, ICreateAtEntity, IUpdatedAtEntity
 {
-    public string Email { get; private set; } = null!;
-    public string NormalizedEmail { get; private set; } = null!;
-    public string PasswordHash { get; private set; } = null!;
     public string? FirstName { get; private set; }
     public string? LastName { get; private set; }
     public bool IsActive { get; private set; }
-    public bool EmailConfirmed { get; private set; }
     public DateTime? LastLoginAt { get; private set; }
-    public DateTimeOffset? CreatedAt { get; set; }
-    public DateTimeOffset? UpdatedAt { get; set; }
-
-    private readonly List<UserRole> _roles = [];
-    public IReadOnlyList<UserRole> Roles => _roles.AsReadOnly();
-
-    private readonly List<UserClaim> _claims = [];
-    public IReadOnlyCollection<UserClaim> Claims => _claims.AsReadOnly();
 
     private User() { } // For EF Core
+
+    private User(string email, string? firstName = null, string? lastName = null)
+        : base(email, email) // Use email as both username and email
+    {
+        FirstName = firstName?.Trim();
+        LastName = lastName?.Trim();
+        IsActive = true;
+    }
 
     /// <summary>
     /// Creates a new user
@@ -45,20 +42,11 @@ public class User : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEntity
         if (string.IsNullOrWhiteSpace(passwordHash))
             throw new ArgumentException("Password hash cannot be empty", nameof(passwordHash));
 
-        // Validate email format
-        var emailVO = ValueObjects.Email.Create(email);
+        // Validate email format using Email value object
+        var emailVO = EmailVO.Create(email);
 
-        var user = new User
-        {
-            Id = Guid.NewGuid(),
-            Email = emailVO.Value,
-            NormalizedEmail = emailVO.Normalize(),
-            PasswordHash = passwordHash,
-            FirstName = firstName?.Trim(),
-            LastName = lastName?.Trim(),
-            IsActive = true,
-            EmailConfirmed = false
-        };
+        var user = new User(emailVO.Value, firstName, lastName);
+        user.ChangePasswordHash(passwordHash);
 
         user.AddDomainEvent(new UserCreatedEvent(
             user.Id,
@@ -75,40 +63,17 @@ public class User : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEntity
     /// Assigns roles to user
     /// In tenant-per-database, roles are managed within tenant context
     /// </summary>
-    public void AssignRoles(List<Guid> roleIds)
+    public void AssignRoles(List<Role> roles)
     {
-        // Clear existing roles
-        _roles.Clear();
-
-        // Add new roles
-        foreach (var roleId in roleIds)
+        // Use base class method to clear and add roles
+        foreach (var role in Roles.ToList())
         {
-            var userRole = UserRole.Create(Id, roleId);
-            _roles.Add(userRole);
+            base.RemoveRole(role.Role);
         }
-    }
 
-    /// <summary>
-    /// Adds a single role to user
-    /// </summary>
-    public void AddRole(Guid roleId)
-    {
-        if (_roles.Any(r => r.RoleId == roleId))
-            return; // Already has this role
-
-        var userRole = UserRole.Create(Id, roleId);
-        _roles.Add(userRole);
-    }
-
-    /// <summary>
-    /// Removes a role from user
-    /// </summary>
-    public void RemoveRole(Guid roleId)
-    {
-        var role = _roles.FirstOrDefault(r => r.RoleId == roleId);
-        if (role != null)
+        foreach (var role in roles)
         {
-            _roles.Remove(role);
+            base.AddRole(role);
         }
     }
 
@@ -131,10 +96,7 @@ public class User : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEntity
     /// </summary>
     public void ChangePassword(string newPasswordHash)
     {
-        if (string.IsNullOrWhiteSpace(newPasswordHash))
-            throw new ArgumentException("Password hash cannot be empty", nameof(newPasswordHash));
-
-        PasswordHash = newPasswordHash;
+        base.ChangePasswordHash(newPasswordHash);
 
         AddDomainEvent(new PasswordChangedEvent(
             Id,
@@ -150,7 +112,7 @@ public class User : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEntity
         if (EmailConfirmed)
             return; // Already confirmed
 
-        EmailConfirmed = true;
+        base.ChangeEmailConfirmed(true);
 
         AddDomainEvent(new EmailConfirmedEvent(
             Id,
@@ -193,11 +155,10 @@ public class User : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEntity
             throw new ArgumentException("Permission cannot be empty", nameof(permission));
 
         // Check if permission already exists
-        if (_claims.Any(c => c.ClaimType == "Permission" && c.ClaimValue == permission))
+        if (Claims.Any(c => c.ClaimType == "Permission" && c.ClaimValue == permission))
             return; // Already has this permission
 
-        var userClaim = UserClaim.CreatePermission(Id, permission);
-        _claims.Add(userClaim);
+        base.AddClaim(new System.Security.Claims.Claim("Permission", permission));
     }
 
     /// <summary>
@@ -205,11 +166,7 @@ public class User : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEntity
     /// </summary>
     public void RemovePermission(string permission)
     {
-        var claim = _claims.FirstOrDefault(c => c.ClaimType == "Permission" && c.ClaimValue == permission);
-        if (claim != null)
-        {
-            _claims.Remove(claim);
-        }
+        base.RemoveClaim(new System.Security.Claims.Claim("Permission", permission));
     }
 
     /// <summary>
@@ -224,11 +181,10 @@ public class User : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEntity
             throw new ArgumentException("Claim value cannot be empty", nameof(claimValue));
 
         // Check if claim already exists
-        if (_claims.Any(c => c.ClaimType == claimType && c.ClaimValue == claimValue))
+        if (Claims.Any(c => c.ClaimType == claimType && c.ClaimValue == claimValue))
             return;
 
-        var userClaim = UserClaim.Create(Id, claimType, claimValue);
-        _claims.Add(userClaim);
+        base.AddClaim(new System.Security.Claims.Claim(claimType, claimValue));
     }
 
     /// <summary>
@@ -236,11 +192,7 @@ public class User : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEntity
     /// </summary>
     public void RemoveClaim(string claimType, string claimValue)
     {
-        var claim = _claims.FirstOrDefault(c => c.ClaimType == claimType && c.ClaimValue == claimValue);
-        if (claim != null)
-        {
-            _claims.Remove(claim);
-        }
+        base.RemoveClaim(new System.Security.Claims.Claim(claimType, claimValue));
     }
 
     /// <summary>
@@ -248,7 +200,7 @@ public class User : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEntity
     /// </summary>
     public IEnumerable<string> GetPersonalPermissions()
     {
-        return _claims
+        return Claims
             .Where(c => c.ClaimType == "Permission")
             .Select(c => c.ClaimValue);
     }
@@ -258,6 +210,6 @@ public class User : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEntity
     /// </summary>
     public bool HasPersonalPermission(string permission)
     {
-        return _claims.Any(c => c.ClaimType == "Permission" && c.ClaimValue == permission);
+        return Claims.Any(c => c.ClaimType == "Permission" && c.ClaimValue == permission);
     }
 }

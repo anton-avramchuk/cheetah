@@ -19,7 +19,7 @@ public class IdentityUserClaim : IdentityClaim
     /// <summary>
     /// Internal constructor for domain logic
     /// </summary>
-    internal IdentityUserClaim(Guid userId, Claim claim) : base(claim)
+    protected internal IdentityUserClaim(Guid userId, Claim claim) : base(claim)
     {
         UserId = userId;
     }
@@ -27,7 +27,7 @@ public class IdentityUserClaim : IdentityClaim
     /// <summary>
     /// Public constructor for creating user claims
     /// </summary>
-    public IdentityUserClaim(Guid userId, string claimType, string claimValue)
+    protected internal IdentityUserClaim(Guid userId, string claimType, string claimValue)
         : base(claimType, claimValue)
     {
         UserId = userId;

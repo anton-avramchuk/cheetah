@@ -1,3 +1,4 @@
+using Cheetah.Backend.IdentityCore.Domain;
 using Cheetah.Core.Domain;
 
 namespace Cheetah.Identity.Domain.Entities;
@@ -6,16 +7,15 @@ namespace Cheetah.Identity.Domain.Entities;
 /// Role claim - represents a permission assigned to a role
 /// Example: ClaimType = "Permission", ClaimValue = "Users.Create"
 /// </summary>
-public class RoleClaim : Claim
+public class RoleClaim : IdentityRoleClaim
 {
-    public Guid RoleId { get; private set; }
+    
 
     private RoleClaim() { } // For EF Core
 
     private RoleClaim(Guid roleId, string claimType, string claimValue)
-        : base(claimType, claimValue)
+        : base(roleId, claimType, claimValue)
     {
-        RoleId = roleId;
     }
 
     /// <summary>

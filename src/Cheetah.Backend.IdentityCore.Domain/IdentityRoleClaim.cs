@@ -19,7 +19,7 @@ public class IdentityRoleClaim : IdentityClaim
     /// <summary>
     /// Internal constructor for domain logic
     /// </summary>
-    internal IdentityRoleClaim(Guid roleId, Claim claim) : base(claim)
+    protected internal IdentityRoleClaim(Guid roleId, Claim claim) : base(claim)
     {
         RoleId = roleId;
     }
@@ -27,7 +27,7 @@ public class IdentityRoleClaim : IdentityClaim
     /// <summary>
     /// Public constructor for creating role claims
     /// </summary>
-    public IdentityRoleClaim(Guid roleId, string claimType, string claimValue)
+    protected internal IdentityRoleClaim(Guid roleId, string claimType, string claimValue)
         : base(claimType, claimValue)
     {
         RoleId = roleId;

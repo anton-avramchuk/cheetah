@@ -10,7 +10,8 @@ public class UserRoleConfiguration : IEntityTypeConfiguration<UserRole>
     {
         builder.ToTable("UserRoles");
 
-        builder.HasKey(ur => ur.Id);
+        // Composite key
+        builder.HasKey(ur => new { ur.UserId, ur.RoleId });
 
         builder.Property(ur => ur.UserId)
             .IsRequired();
@@ -20,9 +21,5 @@ public class UserRoleConfiguration : IEntityTypeConfiguration<UserRole>
 
         builder.Property(ur => ur.AssignedAt)
             .IsRequired();
-
-        // Unique constraint: one user can't have the same role twice
-        builder.HasIndex(ur => new { ur.UserId, ur.RoleId })
-            .IsUnique();
     }
 }
