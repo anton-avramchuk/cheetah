@@ -36,6 +36,7 @@
         <Project Path="src/Cheetah.Backend.IdentityCore.Contracts/Cheetah.Backend.IdentityCore.Contracts.csproj" />
         <Project Path="src/Cheetah.Backend.IdentityCore.DataAccess/Cheetah.Backend.IdentityCore.DataAccess.csproj" />
         <Project Path="src/Cheetah.Backend.IdentityCore.Shared/Cheetah.Backend.IdentityCore.Shared.csproj" />
+        <Project Path="tests/Cheetah.Backend.IdentityCore.Domain.Tests/Cheetah.Backend.IdentityCore.Domain.Tests.csproj" />
     </Folder>
     <Folder Name="/Core/Frontend/">
         <Project Path="src/Cheetah.Blazor.Components/Cheetah.Blazor.Components.csproj" />
