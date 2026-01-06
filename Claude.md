@@ -14,21 +14,24 @@ Modular .NET 10.0 CRM framework with event-driven architecture. Monolith with mi
 - Auto-registration via Source Generators
 - Topological dependency sorting
 
-**Module Structure (9 assemblies per large module):**
+**Module Structure (11 assemblies per large module):**
 ```
 Cheetah.{ModuleName}/
-├── Events/              # Domain Events (contracts, NO dependencies)
+├── Events/              # Domain Events (contracts, NO dependencies except Core.Events)
+├── Shared/              # Constants, Enums (depends ONLY on Core)
+├── Contracts/           # DTOs, ViewModels, Requests (depends on Core + Shared)
 ├── Domain/              # Entities, Value Objects (depends on Events)
 ├── Application/         # CQRS, Business Logic (depends on Domain)
 ├── DataAccess/          # EF Core, Migrations (depends on Domain)
-├── Api/                 # Minimal API (depends on Application)
-├── Shared/              # DTOs, ViewModels (NO dependencies)
-├── Frontend/            # Blazor components (depends on Shared)
-├── Client/              # Backend HTTP client (depends on Shared)
+├── Api/                 # Minimal API (depends on Application + Contracts)
+├── Frontend/            # Blazor components (depends on Contracts)
+├── Client/              # Backend HTTP client (depends on Contracts)
 ├── Frontend.Client/     # Blazor CQRS handlers (depends on Client)
 └── Tests/
-    ├── Client.Tests/
-    └── Frontend.Client.Tests/
+    ├── Domain.Tests/          # Unit tests for Domain layer
+    ├── Application.Tests/     # Unit tests for Application layer
+    ├── Client.Tests/          # Unit tests for Client library
+    └── Frontend.Client.Tests/ # Unit tests for Frontend.Client library
 ```
 
 **Solution Organization:** All projects in `/Modules/{ModuleName}/` folder.
@@ -209,6 +212,92 @@ public partial class CrmTenantsFrontendClientModule : CrmModule { }
 ```
 
 **Both MUST have comprehensive tests.**
+
+### Shared and Contracts Libraries
+
+For large modules with complex data structures and validation rules, use separate **Shared** and **Contracts** libraries as demonstrated in the Tenants module.
+
+**Shared Library** (`{ModuleName}.Shared/`):
+- **Purpose**: Constants, enums, shared configuration values
+- **Dependencies**: ONLY depends on `Cheetah.Core`
+- **NO business logic, NO DTOs**
+
+```csharp
+// Cheetah.Tenants.Shared/Constants/TenantConstants.cs
+namespace Cheetah.Tenants.Shared.Constants;
+
+public static class TenantConstants
+{
+    public const int MaxNameLength = 256;
+    public const int MaxNormalizedNameLength = 256;
+    public const int MaxSubdomainLength = 128;
+    public const int MaxDescriptionLength = 2000;
+}
+```
+
+**Contracts Library** (`{ModuleName}.Contracts/`):
+- **Purpose**: DTOs (ViewModels, Requests, Responses)
+- **Dependencies**: `Cheetah.Core` + `{ModuleName}.Shared`
+- **NO business logic, ONLY data contracts**
+
+```csharp
+// Cheetah.Tenants.Contracts/ViewModels/TenantViewModel.cs
+namespace Cheetah.Tenants.Contracts.ViewModels;
+
+public class TenantViewModel
+{
+    public Guid Id { get; set; }
+    public string Name { get; set; } = null!;
+    public bool IsActive { get; set; }
+    public DateTimeOffset? CreatedAt { get; set; }
+}
+
+// Cheetah.Tenants.Contracts/Requests/CreateTenantRequest.cs
+namespace Cheetah.Tenants.Contracts.Requests;
+
+public class CreateTenantRequest
+{
+    public string Name { get; set; } = null!;
+    public string? Subdomain { get; set; }
+}
+```
+
+**When to Use Shared/Contracts:**
+- ✅ Large modules with many DTOs (5+ ViewModels/Requests)
+- ✅ Shared constants referenced by Domain, Application, and API layers
+- ✅ Modules that need clear separation of concerns
+- ❌ Small modules with 2-3 simple DTOs (use single Contracts library)
+- ❌ Modules with no reusable constants (skip Shared)
+
+**Dependency Order:**
+```
+Events (no deps)
+  ↓
+Shared (Core only)
+  ↓
+Contracts (Core + Shared)
+  ↓
+Domain (Events) → Application (Domain) → Api (Application + Contracts)
+  ↓                 ↓
+DataAccess (Domain)  ↓
+                     ↓
+Client (Contracts) → Frontend.Client (Client) → Frontend (Contracts)
+```
+
+**Example Module Structure (Tenants):**
+```
+Cheetah.Tenants/
+├── Cheetah.Tenants.Events/          # TenantCreatedEvent
+├── Cheetah.Tenants.Shared/          # TenantConstants
+├── Cheetah.Tenants.Contracts/       # TenantViewModel, CreateTenantRequest
+├── Cheetah.Tenants.Domain/          # Tenant entity
+├── Cheetah.Tenants.Application/     # CreateTenantCommandHandler
+├── Cheetah.Tenants.DataAccess/      # TenantsDbContext
+├── Cheetah.Tenants.Api/             # Minimal API endpoints
+├── Cheetah.Tenants.Client/          # ITenantClient
+├── Cheetah.Tenants.Frontend.Client/ # Frontend CQRS handlers
+└── Cheetah.Tenants.Frontend/        # Blazor components
+```
 
 ### Tenant-Based Modules & Database Provisioning
 
