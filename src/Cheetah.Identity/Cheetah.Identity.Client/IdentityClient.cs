@@ -1,8 +1,8 @@
 using System.Net;
 using System.Net.Http.Json;
 using Cheetah.Core.DependencyInjection;
-using Cheetah.Identity.Shared.Requests;
-using Cheetah.Identity.Shared.ViewModels;
+using Cheetah.Identity.Contracts.Requests;
+using Cheetah.Identity.Contracts.ViewModels;
 
 namespace Cheetah.Identity.Client;
 

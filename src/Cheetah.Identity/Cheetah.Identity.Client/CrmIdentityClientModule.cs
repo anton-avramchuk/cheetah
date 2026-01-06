@@ -1,12 +1,12 @@
 using Cheetah.Core.Modularity;
-using Cheetah.Identity.Shared;
+using Cheetah.Identity.Contracts;
 
 namespace Cheetah.Identity.Client;
 
 /// <summary>
 /// Identity Client module - Backend client for Identity API
 /// </summary>
-[DependsOn(typeof(CrmIdentitySharedModule))]
+[DependsOn(typeof(CrmIdentityContractsModule))]
 public partial class CrmIdentityClientModule : CrmModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)

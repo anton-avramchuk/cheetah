@@ -1,7 +1,7 @@
 using Cheetah.Core.CQRS;
 using Cheetah.Core.DependencyInjection;
 using Cheetah.Identity.Client;
-using Cheetah.Identity.Shared.ViewModels;
+using Cheetah.Identity.Contracts.ViewModels;
 
 namespace Cheetah.Identity.Frontend.Client.Queries;
 

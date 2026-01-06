@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Cheetah.Identity\Cheetah.Identity.Client\Cheetah.Identity.Client.csproj" />
+    <ProjectReference Include="..\..\src\Cheetah.Identity\Cheetah.Identity.Contracts\Cheetah.Identity.Contracts.csproj" />
   </ItemGroup>
 
 </Project>

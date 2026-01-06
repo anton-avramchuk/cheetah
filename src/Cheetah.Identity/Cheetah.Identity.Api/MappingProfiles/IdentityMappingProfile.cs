@@ -1,5 +1,5 @@
 using Cheetah.Identity.Application.Commands;
-using Cheetah.Identity.Shared.Requests;
+using Cheetah.Identity.Contracts.Requests;
 using Cheetah.Mapping.Mapster;
 using Mapster;
 

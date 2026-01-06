@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Cheetah.Core\Cheetah.Core.csproj" />
-    <ProjectReference Include="..\Cheetah.Identity.Shared\Cheetah.Identity.Shared.csproj" />
+    <ProjectReference Include="..\Cheetah.Identity.Contracts\Cheetah.Identity.Contracts.csproj" />
   </ItemGroup>
 
   <ItemGroup>

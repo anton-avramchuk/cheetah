@@ -2,8 +2,8 @@ using Cheetah.Core.DependencyInjection;
 using Cheetah.Mapping.Mapster;
 using Cheetah.Tenants.Application.Commands;
 using Cheetah.Tenants.Domain.Entities;
-using Cheetah.Tenants.Shared.Requests;
-using Cheetah.Tenants.Shared.ViewModels;
+using Cheetah.Tenants.Contracts.Requests;
+using Cheetah.Tenants.Contracts.ViewModels;
 using Mapster;
 
 namespace Cheetah.Tenants.Api;

@@ -1,6 +1,6 @@
 using Cheetah.Identity.Client;
 using Cheetah.Identity.Frontend.Client.Queries;
-using Cheetah.Identity.Shared.ViewModels;
+using Cheetah.Identity.Contracts.ViewModels;
 using FluentAssertions;
 using Moq;
 

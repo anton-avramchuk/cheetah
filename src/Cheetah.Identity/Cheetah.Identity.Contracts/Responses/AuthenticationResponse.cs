@@ -1,4 +1,4 @@
-namespace Cheetah.Identity.Shared.Responses;
+namespace Cheetah.Identity.Contracts.Responses;
 
 /// <summary>
 /// Response after successful authentication

@@ -1,4 +1,4 @@
-namespace Cheetah.Identity.Shared.Requests;
+namespace Cheetah.Identity.Contracts.Requests;
 
 /// <summary>
 /// Request to add a permission (claim) to a role or user

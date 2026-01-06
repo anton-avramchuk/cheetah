@@ -1,5 +1,5 @@
-using Cheetah.Tenants.Shared.Requests;
-using Cheetah.Tenants.Shared.ViewModels;
+using Cheetah.Tenants.Contracts.Requests;
+using Cheetah.Tenants.Contracts.ViewModels;
 
 namespace Cheetah.Tenants.ApiClient.Interfaces;
 

@@ -1,4 +1,4 @@
-namespace Cheetah.Identity.Shared.ViewModels;
+namespace Cheetah.Identity.Contracts.ViewModels;
 
 /// <summary>
 /// Detailed role information with permissions

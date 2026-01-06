@@ -4,7 +4,7 @@ using Cheetah.Tenants.Application.Queries;
 using Cheetah.Tenants.Application.Services;
 using Cheetah.Tenants.Client.Interfaces;
 using Cheetah.Tenants.Domain.Entities;
-using Cheetah.Tenants.Shared.ViewModels;
+using Cheetah.Tenants.Contracts.ViewModels;
 
 namespace Cheetah.Tenants.Client.Implementation;
 

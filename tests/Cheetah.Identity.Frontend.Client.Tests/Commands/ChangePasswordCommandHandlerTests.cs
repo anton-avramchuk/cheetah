@@ -1,6 +1,6 @@
 using Cheetah.Identity.Client;
 using Cheetah.Identity.Frontend.Client.Commands;
-using Cheetah.Identity.Shared.Requests;
+using Cheetah.Identity.Contracts.Requests;
 using FluentAssertions;
 using Moq;
 

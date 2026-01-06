@@ -1,4 +1,4 @@
-using Cheetah.Tenants.Shared.ViewModels;
+using Cheetah.Tenants.Contracts.ViewModels;
 
 namespace Cheetah.Tenants.Client.Interfaces;
 

@@ -17,7 +17,7 @@
     <ProjectReference Include="..\..\Cheetah.Tenants\Cheetah.Tenants.Client\Cheetah.Tenants.Client.csproj" />
     <ProjectReference Include="..\Cheetah.Identity.Domain\Cheetah.Identity.Domain.csproj" />
     <ProjectReference Include="..\Cheetah.Identity.Events\Cheetah.Identity.Events.csproj" />
-    <ProjectReference Include="..\Cheetah.Identity.Shared\Cheetah.Identity.Shared.csproj" />
+    <ProjectReference Include="..\Cheetah.Identity.Contracts\Cheetah.Identity.Contracts.csproj" />
     <ProjectReference Include="..\Cheetah.Identity.DataAccess\Cheetah.Identity.DataAccess.csproj" />
   </ItemGroup>
 

@@ -10,6 +10,7 @@
     <ProjectReference Include="..\..\Cheetah.Core\Cheetah.Core.csproj" />
     <ProjectReference Include="..\..\Cheetah.Core.CQRS\Cheetah.Core.CQRS.csproj" />
     <ProjectReference Include="..\Cheetah.Identity.Client\Cheetah.Identity.Client.csproj" />
+    <ProjectReference Include="..\Cheetah.Identity.Contracts\Cheetah.Identity.Contracts.csproj" />
   </ItemGroup>
 
   <ItemGroup>

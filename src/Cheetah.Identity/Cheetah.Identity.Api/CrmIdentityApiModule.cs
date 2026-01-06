@@ -6,9 +6,9 @@ using Cheetah.Core.Modularity;
 using Cheetah.Identity.Application;
 using Cheetah.Identity.Application.Commands;
 using Cheetah.Identity.Application.Queries;
-using Cheetah.Identity.Shared;
-using Cheetah.Identity.Shared.Requests;
-using Cheetah.Identity.Shared.ViewModels;
+using Cheetah.Identity.Contracts;
+using Cheetah.Identity.Contracts.Requests;
+using Cheetah.Identity.Contracts.ViewModels;
 using Cheetah.Mapping.Core;
 using Cheetah.Mapping.Mapster;
 using Microsoft.AspNetCore.Builder;
@@ -20,7 +20,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Cheetah.Identity.Api;
 
 [DependsOn(typeof(CrmIdentityApplicationModule))]
-[DependsOn(typeof(CrmIdentitySharedModule))]
+[DependsOn(typeof(CrmIdentityContractsModule))]
 [DependsOn(typeof(CrmAspNetCoreModule))]
 [DependsOn(typeof(CrmMapsterModule))]
 public partial class CrmIdentityApiModule : CrmModule

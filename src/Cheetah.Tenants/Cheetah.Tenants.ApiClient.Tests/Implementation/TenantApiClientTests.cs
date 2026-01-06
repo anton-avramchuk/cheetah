@@ -1,8 +1,8 @@
 using System.Net;
 using Cheetah.Tenants.ApiClient.Implementation;
 using Cheetah.Tenants.ApiClient.Tests.TestHelpers;
-using Cheetah.Tenants.Shared.Requests;
-using Cheetah.Tenants.Shared.ViewModels;
+using Cheetah.Tenants.Contracts.Requests;
+using Cheetah.Tenants.Contracts.ViewModels;
 using FluentAssertions;
 
 namespace Cheetah.Tenants.ApiClient.Tests.Implementation;

@@ -4,6 +4,7 @@ using Cheetah.Frontend.CQRS;
 using Cheetah.Frontend.Events;
 using Cheetah.Blazor.Components;
 using Cheetah.Tenants.ApiClient;
+using Cheetah.Tenants.Contracts;
 
 namespace Cheetah.Tenants.Frontend;
 
@@ -16,6 +17,7 @@ namespace Cheetah.Tenants.Frontend;
 [DependsOn(typeof(CrmFrontendEventsModule))]
 [DependsOn(typeof(CrmBlazorComponentsModule))]
 [DependsOn(typeof(CrmTenantsApiClientModule))]
+[DependsOn(typeof(CrmTenantsContractsModule))]
 public partial class CrmTenantsFrontendModule : CrmModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)

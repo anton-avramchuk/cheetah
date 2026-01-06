@@ -1,7 +1,7 @@
 using Cheetah.Core.CQRS;
 using Cheetah.Core.DependencyInjection;
 using Cheetah.Identity.Client;
-using Cheetah.Identity.Shared.Requests;
+using Cheetah.Identity.Contracts.Requests;
 
 namespace Cheetah.Identity.Frontend.Client.Commands;
 

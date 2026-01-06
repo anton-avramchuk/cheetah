@@ -1,4 +1,4 @@
-namespace Cheetah.Tenants.Shared.ViewModels;
+namespace Cheetah.Tenants.Contracts.ViewModels;
 
 public class TenantConnectionStringViewModel
 {

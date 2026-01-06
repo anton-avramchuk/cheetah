@@ -1,8 +1,8 @@
 using System.Net.Http.Json;
 using Cheetah.Core.DependencyInjection;
 using Cheetah.Tenants.ApiClient.Interfaces;
-using Cheetah.Tenants.Shared.Requests;
-using Cheetah.Tenants.Shared.ViewModels;
+using Cheetah.Tenants.Contracts.Requests;
+using Cheetah.Tenants.Contracts.ViewModels;
 
 namespace Cheetah.Tenants.ApiClient.Implementation;
 

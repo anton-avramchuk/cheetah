@@ -12,7 +12,7 @@
     <ProjectReference Include="..\..\Cheetah.Core.CQRS\Cheetah.Core.CQRS.csproj" />
     <ProjectReference Include="..\..\Cheetah.Mapping.Mapster\Cheetah.Mapping.Mapster.csproj" />
     <ProjectReference Include="..\Cheetah.Identity.Application\Cheetah.Identity.Application.csproj" />
-    <ProjectReference Include="..\Cheetah.Identity.Shared\Cheetah.Identity.Shared.csproj" />
+    <ProjectReference Include="..\Cheetah.Identity.Contracts\Cheetah.Identity.Contracts.csproj" />
   </ItemGroup>
 
   <ItemGroup>

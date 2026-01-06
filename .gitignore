@@ -420,3 +420,4 @@ FodyWeavers.xsd
 
 # Source Generator BuildHost directories
 **/BuildHost-*/
+.claude

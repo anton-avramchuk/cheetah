@@ -8,16 +8,16 @@ using Cheetah.Mapping.Mapster;
 using Cheetah.Tenants.Application;
 using Cheetah.Tenants.Application.Commands;
 using Cheetah.Tenants.Application.Queries;
+using Cheetah.Tenants.Contracts;
+using Cheetah.Tenants.Contracts.Requests;
+using Cheetah.Tenants.Contracts.ViewModels;
 using Cheetah.Tenants.Domain.Entities;
-using Cheetah.Tenants.Shared;
-using Cheetah.Tenants.Shared.Requests;
-using Cheetah.Tenants.Shared.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Cheetah.Tenants.Api;
 
 [DependsOn(typeof(CrmTenantsApplicationModule))]
-[DependsOn(typeof(CrmTenantsSharedModule))]
+[DependsOn(typeof(CrmTenantsContractsModule))]
 [DependsOn(typeof(CrmAspNetCoreModule))]
 [DependsOn(typeof(CrmMapsterModule))]
 public partial class CrmTenantsApiModule : CrmModule

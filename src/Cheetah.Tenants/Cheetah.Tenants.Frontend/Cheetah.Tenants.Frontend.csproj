@@ -5,7 +5,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Cheetah.Tenants.Shared\Cheetah.Tenants.Shared.csproj" />
+    <ProjectReference Include="..\Cheetah.Tenants.Contracts\Cheetah.Tenants.Contracts.csproj" />
     <ProjectReference Include="..\Cheetah.Tenants.ApiClient\Cheetah.Tenants.ApiClient.csproj" />
     <ProjectReference Include="..\..\Cheetah.Frontend.CQRS\Cheetah.Frontend.CQRS.csproj" />
     <ProjectReference Include="..\..\Cheetah.Frontend.Events\Cheetah.Frontend.Events.csproj" />

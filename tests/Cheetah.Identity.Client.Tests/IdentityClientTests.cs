@@ -1,8 +1,8 @@
 using System.Net;
 using System.Net.Http.Json;
 using Cheetah.Identity.Client;
-using Cheetah.Identity.Shared.Requests;
-using Cheetah.Identity.Shared.ViewModels;
+using Cheetah.Identity.Contracts.Requests;
+using Cheetah.Identity.Contracts.ViewModels;
 using FluentAssertions;
 using Moq;
 using Moq.Protected;

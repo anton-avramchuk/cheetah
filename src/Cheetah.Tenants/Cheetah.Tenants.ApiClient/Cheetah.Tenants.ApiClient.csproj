@@ -2,7 +2,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\Cheetah.Core\Cheetah.Core.csproj" />
-        <ProjectReference Include="..\Cheetah.Tenants.Shared\Cheetah.Tenants.Shared.csproj" />
+        <ProjectReference Include="..\Cheetah.Tenants.Contracts\Cheetah.Tenants.Contracts.csproj" />
     </ItemGroup>
 
     <ItemGroup>

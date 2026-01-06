@@ -1,4 +1,4 @@
-namespace Cheetah.Tenants.Shared.Requests;
+namespace Cheetah.Tenants.Contracts.Requests;
 
 public class CreateTenantRequest
 {
