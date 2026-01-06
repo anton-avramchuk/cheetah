@@ -9,11 +9,13 @@ using Cheetah.Core.Modularity;
 using Cheetah.Tenants.Domain;
 using Cheetah.Tenants.Domain.Entities;
 using Cheetah.Tenants.Events;
+using Cheetah.Tenants.Shared;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Cheetah.Tenants.DataAccess;
 
 [DependsOn(typeof(CrmTenantsDomainModule))]
+[DependsOn(typeof(CrmTenantsSharedModule))]
 [DependsOn(typeof(CrmEntityFrameworkTenantsModule))]
 [DependsOn(typeof(CrmEntityFrameworkPostgreSqlModule))]
 public partial class CrmTenantsDataAccessModule : CrmModule
