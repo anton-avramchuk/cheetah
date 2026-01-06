@@ -33,6 +33,7 @@
     <Folder Name="/Core/Backend/Identity/">
         <Project Path="src/Cheetah.Backend.IdentityCore.Events/Cheetah.Backend.IdentityCore.Events.csproj" />
         <Project Path="src/Cheetah.Backend.IdentityCore.Domain/Cheetah.Backend.IdentityCore.Domain.csproj" />
+        <Project Path="src/Cheetah.Backend.IdentityCore.Contracts/Cheetah.Backend.IdentityCore.Contracts.csproj" />
         <Project Path="src/Cheetah.Backend.IdentityCore.DataAccess/Cheetah.Backend.IdentityCore.DataAccess.csproj" />
         <Project Path="src/Cheetah.Backend.IdentityCore.Shared/Cheetah.Backend.IdentityCore.Shared.csproj" />
     </Folder>
@@ -50,6 +51,7 @@
         <Project Path="tests/Cheetah.Tenants.Application.Tests/Cheetah.Tenants.Application.Tests.csproj" />
         <Project Path="src/Cheetah.Tenants/Cheetah.Tenants.Client.Tests/Cheetah.Tenants.Client.Tests.csproj" />
         <Project Path="src/Cheetah.Tenants/Cheetah.Tenants.Client/Cheetah.Tenants.Client.csproj" />
+        <Project Path="src/Cheetah.Tenants/Cheetah.Tenants.Contracts/Cheetah.Tenants.Contracts.csproj" />
         <Project Path="src/Cheetah.Tenants/Cheetah.Tenants.DataAccess/Cheetah.Tenants.DataAccess.csproj" />
         <Project Path="src/Cheetah.Tenants/Cheetah.Tenants.Api/Cheetah.Tenants.Api.csproj" />
         <Project Path="src/Cheetah.Tenants/Cheetah.Tenants.Shared/Cheetah.Tenants.Shared.csproj" />
@@ -74,6 +76,7 @@
         <Project Path="src/Cheetah.Identity/Cheetah.Identity.Events/Cheetah.Identity.Events.csproj" />
         <Project Path="src/Cheetah.Identity/Cheetah.Identity.Domain/Cheetah.Identity.Domain.csproj" />
         <Project Path="src/Cheetah.Identity/Cheetah.Identity.Application/Cheetah.Identity.Application.csproj" />
+        <Project Path="src/Cheetah.Identity/Cheetah.Identity.Contracts/Cheetah.Identity.Contracts.csproj" />
         <Project Path="src/Cheetah.Identity/Cheetah.Identity.DataAccess/Cheetah.Identity.DataAccess.csproj" />
         <Project Path="src/Cheetah.Identity/Cheetah.Identity.Api/Cheetah.Identity.Api.csproj" />
         <Project Path="src/Cheetah.Identity/Cheetah.Identity.Shared/Cheetah.Identity.Shared.csproj" />
