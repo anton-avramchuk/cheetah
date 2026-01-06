@@ -9,6 +9,6 @@ public static class IdentityUserConstants
     public const int MaxNormalizedUserNameLength = 256;
     public const int MaxEmailLength = 256;
     public const int MaxNormalizedEmailLength = 256;
-    public const int MaxPasswordHashLength = 256;
-    public const int MaxSecurityStampLength = 256;
+    public const int MaxPasswordHashLength = 1024;
+    public const int MaxSecurityStampLength = 1024;
 }

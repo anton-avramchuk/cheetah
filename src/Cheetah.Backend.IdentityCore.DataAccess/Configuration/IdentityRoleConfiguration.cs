@@ -1,23 +1,25 @@
 using Cheetah.Backend.IdentityCore.Domain;
 using Cheetah.Backend.IdentityCore.Shared.Constants;
+using Cheetah.Core.EntityFramework.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Cheetah.Backend.IdentityCore.DataAccess.Configuration;
 
-public abstract class IdentityRoleConfiguration<TIdentityRole> : IdentityConfiguration<TIdentityRole>
-    where TIdentityRole : IdentityRole
+public abstract class IdentityRoleConfiguration : AggregateRootConfiguration<IdentityRole,Guid,IdentityRoleConfigurationOptions>
 {
-    public override void Configure(EntityTypeBuilder<TIdentityRole> builder)
+    protected override IdentityRoleConfigurationOptions Options { get; } = new();
+
+    public override void Configure(EntityTypeBuilder<IdentityRole> builder)
     {
-        builder.ToTable(TableName, Schema);
+        base.Configure(builder);
 
-
-        builder.Property(r => r.Name).IsRequired().HasMaxLength(IdentityRoleConstants.MaxNameLength);
+        builder.Property(r => r.Name).IsRequired().HasMaxLength(Options.NameMaxLength);
         builder.Property(r => r.NormalizedName).IsRequired()
-            .HasMaxLength(IdentityRoleConstants.MaxNormalizedNameLength);
+            .HasMaxLength(Options.NormalizedNameMaxLength);
 
-        builder.HasMany(r => r.Claims).WithOne().HasForeignKey(rc => rc.RoleId).IsRequired();
+        builder.HasMany(r => r.Claims).WithOne()
+            .HasForeignKey(rc => rc.RoleId).IsRequired();
 
         builder.HasIndex(r => r.NormalizedName);
 
@@ -27,4 +29,13 @@ public abstract class IdentityRoleConfiguration<TIdentityRole> : IdentityConfigu
 
         claimsNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
     }
+}
+
+public class IdentityRoleConfigurationOptions : AggregateRootConfigurationOptions<IdentityRole, Guid>
+{
+    public override string Schema => Constants.DefaultSchema;
+
+    public int NameMaxLength { get; set; } = IdentityRoleConstants.MaxNameLength;
+
+    public int NormalizedNameMaxLength { get; set; }= IdentityRoleConstants.MaxNormalizedNameLength;
 }
