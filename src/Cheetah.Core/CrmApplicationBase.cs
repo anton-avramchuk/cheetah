@@ -309,4 +309,24 @@ public abstract class CrmApplicationBase : ICrmApplication
             crmHostEnvironment.EnvironmentName = Environments.Production;
         }
     }
+    
+    public virtual void Shutdown()
+    {
+        using (var scope = ServiceProvider.CreateScope())
+        {
+            scope.ServiceProvider
+                .GetRequiredService<IModuleManager>()
+                .ShutdownModules(new ApplicationShutdownContext(scope.ServiceProvider));
+        }
+    }
+    
+    public virtual async Task ShutdownAsync()
+    {
+        using (var scope = ServiceProvider.CreateScope())
+        {
+            await scope.ServiceProvider
+                .GetRequiredService<IModuleManager>()
+                .ShutdownModulesAsync(new ApplicationShutdownContext(scope.ServiceProvider));
+        }
+    }
 }

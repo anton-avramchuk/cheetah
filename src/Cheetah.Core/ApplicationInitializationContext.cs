@@ -2,12 +2,7 @@ using Cheetah.Core.DependencyInjection;
 
 namespace Cheetah.Core;
 
-public class ApplicationInitializationContext : IServiceProviderAccessor
+public class ApplicationInitializationContext(IServiceProvider serviceProvider) : IServiceProviderAccessor
 {
-    public IServiceProvider ServiceProvider { get; set; }
-
-    public ApplicationInitializationContext(IServiceProvider serviceProvider)
-    {
-        ServiceProvider = serviceProvider;
-    }
+    public IServiceProvider ServiceProvider { get; set; } = serviceProvider;
 }

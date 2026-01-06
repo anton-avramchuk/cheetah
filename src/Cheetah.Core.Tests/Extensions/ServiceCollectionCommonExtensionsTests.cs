@@ -240,6 +240,15 @@ public class ServiceCollectionCommonExtensionsTests
         public string InstanceId => Guid.NewGuid().ToString();
 
         public Task ConfigureServicesAsync() => Task.CompletedTask;
+        public void Shutdown()
+        {
+            
+        }
+
+        public Task ShutdownAsync()
+        {
+            return Task.CompletedTask;
+        }
 
         public void Dispose() { }
     }

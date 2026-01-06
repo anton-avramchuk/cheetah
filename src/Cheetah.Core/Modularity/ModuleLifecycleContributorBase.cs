@@ -10,4 +10,13 @@ public abstract class ModuleLifecycleContributorBase : IModuleLifecycleContribut
     public virtual void Initialize(ApplicationInitializationContext context, ICrmModule module)
     {
     }
+
+    public virtual Task ShutdownAsync(ApplicationShutdownContext context, ICrmModule module)
+    {
+        return Task.CompletedTask;
+    }
+
+    public virtual void Shutdown(ApplicationShutdownContext context, ICrmModule module)
+    {
+    }
 }

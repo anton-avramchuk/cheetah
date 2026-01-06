@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Cheetah.Core.Modularity;
 
 public abstract class CrmModule : ICrmModule, IOnApplicationInitialization, IPreConfigureServices,
-    IPostConfigureServices, IOnPreApplicationInitialization
+    IPostConfigureServices, IOnPreApplicationInitialization, IOnApplicationShutdown 
 {
     internal static void CheckCrmModuleType(Type moduleType)
     {
@@ -32,7 +32,8 @@ public abstract class CrmModule : ICrmModule, IOnApplicationInitialization, IPre
         {
             if (_serviceConfigurationContext == null)
             {
-                throw new CrmException($"{nameof(ServiceConfigurationContext)} is only available in the {nameof(ConfigureServices)}, {nameof(PreConfigureServices)} and {nameof(PostConfigureServices)} methods.");
+                throw new CrmException(
+                    $"{nameof(ServiceConfigurationContext)} is only available in the {nameof(ConfigureServices)}, {nameof(PreConfigureServices)} and {nameof(PostConfigureServices)} methods.");
             }
 
             return _serviceConfigurationContext;
@@ -59,25 +60,22 @@ public abstract class CrmModule : ICrmModule, IOnApplicationInitialization, IPre
 
     public virtual void PreConfigureServices(ServiceConfigurationContext context)
     {
-        
     }
 
     public virtual void PostConfigureServices(ServiceConfigurationContext context)
     {
-        
     }
 
     public virtual Task OnPreApplicationInitializationAsync(ApplicationInitializationContext context)
     {
         OnPreApplicationInitialization(context);
         return Task.CompletedTask;
-        
     }
 
     public virtual void OnPreApplicationInitialization(ApplicationInitializationContext context)
     {
     }
-    
+
     protected void Configure<TOptions>(Action<TOptions> configureOptions)
         where TOptions : class
     {
@@ -124,5 +122,16 @@ public abstract class CrmModule : ICrmModule, IOnApplicationInitialization, IPre
         where TOptions : class
     {
         ServiceConfigurationContext.Services.PostConfigureAll(configureOptions);
+    }
+
+    public virtual Task OnApplicationShutdownAsync(ApplicationShutdownContext context)
+    {
+        OnApplicationShutdown(context);
+        return Task.CompletedTask;
+    }
+
+    public virtual void OnApplicationShutdown(ApplicationShutdownContext context)
+    {
+
     }
 }

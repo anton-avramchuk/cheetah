@@ -30,4 +30,14 @@ public interface ICrmApplication :
     /// option to true before.
     /// </summary>
     Task ConfigureServicesAsync();
+    
+    /// <summary>
+    /// Used to gracefully shutdown the application and all modules.
+    /// </summary>
+    void Shutdown();
+    
+    /// <summary>
+    /// Used to gracefully shutdown the application and all modules.
+    /// </summary>
+    Task ShutdownAsync();
 }

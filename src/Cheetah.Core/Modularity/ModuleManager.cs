@@ -60,5 +60,28 @@ public class ModuleManager(
         logger.LogInformation("Initialized all CRM modules.");
     }
 
+    public Task ShutdownModulesAsync(ApplicationShutdownContext context)
+    {
+        throw new NotImplementedException();
+    }
 
+    public void ShutdownModules(ApplicationShutdownContext context)
+    {
+        var modules = moduleContainer.Modules.Reverse().ToList();
+
+        foreach (var contributor in _lifecycleContributors)
+        {
+            foreach (var module in modules)
+            {
+                try
+                {
+                    contributor.Shutdown(context, module.Instance);
+                }
+                catch (Exception ex)
+                {
+                    throw new CrmException($"An error occurred during the shutdown {contributor.GetType().FullName} phase of the module {module.Type.AssemblyQualifiedName}: {ex.Message}. See the inner exception for details.", ex);
+                }
+            }
+        }
+    }
 }
