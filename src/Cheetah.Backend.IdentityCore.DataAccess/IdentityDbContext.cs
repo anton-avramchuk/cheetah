@@ -4,12 +4,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Cheetah.Backend.IdentityCore.DataAccess;
 
-public abstract class IdentityDbContext<TDbContext, TIdentityUser, TIdentityRole> : CrmDbContext<TDbContext>,
-    IIdentityDbContext
-    where TIdentityUser : IdentityUser<TIdentityRole> where TIdentityRole : IdentityRole where TDbContext : DbContext
-{
-    protected IdentityDbContext(DbContextOptions<TDbContext> options) : base(options)
-    {
-    }
-
-}
+public abstract class IdentityDbContext<TDbContext, TIdentityUser, TIdentityRole>(DbContextOptions<TDbContext> options)
+    : CrmDbContext<TDbContext>(options),
+        IIdentityDbContext
+    where TIdentityUser : IdentityUser<TIdentityRole>
+    where TIdentityRole : IdentityRole
+    where TDbContext : DbContext;

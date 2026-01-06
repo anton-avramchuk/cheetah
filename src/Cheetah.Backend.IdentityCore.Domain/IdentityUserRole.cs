@@ -2,7 +2,7 @@ using Cheetah.Core.Domain;
 
 namespace Cheetah.Backend.IdentityCore.Domain;
 
-public class IdentityUserRole<TIdentityRole> : Entity<Guid> where TIdentityRole : IdentityRole
+public class IdentityUserRole<TIdentityRole> : Entity where TIdentityRole : IdentityRole
 {
     /// <summary>
     /// Gets or sets the primary key of the user that is linked to a role.
@@ -26,7 +26,7 @@ public class IdentityUserRole<TIdentityRole> : Entity<Guid> where TIdentityRole 
     /// <summary>
     /// Constructor for creating a new user-role relationship
     /// </summary>
-    public IdentityUserRole(Guid userId, TIdentityRole role) : base(Guid.NewGuid())
+    public IdentityUserRole(Guid userId, TIdentityRole role)
     {
         if (role == null)
             throw new ArgumentNullException(nameof(role));
@@ -42,5 +42,10 @@ public class IdentityUserRole<TIdentityRole> : Entity<Guid> where TIdentityRole 
 
         Role = role;
         RoleId = role.Id;
+    }
+
+    public override object?[] GetKeys()
+    {
+        return [UserId, RoleId];
     }
 }
