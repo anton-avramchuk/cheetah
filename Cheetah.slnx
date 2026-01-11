@@ -34,6 +34,8 @@
     <Folder Name="/Core/Backend/Identity/">
         <Project Path="src/Cheetah.Backend.IdentityCore.Events/Cheetah.Backend.IdentityCore.Events.csproj" />
         <Project Path="src/Cheetah.Backend.IdentityCore.Domain/Cheetah.Backend.IdentityCore.Domain.csproj" />
+        <Project Path="src/Cheetah.Backend.IdentityCore.Api/Cheetah.Backend.IdentityCore.Api.csproj" />
+        <Project Path="src/Cheetah.Backend.IdentityCore.Application/Cheetah.Backend.IdentityCore.Application.csproj" />
         <Project Path="src/Cheetah.Backend.IdentityCore.Contracts/Cheetah.Backend.IdentityCore.Contracts.csproj" />
         <Project Path="src/Cheetah.Backend.IdentityCore.DataAccess/Cheetah.Backend.IdentityCore.DataAccess.csproj" />
         <Project Path="src/Cheetah.Backend.IdentityCore.Shared/Cheetah.Backend.IdentityCore.Shared.csproj" />
