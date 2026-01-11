@@ -1,5 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <ItemGroup>
-        <ProjectReference Include="..\Cheetah.Core\Cheetah.Core.csproj" />
+        <ProjectReference Include="..\Cheetah.Core\Cheetah.Core.csproj"/>
+    </ItemGroup>
+    <ItemGroup>
+      <Folder Include="Commands\" />
+      <Folder Include="Queries\" />
     </ItemGroup>
 </Project>
