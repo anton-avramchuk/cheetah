@@ -1,7 +1,6 @@
-﻿using System;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 
-namespace Volo.Abp.Specifications;
+namespace Cheetah.Core.Specification;
 
 /// <summary>
 /// Represents that the implemented classes are specifications. For more

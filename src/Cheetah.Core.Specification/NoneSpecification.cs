@@ -1,7 +1,6 @@
-﻿using System;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 
-namespace Volo.Abp.Specifications;
+namespace Cheetah.Core.Specification;
 
 /// <summary>
 /// Represents the specification that can be satisfied by the given object

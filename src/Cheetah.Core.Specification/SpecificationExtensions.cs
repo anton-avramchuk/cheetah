@@ -1,6 +1,4 @@
-﻿using JetBrains.Annotations;
-
-namespace Volo.Abp.Specifications;
+﻿namespace Cheetah.Core.Specification;
 
 public static class SpecificationExtensions
 {
@@ -12,12 +10,9 @@ public static class SpecificationExtensions
     /// <param name="specification">The specification</param>
     /// <param name="other">The specification instance with which the current specification is combined.</param>
     /// <returns>The combined specification instance.</returns>
-    public static ISpecification<T> And<T>([NotNull] this ISpecification<T> specification,
-        [NotNull] ISpecification<T> other)
+    public static ISpecification<T> And<T>(this ISpecification<T> specification,
+        ISpecification<T> other)
     {
-        Check.NotNull(specification, nameof(specification));
-        Check.NotNull(other, nameof(other));
-
         return new AndSpecification<T>(specification, other);
     }
 
@@ -30,12 +25,9 @@ public static class SpecificationExtensions
     /// <param name="other">The specification instance with which the current specification
     /// is combined.</param>
     /// <returns>The combined specification instance.</returns>
-    public static ISpecification<T> Or<T>([NotNull] this ISpecification<T> specification,
-        [NotNull] ISpecification<T> other)
+    public static ISpecification<T> Or<T>(this ISpecification<T> specification,
+        ISpecification<T> other)
     {
-        Check.NotNull(specification, nameof(specification));
-        Check.NotNull(other, nameof(other));
-
         return new OrSpecification<T>(specification, other);
     }
 
@@ -48,12 +40,9 @@ public static class SpecificationExtensions
     /// <param name="other">The specification instance with which the current specification
     /// is combined.</param>
     /// <returns>The combined specification instance.</returns>
-    public static ISpecification<T> AndNot<T>([NotNull] this ISpecification<T> specification,
-        [NotNull] ISpecification<T> other)
+    public static ISpecification<T> AndNot<T>(this ISpecification<T> specification,
+        ISpecification<T> other)
     {
-        Check.NotNull(specification, nameof(specification));
-        Check.NotNull(other, nameof(other));
-
         return new AndNotSpecification<T>(specification, other);
     }
 
@@ -62,10 +51,8 @@ public static class SpecificationExtensions
     /// the semantics opposite to the current specification.
     /// </summary>
     /// <returns>The reversed specification instance.</returns>
-    public static ISpecification<T> Not<T>([NotNull] this ISpecification<T> specification)
+    public static ISpecification<T> Not<T>(this ISpecification<T> specification)
     {
-        Check.NotNull(specification, nameof(specification));
-
         return new NotSpecification<T>(specification);
     }
 }

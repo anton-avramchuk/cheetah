@@ -1,8 +1,6 @@
-﻿using System;
-using System.Linq;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 
-namespace Volo.Abp.Specifications;
+namespace Cheetah.Core.Specification;
 
 /// <summary>
 /// Represents the extender for Expression[Func[T, bool]] type.

@@ -1,4 +1,4 @@
-﻿namespace Volo.Abp.Specifications;
+﻿namespace Cheetah.Core.Specification;
 
 /// <summary>
 /// Represents that the implemented classes are composite specifications.

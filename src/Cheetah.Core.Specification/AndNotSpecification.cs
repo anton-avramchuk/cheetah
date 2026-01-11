@@ -1,7 +1,6 @@
-﻿using System;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 
-namespace Volo.Abp.Specifications;
+namespace Cheetah.Core.Specification;
 
 /// <summary>
 /// Represents the combined specification which indicates that the first specification
