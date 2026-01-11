@@ -1,6 +1,8 @@
+using Cheetah.AspNetCore.Contracts.Responses;
+
 namespace Cheetah.Tenants.Contracts.ViewModels;
 
-public class TenantViewModel
+public class TenantViewModel : ICrmResponse
 {
     public Guid Id { get; set; }
     public string Name { get; set; } = null!;

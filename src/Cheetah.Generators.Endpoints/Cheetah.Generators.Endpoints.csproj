@@ -22,9 +22,24 @@
     </ItemGroup>
 
     <ItemGroup>
-    <Compile Include="..\Cheetah.Generators.Core\IsExternalInit.cs">
-        <Link>IsExternalInit.cs</Link>
-    </Compile>
+        <Compile Include="..\Cheetah.Generators.Core\IsExternalInit.cs">
+            <Link>IsExternalInit.cs</Link>
+        </Compile>
+        <Compile Include="..\Cheetah.Core\Modularity\ICrmModule.cs">
+            <Link>Common\ICrmModule.cs</Link>
+        </Compile>
+        <Compile Include="..\Cheetah.Core\ApplicationInitializationContext.cs">
+            <Link>Common\ApplicationInitializationContext.cs</Link>
+        </Compile>
+        <Compile Include="..\Cheetah.Core\Modularity\ServiceConfigurationContext.cs">
+            <Link>Common\ServiceConfigurationContext.cs</Link>
+        </Compile>
+        <Compile Include="..\Cheetah.Core\DependencyInjection\IServiceProviderAccessor.cs">
+            <Link>Common\IServiceProviderAccessor.cs</Link>
+        </Compile>
+        <Compile Include="..\Cheetah.Core\Extensions\Collections\DictionaryExtensions.cs">
+            <Link>Common\DictionaryExtensions.cs</Link>
+        </Compile>
     </ItemGroup>
 
 </Project>

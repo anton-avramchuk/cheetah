@@ -1,8 +1,7 @@
-﻿using System;
-
-namespace Cheetah.Generators.Core
+﻿// ReSharper disable once CheckNamespace
+namespace System.Runtime.CompilerServices
 {
-    public class IsExternalInit
+    internal static class IsExternalInit
     {
     }
 }
