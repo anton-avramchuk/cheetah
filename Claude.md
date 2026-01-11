@@ -78,26 +78,159 @@ public class Tenant : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEntity
 **Commands** (state changes) return `Guid` or `void`. **Queries** return ViewModels.
 Use `ValueTask<T>` for hot paths, always pass `CancellationToken`.
 
+**CRITICAL: Application layer MUST NOT use DbContext directly. Use Repository pattern with Specifications.**
+
 ```csharp
 public record CreateTenantCommand(string Name) : ICommand<Guid>;
 
 [Export(LifetimeType.Scoped, typeof(ICommandHandler<CreateTenantCommand, Guid>))]
 public class CreateTenantCommandHandler : ICommandHandler<CreateTenantCommand, Guid>
 {
-    private readonly MyDbContext _db;
+    private readonly ITenantRepository _tenantRepository;
     private readonly IEventBus _eventBus;
 
     public async ValueTask<Guid> HandleAsync(CreateTenantCommand cmd, CancellationToken ct)
     {
         var tenant = Tenant.Create(cmd.Name);
-        _db.Tenants.Add(tenant);
-        await _db.SaveChangesAsync(ct);
+        _tenantRepository.Add(tenant);
+        await _tenantRepository.SaveChangesAsync(ct);
 
         foreach (var e in tenant.DomainEvents)
             await _eventBus.PublishAsync(e, ct);
         tenant.ClearDomainEvents();
 
         return tenant.Id;
+    }
+}
+```
+
+### Repository Pattern & Specifications
+
+**Application layer uses repositories, NOT DbContext directly.**
+
+**Repository Interface (Domain layer):**
+```csharp
+public interface ITenantRepository
+{
+    ValueTask<Tenant?> GetByIdAsync(Guid id, CancellationToken ct = default);
+    ValueTask<Tenant?> GetBySpecAsync(ISpecification<Tenant> spec, CancellationToken ct = default);
+    ValueTask<List<Tenant>> GetAllAsync(ISpecification<Tenant>? spec = null, CancellationToken ct = default);
+    ValueTask<bool> ExistsAsync(ISpecification<Tenant> spec, CancellationToken ct = default);
+    void Add(Tenant tenant);
+    void Update(Tenant tenant);
+    void Delete(Tenant tenant);
+    ValueTask<int> SaveChangesAsync(CancellationToken ct = default);
+    IQueryable<Tenant> AsQueryable();
+    IQueryable<Tenant> AsNoTrackingQueryable();
+}
+```
+
+**Specification (Domain layer):**
+```csharp
+public class TenantByNameSpecification : Specification<Tenant>
+{
+    private readonly string _normalizedName;
+
+    public TenantByNameSpecification(string name)
+    {
+        _normalizedName = name.ToUpperInvariant();
+    }
+
+    public override Expression<Func<Tenant, bool>> ToExpression()
+    {
+        return tenant => tenant.NormalizedName == _normalizedName;
+    }
+}
+
+public class ActiveTenantsSpecification : Specification<Tenant>
+{
+    public override Expression<Func<Tenant, bool>> ToExpression()
+    {
+        return tenant => tenant.IsActive;
+    }
+}
+```
+
+**Repository Implementation (DataAccess layer):**
+```csharp
+[Export(LifetimeType.Scoped, typeof(ITenantRepository))]
+public class TenantRepository : ITenantRepository
+{
+    private readonly MyDbContext _context;
+
+    public TenantRepository(MyDbContext context)
+    {
+        _context = context;
+    }
+
+    public async ValueTask<Tenant?> GetByIdAsync(Guid id, CancellationToken ct = default)
+    {
+        return await _context.Tenants.FindAsync(new object[] { id }, ct);
+    }
+
+    public async ValueTask<Tenant?> GetBySpecAsync(ISpecification<Tenant> spec, CancellationToken ct = default)
+    {
+        return await _context.Tenants
+            .Where(spec.ToExpression())
+            .FirstOrDefaultAsync(ct);
+    }
+
+    public async ValueTask<List<Tenant>> GetAllAsync(ISpecification<Tenant>? spec = null, CancellationToken ct = default)
+    {
+        var query = _context.Tenants.AsQueryable();
+
+        if (spec != null)
+            query = query.Where(spec.ToExpression());
+
+        return await query.ToListAsync(ct);
+    }
+
+    public IQueryable<Tenant> AsNoTrackingQueryable()
+    {
+        return _context.Tenants.AsNoTracking();
+    }
+
+    // Other methods...
+}
+```
+
+**Usage in Query Handler:**
+```csharp
+public class GetTenantByNameQueryHandler : IQueryHandler<GetTenantByNameQuery, TenantViewModel?>
+{
+    private readonly ITenantRepository _tenantRepository;
+
+    public async ValueTask<TenantViewModel?> HandleAsync(GetTenantByNameQuery query, CancellationToken ct)
+    {
+        var spec = new TenantByNameSpecification(query.Name);
+        var tenant = await _tenantRepository.GetBySpecAsync(spec, ct);
+
+        return tenant != null ? new TenantViewModel
+        {
+            Id = tenant.Id,
+            Name = tenant.Name,
+            IsActive = tenant.IsActive
+        } : null;
+    }
+}
+```
+
+**For complex queries with projections, use AsNoTrackingQueryable():**
+```csharp
+public class GetAllTenantsQueryHandler : IQueryHandler<GetAllTenantsQuery, List<TenantViewModel>>
+{
+    private readonly ITenantRepository _tenantRepository;
+
+    public async ValueTask<List<TenantViewModel>> HandleAsync(GetAllTenantsQuery query, CancellationToken ct)
+    {
+        return await _tenantRepository.AsNoTrackingQueryable()
+            .Select(t => new TenantViewModel
+            {
+                Id = t.Id,
+                Name = t.Name,
+                IsActive = t.IsActive
+            })
+            .ToListAsync(ct);
     }
 }
 ```
@@ -427,6 +560,98 @@ Cheetah.Tenants.Application/
 └── CrmTenantsApplicationModule.cs
 ```
 
+### Testing Application Layer
+
+**Use custom TestAsyncQueryProvider for testing EF Core async operations:**
+
+```csharp
+// Test helper for mocking IQueryable with async support
+internal class TestAsyncQueryProvider<TEntity> : IAsyncQueryProvider
+{
+    private readonly IQueryProvider _inner;
+
+    internal TestAsyncQueryProvider(IQueryProvider inner)
+    {
+        _inner = inner;
+    }
+
+    public IQueryable CreateQuery(Expression expression)
+    {
+        return new TestAsyncEnumerable<TEntity>(expression);
+    }
+
+    public IQueryable<TElement> CreateQuery<TElement>(Expression expression)
+    {
+        return new TestAsyncEnumerable<TElement>(expression);
+    }
+
+    public TResult ExecuteAsync<TResult>(Expression expression, CancellationToken cancellationToken = default)
+    {
+        var resultType = typeof(TResult).GetGenericArguments()[0];
+        var executionResult = typeof(IQueryProvider)
+            .GetMethod(nameof(IQueryProvider.Execute), 1, new[] { typeof(Expression) })!
+            .MakeGenericMethod(resultType)
+            .Invoke(this, new[] { expression });
+
+        return (TResult)typeof(Task).GetMethod(nameof(Task.FromResult))!
+            .MakeGenericMethod(resultType)
+            .Invoke(null, new[] { executionResult })!;
+    }
+}
+
+internal class TestAsyncEnumerable<T> : EnumerableQuery<T>, IAsyncEnumerable<T>, IQueryable<T>
+{
+    public TestAsyncEnumerable(IEnumerable<T> enumerable) : base(enumerable) { }
+    public TestAsyncEnumerable(Expression expression) : base(expression) { }
+
+    public IAsyncEnumerator<T> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+    {
+        return new TestAsyncEnumerator<T>(this.AsEnumerable().GetEnumerator());
+    }
+
+    IQueryProvider IQueryable.Provider => new TestAsyncQueryProvider<T>(this);
+}
+```
+
+**Example test:**
+```csharp
+public class GetTenantByIdQueryHandlerTests
+{
+    private readonly Mock<ITenantRepository> _tenantRepositoryMock;
+    private readonly GetTenantByIdQueryHandler _handler;
+
+    public GetTenantByIdQueryHandlerTests()
+    {
+        _tenantRepositoryMock = new Mock<ITenantRepository>();
+        _handler = new GetTenantByIdQueryHandler(_tenantRepositoryMock.Object);
+    }
+
+    [Fact]
+    public async Task HandleAsync_ShouldReturnTenant_WhenTenantExists()
+    {
+        // Arrange
+        var tenantId = Guid.NewGuid();
+        var query = new GetTenantByIdQuery(tenantId);
+
+        var tenant = Tenant.Create("Test Tenant");
+        typeof(Tenant).GetProperty("Id")!.SetValue(tenant, tenantId);
+
+        var tenants = new TestAsyncEnumerable<Tenant>(new List<Tenant> { tenant });
+
+        _tenantRepositoryMock.Setup(x => x.AsNoTrackingQueryable())
+            .Returns(tenants);
+
+        // Act
+        var result = await _handler.HandleAsync(query, CancellationToken.None);
+
+        // Assert
+        result.Should().NotBeNull();
+        result!.Id.Should().Be(tenantId);
+        result.Name.Should().Be("Test Tenant");
+    }
+}
+```
+
 ### Project Configuration
 
 Use `$(MsPackageVersion)` for Microsoft packages (defined in `src/Directory.Build.props`):
@@ -479,6 +704,8 @@ Use `$(MsPackageVersion)` for Microsoft packages (defined in `src/Directory.Buil
 14. **Blazor WASM via API only** - through Client libraries
 15. **Project references MUST match module dependencies** - When adding a `<ProjectReference>` to project B from project A, you MUST add `[DependsOn(typeof(BModule))]` to AModule. Module dependency graph must mirror project reference graph.
 16. **Tenant-based modules MUST register providers** - Modules with tenant-specific databases MUST register both `IModuleConnectionStringProvider` (in Application) and `ITenantBasedDbContext<TenantCreatedEvent>` (in DataAccess) for automatic database provisioning.
+17. **Repository Pattern MANDATORY** - Application layer MUST NOT use DbContext directly. Use repositories for all data access.
+18. **Specifications for queries** - Repositories MUST NOT build queries directly. Use Specification pattern for filtering logic. Only `AsQueryable()`/`AsNoTrackingQueryable()` methods allowed for complex projections in query handlers.
 
 ## 📚 Key Files
 
@@ -486,6 +713,7 @@ Use `$(MsPackageVersion)` for Microsoft packages (defined in `src/Directory.Buil
 - CQRS: `src/Cheetah.Core.CQRS/IDispatcher.cs`
 - Events: `src/Cheetah.Core.Events/IEventBus.cs`
 - Domain: `src/Cheetah.Core.Domain/AggregateRoot.cs`
+- Specifications: `src/Cheetah.Core.Specification/Specification.cs`
 - Tenant System: `src/Cheetah.Core.Tenants/`
   - `Services/IModuleConnectionStringProvider.cs` - Module database registration
   - `Services/ITenantMigrationService.cs` - Tenant info for migrations
