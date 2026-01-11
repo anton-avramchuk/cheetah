@@ -4,9 +4,4 @@
       <ProjectReference Include="..\Cheetah.Core\Cheetah.Core.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Requests\" />
-      <Folder Include="Responses\" />
-    </ItemGroup>
-
 </Project>
