@@ -2,6 +2,7 @@
     <Folder Name="/CodeGen/">
         <Project Path="src/Cheetah.Generators.Application/Cheetah.Generators.Application.csproj" />
         <Project Path="src/Cheetah.Generators.Core/Cheetah.Generators.Core.csproj" />
+        <Project Path="src/Cheetah.Generators.Endpoints/Cheetah.Generators.Endpoints.csproj" />
         <Project Path="src/Cheetah.Generators.Module/Cheetah.Generators.Module.csproj" />
     </Folder>
     <Folder Name="/Core/">
@@ -27,6 +28,7 @@
     </Folder>
     <Folder Name="/Core/Backend/">
         <Project Path="src/Cheetah.Backend.CQRS/Cheetah.Backend.CQRS.csproj" />
+        <Project Path="src/Cheetah.Backend.Endpoints/Cheetah.Backend.Endpoints.csproj" />
         <Project Path="src/Cheetah.Backend.Events.Redis/Cheetah.Backend.Events.Redis.csproj" />
         <Project Path="src/Cheetah.Backend.Redis/Cheetah.Backend.Redis.csproj" />
         <Project Path="src/Cheetah.OpenApi/Cheetah.OpenApi.csproj" />
