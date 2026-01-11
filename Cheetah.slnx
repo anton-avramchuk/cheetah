@@ -5,6 +5,7 @@
         <Project Path="src/Cheetah.Generators.Module/Cheetah.Generators.Module.csproj" />
     </Folder>
     <Folder Name="/Core/">
+        <Project Path="src/Cheetah.AspNetCore.Contracts/Cheetah.AspNetCore.Contracts.csproj" />
         <Project Path="src/Cheetah.AspNetCore/Cheetah.AspNetCore.csproj" />
         <Project Path="src/Cheetah.Core.Cache/Cheetah.Core.Cache.csproj" />
         <Project Path="src/Cheetah.Core.CQRS/Cheetah.Core.CQRS.csproj" />
