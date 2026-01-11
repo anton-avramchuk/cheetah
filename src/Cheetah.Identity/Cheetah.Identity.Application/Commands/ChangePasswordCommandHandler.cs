@@ -2,30 +2,30 @@ using Cheetah.Core.CQRS;
 using Cheetah.Core.Events;
 using Cheetah.Core.Modularity;
 using Cheetah.Identity.Application.Services;
-using Cheetah.Identity.DataAccess;
+using Cheetah.Identity.Domain.Repositories;
 
 namespace Cheetah.Identity.Application.Commands;
 
 [Export(LifetimeType.Scoped, typeof(ICommandHandler<ChangePasswordCommand>))]
 public class ChangePasswordCommandHandler : ICommandHandler<ChangePasswordCommand>
 {
-    private readonly IIdentityDbContext _dbContext;
+    private readonly IUserRepository _userRepository;
     private readonly IPasswordHasher _passwordHasher;
     private readonly IEventBus _eventBus;
 
     public ChangePasswordCommandHandler(
-        IIdentityDbContext dbContext,
+        IUserRepository userRepository,
         IPasswordHasher passwordHasher,
         IEventBus eventBus)
     {
-        _dbContext = dbContext;
+        _userRepository = userRepository;
         _passwordHasher = passwordHasher;
         _eventBus = eventBus;
     }
 
     public async ValueTask HandleAsync(ChangePasswordCommand command, CancellationToken ct)
     {
-        var user = await _dbContext.Users.FindAsync([command.UserId], ct);
+        var user = await _userRepository.GetByIdAsync(command.UserId, ct);
         if (user == null)
             throw new InvalidOperationException($"User {command.UserId} not found");
 
@@ -39,7 +39,7 @@ public class ChangePasswordCommandHandler : ICommandHandler<ChangePasswordComman
         // Change password
         user.ChangePassword(newPasswordHash);
 
-        await _dbContext.SaveChangesAsync(ct);
+        await _userRepository.SaveChangesAsync(ct);
 
         // Publish domain events
         foreach (var domainEvent in user.DomainEvents)

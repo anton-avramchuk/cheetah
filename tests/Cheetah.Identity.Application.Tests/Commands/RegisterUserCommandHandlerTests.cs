@@ -1,34 +1,32 @@
 using Cheetah.Core.Events;
 using Cheetah.Identity.Application.Commands;
 using Cheetah.Identity.Application.Services;
-using Cheetah.Identity.DataAccess;
 using Cheetah.Identity.Domain.Entities;
+using Cheetah.Identity.Domain.Repositories;
 using Cheetah.Identity.Events;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
 using Moq;
 
 namespace Cheetah.Identity.Application.Tests.Commands;
 
 public class RegisterUserCommandHandlerTests
 {
-    private readonly Mock<IIdentityDbContext> _dbContextMock;
+    private readonly Mock<IUserRepository> _userRepositoryMock;
+    private readonly Mock<IRoleRepository> _roleRepositoryMock;
     private readonly Mock<IPasswordHasher> _passwordHasherMock;
     private readonly Mock<IEventBus> _eventBusMock;
-    private readonly Mock<DbSet<User>> _userDbSetMock;
     private readonly RegisterUserCommandHandler _handler;
 
     public RegisterUserCommandHandlerTests()
     {
-        _dbContextMock = new Mock<IIdentityDbContext>();
+        _userRepositoryMock = new Mock<IUserRepository>();
+        _roleRepositoryMock = new Mock<IRoleRepository>();
         _passwordHasherMock = new Mock<IPasswordHasher>();
         _eventBusMock = new Mock<IEventBus>();
-        _userDbSetMock = new Mock<DbSet<User>>();
-
-        _dbContextMock.Setup(x => x.Users).Returns(_userDbSetMock.Object);
 
         _handler = new RegisterUserCommandHandler(
-            _dbContextMock.Object,
+            _userRepositoryMock.Object,
+            _roleRepositoryMock.Object,
             _passwordHasherMock.Object,
             _eventBusMock.Object);
     }
@@ -47,17 +45,14 @@ public class RegisterUserCommandHandlerTests
         _passwordHasherMock.Setup(x => x.HashPassword(command.Password))
             .Returns(hashedPassword);
 
-        var users = new List<User>().AsQueryable();
-        _userDbSetMock.As<IQueryable<User>>().Setup(m => m.Provider).Returns(users.Provider);
-        _userDbSetMock.As<IQueryable<User>>().Setup(m => m.Expression).Returns(users.Expression);
-        _userDbSetMock.As<IQueryable<User>>().Setup(m => m.ElementType).Returns(users.ElementType);
-        _userDbSetMock.As<IQueryable<User>>().Setup(m => m.GetEnumerator()).Returns(users.GetEnumerator());
+        _userRepositoryMock.Setup(x => x.GetByEmailAsync(command.Email, It.IsAny<CancellationToken>()))
+            .ReturnsAsync((User?)null);
 
         User? capturedUser = null;
-        _dbContextMock.Setup(x => x.Users.Add(It.IsAny<User>()))
+        _userRepositoryMock.Setup(x => x.Add(It.IsAny<User>()))
             .Callback<User>(user => capturedUser = user);
 
-        _dbContextMock.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
+        _userRepositoryMock.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(1);
 
         // Act
@@ -72,8 +67,8 @@ public class RegisterUserCommandHandlerTests
         capturedUser.PasswordHash.Should().Be(hashedPassword);
 
         _passwordHasherMock.Verify(x => x.HashPassword(command.Password), Times.Once);
-        _dbContextMock.Verify(x => x.Users.Add(It.IsAny<User>()), Times.Once);
-        _dbContextMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+        _userRepositoryMock.Verify(x => x.Add(It.IsAny<User>()), Times.Once);
+        _userRepositoryMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
@@ -89,13 +84,10 @@ public class RegisterUserCommandHandlerTests
         _passwordHasherMock.Setup(x => x.HashPassword(It.IsAny<string>()))
             .Returns("hashed_password");
 
-        var users = new List<User>().AsQueryable();
-        _userDbSetMock.As<IQueryable<User>>().Setup(m => m.Provider).Returns(users.Provider);
-        _userDbSetMock.As<IQueryable<User>>().Setup(m => m.Expression).Returns(users.Expression);
-        _userDbSetMock.As<IQueryable<User>>().Setup(m => m.ElementType).Returns(users.ElementType);
-        _userDbSetMock.As<IQueryable<User>>().Setup(m => m.GetEnumerator()).Returns(users.GetEnumerator());
+        _userRepositoryMock.Setup(x => x.GetByEmailAsync(command.Email, It.IsAny<CancellationToken>()))
+            .ReturnsAsync((User?)null);
 
-        _dbContextMock.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
+        _userRepositoryMock.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(1);
 
         // Act
@@ -127,11 +119,8 @@ public class RegisterUserCommandHandlerTests
             "Jane",
             "Smith");
 
-        var users = new List<User> { existingUser }.AsQueryable();
-        _userDbSetMock.As<IQueryable<User>>().Setup(m => m.Provider).Returns(users.Provider);
-        _userDbSetMock.As<IQueryable<User>>().Setup(m => m.Expression).Returns(users.Expression);
-        _userDbSetMock.As<IQueryable<User>>().Setup(m => m.ElementType).Returns(users.ElementType);
-        _userDbSetMock.As<IQueryable<User>>().Setup(m => m.GetEnumerator()).Returns(users.GetEnumerator());
+        _userRepositoryMock.Setup(x => x.GetByEmailAsync(command.Email, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(existingUser);
 
         // Act
         var act = async () => await _handler.HandleAsync(command, CancellationToken.None);
@@ -140,8 +129,8 @@ public class RegisterUserCommandHandlerTests
         await act.Should().ThrowAsync<InvalidOperationException>()
             .WithMessage($"*{command.Email}*already exists*");
 
-        _dbContextMock.Verify(x => x.Users.Add(It.IsAny<User>()), Times.Never);
-        _dbContextMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
+        _userRepositoryMock.Verify(x => x.Add(It.IsAny<User>()), Times.Never);
+        _userRepositoryMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
@@ -158,17 +147,14 @@ public class RegisterUserCommandHandlerTests
         _passwordHasherMock.Setup(x => x.HashPassword("plaintext_password"))
             .Returns(hashedPassword);
 
-        var users = new List<User>().AsQueryable();
-        _userDbSetMock.As<IQueryable<User>>().Setup(m => m.Provider).Returns(users.Provider);
-        _userDbSetMock.As<IQueryable<User>>().Setup(m => m.Expression).Returns(users.Expression);
-        _userDbSetMock.As<IQueryable<User>>().Setup(m => m.ElementType).Returns(users.ElementType);
-        _userDbSetMock.As<IQueryable<User>>().Setup(m => m.GetEnumerator()).Returns(users.GetEnumerator());
+        _userRepositoryMock.Setup(x => x.GetByEmailAsync(command.Email, It.IsAny<CancellationToken>()))
+            .ReturnsAsync((User?)null);
 
         User? capturedUser = null;
-        _dbContextMock.Setup(x => x.Users.Add(It.IsAny<User>()))
+        _userRepositoryMock.Setup(x => x.Add(It.IsAny<User>()))
             .Callback<User>(user => capturedUser = user);
 
-        _dbContextMock.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
+        _userRepositoryMock.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(1);
 
         // Act

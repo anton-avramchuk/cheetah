@@ -1,24 +1,24 @@
 using Cheetah.Core.CQRS;
 using Cheetah.Core.Modularity;
-using Cheetah.Identity.DataAccess;
+using Cheetah.Identity.Domain.Repositories;
 using Cheetah.Identity.Contracts.ViewModels;
+using Microsoft.EntityFrameworkCore;
 
 namespace Cheetah.Identity.Application.Queries;
 
 [Export(LifetimeType.Scoped, typeof(IQueryHandler<GetAllRolesQuery, List<RoleViewModel>>))]
 public class GetAllRolesQueryHandler : IQueryHandler<GetAllRolesQuery, List<RoleViewModel>>
 {
-    private readonly IIdentityDbContext _dbContext;
+    private readonly IRoleRepository _roleRepository;
 
-    public GetAllRolesQueryHandler(IIdentityDbContext dbContext)
+    public GetAllRolesQueryHandler(IRoleRepository roleRepository)
     {
-        _dbContext = dbContext;
+        _roleRepository = roleRepository;
     }
 
     public async ValueTask<List<RoleViewModel>> HandleAsync(GetAllRolesQuery query, CancellationToken ct)
     {
-        return await _dbContext.Roles
-            .AsNoTracking()
+        return await _roleRepository.AsNoTrackingQueryable()
             .Select(r => new RoleViewModel
             {
                 Id = r.Id,

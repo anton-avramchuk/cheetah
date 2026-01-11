@@ -1,6 +1,7 @@
 using Cheetah.Backend.IdentityCore.Domain;
 using Cheetah.Core.Domain;
 using Cheetah.Core.Modularity;
+using Cheetah.Core.Specification;
 using Cheetah.Identity.Events;
 
 namespace Cheetah.Identity.Domain;
@@ -11,6 +12,7 @@ namespace Cheetah.Identity.Domain;
 [DependsOn(typeof(CrmDomainModule))]
 [DependsOn(typeof(CrmIdentityEventsModule))]
 [DependsOn(typeof(IdentityCoreDomainModule))]
+[DependsOn(typeof(CrmSpecificationModule))]
 public class CrmIdentityDomainModule : CrmModule
 {
 }

@@ -1,24 +1,24 @@
 using Cheetah.Core.CQRS;
 using Cheetah.Core.Modularity;
-using Cheetah.Identity.DataAccess;
+using Cheetah.Identity.Domain.Repositories;
 using Cheetah.Identity.Contracts.ViewModels;
+using Microsoft.EntityFrameworkCore;
 
 namespace Cheetah.Identity.Application.Queries;
 
 [Export(LifetimeType.Scoped, typeof(IQueryHandler<GetUserByIdQuery, UserViewModel?>))]
 public class GetUserByIdQueryHandler : IQueryHandler<GetUserByIdQuery, UserViewModel?>
 {
-    private readonly IIdentityDbContext _dbContext;
+    private readonly IUserRepository _userRepository;
 
-    public GetUserByIdQueryHandler(IIdentityDbContext dbContext)
+    public GetUserByIdQueryHandler(IUserRepository userRepository)
     {
-        _dbContext = dbContext;
+        _userRepository = userRepository;
     }
 
     public async ValueTask<UserViewModel?> HandleAsync(GetUserByIdQuery query, CancellationToken ct)
     {
-        return await _dbContext.Users
-            .AsNoTracking()
+        return await _userRepository.AsNoTrackingQueryable()
             .Where(u => u.Id == query.UserId)
             .Select(u => new UserViewModel
             {

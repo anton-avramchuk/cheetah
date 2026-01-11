@@ -1,24 +1,29 @@
 using Cheetah.Core.CQRS;
 using Cheetah.Core.Modularity;
+using Cheetah.Identity.Domain.Repositories;
 using Cheetah.Identity.DataAccess;
+using Microsoft.EntityFrameworkCore;
 
 namespace Cheetah.Identity.Application.Queries;
 
 [Export(LifetimeType.Scoped, typeof(IQueryHandler<GetUserPermissionsQuery, List<string>>))]
 public class GetUserPermissionsQueryHandler : IQueryHandler<GetUserPermissionsQuery, List<string>>
 {
+    private readonly IUserRepository _userRepository;
     private readonly IIdentityDbContext _dbContext;
 
-    public GetUserPermissionsQueryHandler(IIdentityDbContext dbContext)
+    public GetUserPermissionsQueryHandler(
+        IUserRepository userRepository,
+        IIdentityDbContext dbContext)
     {
+        _userRepository = userRepository;
         _dbContext = dbContext;
     }
 
     public async ValueTask<List<string>> HandleAsync(GetUserPermissionsQuery query, CancellationToken ct)
     {
-        // Get user with roles
-        var user = await _dbContext.Users
-            .AsNoTracking()
+        // Get user with roles and claims
+        var user = await _userRepository.AsNoTrackingQueryable()
             .Include(u => u.Roles)
             .Include(u => u.Claims)
             .FirstOrDefaultAsync(u => u.Id == query.UserId, ct);

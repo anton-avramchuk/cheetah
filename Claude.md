@@ -435,6 +435,11 @@ Use `$(MsPackageVersion)` for Microsoft packages (defined in `src/Directory.Buil
 <PackageReference Include="Microsoft.EntityFrameworkCore" Version="$(MsPackageVersion)" />
 ```
 
+**Solution File Format:**
+- Project uses `.slnx` (XML-based solution format) instead of legacy `.sln`
+- Add projects to solution using: `dotnet sln add <path-to-csproj>`
+- All module projects MUST be added to `Cheetah.slnx` in `/Modules/{ModuleName}/` folder structure
+
 ## 🚀 Creating New Module
 
 1. **Events** project FIRST (NO dependencies, pure contracts)

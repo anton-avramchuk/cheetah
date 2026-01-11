@@ -2,24 +2,28 @@ using Cheetah.Core.CQRS;
 using Cheetah.Core.Events;
 using Cheetah.Core.Modularity;
 using Cheetah.Identity.Application.Services;
-using Cheetah.Identity.DataAccess;
 using Cheetah.Identity.Domain.Entities;
+using Cheetah.Identity.Domain.Repositories;
+using Cheetah.Identity.Domain.Specifications;
 
 namespace Cheetah.Identity.Application.Commands;
 
 [Export(LifetimeType.Scoped, typeof(ICommandHandler<RegisterUserCommand, Guid>))]
 public class RegisterUserCommandHandler : ICommandHandler<RegisterUserCommand, Guid>
 {
-    private readonly IIdentityDbContext _dbContext;
+    private readonly IUserRepository _userRepository;
+    private readonly IRoleRepository _roleRepository;
     private readonly IPasswordHasher _passwordHasher;
     private readonly IEventBus _eventBus;
 
     public RegisterUserCommandHandler(
-        IIdentityDbContext dbContext,
+        IUserRepository userRepository,
+        IRoleRepository roleRepository,
         IPasswordHasher passwordHasher,
         IEventBus eventBus)
     {
-        _dbContext = dbContext;
+        _userRepository = userRepository;
+        _roleRepository = roleRepository;
         _passwordHasher = passwordHasher;
         _eventBus = eventBus;
     }
@@ -27,8 +31,7 @@ public class RegisterUserCommandHandler : ICommandHandler<RegisterUserCommand, G
     public async ValueTask<Guid> HandleAsync(RegisterUserCommand command, CancellationToken ct)
     {
         // Check if user already exists
-        var existingUser = await _dbContext.Users
-            .FirstOrDefaultAsync(u => u.NormalizedEmail == command.Email.ToUpperInvariant(), ct);
+        var existingUser = await _userRepository.GetByEmailAsync(command.Email, ct);
 
         if (existingUser != null)
             throw new InvalidOperationException($"User with email {command.Email} already exists");
@@ -45,12 +48,12 @@ public class RegisterUserCommandHandler : ICommandHandler<RegisterUserCommand, G
         );
 
         // TODO: Assign default "User" role
-        // var defaultRole = await _dbContext.Roles.FirstOrDefaultAsync(r => r.Name == "User", ct);
+        // var defaultRole = await _roleRepository.GetByNameAsync("User", ct);
         // if (defaultRole != null)
-        //     user.AddRole(defaultRole.Id);
+        //     user.AddRole(defaultRole);
 
-        _dbContext.Users.Add(user);
-        await _dbContext.SaveChangesAsync(ct);
+        _userRepository.Add(user);
+        await _userRepository.SaveChangesAsync(ct);
 
         // Publish domain events
         foreach (var domainEvent in user.DomainEvents)

@@ -5,6 +5,7 @@
     <ProjectReference Include="..\..\Cheetah.Core.Domain\Cheetah.Core.Domain.csproj" />
     <ProjectReference Include="..\Cheetah.Identity.Events\Cheetah.Identity.Events.csproj" />
     <ProjectReference Include="..\..\Cheetah.Core\Cheetah.Core.csproj" />
+    <ProjectReference Include="..\..\Cheetah.Core.Specification\Cheetah.Core.Specification.csproj" />
   </ItemGroup>
 
 

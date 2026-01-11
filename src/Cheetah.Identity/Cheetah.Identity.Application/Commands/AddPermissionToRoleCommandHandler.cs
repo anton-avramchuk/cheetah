@@ -1,32 +1,32 @@
 using Cheetah.Core.CQRS;
 using Cheetah.Core.Events;
 using Cheetah.Core.Modularity;
-using Cheetah.Identity.DataAccess;
+using Cheetah.Identity.Domain.Repositories;
 
 namespace Cheetah.Identity.Application.Commands;
 
 [Export(LifetimeType.Scoped, typeof(ICommandHandler<AddPermissionToRoleCommand>))]
 public class AddPermissionToRoleCommandHandler : ICommandHandler<AddPermissionToRoleCommand>
 {
-    private readonly IIdentityDbContext _dbContext;
+    private readonly IRoleRepository _roleRepository;
     private readonly IEventBus _eventBus;
 
-    public AddPermissionToRoleCommandHandler(IIdentityDbContext dbContext, IEventBus eventBus)
+    public AddPermissionToRoleCommandHandler(IRoleRepository roleRepository, IEventBus eventBus)
     {
-        _dbContext = dbContext;
+        _roleRepository = roleRepository;
         _eventBus = eventBus;
     }
 
     public async ValueTask HandleAsync(AddPermissionToRoleCommand command, CancellationToken ct)
     {
-        var role = await _dbContext.Roles.FindAsync([command.RoleId], ct);
+        var role = await _roleRepository.GetByIdAsync(command.RoleId, ct);
         if (role == null)
             throw new InvalidOperationException($"Role {command.RoleId} not found");
 
         // Add permission to role
         role.AddPermission(command.Permission);
 
-        await _dbContext.SaveChangesAsync(ct);
+        await _roleRepository.SaveChangesAsync(ct);
 
         // Publish domain events
         foreach (var domainEvent in role.DomainEvents)

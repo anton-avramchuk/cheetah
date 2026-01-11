@@ -24,6 +24,8 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Cheetah.Identity\Cheetah.Identity.Events\Cheetah.Identity.Events.csproj" />
     <ProjectReference Include="..\..\src\Cheetah.Identity\Cheetah.Identity.Application\Cheetah.Identity.Application.csproj" />
+    <ProjectReference Include="..\..\src\Cheetah.Identity\Cheetah.Identity.Domain\Cheetah.Identity.Domain.csproj" />
+    <ProjectReference Include="..\..\src\Cheetah.Identity\Cheetah.Identity.Contracts\Cheetah.Identity.Contracts.csproj" />
   </ItemGroup>
 
 </Project>
