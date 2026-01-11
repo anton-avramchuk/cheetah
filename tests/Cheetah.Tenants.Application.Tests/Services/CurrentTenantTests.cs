@@ -5,124 +5,121 @@ namespace Cheetah.Tenants.Application.Tests.Services;
 
 public class CurrentTenantTests
 {
-    private readonly CurrentTenant _currentTenant;
-
-    public CurrentTenantTests()
-    {
-        _currentTenant = new CurrentTenant();
-    }
-
     [Fact]
-    public void Id_ShouldReturnNull_WhenTenantNotSet()
+    public void Constructor_ShouldInitializeWithNoTenant()
     {
         // Act
-        var id = _currentTenant.Id;
+        var currentTenant = new CurrentTenant();
 
         // Assert
-        id.Should().BeNull();
+        currentTenant.Id.Should().BeNull();
+        currentTenant.Name.Should().BeNull();
+        currentTenant.IsAvailable.Should().BeFalse();
     }
 
     [Fact]
-    public void Name_ShouldReturnNull_WhenTenantNotSet()
-    {
-        // Act
-        var name = _currentTenant.Name;
-
-        // Assert
-        name.Should().BeNull();
-    }
-
-    [Fact]
-    public void IsAvailable_ShouldReturnFalse_WhenTenantNotSet()
-    {
-        // Act
-        var isAvailable = _currentTenant.IsAvailable;
-
-        // Assert
-        isAvailable.Should().BeFalse();
-    }
-
-    [Fact]
-    public void SetTenant_ShouldSetTenantId()
+    public void SetTenant_WithValidTenantId_ShouldSetTenantId()
     {
         // Arrange
+        var currentTenant = new CurrentTenant();
         var tenantId = Guid.NewGuid();
 
         // Act
-        _currentTenant.SetTenant(tenantId);
+        currentTenant.SetTenant(tenantId);
 
         // Assert
-        _currentTenant.Id.Should().Be(tenantId);
+        currentTenant.Id.Should().Be(tenantId);
+        currentTenant.IsAvailable.Should().BeTrue();
     }
 
     [Fact]
-    public void SetTenant_ShouldSetTenantName()
+    public void SetTenant_WithTenantIdAndName_ShouldSetBoth()
     {
         // Arrange
+        var currentTenant = new CurrentTenant();
         var tenantId = Guid.NewGuid();
-        var tenantName = "Test Tenant";
+        var tenantName = "Acme Corporation";
 
         // Act
-        _currentTenant.SetTenant(tenantId, tenantName);
+        currentTenant.SetTenant(tenantId, tenantName);
 
         // Assert
-        _currentTenant.Name.Should().Be(tenantName);
+        currentTenant.Id.Should().Be(tenantId);
+        currentTenant.Name.Should().Be(tenantName);
+        currentTenant.IsAvailable.Should().BeTrue();
     }
 
     [Fact]
-    public void IsAvailable_ShouldReturnTrue_WhenTenantIdIsSet()
+    public void SetTenant_WithNullTenantId_ShouldClearTenant()
     {
         // Arrange
-        var tenantId = Guid.NewGuid();
+        var currentTenant = new CurrentTenant();
+        currentTenant.SetTenant(Guid.NewGuid(), "Test Tenant");
 
         // Act
-        _currentTenant.SetTenant(tenantId);
+        currentTenant.SetTenant(null);
 
         // Assert
-        _currentTenant.IsAvailable.Should().BeTrue();
+        currentTenant.Id.Should().BeNull();
+        currentTenant.Name.Should().BeNull();
+        currentTenant.IsAvailable.Should().BeFalse();
     }
 
     [Fact]
-    public void SetTenant_ShouldAllowNullTenantId()
+    public void SetTenant_CalledMultipleTimes_ShouldUpdateTenant()
     {
         // Arrange
-        _currentTenant.SetTenant(Guid.NewGuid());
-
-        // Act
-        _currentTenant.SetTenant(null);
-
-        // Assert
-        _currentTenant.Id.Should().BeNull();
-        _currentTenant.IsAvailable.Should().BeFalse();
-    }
-
-    [Fact]
-    public void SetTenant_ShouldAllowChangingTenant()
-    {
-        // Arrange
+        var currentTenant = new CurrentTenant();
         var firstTenantId = Guid.NewGuid();
         var secondTenantId = Guid.NewGuid();
-        _currentTenant.SetTenant(firstTenantId, "First Tenant");
 
         // Act
-        _currentTenant.SetTenant(secondTenantId, "Second Tenant");
+        currentTenant.SetTenant(firstTenantId, "First Tenant");
+        currentTenant.SetTenant(secondTenantId, "Second Tenant");
 
         // Assert
-        _currentTenant.Id.Should().Be(secondTenantId);
-        _currentTenant.Name.Should().Be("Second Tenant");
+        currentTenant.Id.Should().Be(secondTenantId);
+        currentTenant.Name.Should().Be("Second Tenant");
+        currentTenant.IsAvailable.Should().BeTrue();
     }
 
     [Fact]
-    public void SetTenant_ShouldSetOnlyId_WhenNameNotProvided()
+    public void IsAvailable_WhenTenantIsSet_ShouldReturnTrue()
     {
         // Arrange
+        var currentTenant = new CurrentTenant();
         var tenantId = Guid.NewGuid();
 
         // Act
-        _currentTenant.SetTenant(tenantId);
+        currentTenant.SetTenant(tenantId);
 
         // Assert
-        _currentTenant.Id.Should().Be(tenantId);
-        _currentTenant.Name.Should().BeNull();
+        currentTenant.IsAvailable.Should().BeTrue();
+    }
+
+    [Fact]
+    public void IsAvailable_WhenTenantIsNotSet_ShouldReturnFalse()
+    {
+        // Arrange
+        var currentTenant = new CurrentTenant();
+
+        // Assert
+        currentTenant.IsAvailable.Should().BeFalse();
+    }
+
+    [Fact]
+    public void SetTenant_WithOnlyTenantId_ShouldLeaveNameNull()
+    {
+        // Arrange
+        var currentTenant = new CurrentTenant();
+        var tenantId = Guid.NewGuid();
+
+        // Act
+        currentTenant.SetTenant(tenantId);
+
+        // Assert
+        currentTenant.Id.Should().Be(tenantId);
+        currentTenant.Name.Should().BeNull();
+        currentTenant.IsAvailable.Should().BeTrue();
     }
 }

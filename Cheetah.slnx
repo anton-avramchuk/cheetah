@@ -58,6 +58,7 @@
         <Project Path="src/Cheetah.Tenants/Cheetah.Tenants.Shared/Cheetah.Tenants.Shared.csproj" />
         <Project Path="src/Cheetah.Tenants/Cheetah.Tenants.Events/Cheetah.Tenants.Events.csproj" />
         <Project Path="src/Cheetah.Tenants/Cheetah.Tenants.Frontend/Cheetah.Tenants.Frontend.csproj" />
+        <Project Path="tests/Cheetah.Tenants.Domain.Tests/Cheetah.Tenants.Domain.Tests.csproj" />
     </Folder>
     <Folder Name="/Modules/Feature/">
         <Project Path="src/Cheetah.Features/Cheetah.Features.Api/Cheetah.Features.Api.csproj" />
@@ -70,7 +71,9 @@
         <Project Path="src/Cheetah.Features/Cheetah.Features.Frontend.Client/Cheetah.Features.Frontend.Client.csproj" />
         <Project Path="src/Cheetah.Features/Cheetah.Features.Frontend/Cheetah.Features.Frontend.csproj" />
         <Project Path="src/Cheetah.Features/Cheetah.Features.Shared/Cheetah.Features.Shared.csproj" />
+        <Project Path="tests/Cheetah.Features.Application.Tests/Cheetah.Features.Application.Tests.csproj" />
         <Project Path="tests/Cheetah.Features.Client.Tests/Cheetah.Features.Client.Tests.csproj" />
+        <Project Path="tests/Cheetah.Features.Domain.Tests/Cheetah.Features.Domain.Tests.csproj" />
         <Project Path="tests/Cheetah.Features.Frontend.Client.Tests/Cheetah.Features.Frontend.Client.Tests.csproj" />
     </Folder>
     <Folder Name="/Modules/Identity/">
@@ -84,18 +87,22 @@
         <Project Path="src/Cheetah.Identity/Cheetah.Identity.Frontend/Cheetah.Identity.Frontend.csproj" />
         <Project Path="src/Cheetah.Identity/Cheetah.Identity.Client/Cheetah.Identity.Client.csproj" />
         <Project Path="src/Cheetah.Identity/Cheetah.Identity.Frontend.Client/Cheetah.Identity.Frontend.Client.csproj" />
+        <Project Path="tests/Cheetah.Identity.Application.Tests/Cheetah.Identity.Application.Tests.csproj" />
         <Project Path="tests/Cheetah.Identity.Client.Tests/Cheetah.Identity.Client.Tests.csproj" />
+        <Project Path="tests/Cheetah.Identity.Domain.Tests/Cheetah.Identity.Domain.Tests.csproj" />
         <Project Path="tests/Cheetah.Identity.Frontend.Client.Tests/Cheetah.Identity.Frontend.Client.Tests.csproj" />
     </Folder>
     <Folder Name="/Solution Items/">
         <File Path="compose.yaml" />
         <File Path="nginx.conf" />
     </Folder>
+    <Folder Name="/src/" />
     <Folder Name="/Tests/">
         <Project Path="src/Cheetah.Backend.Events.Redis.Tests/Cheetah.Backend.Events.Redis.Tests.csproj" />
         <Project Path="src/Cheetah.Backend.Redis.Tests/Cheetah.Backend.Redis.Tests.csproj" />
         <Project Path="src/Cheetah.Core.Tests/Cheetah.Core.Tests.csproj" />
         <Project Path="src/Cheetah.Frontend.Events.Tests/Cheetah.Frontend.Events.Tests.csproj" />
+        <Project Path="tests/Cheetah.Core.Tenants.Tests/Cheetah.Core.Tenants.Tests.csproj" />
         <Project Path="tests/Cheetah.Tests.Core/Cheetah.Tests.Core.csproj" />
     </Folder>
     <Project Path="src/Cheetah.Crm.Web.Client/Cheetah.Crm.Web.Client.csproj" />
