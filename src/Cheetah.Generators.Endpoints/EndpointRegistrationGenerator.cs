@@ -189,7 +189,16 @@ public class EndpointRegistrationGenerator : IIncrementalGenerator
         sb.AppendLine("        var serviceProvider = context.ServiceProvider;");
         sb.AppendLine();
         sb.AppendLine("        RegisterGeneratedEndpoints(routeBuilder, serviceProvider);");
+        sb.AppendLine();
+        sb.AppendLine("        // Call custom initialization logic if defined");
+        sb.AppendLine("        OnApplicationInitializationCustom(context);");
         sb.AppendLine("    }");
+        sb.AppendLine();
+        sb.AppendLine("    /// <summary>");
+        sb.AppendLine("    /// Optional partial method for custom initialization logic.");
+        sb.AppendLine("    /// Implement this method in your partial class to add custom endpoint registrations or other initialization logic.");
+        sb.AppendLine("    /// </summary>");
+        sb.AppendLine("    partial void OnApplicationInitializationCustom(ApplicationInitializationContext context);");
         sb.AppendLine();
 
         // RegisterGeneratedEndpoints method
