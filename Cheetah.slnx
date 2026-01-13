@@ -1,5 +1,7 @@
 <Solution>
     <Folder Name="/CodeGen/">
+        <Project Path="src/Cheetah.Analyzers.Tests/Cheetah.Analyzers.Tests.csproj" />
+        <Project Path="src/Cheetah.Analyzers/Cheetah.Analyzers.csproj" />
         <Project Path="src/Cheetah.Generators.Application/Cheetah.Generators.Application.csproj" />
         <Project Path="src/Cheetah.Generators.Core/Cheetah.Generators.Core.csproj" />
         <Project Path="src/Cheetah.Generators.Endpoints/Cheetah.Generators.Endpoints.csproj" />

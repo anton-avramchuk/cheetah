@@ -1,0 +1,26 @@
+<Project InitialTargets="PassDirectProjectReferencesToAnalyzer">
+
+    <!-- Make DirectProjectReferences visible to analyzers -->
+    <ItemGroup>
+        <CompilerVisibleProperty Include="DirectProjectReferences" />
+    </ItemGroup>
+
+    <!-- Передаем список прямых ProjectReference в анализатор -->
+    <Target Name="PassDirectProjectReferencesToAnalyzer">
+        <PropertyGroup>
+            <!-- Extract only filenames without extensions from ProjectReference paths -->
+            <!-- Use comma as delimiter because semicolon is trimmed by MSBuild -->
+            <DirectProjectReferences>@(ProjectReference->'%(Filename)', ',')</DirectProjectReferences>
+        </PropertyGroup>
+    </Target>
+
+    <!-- Подключение Roslyn Analyzers ко всем проектам -->
+    <ItemGroup Condition="'$(IsAnalyzerProject)' != 'true' AND '$(IsAnalyzerTestProject)' != 'true'">
+        <!-- Cheetah.Analyzers - проверка соответствия ProjectReference и [DependsOn] -->
+        <ProjectReference Include="$(MSBuildThisFileDirectory)Cheetah.Analyzers\Cheetah.Analyzers.csproj"
+                          ReferenceOutputAssembly="false"
+                          OutputItemType="Analyzer"
+                          PrivateAssets="all" />
+    </ItemGroup>
+
+</Project>
