@@ -1,10 +1,12 @@
 using Cheetah.Core;
 using Cheetah.Core.CQRS;
+using Cheetah.Core.Domain;
 using Cheetah.Core.EntityFramework.Tenants;
 using Cheetah.Core.Events;
 using Cheetah.Core.Modularity;
 using Cheetah.Core.Tenants;
 using Cheetah.Identity.Application.EventHandlers;
+using Cheetah.Identity.Contracts;
 using Cheetah.Identity.DataAccess;
 using Cheetah.Identity.Domain;
 using Cheetah.Identity.Events;
@@ -14,7 +16,11 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Cheetah.Identity.Application;
 
+[DependsOn(typeof(CoreModule))]
+[DependsOn(typeof(CrmDomainModule))]
+[DependsOn(typeof(CrmEventsCoreModule))]
 [DependsOn(typeof(CrmIdentityDomainModule))]
+[DependsOn(typeof(CrmIdentityContractsModule))]
 [DependsOn(typeof(CrmIdentityDataAccessModule))]
 [DependsOn(typeof(CrmCQRSCoreModule))]
 [DependsOn(typeof(CrmIdentityEventsModule))]

@@ -21,6 +21,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Cheetah.Features.Api;
 
+[DependsOn(typeof(CoreModule))]
 [DependsOn(typeof(CrmFeaturesApplicationModule))]
 [DependsOn(typeof(CrmFeaturesDataAccessModule))]
 [DependsOn(typeof(CrmAspNetCoreModule))]

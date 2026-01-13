@@ -1,3 +1,4 @@
+using Cheetah.Core;
 using Cheetah.Core.EntityFramework;
 using Cheetah.Core.EntityFramework.PostgreSql;
 using Cheetah.Core.EntityFramework.PostgreSql.Extensions;
@@ -8,6 +9,7 @@ using Cheetah.Identity.Domain;
 
 namespace Cheetah.Identity.DataAccess;
 
+[DependsOn(typeof(CoreModule))]
 [DependsOn(typeof(CrmIdentityDomainModule))]
 [DependsOn(typeof(CrmEntityFrameworkModule))]
 [DependsOn(typeof(CrmEntityFrameworkPostgreSqlModule))]

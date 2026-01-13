@@ -1,7 +1,9 @@
-﻿using Cheetah.Core.Modularity;
+﻿using Cheetah.Core;
+using Cheetah.Core.Modularity;
 
 namespace Cheetah.Core.EntityFramework.MsSql;
 
+[DependsOn(typeof(CoreModule))]
 [DependsOn(typeof(CrmEntityFrameworkModule))]
 public partial class CrmEntityFrameworkMsSqlModule : CrmModule
 {

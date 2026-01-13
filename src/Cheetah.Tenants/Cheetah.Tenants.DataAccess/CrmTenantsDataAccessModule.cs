@@ -1,3 +1,5 @@
+using Cheetah.Core;
+using Cheetah.Core.DataAccess;
 using Cheetah.Core.EntityFramework;
 using Cheetah.Core.EntityFramework.Extensions;
 using Cheetah.Core.EntityFramework.Migrations;
@@ -14,6 +16,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Cheetah.Tenants.DataAccess;
 
+[DependsOn(typeof(CoreModule))]
+[DependsOn(typeof(CrmDataAccessModule))]
+[DependsOn(typeof(CrmEntityFrameworkModule))]
 [DependsOn(typeof(CrmTenantsDomainModule))]
 [DependsOn(typeof(CrmTenantsSharedModule))]
 [DependsOn(typeof(CrmEntityFrameworkTenantsModule))]

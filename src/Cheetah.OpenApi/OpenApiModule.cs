@@ -5,6 +5,7 @@ using Cheetah.Core.Modularity;
 
 namespace Cheetah.OpenApi;
 
+[DependsOn(typeof(CoreModule))]
 [DependsOn(typeof(CrmAspNetCoreModule))]
 public partial class OpenApiModule : CrmModule
 {

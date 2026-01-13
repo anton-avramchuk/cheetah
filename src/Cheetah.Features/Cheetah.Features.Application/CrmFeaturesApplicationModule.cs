@@ -1,7 +1,13 @@
 using Cheetah.Backend.CQRS;
+using Cheetah.Core;
+using Cheetah.Core.Cache;
+using Cheetah.Core.CQRS;
+using Cheetah.Core.DataAccess;
+using Cheetah.Core.Events;
 using Cheetah.Core.Modularity;
 using Cheetah.Core.Tenants;
 using Cheetah.Core.Tenants.Services;
+using Cheetah.Features.DataAccess;
 using Cheetah.Features.Domain;
 using Cheetah.Features.Events;
 using Cheetah.Tenants.Events;
@@ -13,7 +19,13 @@ namespace Cheetah.Features.Application;
 /// Features Application Module - Contains CQRS handlers and business logic
 /// Database migration is handled automatically by TenantDatabaseMigrationManager
 /// </summary>
+[DependsOn(typeof(CoreModule))]
+[DependsOn(typeof(CrmCacheCoreModule))]
+[DependsOn(typeof(CrmCQRSCoreModule))]
+[DependsOn(typeof(CrmDataAccessModule))]
+[DependsOn(typeof(CrmEventsCoreModule))]
 [DependsOn(typeof(CrmFeaturesDomainModule))]
+[DependsOn(typeof(CrmFeaturesDataAccessModule))]
 [DependsOn(typeof(CrmBackendCQRSModule))]
 [DependsOn(typeof(CrmFeaturesEventsModule))]
 [DependsOn(typeof(CrmTenantsEventsModule))] // Dependency on Tenants.Events for TenantCreatedEvent

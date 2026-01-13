@@ -6,6 +6,7 @@ using Cheetah.Core.Security;
 
 namespace Cheetah.AspNetCore;
 
+[DependsOn(typeof(CoreModule))]
 [DependsOn(typeof(CrmCoreSecurityModule))]
 public partial class CrmAspNetCoreModule : CrmModule
 {

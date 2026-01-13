@@ -1,12 +1,16 @@
 using Cheetah.AspNetCore;
 using Cheetah.Backend.Endpoints;
+using Cheetah.Core;
 using Cheetah.Core.Modularity;
+using Cheetah.Mapping.Core;
 using Cheetah.Mapping.Mapster;
 using Cheetah.Tenants.Application;
 using Cheetah.Tenants.Contracts;
 
 namespace Cheetah.Tenants.Api;
 
+[DependsOn(typeof(CoreModule))]
+[DependsOn(typeof(CrmMappingCoreModule))]
 [DependsOn(typeof(CrmTenantsApplicationModule))]
 [DependsOn(typeof(CrmTenantsContractsModule))]
 [DependsOn(typeof(CrmAspNetCoreModule))]

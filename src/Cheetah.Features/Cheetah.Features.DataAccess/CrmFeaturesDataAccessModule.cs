@@ -1,3 +1,4 @@
+using Cheetah.Core;
 using Cheetah.Core.EntityFramework;
 using Cheetah.Core.EntityFramework.PostgreSql;
 using Cheetah.Core.EntityFramework.Tenants;
@@ -15,11 +16,13 @@ namespace Cheetah.Features.DataAccess;
 /// <summary>
 /// Features Data Access Module - Configures database access for Features
 /// </summary>
+[DependsOn(typeof(CoreModule))]
 [DependsOn(typeof(CrmFeaturesDomainModule))]
 [DependsOn(typeof(CrmEntityFrameworkModule))]
 [DependsOn(typeof(CrmEntityFrameworkPostgreSqlModule))]
 [DependsOn(typeof(CrmEntityFrameworkTenantsModule))]
 [DependsOn(typeof(CrmFeaturesSharedModule))]
+[DependsOn(typeof(CrmTenantsEventsModule))]
 public partial class CrmFeaturesDataAccessModule : CrmModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)

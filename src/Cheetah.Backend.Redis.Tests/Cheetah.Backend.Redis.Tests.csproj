@@ -17,12 +17,16 @@
     <PackageReference Include="xunit.runner.visualstudio" Version="3.1.4" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Cheetah.Backend.Redis\Cheetah.Backend.Redis.csproj" />
-  </ItemGroup>
+<!--  <ItemGroup>-->
+<!--    <ProjectReference Include="..\Cheetah.Backend.Redis\Cheetah.Backend.Redis.csproj" />-->
+<!--  </ItemGroup>-->
 
   <ItemGroup>
     <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Cheetah.Backend.Redis\Cheetah.Backend.Redis.csproj" />
   </ItemGroup>
 
 </Project>

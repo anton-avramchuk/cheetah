@@ -1,3 +1,4 @@
+using Cheetah.Core;
 using Cheetah.Core.Modularity;
 using Cheetah.Mapping.Core;
 using Mapster;
@@ -6,9 +7,8 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Cheetah.Mapping.Mapster;
 
-[DependsOn(
-    typeof(CrmMappingCoreModule)
-    )]
+[DependsOn(typeof(CoreModule))]
+[DependsOn(typeof(CrmMappingCoreModule))]
 public partial class CrmMapsterModule:CrmModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)

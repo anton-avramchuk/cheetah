@@ -1,3 +1,4 @@
+using Cheetah.Core;
 using Cheetah.Core.Modularity;
 using Cheetah.Tenants.ApiClient.Implementation;
 using Cheetah.Tenants.Contracts;
@@ -9,6 +10,7 @@ namespace Cheetah.Tenants.ApiClient;
 /// API Client module for Tenants.
 /// Used by Blazor WASM frontend to communicate with backend API.
 /// </summary>
+[DependsOn(typeof(CoreModule))]
 [DependsOn(typeof(CrmTenantsContractsModule))]
 public partial class CrmTenantsApiClientModule : CrmModule
 {

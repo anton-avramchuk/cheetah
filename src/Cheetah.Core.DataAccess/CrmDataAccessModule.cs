@@ -1,3 +1,4 @@
+using Cheetah.Core;
 using Cheetah.Core.DataAccess.Abstractions;
 using Cheetah.Core.Domain;
 using Cheetah.Core.Extensions.Collections;
@@ -7,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Cheetah.Core.DataAccess;
 
+[DependsOn(typeof(CoreModule))]
 [DependsOn(typeof(CrmDomainModule))]
 public partial class CrmDataAccessModule : CrmModule
 {

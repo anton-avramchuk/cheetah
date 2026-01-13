@@ -19,6 +19,8 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Cheetah.Identity.Api;
 
+[DependsOn(typeof(CoreModule))]
+[DependsOn(typeof(CrmCQRSCoreModule))]
 [DependsOn(typeof(CrmIdentityApplicationModule))]
 [DependsOn(typeof(CrmIdentityContractsModule))]
 [DependsOn(typeof(CrmAspNetCoreModule))]

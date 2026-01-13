@@ -1,9 +1,11 @@
-﻿using Cheetah.Core.Events;
+﻿using Cheetah.Core;
+using Cheetah.Core.Events;
 using Cheetah.Core.Modularity;
 using Cheetah.Core.Tenants;
 
 namespace Cheetah.Core.EntityFramework.Tenants;
 
+[DependsOn(typeof(CoreModule))]
 [DependsOn(typeof(CrmEntityFrameworkModule))]
 [DependsOn(typeof(CrmEventsCoreModule))]
 [DependsOn(typeof(CrmTenantsCoreModule))]

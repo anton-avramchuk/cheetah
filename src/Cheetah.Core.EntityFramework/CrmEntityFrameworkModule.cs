@@ -1,3 +1,4 @@
+using Cheetah.Core;
 using Cheetah.Core.DataAccess;
 using Cheetah.Core.Domain;
 using Cheetah.Core.EntityFramework.Migrations;
@@ -9,6 +10,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Cheetah.Core.EntityFramework;
 
+[DependsOn(typeof(CoreModule))]
 [DependsOn(typeof(CrmDomainModule),typeof(CrmDataAccessModule))]
 public partial class CrmEntityFrameworkModule : CrmModule
 {

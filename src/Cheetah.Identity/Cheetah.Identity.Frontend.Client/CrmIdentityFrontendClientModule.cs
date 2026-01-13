@@ -1,3 +1,5 @@
+using Cheetah.Core;
+using Cheetah.Core.CQRS;
 using Cheetah.Core.Modularity;
 using Cheetah.Identity.Client;
 using Cheetah.Identity.Contracts;
@@ -7,6 +9,8 @@ namespace Cheetah.Identity.Frontend.Client;
 /// <summary>
 /// Identity Frontend Client module - CQRS handlers for Blazor application
 /// </summary>
+[DependsOn(typeof(CoreModule))]
+[DependsOn(typeof(CrmCQRSCoreModule))]
 [DependsOn(typeof(CrmIdentityClientModule))]
 [DependsOn(typeof(CrmIdentityContractsModule))]
 public partial class CrmIdentityFrontendClientModule : CrmModule

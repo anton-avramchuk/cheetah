@@ -8,6 +8,7 @@ using Scalar.AspNetCore;
 
 namespace Cheetah.Scalar;
 
+[DependsOn(typeof(CoreModule))]
 [DependsOn(typeof(CrmAspNetCoreModule),typeof(OpenApiModule))]
 public partial class ScalarModule: CrmModule
 {
