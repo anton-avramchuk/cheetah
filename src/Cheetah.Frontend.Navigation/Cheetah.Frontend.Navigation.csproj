@@ -2,8 +2,8 @@
     <ItemGroup>
         <ProjectReference Include="..\Cheetah.Core\Cheetah.Core.csproj"/>
     </ItemGroup>
+
     <ItemGroup>
-      <Folder Include="Commands\" />
-      <Folder Include="Queries\" />
+        <ProjectReference Include="..\Cheetah.Generators.Module\Cheetah.Generators.Module.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer"/>
     </ItemGroup>
 </Project>
