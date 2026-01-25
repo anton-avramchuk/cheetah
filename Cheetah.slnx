@@ -52,6 +52,11 @@
         <Project Path="src/Cheetah.Frontend.Events/Cheetah.Frontend.Events.csproj" />
     </Folder>
     <Folder Name="/Modules/" />
+    <Folder Name="/Modules/Admin/">
+        <Project Path="src/Modules/Admin/Cheetah.Admin.Api/Cheetah.Admin.Api.csproj" />
+        <Project Path="src/Modules/Admin/Cheetah.Admin.Client/Cheetah.Admin.Client.csproj" />
+    </Folder>
+    <Folder Name="/Modules/Features/" />
     <Folder Name="/Solution Items/">
         <File Path="nuget.config" />
     </Folder>
@@ -64,4 +69,6 @@
         <Project Path="tests/Cheetah.Core.Tenants.Tests/Cheetah.Core.Tenants.Tests.csproj" />
         <Project Path="tests/Cheetah.Tests.Core/Cheetah.Tests.Core.csproj" />
     </Folder>
+    <Project Path="Cheetah.ServiceDefaults/Cheetah.ServiceDefaults.csproj" />
+    <Project Path="src/Cheetah.Crm.Host/Cheetah.Crm.Host.csproj" />
 </Solution>

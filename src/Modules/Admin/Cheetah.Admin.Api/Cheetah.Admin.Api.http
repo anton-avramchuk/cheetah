@@ -1,0 +1,6 @@
+@Cheetah.Admin.Api_HostAddress = http://localhost:5252
+
+GET {{Cheetah.Admin.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
