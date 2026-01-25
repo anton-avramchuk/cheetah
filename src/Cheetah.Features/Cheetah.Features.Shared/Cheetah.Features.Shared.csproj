@@ -1,7 +1,0 @@
-<Project Sdk="Microsoft.NET.Sdk"><!-- No dependencies - pure DTOs -->
-
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\Cheetah.Core\Cheetah.Core.csproj" />
-  </ItemGroup>
-</Project>

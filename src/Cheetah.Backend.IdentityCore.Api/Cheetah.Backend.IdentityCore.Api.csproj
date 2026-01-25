@@ -5,7 +5,10 @@
         <NoDefaultLaunchSettingsFile>true</NoDefaultLaunchSettingsFile>
     </PropertyGroup>
     <ItemGroup>
+        <ProjectReference Include="..\Cheetah.Backend.Endpoints\Cheetah.Backend.Endpoints.csproj" />
         <ProjectReference Include="..\Cheetah.Backend.IdentityCore.Application\Cheetah.Backend.IdentityCore.Application.csproj" />
+        <ProjectReference Include="..\Cheetah.Backend.IdentityCore.DataAccess\Cheetah.Backend.IdentityCore.DataAccess.csproj" />
+        <ProjectReference Include="..\Cheetah.Backend.IdentityCore.Domain\Cheetah.Backend.IdentityCore.Domain.csproj" />
         <ProjectReference Include="..\Cheetah.Core\Cheetah.Core.csproj" />
     </ItemGroup>
 </Project>
