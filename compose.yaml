@@ -14,9 +14,62 @@ services:
     build:
       context: .
       dockerfile: src/Modules/Admin/Cheetah.Admin.Api/Dockerfile
+    environment:
+      - ConnectionStrings__Default=Host=postgres;Port=5432;Database=cheetah;Username=postgres;Password=postgres
+      - Redis__Connection=redis:6379
+    depends_on:
+      - postgres
+      - redis
 
   admin-client:
     image: cheetah.admin.client
     build:
       context: .
       dockerfile: src/Modules/Admin/Cheetah.Admin.Client/Dockerfile
+
+  postgres:
+    image: postgres:17-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: cheetah
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    ports:
+      - "5050:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@cheetah.local
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      - postgres
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+
+  redis-insight:
+    image: redis/redisinsight:latest
+    ports:
+      - "5540:5540"
+    volumes:
+      - redis_insight_data:/data
+    depends_on:
+      - redis
+
+volumes:
+  postgres_data:
+  pgadmin_data:
+  redis_data:
+  redis_insight_data:
