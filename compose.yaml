@@ -1,0 +1,22 @@
+services:
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - admin-api
+      - admin-client
+
+  admin-api:
+    image: cheetah.admin.api
+    build:
+      context: .
+      dockerfile: src/Modules/Admin/Cheetah.Admin.Api/Dockerfile
+
+  admin-client:
+    image: cheetah.admin.client
+    build:
+      context: .
+      dockerfile: src/Modules/Admin/Cheetah.Admin.Client/Dockerfile
