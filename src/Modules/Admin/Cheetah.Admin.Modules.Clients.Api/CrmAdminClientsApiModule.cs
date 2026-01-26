@@ -7,7 +7,7 @@ using Cheetah.Mapping.Mapster;
 
 namespace Cheetah.Admin.Modules.Clients.Api;
 
-[DependsOn(typeof(Cheetah.Core.CoreModule), 
+[DependsOn(typeof(Cheetah.Core.CoreModule),
     typeof(CrmAdminClientsApplicationModule),
     typeof(CrmBackendEndpointsModule),
     typeof(CrmAspNetCoreModule),

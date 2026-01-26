@@ -574,8 +574,6 @@ public class EndpointRegistrationGenerator : IIncrementalGenerator
         sb.AppendLine();
         sb.AppendLine("        if (endpoint.IsDeprecated)");
         sb.AppendLine("            builder.WithMetadata(new System.ObsoleteAttribute(\"This endpoint is deprecated\"));");
-        sb.AppendLine();
-        sb.AppendLine("        // builder.WithOpenApi(); // Uncomment if you have OpenAPI configured");
         sb.AppendLine("    }");
     }
 

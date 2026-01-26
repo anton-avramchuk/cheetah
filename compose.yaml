@@ -17,6 +17,7 @@ services:
     environment:
       - ConnectionStrings__Default=Host=postgres;Port=5432;Database=cheetah;Username=postgres;Password=postgres
       - Redis__Connection=redis:6379
+      - OpenApi__BasePath=/admin
     depends_on:
       - postgres
       - redis

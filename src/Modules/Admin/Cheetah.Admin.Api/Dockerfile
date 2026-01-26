@@ -17,6 +17,7 @@ COPY ["src/Cheetah.AspNetCore/Cheetah.AspNetCore.csproj", "src/Cheetah.AspNetCor
 COPY ["src/Cheetah.AspNetCore.Contracts/Cheetah.AspNetCore.Contracts.csproj", "src/Cheetah.AspNetCore.Contracts/"]
 
 # Backend projects
+COPY ["src/Cheetah.Backend.CQRS/Cheetah.Backend.CQRS.csproj", "src/Cheetah.Backend.CQRS/"]
 COPY ["src/Cheetah.Backend.Endpoints/Cheetah.Backend.Endpoints.csproj", "src/Cheetah.Backend.Endpoints/"]
 COPY ["src/Cheetah.OpenApi/Cheetah.OpenApi.csproj", "src/Cheetah.OpenApi/"]
 COPY ["src/Cheetah.Scalar/Cheetah.Scalar.csproj", "src/Cheetah.Scalar/"]
@@ -40,7 +41,7 @@ COPY ["src/Modules/Admin/Cheetah.Admin.Modules.Clients.Contracts/Cheetah.Admin.M
 RUN dotnet restore "src/Modules/Admin/Cheetah.Admin.Api/Cheetah.Admin.Api.csproj"
 COPY . .
 WORKDIR "/src/src/Modules/Admin/Cheetah.Admin.Api"
-RUN dotnet build "./Cheetah.Admin.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "./Cheetah.Admin.Api.csproj" -c $BUILD_CONFIGURATION
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
