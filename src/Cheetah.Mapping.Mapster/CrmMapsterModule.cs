@@ -2,7 +2,6 @@ using Cheetah.Core;
 using Cheetah.Core.Modularity;
 using Cheetah.Mapping.Core;
 using Mapster;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Cheetah.Mapping.Mapster;

@@ -204,9 +204,6 @@ public class EndpointRegistrationGenerator : IIncrementalGenerator
         // RegisterGeneratedEndpoints method
         sb.AppendLine("    private void RegisterGeneratedEndpoints(IEndpointRouteBuilder routeBuilder, IServiceProvider serviceProvider)");
         sb.AppendLine("    {");
-        sb.AppendLine("        var dispatcher = serviceProvider.GetRequiredService<IDispatcher>();");
-        sb.AppendLine("        var mapper = serviceProvider.GetRequiredService<IObjectMapper>();");
-        sb.AppendLine();
 
         // Generate registration for each endpoint
         foreach (var endpoint in endpoints)
@@ -308,7 +305,7 @@ public class EndpointRegistrationGenerator : IIncrementalGenerator
         var tQueryResult = typeArgs[2].ToDisplayString();
         var tResponse = typeArgs[3].ToDisplayString();
 
-        var parameters = $"[AsParameters] {tRequest} request, CancellationToken cancellationToken";
+        var parameters = $"[AsParameters] {tRequest} request, [FromServices] IDispatcher dispatcher, [FromServices] IObjectMapper mapper, CancellationToken cancellationToken";
         var body = new List<string>
         {
             $"var query = mapper.Map<{tQuery}>(request);",
@@ -332,7 +329,7 @@ public class EndpointRegistrationGenerator : IIncrementalGenerator
         var tQueryResult = typeArgs[2].ToDisplayString();
         var tResponse = typeArgs[3].ToDisplayString();
 
-        var parameters = $"[AsParameters] {tRequest} request, CancellationToken cancellationToken";
+        var parameters = $"[AsParameters] {tRequest} request, [FromServices] IDispatcher dispatcher, [FromServices] IObjectMapper mapper, CancellationToken cancellationToken";
         var body = new List<string>
         {
             $"var query = mapper.Map<{tQuery}>(request);",
@@ -361,7 +358,7 @@ public class EndpointRegistrationGenerator : IIncrementalGenerator
         var tQueryResult = typeArgs[2].ToDisplayString();
         var tResponse = typeArgs[3].ToDisplayString();
 
-        var parameters = $"[AsParameters] {tRequest} request, CancellationToken cancellationToken";
+        var parameters = $"[AsParameters] {tRequest} request, [FromServices] IDispatcher dispatcher, [FromServices] IObjectMapper mapper, CancellationToken cancellationToken";
         var body = new List<string>
         {
             $"var query = mapper.Map<{tQuery}>(request);",
@@ -383,7 +380,7 @@ public class EndpointRegistrationGenerator : IIncrementalGenerator
         var tRequest = typeArgs[0].ToDisplayString();
         var tCommand = typeArgs[1].ToDisplayString();
 
-        var parameters = $"[FromBody] {tRequest} request, CancellationToken cancellationToken";
+        var parameters = $"[FromBody] {tRequest} request, [FromServices] IDispatcher dispatcher, [FromServices] IObjectMapper mapper, CancellationToken cancellationToken";
         var body = new List<string>
         {
             $"var command = mapper.Map<{tCommand}>(request);",
@@ -407,7 +404,7 @@ public class EndpointRegistrationGenerator : IIncrementalGenerator
         var tCommandResult = typeArgs[2].ToDisplayString();
         var tResponse = typeArgs[3].ToDisplayString();
 
-        var parameters = $"[FromBody] {tRequest} request, CancellationToken cancellationToken";
+        var parameters = $"[FromBody] {tRequest} request, [FromServices] IDispatcher dispatcher, [FromServices] IObjectMapper mapper, CancellationToken cancellationToken";
         var body = new List<string>
         {
             $"var command = mapper.Map<{tCommand}>(request);",
@@ -430,7 +427,7 @@ public class EndpointRegistrationGenerator : IIncrementalGenerator
         var tRequest = typeArgs[0].ToDisplayString();
         var tCommand = typeArgs[1].ToDisplayString();
 
-        var parameters = $"[FromBody] {tRequest} request, CancellationToken cancellationToken";
+        var parameters = $"[FromBody] {tRequest} request, [FromServices] IDispatcher dispatcher, [FromServices] IObjectMapper mapper, CancellationToken cancellationToken";
         var body = new List<string>
         {
             $"var command = mapper.Map<{tCommand}>(request);",
@@ -452,7 +449,7 @@ public class EndpointRegistrationGenerator : IIncrementalGenerator
         var tRequest = typeArgs[0].ToDisplayString();
         var tCommand = typeArgs[1].ToDisplayString();
 
-        var parameters = $"[FromBody] {tRequest} request, CancellationToken cancellationToken";
+        var parameters = $"[FromBody] {tRequest} request, [FromServices] IDispatcher dispatcher, [FromServices] IObjectMapper mapper, CancellationToken cancellationToken";
         var body = new List<string>
         {
             $"var command = mapper.Map<{tCommand}>(request);",
@@ -477,7 +474,7 @@ public class EndpointRegistrationGenerator : IIncrementalGenerator
         var tCommandResult = typeArgs[2].ToDisplayString();
         var tResponse = typeArgs[3].ToDisplayString();
 
-        var parameters = $"[FromBody] {tRequest} request, CancellationToken cancellationToken";
+        var parameters = $"[FromBody] {tRequest} request, [FromServices] IDispatcher dispatcher, [FromServices] IObjectMapper mapper, CancellationToken cancellationToken";
         var body = new List<string>
         {
             $"var command = mapper.Map<{tCommand}>(request);",
@@ -501,7 +498,7 @@ public class EndpointRegistrationGenerator : IIncrementalGenerator
         var tRequest = typeArgs[0].ToDisplayString();
         var tCommand = typeArgs[1].ToDisplayString();
 
-        var parameters = $"[FromBody] {tRequest} request, CancellationToken cancellationToken";
+        var parameters = $"[FromBody] {tRequest} request, [FromServices] IDispatcher dispatcher, [FromServices] IObjectMapper mapper, CancellationToken cancellationToken";
         var body = new List<string>
         {
             $"var command = mapper.Map<{tCommand}>(request);",
@@ -524,7 +521,7 @@ public class EndpointRegistrationGenerator : IIncrementalGenerator
         var tRequest = typeArgs[0].ToDisplayString();
         var tCommand = typeArgs[1].ToDisplayString();
 
-        var parameters = $"[AsParameters] {tRequest} request, CancellationToken cancellationToken";
+        var parameters = $"[AsParameters] {tRequest} request, [FromServices] IDispatcher dispatcher, [FromServices] IObjectMapper mapper, CancellationToken cancellationToken";
         var body = new List<string>
         {
             $"var command = mapper.Map<{tCommand}>(request);",
