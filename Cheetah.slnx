@@ -57,6 +57,7 @@
         <Project Path="src/Modules/Admin/Cheetah.Admin.Modules.Clients.DataAccess.Mongo/Cheetah.Admin.Modules.Clients.DataAccess.Mongo.csproj" />
         <Project Path="src/Modules/Admin/Cheetah.Admin.Modules.Clients.DataAccess/Cheetah.Admin.Modules.Clients.DataAccess.csproj" />
         <Project Path="src/Modules/Admin/Cheetah.Admin.Modules.Clients.Domain/Cheetah.Admin.Modules.Clients.Domain.csproj" />
+        <Project Path="src/Modules/Admin/Cheetah.Admin.Modules.Clients.DomainEvents/Cheetah.Admin.Modules.Clients.DomainEvents.csproj" />
     </Folder>
     <Folder Name="/Modules/Features/" />
     <Folder Name="/Solution Items/">
