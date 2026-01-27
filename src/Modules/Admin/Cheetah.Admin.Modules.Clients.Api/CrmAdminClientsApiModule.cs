@@ -1,6 +1,8 @@
 ﻿using Cheetah.Admin.Modules.Clients.Application;
+using Cheetah.Admin.Modules.Clients.DataAccess;
 using Cheetah.AspNetCore;
 using Cheetah.Backend.Endpoints;
+using Cheetah.Core;
 using Cheetah.Core.Modularity;
 using Cheetah.Mapping.Core;
 using Cheetah.Mapping.Mapster;
@@ -12,7 +14,8 @@ namespace Cheetah.Admin.Modules.Clients.Api;
     typeof(CrmBackendEndpointsModule),
     typeof(CrmAspNetCoreModule),
     typeof(CrmMappingCoreModule),
-    typeof(CrmMapsterModule)
+    typeof(CrmMapsterModule),
+    typeof(CrmAdminClientsDataAccessModule)
     )]
 public partial class CrmAdminClientsApiModule : CrmModule
 {

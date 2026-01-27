@@ -12,6 +12,7 @@
         <ProjectReference Include="..\..\..\Cheetah.Mapping.Core\Cheetah.Mapping.Core.csproj" />
         <ProjectReference Include="..\..\..\Cheetah.Mapping.Mapster\Cheetah.Mapping.Mapster.csproj" />
         <ProjectReference Include="..\Cheetah.Admin.Modules.Clients.Application\Cheetah.Admin.Modules.Clients.Application.csproj" />
+        <ProjectReference Include="..\Cheetah.Admin.Modules.Clients.DataAccess\Cheetah.Admin.Modules.Clients.DataAccess.csproj" />
     </ItemGroup>
 
     <ItemGroup>

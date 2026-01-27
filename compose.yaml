@@ -16,6 +16,7 @@ services:
       dockerfile: src/Modules/Admin/Cheetah.Admin.Api/Dockerfile
     environment:
       - ConnectionStrings__Default=Host=postgres;Port=5432;Database=cheetah;Username=postgres;Password=postgres
+      - ConnectionStrings__AdminDb=Host=postgres;Port=5432;Database=cheetah_admin;Username=postgres;Password=postgres
       - Redis__Connection=redis:6379
       - OpenApi__BasePath=/admin
     depends_on:
@@ -38,17 +39,20 @@ services:
       POSTGRES_DB: cheetah
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
 
   pgadmin:
     image: dpage/pgadmin4:latest
     ports:
       - "5050:80"
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@cheetah.local
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
       PGADMIN_DEFAULT_PASSWORD: admin
       PGADMIN_CONFIG_SERVER_MODE: "False"
     volumes:
       - pgadmin_data:/var/lib/pgadmin
+      - ./docker/pgadmin/servers.json:/pgadmin4/servers.json:ro
+      - ./docker/pgadmin/pgpass:/pgpass:ro
     depends_on:
       - postgres
 

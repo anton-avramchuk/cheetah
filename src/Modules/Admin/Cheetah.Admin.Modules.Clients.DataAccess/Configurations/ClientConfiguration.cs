@@ -25,7 +25,7 @@ public class ClientConfiguration : AggregateRootConfiguration<Client, Guid, Clie
         builder.Property(x => x.Description)
             .HasMaxLength(1024);
 
-        builder.HasIndex(x => x.Name);
+        builder.HasIndex(x => x.Name).IsUnique();
         builder.HasIndex(x => x.TenantId);
     }
 }
