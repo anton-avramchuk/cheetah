@@ -1,3 +1,4 @@
+using Cheetah.Admin.Modules.Clients.Application;
 using Cheetah.Admin.Modules.Clients.Application.Commands;
 using Cheetah.Admin.Modules.Clients.Application.Queries;
 using Cheetah.Admin.Modules.Clients.Contracts.Requests;

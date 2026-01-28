@@ -52,14 +52,23 @@
     <Folder Name="/Modules/Admin/modules/clients/backend/">
         <Project Path="src/Modules/Admin/Cheetah.Admin.Modules.Clients.Api/Cheetah.Admin.Modules.Clients.Api.csproj" />
         <Project Path="src/Modules/Admin/Cheetah.Admin.Modules.Clients.Application/Cheetah.Admin.Modules.Clients.Application.csproj" />
-        <Project Path="src/Modules/Admin/Cheetah.Admin.Modules.Clients.Contracts/Cheetah.Admin.Modules.Clients.Contracts.csproj" />
         <Project Path="src/Modules/Admin/Cheetah.Admin.Modules.Clients.DataAccess.Mongo/Cheetah.Admin.Modules.Clients.DataAccess.Mongo.csproj" />
         <Project Path="src/Modules/Admin/Cheetah.Admin.Modules.Clients.DataAccess/Cheetah.Admin.Modules.Clients.DataAccess.csproj" />
         <Project Path="src/Modules/Admin/Cheetah.Admin.Modules.Clients.Domain/Cheetah.Admin.Modules.Clients.Domain.csproj" />
-        <Project Path="src/Modules/Admin/Cheetah.Admin.Modules.Clients.DomainEvents/Cheetah.Admin.Modules.Clients.DomainEvents.csproj" />
     </Folder>
     <Folder Name="/Modules/Admin/modules/clients/backend/tests/">
+        <Project Path="src/Modules/Admin/Cheetah.Admin.Modules.Clients.Api.Tests/Cheetah.Admin.Modules.Clients.Api.Tests.csproj" />
         <Project Path="src/Modules/Admin/Cheetah.Admin.Modules.Clients.Application.Tests/Cheetah.Admin.Modules.Clients.Application.Tests.csproj" />
+        <Project Path="src/Modules/Admin/Cheetah.Admin.Modules.Clients.Domain.Tests/Cheetah.Admin.Modules.Clients.Domain.Tests.csproj" />
+    </Folder>
+    <Folder Name="/Modules/Admin/modules/clients/frontend/" />
+    <Folder Name="/Modules/Admin/modules/clients/shared/">
+        <Project Path="src/Modules/Admin/Cheetah.Admin.Modules.Clients.Api.Client/Cheetah.Admin.Modules.Clients.Api.Client.csproj" />
+        <Project Path="src/Modules/Admin/Cheetah.Admin.Modules.Clients.Contracts/Cheetah.Admin.Modules.Clients.Contracts.csproj" />
+        <Project Path="src/Modules/Admin/Cheetah.Admin.Modules.Clients.DomainEvents/Cheetah.Admin.Modules.Clients.DomainEvents.csproj" />
+    </Folder>
+    <Folder Name="/Modules/Admin/modules/clients/shared/tests/">
+        <Project Path="src/Modules/Admin/Cheetah.Admin.Modules.Clients.Api.Client.Tests/Cheetah.Admin.Modules.Clients.Api.Client.Tests.csproj" />
     </Folder>
     <Folder Name="/Modules/Features/" />
     <Folder Name="/Solution Items/">

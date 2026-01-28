@@ -1,4 +1,4 @@
-namespace Cheetah.Admin.Modules.Clients.Application.Queries;
+namespace Cheetah.Admin.Modules.Clients.Application;
 
 public record ClientModel(Guid Id, string Name, TenantModel Tenant);
 
