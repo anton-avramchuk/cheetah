@@ -15,4 +15,14 @@
         <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="10.0.2"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\Cheetah.Blazor.Components\Cheetah.Blazor.Components.csproj" />
+      <ProjectReference Include="..\..\..\Cheetah.Generators.Module\Cheetah.Generators.Module.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer"/>
+      <ProjectReference Include="..\Cheetah.Admin.Modules.Clients.Api.Client\Cheetah.Admin.Modules.Clients.Api.Client.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="wwwroot\" />
+    </ItemGroup>
+
 </Project>

@@ -2,7 +2,6 @@ using System.Net;
 using System.Text.Json;
 using Cheetah.Admin.Modules.Clients.Contracts.Requests;
 using Cheetah.Admin.Modules.Clients.Contracts.Response;
-using Cheetah.Backend.Endpoints.Responses;
 using FluentAssertions;
 
 namespace Cheetah.Admin.Modules.Clients.Api.Client.Tests;
@@ -103,7 +102,7 @@ public class AdminClientsServiceTests
         // Arrange
         var expectedId = Guid.NewGuid();
         var request = new CreateClientRequest("New Client", "Description");
-        var response = new GuidResponse(expectedId);
+        var response = new { Id = expectedId };
 
         var handler = new MockHttpMessageHandler(HttpStatusCode.Created, JsonSerializer.Serialize(response));
         var service = CreateService(handler);

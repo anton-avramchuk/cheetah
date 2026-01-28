@@ -1,5 +1,5 @@
-using Cheetah.AspNetCore.Contracts.Requests;
-using Cheetah.AspNetCore.Contracts.Responses;
+using Cheetah.Contracts.Requests;
+using Cheetah.Contracts.Responses;
 
 namespace Cheetah.Backend.Endpoints.Abstractions;
 

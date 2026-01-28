@@ -1,8 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <ItemGroup>
-      <ProjectReference Include="..\..\..\Cheetah.AspNetCore.Contracts\Cheetah.AspNetCore.Contracts.csproj" />
+      <ProjectReference Include="..\..\..\Cheetah.Contracts\Cheetah.Contracts.csproj" />
       <ProjectReference Include="..\..\..\Cheetah.Core\Cheetah.Core.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\..\Cheetah.Generators.Module\Cheetah.Generators.Module.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
     </ItemGroup>
 
 </Project>

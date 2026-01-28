@@ -78,6 +78,9 @@
         <File Path="nginx.conf" />
         <File Path="nuget.config" />
     </Folder>
+    <Folder Name="/src/">
+        <Project Path="src/Cheetah.Contracts/Cheetah.Contracts.csproj" />
+    </Folder>
     <Folder Name="/Tests/">
         <Project Path="src/Cheetah.Backend.Events.Redis.Tests/Cheetah.Backend.Events.Redis.Tests.csproj" />
         <Project Path="src/Cheetah.Backend.Redis.Tests/Cheetah.Backend.Redis.Tests.csproj" />

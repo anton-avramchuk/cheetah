@@ -1,4 +1,4 @@
-using Cheetah.AspNetCore.Contracts.Responses;
+using Cheetah.Contracts.Responses;
 
 namespace Cheetah.Admin.Modules.Clients.Contracts.Response;
 

@@ -1,5 +1,4 @@
 using Cheetah.Admin.Modules.Clients.Contracts;
-using Cheetah.Backend.Endpoints;
 using Cheetah.Core.Modularity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -8,7 +7,6 @@ namespace Cheetah.Admin.Modules.Clients.Api.Client;
 
 [DependsOn(typeof(Cheetah.Core.CoreModule))]
 [DependsOn(typeof(CrmAdminClientsContractsModule))]
-[DependsOn(typeof(CrmBackendEndpointsModule))]
 public partial class CrmAdminClientsApiClientModule : CrmModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)

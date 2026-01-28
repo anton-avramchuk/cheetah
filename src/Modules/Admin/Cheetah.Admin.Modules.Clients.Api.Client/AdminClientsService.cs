@@ -2,9 +2,10 @@ using System.Net;
 using System.Net.Http.Json;
 using Cheetah.Admin.Modules.Clients.Contracts.Requests;
 using Cheetah.Admin.Modules.Clients.Contracts.Response;
-using Cheetah.Backend.Endpoints.Responses;
 
 namespace Cheetah.Admin.Modules.Clients.Api.Client;
+
+internal record CreateClientResponse(Guid Id);
 
 public class AdminClientsService : IAdminClientsService
 {
@@ -41,7 +42,7 @@ public class AdminClientsService : IAdminClientsService
         var response = await _httpClient.PostAsJsonAsync(BasePath, request, ct);
         response.EnsureSuccessStatusCode();
 
-        var result = await response.Content.ReadFromJsonAsync<GuidResponse>(ct);
+        var result = await response.Content.ReadFromJsonAsync<CreateClientResponse>(ct);
         return result?.Id ?? throw new InvalidOperationException("Failed to parse response");
     }
 

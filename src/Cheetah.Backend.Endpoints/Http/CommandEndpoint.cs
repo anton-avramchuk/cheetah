@@ -1,8 +1,7 @@
-using Cheetah.AspNetCore.Contracts.Requests;
-using Cheetah.AspNetCore.Contracts.Responses;
+using Cheetah.Contracts.Requests;
+using Cheetah.Contracts.Responses;
 using Cheetah.Backend.Endpoints.Responses;
 using Cheetah.Core.CQRS;
-using ICommand = System.Windows.Input.ICommand;
 
 namespace Cheetah.Backend.Endpoints.Http;
 
