@@ -1,6 +1,5 @@
 using Cheetah.Admin.Modules.Clients.Domain;
 using Cheetah.Core.EntityFramework.Configuration;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Cheetah.Admin.Modules.Clients.DataAccess.Configurations;

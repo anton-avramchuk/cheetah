@@ -7,5 +7,5 @@ namespace Cheetah.Admin.Modules.Clients.Api.Endpoints;
 
 public class GetAllClientsEndpoint:QueryCollectionEndpoint<GetAllClientsRequest,GetAllClientsQuery,ClientModel,ClientViewModel>
 {
-    public override string Route => "api/clients";
+    public override string Route => Constants.DefaultRoute;
 }

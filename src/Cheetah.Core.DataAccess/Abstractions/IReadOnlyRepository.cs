@@ -1,12 +1,15 @@
 using Cheetah.Core.Domain;
+using Cheetah.Core.Specification;
 
 namespace Cheetah.Core.DataAccess.Abstractions;
 
-public interface IReadOnlyRepository<TEntity, TKey> where TEntity : Entity<TKey>
+public interface IReadOnlyRepository<TEntity, TKey>
+    where TEntity : Entity<TKey>
 {
-    Task<TEntity?> GetAsync(TKey id, CancellationToken cancellationToken = default);
-    Task<TEntity?> FirstOrDefaultAsync(System.Linq.Expressions.Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default);
-    Task<IReadOnlyList<TEntity>> GetAllAsync(CancellationToken cancellationToken = default);
-    
-    Task<TEntity?> GetByIdAsync(TKey key, CancellationToken cancellationToken = default);
+    ValueTask<TEntity?> GetByIdAsync(TKey id, CancellationToken cancellationToken = default);
+    ValueTask<TEntity?> GetBySpecAsync(ISpecification<TEntity> spec, CancellationToken cancellationToken = default);
+    ValueTask<List<TEntity>> GetAllAsync(ISpecification<TEntity>? spec = null, CancellationToken cancellationToken = default);
+    ValueTask<bool> ExistsAsync(ISpecification<TEntity> spec, CancellationToken cancellationToken = default);
+    IQueryable<TEntity> AsQueryable();
+    IQueryable<TEntity> AsNoTrackingQueryable();
 }

@@ -44,13 +44,12 @@
     </Folder>
     <Folder Name="/Modules/" />
     <Folder Name="/Modules/Admin/">
+        <Project Path="src/Modules/Admin/Cheetah.Admin.Api/Cheetah.Admin.Api.csproj" />
         <Project Path="src/Modules/Admin/Cheetah.Admin.Client/Cheetah.Admin.Client.csproj" />
     </Folder>
-    <Folder Name="/Modules/Admin/backend/">
-        <Project Path="src/Modules/Admin/Cheetah.Admin.Api/Cheetah.Admin.Api.csproj" />
-    </Folder>
-    <Folder Name="/Modules/Admin/backend/modules/" />
-    <Folder Name="/Modules/Admin/backend/modules/clients/">
+    <Folder Name="/Modules/Admin/modules/" />
+    <Folder Name="/Modules/Admin/modules/clients/" />
+    <Folder Name="/Modules/Admin/modules/clients/backend/">
         <Project Path="src/Modules/Admin/Cheetah.Admin.Modules.Clients.Api/Cheetah.Admin.Modules.Clients.Api.csproj" />
         <Project Path="src/Modules/Admin/Cheetah.Admin.Modules.Clients.Application/Cheetah.Admin.Modules.Clients.Application.csproj" />
         <Project Path="src/Modules/Admin/Cheetah.Admin.Modules.Clients.Contracts/Cheetah.Admin.Modules.Clients.Contracts.csproj" />
@@ -58,6 +57,9 @@
         <Project Path="src/Modules/Admin/Cheetah.Admin.Modules.Clients.DataAccess/Cheetah.Admin.Modules.Clients.DataAccess.csproj" />
         <Project Path="src/Modules/Admin/Cheetah.Admin.Modules.Clients.Domain/Cheetah.Admin.Modules.Clients.Domain.csproj" />
         <Project Path="src/Modules/Admin/Cheetah.Admin.Modules.Clients.DomainEvents/Cheetah.Admin.Modules.Clients.DomainEvents.csproj" />
+    </Folder>
+    <Folder Name="/Modules/Admin/modules/clients/backend/tests/">
+        <Project Path="src/Modules/Admin/Cheetah.Admin.Modules.Clients.Application.Tests/Cheetah.Admin.Modules.Clients.Application.Tests.csproj" />
     </Folder>
     <Folder Name="/Modules/Features/" />
     <Folder Name="/Solution Items/">

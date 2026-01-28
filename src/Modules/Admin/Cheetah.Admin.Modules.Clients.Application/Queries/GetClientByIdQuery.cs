@@ -2,4 +2,4 @@ using Cheetah.Core.CQRS;
 
 namespace Cheetah.Admin.Modules.Clients.Application.Queries;
 
-public record GetAllClientsQuery : IQuery<IReadOnlyList<ClientModel>>;
+public record GetClientByIdQuery(Guid Id) : IQuery<ClientModel?>;

@@ -1,13 +1,13 @@
 using Cheetah.Core.Domain;
+using Cheetah.Core.Specification;
 
 namespace Cheetah.Core.DataAccess.Abstractions;
 
-public interface IRepository<TEntity, TKey> where TEntity : Entity<TKey>
+public interface IRepository<TEntity, TKey> : IReadOnlyRepository<TEntity, TKey>
+    where TEntity : Entity<TKey>
 {
-    Task<TEntity?> GetAsync(TKey id, CancellationToken cancellationToken = default);
-    Task<TEntity?> FirstOrDefaultAsync(System.Linq.Expressions.Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default);
-    Task<IReadOnlyList<TEntity>> GetAllAsync(CancellationToken cancellationToken = default);
-    Task InsertAsync(TEntity entity, CancellationToken cancellationToken = default);
-    Task UpdateAsync(TEntity entity, CancellationToken cancellationToken = default);
-    Task DeleteAsync(TEntity entity, CancellationToken cancellationToken = default);
+    void Add(TEntity entity);
+    void Update(TEntity entity);
+    void Delete(TEntity entity);
+    ValueTask<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

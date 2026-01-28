@@ -4,12 +4,14 @@ using Cheetah.Core.Domain;
 using Cheetah.Core.Extensions.Collections;
 using Cheetah.Core.Extensions.DependencyInjection;
 using Cheetah.Core.Modularity;
+using Cheetah.Core.Specification;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Cheetah.Core.DataAccess;
 
 [DependsOn(typeof(CoreModule))]
 [DependsOn(typeof(CrmDomainModule))]
+[DependsOn(typeof(CrmSpecificationModule))]
 public partial class CrmDataAccessModule : CrmModule
 {
     public override void PreConfigureServices(ServiceConfigurationContext context)
