@@ -8,6 +8,7 @@ COPY ["src/Cheetah.Core/Cheetah.Core.csproj", "src/Cheetah.Core/"]
 COPY ["src/Cheetah.Contracts/Cheetah.Contracts.csproj", "src/Cheetah.Contracts/"]
 COPY ["src/Cheetah.Frontend.Navigation/Cheetah.Frontend.Navigation.csproj", "src/Cheetah.Frontend.Navigation/"]
 COPY ["src/Cheetah.Blazor.Components/Cheetah.Blazor.Components.csproj", "src/Cheetah.Blazor.Components/"]
+COPY ["src/Cheetah.Blazor/Cheetah.Blazor.csproj","src/Cheetah.Blazor/"]
 
 # Generators and Analyzers
 COPY ["src/Cheetah.Analyzers/Cheetah.Analyzers.csproj", "src/Cheetah.Analyzers/"]
