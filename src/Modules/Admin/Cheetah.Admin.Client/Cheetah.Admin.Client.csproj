@@ -11,7 +11,9 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\..\Cheetah.Blazor\Cheetah.Blazor.csproj" />
         <ProjectReference Include="..\..\..\Cheetah.Core\Cheetah.Core.csproj" />
+        <ProjectReference Include="..\..\..\Cheetah.Frontend.Navigation\Cheetah.Frontend.Navigation.csproj" />
         <ProjectReference Include="..\..\..\Cheetah.Generators.Module\Cheetah.Generators.Module.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer"/>
         <ProjectReference Include="..\..\..\Cheetah.Generators.Application\Cheetah.Generators.Application.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer"/>
         <ProjectReference Include="..\Cheetah.Admin.Modules.Clients.Frontend\Cheetah.Admin.Modules.Clients.Frontend.csproj" />

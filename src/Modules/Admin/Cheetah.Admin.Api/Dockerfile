@@ -12,7 +12,14 @@ COPY ["src/Directory.Build.props", "src/"]
 # Core projects
 COPY ["src/Cheetah.Core/Cheetah.Core.csproj", "src/Cheetah.Core/"]
 COPY ["src/Cheetah.Core.CQRS/Cheetah.Core.CQRS.csproj", "src/Cheetah.Core.CQRS/"]
+COPY ["src/Cheetah.Core.Domain/Cheetah.Core.Domain.csproj", "src/Cheetah.Core.Domain/"]
+COPY ["src/Cheetah.Core.Events/Cheetah.Core.Events.csproj", "src/Cheetah.Core.Events/"]
 COPY ["src/Cheetah.Core.Security/Cheetah.Core.Security.csproj", "src/Cheetah.Core.Security/"]
+COPY ["src/Cheetah.Core.Specification/Cheetah.Core.Specification.csproj", "src/Cheetah.Core.Specification/"]
+COPY ["src/Cheetah.Core.DataAccess/Cheetah.Core.DataAccess.csproj", "src/Cheetah.Core.DataAccess/"]
+COPY ["src/Cheetah.Core.EntityFramework/Cheetah.Core.EntityFramework.csproj", "src/Cheetah.Core.EntityFramework/"]
+COPY ["src/Cheetah.Core.EntityFramework.PostgreSql/Cheetah.Core.EntityFramework.PostgreSql.csproj", "src/Cheetah.Core.EntityFramework.PostgreSql/"]
+COPY ["src/Cheetah.Contracts/Cheetah.Contracts.csproj", "src/Cheetah.Contracts/"]
 COPY ["src/Cheetah.AspNetCore/Cheetah.AspNetCore.csproj", "src/Cheetah.AspNetCore/"]
 COPY ["src/Cheetah.AspNetCore.Contracts/Cheetah.AspNetCore.Contracts.csproj", "src/Cheetah.AspNetCore.Contracts/"]
 
@@ -31,12 +38,16 @@ COPY ["src/Cheetah.Analyzers/Cheetah.Analyzers.csproj", "src/Cheetah.Analyzers/"
 COPY ["src/Cheetah.Generators.Module/Cheetah.Generators.Module.csproj", "src/Cheetah.Generators.Module/"]
 COPY ["src/Cheetah.Generators.Application/Cheetah.Generators.Application.csproj", "src/Cheetah.Generators.Application/"]
 COPY ["src/Cheetah.Generators.Endpoints/Cheetah.Generators.Endpoints.csproj", "src/Cheetah.Generators.Endpoints/"]
+COPY ["src/Cheetah.Generators.Core/Cheetah.Generators.Core.csproj", "src/Cheetah.Generators.Core/"]
 
 # Admin module projects
 COPY ["src/Modules/Admin/Cheetah.Admin.Api/Cheetah.Admin.Api.csproj", "src/Modules/Admin/Cheetah.Admin.Api/"]
 COPY ["src/Modules/Admin/Cheetah.Admin.Modules.Clients.Api/Cheetah.Admin.Modules.Clients.Api.csproj", "src/Modules/Admin/Cheetah.Admin.Modules.Clients.Api/"]
 COPY ["src/Modules/Admin/Cheetah.Admin.Modules.Clients.Application/Cheetah.Admin.Modules.Clients.Application.csproj", "src/Modules/Admin/Cheetah.Admin.Modules.Clients.Application/"]
 COPY ["src/Modules/Admin/Cheetah.Admin.Modules.Clients.Contracts/Cheetah.Admin.Modules.Clients.Contracts.csproj", "src/Modules/Admin/Cheetah.Admin.Modules.Clients.Contracts/"]
+COPY ["src/Modules/Admin/Cheetah.Admin.Modules.Clients.Domain/Cheetah.Admin.Modules.Clients.Domain.csproj", "src/Modules/Admin/Cheetah.Admin.Modules.Clients.Domain/"]
+COPY ["src/Modules/Admin/Cheetah.Admin.Modules.Clients.DomainEvents/Cheetah.Admin.Modules.Clients.DomainEvents.csproj", "src/Modules/Admin/Cheetah.Admin.Modules.Clients.DomainEvents/"]
+COPY ["src/Modules/Admin/Cheetah.Admin.Modules.Clients.DataAccess/Cheetah.Admin.Modules.Clients.DataAccess.csproj", "src/Modules/Admin/Cheetah.Admin.Modules.Clients.DataAccess/"]
 
 RUN dotnet restore "src/Modules/Admin/Cheetah.Admin.Api/Cheetah.Admin.Api.csproj"
 COPY . .
