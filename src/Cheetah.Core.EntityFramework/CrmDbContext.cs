@@ -24,7 +24,7 @@ public abstract class CrmDbContext<TDbContext> : DbContext, ICrmDbContext
     {
         if (ChangeTracker.HasChanges())
         {
-            var date = DateTimeOffset.Now;
+            var date = DateTimeOffset.UtcNow;
             foreach (var entry in ChangeTracker.Entries()
                          .Where(w => w.State is EntityState.Added or EntityState.Modified))
             {

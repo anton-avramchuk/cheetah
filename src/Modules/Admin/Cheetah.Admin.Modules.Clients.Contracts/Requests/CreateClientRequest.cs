@@ -1,5 +1,9 @@
+using System.ComponentModel.DataAnnotations;
 using Cheetah.AspNetCore.Contracts.Requests;
 
 namespace Cheetah.Admin.Modules.Clients.Contracts.Requests;
 
-public record CreateClientRequest(string Name, string? Description) : ICrmRequest;
+public record CreateClientRequest(
+    [property: Required(AllowEmptyStrings = false)]
+    string Name,
+    string? Description) : ICrmRequest;

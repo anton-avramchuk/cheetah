@@ -1,4 +1,5 @@
 using Cheetah.Admin.Modules.Clients.DataAccess;
+using Cheetah.Core.Events;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
@@ -48,6 +49,9 @@ public class ClientsApiFixture : WebApplicationFactory<Program>, IAsyncLifetime
                 options.UseNpgsql(_dbContainer.GetConnectionString());
             });
 
+            // Add NullEventBus for testing
+            services.AddSingleton<IEventBus, NullEventBus>();
+
             // Ensure database is created with migrations
             var sp = services.BuildServiceProvider();
             using var scope = sp.CreateScope();
@@ -56,5 +60,23 @@ public class ClientsApiFixture : WebApplicationFactory<Program>, IAsyncLifetime
         });
 
         builder.UseEnvironment("Testing");
+    }
+}
+
+/// <summary>
+/// No-op event bus for integration tests
+/// </summary>
+internal class NullEventBus : IEventBus
+{
+    public ValueTask PublishAsync<TEvent>(TEvent @event, CancellationToken cancellationToken = default)
+        where TEvent : IEvent => ValueTask.CompletedTask;
+
+    public ValueTask PublishManyAsync<TEvent>(IEnumerable<TEvent> events, CancellationToken cancellationToken = default)
+        where TEvent : IEvent => ValueTask.CompletedTask;
+
+    public void Subscribe<TEvent, THandler>()
+        where TEvent : IEvent
+        where THandler : IEventHandler<TEvent>
+    {
     }
 }

@@ -61,7 +61,9 @@
         <Project Path="src/Modules/Admin/Cheetah.Admin.Modules.Clients.Application.Tests/Cheetah.Admin.Modules.Clients.Application.Tests.csproj" />
         <Project Path="src/Modules/Admin/Cheetah.Admin.Modules.Clients.Domain.Tests/Cheetah.Admin.Modules.Clients.Domain.Tests.csproj" />
     </Folder>
-    <Folder Name="/Modules/Admin/modules/clients/frontend/" />
+    <Folder Name="/Modules/Admin/modules/clients/frontend/">
+        <Project Path="src/Modules/Admin/Cheetah.Admin.Modules.Clients.Frontend/Cheetah.Admin.Modules.Clients.Frontend.csproj" />
+    </Folder>
     <Folder Name="/Modules/Admin/modules/clients/shared/">
         <Project Path="src/Modules/Admin/Cheetah.Admin.Modules.Clients.Api.Client/Cheetah.Admin.Modules.Clients.Api.Client.csproj" />
         <Project Path="src/Modules/Admin/Cheetah.Admin.Modules.Clients.Contracts/Cheetah.Admin.Modules.Clients.Contracts.csproj" />
