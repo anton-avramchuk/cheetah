@@ -24,8 +24,8 @@ public class AdminClientsServiceTests
         // Arrange
         var expectedClients = new List<ClientViewModel>
         {
-            new(Guid.NewGuid(), "Client 1", new TenantViewModel(Guid.NewGuid(), "Tenant 1")),
-            new(Guid.NewGuid(), "Client 2", new TenantViewModel(Guid.NewGuid(), "Tenant 2"))
+            new(Guid.NewGuid(), "Client 1", "Description 1", new TenantViewModel(Guid.NewGuid(), "Tenant 1")),
+            new(Guid.NewGuid(), "Client 2", "Description 2", new TenantViewModel(Guid.NewGuid(), "Tenant 2"))
         };
 
         var handler = new MockHttpMessageHandler(HttpStatusCode.OK, JsonSerializer.Serialize(expectedClients));
@@ -63,7 +63,7 @@ public class AdminClientsServiceTests
     {
         // Arrange
         var clientId = Guid.NewGuid();
-        var expectedClient = new ClientViewModel(clientId, "Test Client", new TenantViewModel(Guid.NewGuid(), "Tenant"));
+        var expectedClient = new ClientViewModel(clientId, "Test Client", "Test Description", new TenantViewModel(Guid.NewGuid(), "Tenant"));
 
         var handler = new MockHttpMessageHandler(HttpStatusCode.OK, JsonSerializer.Serialize(expectedClient));
         var service = CreateService(handler);

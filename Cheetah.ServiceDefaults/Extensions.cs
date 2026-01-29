@@ -70,7 +70,12 @@ public static class Extensions
                     )
                     // Uncomment the following line to enable gRPC instrumentation (requires the OpenTelemetry.Instrumentation.GrpcNetClient package)
                     //.AddGrpcClientInstrumentation()
-                    .AddHttpClientInstrumentation();
+                    .AddHttpClientInstrumentation()
+                    .AddEntityFrameworkCoreInstrumentation(options =>
+                    {
+                        options.SetDbStatementForText = true;
+                        options.SetDbStatementForStoredProcedure = true;
+                    });
             });
 
         builder.AddOpenTelemetryExporters();
