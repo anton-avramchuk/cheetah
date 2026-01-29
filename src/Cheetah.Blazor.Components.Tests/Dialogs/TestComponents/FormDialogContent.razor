@@ -1,0 +1,60 @@
+@namespace Cheetah.Blazor.Components.Tests.Dialogs.TestComponents
+@using Microsoft.AspNetCore.Components.Forms
+@using Cheetah.Blazor.Components.Dialogs
+
+@implements IDialogForm<FormDialogResult>
+
+<EditForm Model="_model" @ref="_editForm">
+    <DataAnnotationsValidator />
+    <div class="form-group">
+        <label>Name</label>
+        <InputText @bind-Value="_model.Name" class="form-control" />
+        <ValidationMessage For="() => _model.Name" />
+    </div>
+</EditForm>
+
+@code {
+    [CascadingParameter]
+    public IDialogFormContext? DialogContext { get; set; }
+
+    [Parameter]
+    public string? InitialName { get; set; }
+
+    [Parameter]
+    public bool ShouldFail { get; set; }
+
+    private FormModel _model = new();
+    private EditForm? _editForm;
+    private EditContext? _editContext;
+
+    public EditContext? EditContext => _editContext;
+
+    protected override void OnInitialized()
+    {
+        _model.Name = InitialName ?? "";
+        _editContext = new EditContext(_model);
+        DialogContext?.RegisterEditContext(_editContext);
+    }
+
+    public Task<DialogFormResult<FormDialogResult>> SubmitAsync()
+    {
+        if (ShouldFail)
+        {
+            return Task.FromResult(DialogFormResult<FormDialogResult>.Fail("Forced failure"));
+        }
+
+        if (!(_editContext?.Validate() ?? false))
+        {
+            return Task.FromResult(DialogFormResult<FormDialogResult>.Fail("Validation failed"));
+        }
+
+        var result = new FormDialogResult { Name = _model.Name };
+        return Task.FromResult(DialogFormResult<FormDialogResult>.Ok(result));
+    }
+
+    private class FormModel
+    {
+        [System.ComponentModel.DataAnnotations.Required(ErrorMessage = "Name is required")]
+        public string Name { get; set; } = "";
+    }
+}
