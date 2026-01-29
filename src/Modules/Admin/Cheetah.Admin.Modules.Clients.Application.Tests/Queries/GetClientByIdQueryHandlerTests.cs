@@ -38,7 +38,8 @@ public class GetClientByIdQueryHandlerTests
         result.Should().NotBeNull();
         result!.Id.Should().Be(clientId);
         result.Name.Should().Be("Test Client");
-        result.Tenant.Id.Should().Be(tenantId);
+        result.Tenant.Should().NotBeNull();
+        result.Tenant!.Id.Should().Be(tenantId);
     }
 
     [Fact]
@@ -61,7 +62,7 @@ public class GetClientByIdQueryHandlerTests
     }
 
     [Fact]
-    public async Task HandleAsync_WithNullTenantId_ShouldMapToEmptyGuid()
+    public async Task HandleAsync_WithNullTenantId_ShouldMapToNullTenant()
     {
         // Arrange
         var clientId = Guid.NewGuid();
@@ -78,7 +79,7 @@ public class GetClientByIdQueryHandlerTests
 
         // Assert
         result.Should().NotBeNull();
-        result!.Tenant.Id.Should().Be(Guid.Empty);
+        result!.Tenant.Should().BeNull();
     }
 
     [Fact]

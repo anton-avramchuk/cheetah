@@ -80,11 +80,12 @@ public class GetAllClientsQueryHandlerTests
 
         // Assert
         result.Should().HaveCount(1);
-        result[0].Tenant.Id.Should().Be(tenantId);
+        result[0].Tenant.Should().NotBeNull();
+        result[0].Tenant!.Id.Should().Be(tenantId);
     }
 
     [Fact]
-    public async Task HandleAsync_WithNullTenantId_ShouldMapToEmptyGuid()
+    public async Task HandleAsync_WithNullTenantId_ShouldMapToNullTenant()
     {
         // Arrange
         var client = CreateClient(Guid.NewGuid(), "Client 1", "Description", null);
@@ -100,7 +101,7 @@ public class GetAllClientsQueryHandlerTests
 
         // Assert
         result.Should().HaveCount(1);
-        result[0].Tenant.Id.Should().Be(Guid.Empty);
+        result[0].Tenant.Should().BeNull();
     }
 
     private static Client CreateClient(Guid id, string name, string? description, Guid? tenantId = null)
