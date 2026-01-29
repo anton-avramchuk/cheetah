@@ -1,11 +1,13 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
 var postgres = builder.AddPostgres("postgres")
+    .WithDataVolume()
     .WithPgAdmin();
 
 var adminDb = postgres.AddDatabase("AdminDb", "cheetah_admin");
 
 var redis = builder.AddRedis("redis")
+    .WithDataVolume()
     .WithRedisInsight();
 
 var adminApi = builder.AddProject<Projects.Cheetah_Admin_Api>("admin-api")
