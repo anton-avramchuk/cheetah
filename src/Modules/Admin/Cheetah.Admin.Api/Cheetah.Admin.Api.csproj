@@ -6,6 +6,7 @@
 
 
     <ItemGroup>
+      <ProjectReference Include="..\..\..\..\Cheetah.ServiceDefaults\Cheetah.ServiceDefaults.csproj" />
       <ProjectReference Include="..\..\..\Cheetah.Backend.CQRS\Cheetah.Backend.CQRS.csproj" />
       <ProjectReference Include="..\..\..\Cheetah.Mapping.Mapster\Cheetah.Mapping.Mapster.csproj" />
       <ProjectReference Include="..\..\..\Cheetah.Scalar\Cheetah.Scalar.csproj" />
@@ -17,12 +18,6 @@
         <ProjectReference Include="..\..\..\Cheetah.Core\Cheetah.Core.csproj" />
         <ProjectReference Include="..\..\..\Cheetah.Generators.Module\Cheetah.Generators.Module.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
         <ProjectReference Include="..\..\..\Cheetah.Generators.Application\Cheetah.Generators.Application.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Content Include="..\..\..\..\.dockerignore">
-        <Link>.dockerignore</Link>
-      </Content>
     </ItemGroup>
 
     <ItemGroup>

@@ -19,10 +19,4 @@
         <ProjectReference Include="..\Cheetah.Admin.Modules.Clients.Frontend\Cheetah.Admin.Modules.Clients.Frontend.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Content Include="..\..\..\..\.dockerignore">
-        <Link>.dockerignore</Link>
-      </Content>
-    </ItemGroup>
-
 </Project>

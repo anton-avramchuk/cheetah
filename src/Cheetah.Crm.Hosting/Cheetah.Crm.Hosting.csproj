@@ -1,0 +1,23 @@
+<Project Sdk="Aspire.AppHost.Sdk/13.1.0">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <IsAspireHost>true</IsAspireHost>
+        <UserSecretsId>6534cdf0-f504-44c4-8e91-4a13729613f6</UserSecretsId>
+        <NoWarn>$(NoWarn);ASPIRE004</NoWarn>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Aspire.Hosting.PostgreSQL" Version="13.1.*" />
+        <PackageReference Include="Aspire.Hosting.Redis" Version="13.1.*" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Modules\Admin\Cheetah.Admin.Api\Cheetah.Admin.Api.csproj" />
+        <ProjectReference Include="..\Modules\Admin\Cheetah.Admin.Client\Cheetah.Admin.Client.csproj" />
+    </ItemGroup>
+
+</Project>

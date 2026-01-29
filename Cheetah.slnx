@@ -74,9 +74,11 @@
         <Project Path="src/Modules/Admin/Cheetah.Admin.Modules.Clients.Api.Client.Tests/Cheetah.Admin.Modules.Clients.Api.Client.Tests.csproj" />
     </Folder>
     <Folder Name="/Modules/Features/" />
+    <Folder Name="/Hosting/">
+        <Project Path="src/Cheetah.Crm.Hosting/Cheetah.Crm.Hosting.csproj" />
+    </Folder>
     <Folder Name="/Solution Items/">
-        <File Path="compose.yaml" />
-        <File Path="nginx.conf" />
+        <File Path="global.json" />
         <File Path="nuget.config" />
     </Folder>
     <Folder Name="/src/">
@@ -91,4 +93,5 @@
         <Project Path="tests/Cheetah.Core.Tenants.Tests/Cheetah.Core.Tenants.Tests.csproj" />
         <Project Path="tests/Cheetah.Tests.Core/Cheetah.Tests.Core.csproj" />
     </Folder>
+    <Project Path="Cheetah.ServiceDefaults/Cheetah.ServiceDefaults.csproj" />
 </Solution>
