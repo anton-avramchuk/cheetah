@@ -8,5 +8,5 @@ public static class ModuleInitializer
         modules.Add(typeof(TModule));
     }
 
-    internal static IEnumerable<Type> Modules => modules.AsEnumerable();
+    public static IEnumerable<Type> Modules => modules.AsEnumerable();
 }

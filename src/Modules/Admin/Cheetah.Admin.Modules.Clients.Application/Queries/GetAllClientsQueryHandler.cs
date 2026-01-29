@@ -22,7 +22,8 @@ public class GetAllClientsQueryHandler : IQueryHandler<GetAllClientsQuery, IRead
             .Select(c => new ClientModel(
                 c.Id,
                 c.Name,
-                new TenantModel(c.TenantId ?? Guid.Empty, "Default")))
+                c.Description,
+                c.TenantId.HasValue ? new TenantModel(c.TenantId.Value, "Default") : null))
             .ToList();
     }
 }

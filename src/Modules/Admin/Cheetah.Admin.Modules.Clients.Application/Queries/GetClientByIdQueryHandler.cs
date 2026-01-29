@@ -23,6 +23,7 @@ public class GetClientByIdQueryHandler : IQueryHandler<GetClientByIdQuery, Clien
         return new ClientModel(
             client.Id,
             client.Name,
-            new TenantModel(client.TenantId ?? Guid.Empty, "Default"));
+            client.Description,
+            client.TenantId.HasValue ? new TenantModel(client.TenantId.Value, "Default") : null);
     }
 }

@@ -15,6 +15,9 @@ var adminApi = builder.AddProject<Projects.Cheetah_Admin_Api>("admin-api")
     .WaitFor(adminDb)
     .WaitFor(redis);
 
-builder.AddProject<Projects.Cheetah_Admin_Client>("admin-client");
+builder.AddProject<Projects.Cheetah_Admin_Client>("admin-client")
+    .WithReference(adminApi)
+    .WithEnvironment("AdminClients__BaseUrl", adminApi.GetEndpoint("https"))
+    .WaitFor(adminApi);
 
 builder.Build().Run();

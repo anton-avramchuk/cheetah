@@ -1,9 +1,8 @@
 @namespace Cheetah.Blazor.Components.Forms
 @using System.Diagnostics.CodeAnalysis
 
-@* Text input with validation integration *@
-@typeparam TValue
-@inherits InputBase<TValue>
+@* Text area with validation integration *@
+@inherits InputBase<string>
 
 <div class="mb-3">
     @if (!string.IsNullOrEmpty(Label))
@@ -17,13 +16,13 @@
         </label>
     }
 
-    <input type="@InputType"
-           id="@Id"
-           class="@GetInputClass()"
-           placeholder="@Placeholder"
-           disabled="@Disabled"
-           @bind="CurrentValueAsString"
-           @bind:event="oninput" />
+    <textarea id="@Id"
+              class="@GetInputClass()"
+              placeholder="@Placeholder"
+              disabled="@Disabled"
+              rows="@Rows"
+              @bind="CurrentValue"
+              @bind:event="oninput"></textarea>
 
     @if (!string.IsNullOrEmpty(HelpText))
     {
@@ -47,10 +46,10 @@
     public string? Placeholder { get; set; }
 
     /// <summary>
-    /// Input type (text, password, email, etc.)
+    /// Number of rows
     /// </summary>
     [Parameter]
-    public string InputType { get; set; } = "text";
+    public int Rows { get; set; } = 3;
 
     /// <summary>
     /// Is input required
@@ -74,7 +73,7 @@
     /// Expression for validation
     /// </summary>
     [Parameter]
-    public Expression<Func<TValue>>? ValidationFor { get; set; }
+    public Expression<Func<string>>? ValidationFor { get; set; }
 
     /// <summary>
     /// Additional CSS classes
@@ -106,17 +105,10 @@
         return string.Join(" ", classes);
     }
 
-    protected override bool TryParseValueFromString(string? value, out TValue result, [NotNullWhen(false)] out string? validationErrorMessage)
+    protected override bool TryParseValueFromString(string? value, out string result, [NotNullWhen(false)] out string? validationErrorMessage)
     {
-        if (typeof(TValue) == typeof(string))
-        {
-            result = (TValue)(object)value!;
-            validationErrorMessage = null;
-            return true;
-        }
-
-        result = default!;
-        validationErrorMessage = $"The {FieldIdentifier.FieldName} field is not valid.";
-        return false;
+        result = value ?? string.Empty;
+        validationErrorMessage = null;
+        return true;
     }
 }
