@@ -8,6 +8,7 @@
     <ItemGroup>
       <ProjectReference Include="..\..\..\..\Cheetah.ServiceDefaults\Cheetah.ServiceDefaults.csproj" />
       <ProjectReference Include="..\..\..\Cheetah.Backend.CQRS\Cheetah.Backend.CQRS.csproj" />
+      <ProjectReference Include="..\..\..\Cheetah.Backend.Events.Redis\Cheetah.Backend.Events.Redis.csproj" />
       <ProjectReference Include="..\..\..\Cheetah.Mapping.Mapster\Cheetah.Mapping.Mapster.csproj" />
       <ProjectReference Include="..\..\..\Cheetah.Scalar\Cheetah.Scalar.csproj" />
       <ProjectReference Include="..\Cheetah.Admin.Modules.Clients.Api\Cheetah.Admin.Modules.Clients.Api.csproj" />

@@ -1,6 +1,7 @@
 using Cheetah.Admin.Modules.Clients.Api;
 using Cheetah.AspNetCore;
 using Cheetah.Backend.CQRS;
+using Cheetah.Backend.Events.Redis;
 using Cheetah.Core;
 using Cheetah.Core.Modularity;
 using Cheetah.Mapping.Mapster;
@@ -10,7 +11,8 @@ namespace Cheetah.Admin.Api;
 
 [DependsOn(typeof(Cheetah.Core.CoreModule), typeof(CrmAspNetCoreModule), typeof(ScalarModule))]
 [DependsOn(typeof(CrmAdminClientsApiModule))]
-[DependsOn(typeof(CrmMapsterModule),typeof(CrmBackendCQRSModule))]
+[DependsOn(typeof(CrmMapsterModule), typeof(CrmBackendCQRSModule))]
+[DependsOn(typeof(CrmBackendEventsRedisModule))]
 [Bootstrapper]
 public partial class AdminApiBootstrapperModule : CrmModule
 {
