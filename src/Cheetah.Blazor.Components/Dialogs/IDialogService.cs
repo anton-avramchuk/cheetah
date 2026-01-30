@@ -36,6 +36,21 @@ public interface IDialogService
         DialogOptions? options = null,
         CancellationToken ct = default)
         where TComponent : IComponent;
+
+    /// <summary>
+    /// Shows a dialog with component type specified at runtime.
+    /// </summary>
+    /// <typeparam name="TMarker">Marker interface (usually IComponent).</typeparam>
+    /// <param name="componentType">Type of component to render.</param>
+    /// <param name="parameters">Parameters to pass to the component.</param>
+    /// <param name="options">Dialog options for appearance and behavior.</param>
+    /// <param name="ct">Cancellation token.</param>
+    /// <returns>Dialog result containing confirmation status and data.</returns>
+    Task<DialogResult> ShowAsync<TMarker>(
+        Type componentType,
+        IDictionary<string, object?>? parameters = null,
+        DialogOptions? options = null,
+        CancellationToken ct = default);
 }
 
 /// <summary>
@@ -72,6 +87,15 @@ internal sealed class DialogService : IDialogServiceInternal
         where TComponent : IComponent
     {
         return await ShowInternalAsync(typeof(TComponent), parameters, options, ct);
+    }
+
+    public async Task<DialogResult> ShowAsync<TMarker>(
+        Type componentType,
+        IDictionary<string, object?>? parameters = null,
+        DialogOptions? options = null,
+        CancellationToken ct = default)
+    {
+        return await ShowInternalAsync(componentType, parameters, options, ct);
     }
 
     private async Task<DialogResult> ShowInternalAsync(

@@ -187,6 +187,15 @@ public class CrmDialogProviderTests : TestContext
             return await ShowInternalAsync(typeof(TComponent), parameters, options, ct);
         }
 
+        public async Task<DialogResult> ShowAsync<TMarker>(
+            Type componentType,
+            IDictionary<string, object?>? parameters = null,
+            DialogOptions? options = null,
+            CancellationToken ct = default)
+        {
+            return await ShowInternalAsync(componentType, parameters, options, ct);
+        }
+
         private async Task<DialogResult> ShowInternalAsync(
             Type componentType,
             IDictionary<string, object?>? parameters,

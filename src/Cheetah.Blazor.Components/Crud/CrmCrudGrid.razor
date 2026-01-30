@@ -1,0 +1,100 @@
+@namespace Cheetah.Blazor.Components.Crud
+@typeparam TGridViewModel where TGridViewModel : IGridViewModel
+@typeparam TCreateViewModel
+@typeparam TEditViewModel
+
+@using Cheetah.Blazor.Components.Buttons
+@using Cheetah.Blazor.Components.Dialogs
+@using Cheetah.Blazor.Components.Feedback
+@using Cheetah.Blazor.Components.Layout
+
+<CrmCard>
+    <Header>
+        <div class="d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">@Title</h5>
+            @if (AllowCreate && CreateFormType != null)
+            {
+                <CrmButton Text="@CreateButtonText" Icon="plus" OnClick="OpenCreateDialogAsync" />
+            }
+        </div>
+    </Header>
+    <ChildContent>
+        @if (!string.IsNullOrEmpty(_errorMessage))
+        {
+            <CrmAlert Variant="CrmAlert.AlertVariant.Danger" Message="@_errorMessage" Dismissible="true" />
+        }
+
+        @if (_isLoading)
+        {
+            <div class="text-center py-4">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">@LoadingMessage</span>
+                </div>
+                <div class="mt-2">@LoadingMessage</div>
+            </div>
+        }
+        else if (_items == null || _items.Count == 0)
+        {
+            <div class="alert alert-info" role="alert">
+                <i class="bi bi-info-circle me-2"></i>
+                @EmptyMessage
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            @foreach (var column in _columns)
+                            {
+                                <th class="@column.GetAlignmentClass()" style="@column.GetWidthStyle()">
+                                    @column.DisplayName
+                                </th>
+                            }
+                            @if (HasActions)
+                            {
+                                <th style="width: @ActionsColumnWidth;">@ActionsColumnHeader</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in _items)
+                        {
+                            <tr>
+                                @foreach (var column in _columns)
+                                {
+                                    var value = column.GetValue(item);
+                                    <td class="@(column.CssClass) @column.GetAlignmentClass()">
+                                        @column.FormatValue(value)
+                                    </td>
+                                }
+                                @if (HasActions)
+                                {
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            @if (AllowEdit && EditFormType != null)
+                                            {
+                                                <CrmButton Icon="pencil"
+                                                           Variant="CrmButton.ButtonVariant.Secondary"
+                                                           Size="CrmButton.ButtonSize.Small"
+                                                           OnClick="() => OpenEditDialogAsync(item.Id)" />
+                                            }
+                                            @if (AllowDelete)
+                                            {
+                                                <CrmButton Icon="trash"
+                                                           Variant="CrmButton.ButtonVariant.Danger"
+                                                           Size="CrmButton.ButtonSize.Small"
+                                                           OnClick="() => DeleteAsync(item)" />
+                                            }
+                                        </div>
+                                    </td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </ChildContent>
+</CrmCard>

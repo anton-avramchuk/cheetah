@@ -1,0 +1,23 @@
+@namespace Cheetah.Blazor.Components.Crud
+
+@using Cheetah.Blazor.Components.Dialogs
+@using Microsoft.AspNetCore.Components.Forms
+
+@implements IDialogForm<bool>
+
+<div class="text-center py-3">
+    <i class="bi bi-exclamation-triangle text-warning" style="font-size: 3rem;"></i>
+    <p class="mt-3 mb-0">@Message</p>
+</div>
+
+@code {
+    [Parameter]
+    public string Message { get; set; } = "Вы уверены, что хотите удалить эту запись?";
+
+    public EditContext? EditContext => null;
+
+    public Task<DialogFormResult<bool>> SubmitAsync()
+    {
+        return Task.FromResult(DialogFormResult<bool>.Ok(true));
+    }
+}
