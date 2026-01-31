@@ -74,11 +74,15 @@
         <Project Path="src/Modules/Admin/Cheetah.Admin.Modules.Clients.Api.Client.Tests/Cheetah.Admin.Modules.Clients.Api.Client.Tests.csproj" />
     </Folder>
     <Folder Name="/Modules/Features/">
+        <Project Path="src/Modules/Features/Crm.Features.Api.Tests/Crm.Features.Api.Tests.csproj" />
         <Project Path="src/Modules/Features/Crm.Features.Api/Crm.Features.Api.csproj" />
+        <Project Path="src/Modules/Features/Crm.Features.ApiClient.Tests/Crm.Features.ApiClient.Tests.csproj" />
         <Project Path="src/Modules/Features/Crm.Features.ApiClient/Crm.Features.ApiClient.csproj" />
+        <Project Path="src/Modules/Features/Crm.Features.Application.Tests/Crm.Features.Application.Tests.csproj" />
         <Project Path="src/Modules/Features/Crm.Features.Application/Crm.Features.Application.csproj" />
         <Project Path="src/Modules/Features/Crm.Features.Contracts/Crm.Features.Contracts.csproj" />
         <Project Path="src/Modules/Features/Crm.Features.DataAccess/Crm.Features.DataAccess.csproj" />
+        <Project Path="src/Modules/Features/Crm.Features.Domain.Tests/Crm.Features.Domain.Tests.csproj" />
         <Project Path="src/Modules/Features/Crm.Features.Domain/Crm.Features.Domain.csproj" />
         <Project Path="src/Modules/Features/Crm.Features.DomainEvents/Crm.Features.DomainEvents.csproj" />
     </Folder>
