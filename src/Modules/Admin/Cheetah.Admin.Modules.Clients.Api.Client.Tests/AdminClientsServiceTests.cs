@@ -170,6 +170,164 @@ public class AdminClientsServiceTests
 
     #endregion
 
+    #region GetAllTariffsAsync
+
+    [Fact]
+    public async Task GetAllTariffsAsync_ShouldReturnTariffs()
+    {
+        // Arrange
+        var expectedTariffs = new List<TariffViewModel>
+        {
+            new(Guid.NewGuid(), "Basic", "Basic plan", 9.99m, "USD", true),
+            new(Guid.NewGuid(), "Premium", "Premium plan", 29.99m, "EUR", true)
+        };
+
+        var handler = new MockHttpMessageHandler(HttpStatusCode.OK, JsonSerializer.Serialize(expectedTariffs));
+        var service = CreateService(handler);
+
+        // Act
+        var result = await service.GetAllTariffsAsync();
+
+        // Assert
+        result.Should().HaveCount(2);
+        handler.RequestUri!.PathAndQuery.Should().Be("/api/tariffs");
+        handler.Method.Should().Be(HttpMethod.Get);
+    }
+
+    [Fact]
+    public async Task GetAllTariffsAsync_WhenEmpty_ShouldReturnEmptyList()
+    {
+        // Arrange
+        var handler = new MockHttpMessageHandler(HttpStatusCode.OK, "[]");
+        var service = CreateService(handler);
+
+        // Act
+        var result = await service.GetAllTariffsAsync();
+
+        // Assert
+        result.Should().BeEmpty();
+    }
+
+    #endregion
+
+    #region GetTariffByIdAsync
+
+    [Fact]
+    public async Task GetTariffByIdAsync_WithExistingTariff_ShouldReturnTariff()
+    {
+        // Arrange
+        var tariffId = Guid.NewGuid();
+        var expectedTariff = new TariffViewModel(tariffId, "Basic", "Basic plan", 9.99m, "USD", true);
+
+        var handler = new MockHttpMessageHandler(HttpStatusCode.OK, JsonSerializer.Serialize(expectedTariff));
+        var service = CreateService(handler);
+
+        // Act
+        var result = await service.GetTariffByIdAsync(tariffId);
+
+        // Assert
+        result.Should().NotBeNull();
+        result!.Id.Should().Be(tariffId);
+        handler.RequestUri!.PathAndQuery.Should().Be($"/api/tariffs/{tariffId}");
+    }
+
+    [Fact]
+    public async Task GetTariffByIdAsync_WithNonExistingTariff_ShouldReturnNull()
+    {
+        // Arrange
+        var tariffId = Guid.NewGuid();
+        var handler = new MockHttpMessageHandler(HttpStatusCode.NotFound, "");
+        var service = CreateService(handler);
+
+        // Act
+        var result = await service.GetTariffByIdAsync(tariffId);
+
+        // Assert
+        result.Should().BeNull();
+    }
+
+    #endregion
+
+    #region CreateTariffAsync
+
+    [Fact]
+    public async Task CreateTariffAsync_WithValidRequest_ShouldReturnNewId()
+    {
+        // Arrange
+        var expectedId = Guid.NewGuid();
+        var request = new CreateTariffRequest("New Plan", "Description", 19.99m, "USD", true);
+        var response = new { Id = expectedId };
+
+        var handler = new MockHttpMessageHandler(HttpStatusCode.Created, JsonSerializer.Serialize(response));
+        var service = CreateService(handler);
+
+        // Act
+        var result = await service.CreateTariffAsync(request);
+
+        // Assert
+        result.Should().Be(expectedId);
+        handler.RequestUri!.PathAndQuery.Should().Be("/api/tariffs");
+        handler.Method.Should().Be(HttpMethod.Post);
+    }
+
+    #endregion
+
+    #region UpdateTariffAsync
+
+    [Fact]
+    public async Task UpdateTariffAsync_WithValidRequest_ShouldSucceed()
+    {
+        // Arrange
+        var tariffId = Guid.NewGuid();
+        var request = new UpdateTariffRequest(tariffId, "Updated Plan", "Updated Description", 29.99m, "EUR", true);
+        var handler = new MockHttpMessageHandler(HttpStatusCode.NoContent, "");
+        var service = CreateService(handler);
+
+        // Act
+        await service.UpdateTariffAsync(tariffId, request);
+
+        // Assert
+        handler.RequestUri!.PathAndQuery.Should().Be($"/api/tariffs/{tariffId}");
+        handler.Method.Should().Be(HttpMethod.Put);
+    }
+
+    #endregion
+
+    #region DeleteTariffAsync
+
+    [Fact]
+    public async Task DeleteTariffAsync_WithExistingTariff_ShouldSucceed()
+    {
+        // Arrange
+        var tariffId = Guid.NewGuid();
+        var handler = new MockHttpMessageHandler(HttpStatusCode.NoContent, "");
+        var service = CreateService(handler);
+
+        // Act
+        await service.DeleteTariffAsync(tariffId);
+
+        // Assert
+        handler.RequestUri!.PathAndQuery.Should().Be($"/api/tariffs/{tariffId}");
+        handler.Method.Should().Be(HttpMethod.Delete);
+    }
+
+    [Fact]
+    public async Task DeleteTariffAsync_WithNonExistingTariff_ShouldThrow()
+    {
+        // Arrange
+        var tariffId = Guid.NewGuid();
+        var handler = new MockHttpMessageHandler(HttpStatusCode.NotFound, "");
+        var service = CreateService(handler);
+
+        // Act
+        var act = () => service.DeleteTariffAsync(tariffId).AsTask();
+
+        // Assert
+        await act.Should().ThrowAsync<HttpRequestException>();
+    }
+
+    #endregion
+
     private class MockHttpMessageHandler : HttpMessageHandler
     {
         private readonly HttpStatusCode _statusCode;

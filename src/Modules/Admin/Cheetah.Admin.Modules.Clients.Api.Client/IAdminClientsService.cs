@@ -8,6 +8,8 @@ namespace Cheetah.Admin.Modules.Clients.Api.Client;
 /// </summary>
 public interface IAdminClientsService
 {
+    #region Clients
+
     /// <summary>
     /// Gets all clients
     /// </summary>
@@ -27,4 +29,35 @@ public interface IAdminClientsService
     /// Updates an existing client
     /// </summary>
     ValueTask UpdateAsync(Guid id, UpdateClientRequest request, CancellationToken ct = default);
+
+    #endregion
+
+    #region Tariffs
+
+    /// <summary>
+    /// Gets all tariffs
+    /// </summary>
+    ValueTask<IReadOnlyList<TariffViewModel>> GetAllTariffsAsync(CancellationToken ct = default);
+
+    /// <summary>
+    /// Gets a tariff by ID
+    /// </summary>
+    ValueTask<TariffViewModel?> GetTariffByIdAsync(Guid id, CancellationToken ct = default);
+
+    /// <summary>
+    /// Creates a new tariff
+    /// </summary>
+    ValueTask<Guid> CreateTariffAsync(CreateTariffRequest request, CancellationToken ct = default);
+
+    /// <summary>
+    /// Updates an existing tariff
+    /// </summary>
+    ValueTask UpdateTariffAsync(Guid id, UpdateTariffRequest request, CancellationToken ct = default);
+
+    /// <summary>
+    /// Deletes a tariff
+    /// </summary>
+    ValueTask DeleteTariffAsync(Guid id, CancellationToken ct = default);
+
+    #endregion
 }

@@ -7,7 +7,8 @@ using FluentAssertions;
 
 namespace Cheetah.Admin.Modules.Clients.Api.Tests.Endpoints;
 
-public class ClientsEndpointsTests : IClassFixture<ClientsApiFixture>
+[Collection("ClientsApi")]
+public class ClientsEndpointsTests
 {
     private readonly HttpClient _client;
 

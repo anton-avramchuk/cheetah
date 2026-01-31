@@ -3,6 +3,7 @@ using System;
 using Cheetah.Admin.Modules.Clients.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Cheetah.Admin.Modules.Clients.DataAccess.Migrations
 {
     [DbContext(typeof(ClientsDbContext))]
-    partial class ClientsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260131103347_AddTariffEntity")]
+    partial class AddTariffEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
