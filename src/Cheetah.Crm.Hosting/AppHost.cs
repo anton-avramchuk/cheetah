@@ -1,5 +1,7 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
+
+
 var postgres = builder.AddPostgres("postgres")
     .WithDataVolume()
     .WithPgAdmin();
@@ -21,5 +23,13 @@ builder.AddProject<Projects.Cheetah_Admin_Client>("admin-client")
     .WithReference(adminApi)
     .WithEnvironment("AdminClients__BaseUrl", adminApi.GetEndpoint("https"))
     .WaitFor(adminApi);
+
+
+builder.AddProject<Projects.Crm_Features_Api>("crm-features-api")
+    .WithEnvironment("Redis__Instances__default__ConnectionString",
+        redis.Resource.ConnectionStringExpression)
+    .WaitFor(redis)
+    ;
+
 
 builder.Build().Run();

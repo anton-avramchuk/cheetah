@@ -73,10 +73,21 @@
     <Folder Name="/Modules/Admin/modules/clients/shared/tests/">
         <Project Path="src/Modules/Admin/Cheetah.Admin.Modules.Clients.Api.Client.Tests/Cheetah.Admin.Modules.Clients.Api.Client.Tests.csproj" />
     </Folder>
-    <Folder Name="/Modules/Features/" />
+    <Folder Name="/Modules/Features/">
+        <Project Path="src/Modules/Features/Crm.Features.Api/Crm.Features.Api.csproj" />
+        <Project Path="src/Modules/Features/Crm.Features.ApiClient/Crm.Features.ApiClient.csproj" />
+        <Project Path="src/Modules/Features/Crm.Features.Application/Crm.Features.Application.csproj" />
+        <Project Path="src/Modules/Features/Crm.Features.Contracts/Crm.Features.Contracts.csproj" />
+        <Project Path="src/Modules/Features/Crm.Features.DataAccess/Crm.Features.DataAccess.csproj" />
+        <Project Path="src/Modules/Features/Crm.Features.Domain/Crm.Features.Domain.csproj" />
+        <Project Path="src/Modules/Features/Crm.Features.DomainEvents/Crm.Features.DomainEvents.csproj" />
+    </Folder>
     <Folder Name="/Hosting/">
         <Project Path="src/Cheetah.Crm.Hosting/Cheetah.Crm.Hosting.csproj" />
     </Folder>
+    <Folder Name="/Modules/Identity/" />
+    <Folder Name="/Modules/Recruitment/" />
+    <Folder Name="/Modules/Tenants/" />
     <Folder Name="/Solution Items/">
         <File Path="global.json" />
         <File Path="nuget.config" />
