@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\..\Cheetah.Core\Cheetah.Core.csproj"/>
+        <ProjectReference Include="..\..\..\Cheetah.Generators.Module\Cheetah.Generators.Module.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer"/>
+        <ProjectReference Include="..\__Prefix__.ModuleName.Contracts\__Prefix__.ModuleName.Contracts.csproj" />
+        <ProjectReference Include="..\__Prefix__.ModuleName.DataAccess\__Prefix__.ModuleName.DataAccess.csproj" />
+        <ProjectReference Include="..\__Prefix__.ModuleName.DomainEvents\__Prefix__.ModuleName.DomainEvents.csproj" />
+        <ProjectReference Include="..\__Prefix__.ModuleName.Domain\__Prefix__.ModuleName.Domain.csproj" />
+    </ItemGroup>
+
+</Project>

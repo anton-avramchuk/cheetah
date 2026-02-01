@@ -1,0 +1,74 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Cheetah Team",
+  "classifications": ["Cheetah", "Module", "DDD"],
+  "identity": "Cheetah.Module.Template",
+  "name": "Cheetah Module",
+  "shortName": "cheetah-module",
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  },
+  "sourceName": "ModuleName",
+  "preferNameDirectory": false,
+  "symbols": {
+    "prefix": {
+      "type": "parameter",
+      "datatype": "string",
+      "description": "The namespace prefix (e.g., Crm, Cheetah.Admin.Modules)",
+      "defaultValue": "Crm",
+      "replaces": "__Prefix__",
+      "fileRename": "__Prefix__"
+    },
+    "schema": {
+      "type": "generated",
+      "generator": "casing",
+      "parameters": {
+        "source": "name",
+        "toLower": true
+      },
+      "replaces": "moduleschema"
+    },
+    "entity": {
+      "type": "parameter",
+      "datatype": "string",
+      "description": "Example entity name (singular, PascalCase)",
+      "defaultValue": "Entity",
+      "replaces": "SampleEntity",
+      "fileRename": "SampleEntity"
+    },
+    "copyrightYear": {
+      "type": "generated",
+      "generator": "now",
+      "parameters": {
+        "format": "yyyy"
+      },
+      "replaces": "2024"
+    }
+  },
+  "sources": [
+    {
+      "modifiers": [
+        {
+          "exclude": [
+            "**/obj/**",
+            "**/bin/**",
+            "**/*.user"
+          ]
+        }
+      ]
+    }
+  ],
+  "postActions": [
+    {
+      "description": "Add projects to solution",
+      "manualInstructions": [
+        {
+          "text": "Add all generated projects to your solution file using: dotnet sln add <project-paths>"
+        }
+      ],
+      "actionId": "D396686C-DE0E-4DE6-906D-291CD29FC5DE",
+      "continueOnError": true
+    }
+  ]
+}
