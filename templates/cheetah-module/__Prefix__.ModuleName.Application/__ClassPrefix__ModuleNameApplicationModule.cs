@@ -7,12 +7,12 @@ using __Prefix__.ModuleName.DomainEvents;
 namespace __Prefix__.ModuleName.Application;
 
 [DependsOn(typeof(Cheetah.Core.CoreModule),
-    typeof(ModuleNameDomainModule),
-    typeof(ModuleNameDataAccessModule),
-    typeof(ModuleNameContractsModule),
-    typeof(ModuleNameDomainEventsModule)
+    typeof(__ClassPrefix__ModuleNameDomainModule),
+    typeof(__ClassPrefix__ModuleNameDataAccessModule),
+    typeof(__ClassPrefix__ModuleNameContractsModule),
+    typeof(__ClassPrefix__ModuleNameDomainEventsModule)
 )]
-public partial class ModuleNameApplicationModule : CrmModule
+public partial class __ClassPrefix__ModuleNameApplicationModule : CrmModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)
     {

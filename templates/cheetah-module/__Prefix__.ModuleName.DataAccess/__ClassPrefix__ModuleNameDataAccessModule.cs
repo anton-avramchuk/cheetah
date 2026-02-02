@@ -10,11 +10,11 @@ using Microsoft.Extensions.DependencyInjection;
 namespace __Prefix__.ModuleName.DataAccess;
 
 [DependsOn(typeof(Cheetah.Core.CoreModule),
-    typeof(ModuleNameDomainModule),
+    typeof(__ClassPrefix__ModuleNameDomainModule),
     typeof(CrmEntityFrameworkModule),
     typeof(CrmEntityFrameworkPostgreSqlModule)
 )]
-public partial class ModuleNameDataAccessModule : CrmModule
+public partial class __ClassPrefix__ModuleNameDataAccessModule : CrmModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)
     {

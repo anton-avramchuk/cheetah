@@ -26,6 +26,13 @@
       "replaces": "__Prefix__",
       "fileRename": "__Prefix__"
     },
+    "classPrefix": {
+      "type": "derived",
+      "valueSource": "prefix",
+      "valueTransform": "RemoveDots",
+      "replaces": "__ClassPrefix__",
+      "fileRename": "__ClassPrefix__"
+    },
     "schema": {
       "type": "generated",
       "generator": "casing",
@@ -84,6 +91,13 @@
       ]
     }
   ],
+  "forms": {
+    "RemoveDots": {
+      "identifier": "replace",
+      "pattern": "\\.",
+      "replacement": ""
+    }
+  },
   "postActions": [
     {
       "description": "Add projects to solution",

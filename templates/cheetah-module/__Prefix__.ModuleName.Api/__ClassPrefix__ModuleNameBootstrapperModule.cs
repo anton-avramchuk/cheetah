@@ -17,10 +17,10 @@ namespace __Prefix__.ModuleName.Api;
     typeof(CrmBackendCQRSModule),
     typeof(CrmBackendEventsRedisModule),
     typeof(CrmBackendEndpointsModule),
-    typeof(ModuleNameApplicationModule)
+    typeof(__ClassPrefix__ModuleNameApplicationModule)
 )]
 [Bootstrapper]
-public partial class ModuleNameBootstrapperModule : CrmModule
+public partial class __ClassPrefix__ModuleNameBootstrapperModule : CrmModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
