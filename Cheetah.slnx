@@ -90,7 +90,19 @@
         <Project Path="src/Cheetah.Crm.Hosting/Cheetah.Crm.Hosting.csproj" />
     </Folder>
     <Folder Name="/Modules/Identity/" />
-    <Folder Name="/Modules/Recruitment/" />
+    <Folder Name="/Modules/Recruitment/">
+        <Project Path="src/Modules/Recruitment/Crm.Recruitment.Api.Tests/Crm.Recruitment.Api.Tests.csproj" />
+        <Project Path="src/Modules/Recruitment/Crm.Recruitment.Api/Crm.Recruitment.Api.csproj" />
+        <Project Path="src/Modules/Recruitment/Crm.Recruitment.ApiClient.Tests/Crm.Recruitment.ApiClient.Tests.csproj" />
+        <Project Path="src/Modules/Recruitment/Crm.Recruitment.ApiClient/Crm.Recruitment.ApiClient.csproj" />
+        <Project Path="src/Modules/Recruitment/Crm.Recruitment.Application.Tests/Crm.Recruitment.Application.Tests.csproj" />
+        <Project Path="src/Modules/Recruitment/Crm.Recruitment.Application/Crm.Recruitment.Application.csproj" />
+        <Project Path="src/Modules/Recruitment/Crm.Recruitment.Contracts/Crm.Recruitment.Contracts.csproj" />
+        <Project Path="src/Modules/Recruitment/Crm.Recruitment.DataAccess/Crm.Recruitment.DataAccess.csproj" />
+        <Project Path="src/Modules/Recruitment/Crm.Recruitment.Domain.Tests/Crm.Recruitment.Domain.Tests.csproj" />
+        <Project Path="src/Modules/Recruitment/Crm.Recruitment.Domain/Crm.Recruitment.Domain.csproj" />
+        <Project Path="src/Modules/Recruitment/Crm.Recruitment.DomainEvents/Crm.Recruitment.DomainEvents.csproj" />
+    </Folder>
     <Folder Name="/Modules/Tenants/" />
     <Folder Name="/Solution Items/">
         <File Path="global.json" />

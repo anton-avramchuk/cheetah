@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+        <ProjectReference Include="..\Crm.Recruitment.Contracts\Crm.Recruitment.Contracts.csproj"/>
+        <ProjectReference Include="..\Crm.Recruitment.DataAccess\Crm.Recruitment.DataAccess.csproj"/>
+        <ProjectReference Include="..\Crm.Recruitment.DomainEvents\Crm.Recruitment.DomainEvents.csproj"/>
+        <ProjectReference Include="..\Crm.Recruitment.Domain\Crm.Recruitment.Domain.csproj"/>
+    </ItemGroup>
+
+</Project>

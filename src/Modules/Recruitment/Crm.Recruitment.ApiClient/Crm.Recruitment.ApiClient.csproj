@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+        <ProjectReference Include="..\Crm.Recruitment.Contracts\Crm.Recruitment.Contracts.csproj"/>
+    </ItemGroup>
+
+</Project>
