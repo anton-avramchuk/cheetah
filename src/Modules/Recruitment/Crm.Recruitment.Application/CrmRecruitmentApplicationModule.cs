@@ -1,3 +1,4 @@
+using Cheetah.Core.CQRS;
 using Cheetah.Core.Modularity;
 using Crm.Recruitment.Contracts;
 using Crm.Recruitment.DataAccess;
@@ -7,6 +8,7 @@ using Crm.Recruitment.DomainEvents;
 namespace Crm.Recruitment.Application;
 
 [DependsOn(typeof(Cheetah.Core.CoreModule),
+    typeof(CrmCQRSCoreModule),
     typeof(CrmRecruitmentDomainModule),
     typeof(CrmRecruitmentDataAccessModule),
     typeof(CrmRecruitmentContractsModule),

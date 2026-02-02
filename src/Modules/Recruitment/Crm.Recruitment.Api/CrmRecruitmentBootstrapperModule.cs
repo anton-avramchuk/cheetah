@@ -2,6 +2,7 @@ using Cheetah.AspNetCore;
 using Cheetah.Backend.CQRS;
 using Cheetah.Backend.Endpoints;
 using Cheetah.Backend.Events.Redis;
+using Cheetah.Core;
 using Cheetah.Core.Modularity;
 using Cheetah.Mapping.Mapster;
 using Cheetah.Scalar;
