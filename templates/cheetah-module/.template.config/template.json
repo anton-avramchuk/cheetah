@@ -12,6 +12,12 @@
   "sourceName": "ModuleName",
   "preferNameDirectory": false,
   "symbols": {
+    "includeEntity": {
+      "type": "parameter",
+      "datatype": "bool",
+      "description": "Include sample entity with CRUD operations",
+      "defaultValue": "true"
+    },
     "prefix": {
       "type": "parameter",
       "datatype": "string",
@@ -54,6 +60,25 @@
             "**/obj/**",
             "**/bin/**",
             "**/*.user"
+          ]
+        },
+        {
+          "condition": "(!includeEntity)",
+          "exclude": [
+            "**/SampleEntity.cs",
+            "**/SampleEntity*.cs",
+            "**/ISampleEntityRepository.cs",
+            "**/Commands/**",
+            "**/Queries/**",
+            "**/Endpoints/**",
+            "**/Requests/**",
+            "**/Response/**",
+            "**/Configurations/**",
+            "**/Repositories/**",
+            "**/Mapping/**",
+            "**/Constants.cs",
+            "**/SampleEntityModel.cs",
+            "**/*.Tests/**"
           ]
         }
       ]
