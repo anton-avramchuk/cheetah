@@ -1,5 +1,5 @@
 using Cheetah.Core.Extensions.Collections;
-using FluentAssertions;
+using Shouldly;
 
 namespace Cheetah.Core.Tests.Extensions.Collections;
 
@@ -15,7 +15,7 @@ public class EnumerableExtensionsTests
         var result = strings.JoinAsString(", ");
 
         // Assert
-        result.Should().Be("apple, banana, cherry");
+        result.ShouldBe("apple, banana, cherry");
     }
 
     [Fact]
@@ -28,7 +28,7 @@ public class EnumerableExtensionsTests
         var result = strings.JoinAsString(", ");
 
         // Assert
-        result.Should().BeEmpty();
+        result.ShouldBeEmpty();
     }
 
     [Fact]
@@ -41,7 +41,7 @@ public class EnumerableExtensionsTests
         var result = strings.JoinAsString(", ");
 
         // Assert
-        result.Should().Be("single");
+        result.ShouldBe("single");
     }
 
     [Fact]
@@ -54,7 +54,7 @@ public class EnumerableExtensionsTests
         var result = numbers.JoinAsString(" - ");
 
         // Assert
-        result.Should().Be("1 - 2 - 3 - 4 - 5");
+        result.ShouldBe("1 - 2 - 3 - 4 - 5");
     }
 
     [Fact]
@@ -71,7 +71,7 @@ public class EnumerableExtensionsTests
         var result = objects.JoinAsString(" | ");
 
         // Assert
-        result.Should().Be("First | Second");
+        result.ShouldBe("First | Second");
     }
 
     [Fact]
@@ -84,7 +84,7 @@ public class EnumerableExtensionsTests
         var result = strings.JoinAsString("");
 
         // Assert
-        result.Should().Be("abc");
+        result.ShouldBe("abc");
     }
 
     [Fact]
@@ -97,7 +97,7 @@ public class EnumerableExtensionsTests
         var result = numbers.WhereIf(true, x => x > 3);
 
         // Assert
-        result.Should().BeEquivalentTo(new[] { 4, 5 });
+        result.ShouldBe(new[] { 4, 5 });
     }
 
     [Fact]
@@ -110,7 +110,7 @@ public class EnumerableExtensionsTests
         var result = numbers.WhereIf(false, x => x > 3);
 
         // Assert
-        result.Should().BeEquivalentTo(new[] { 1, 2, 3, 4, 5 });
+        result.ShouldBe(new[] { 1, 2, 3, 4, 5 });
     }
 
     [Fact]
@@ -123,7 +123,7 @@ public class EnumerableExtensionsTests
         var result = numbers.WhereIf(true, (x, index) => index % 2 == 0);
 
         // Assert
-        result.Should().BeEquivalentTo(new[] { 10, 30, 50 });
+        result.ShouldBe(new[] { 10, 30, 50 });
     }
 
     [Fact]
@@ -136,7 +136,7 @@ public class EnumerableExtensionsTests
         var result = numbers.WhereIf(false, (x, index) => index % 2 == 0);
 
         // Assert
-        result.Should().BeEquivalentTo(new[] { 10, 20, 30, 40, 50 });
+        result.ShouldBe(new[] { 10, 20, 30, 40, 50 });
     }
 
     [Fact]
@@ -152,7 +152,7 @@ public class EnumerableExtensionsTests
             .WhereIf(true, x => x < 8);
 
         // Assert
-        result.Should().BeEquivalentTo(new[] { 3, 4, 5, 6, 7 });
+        result.ShouldBe(new[] { 3, 4, 5, 6, 7 });
     }
 
     [Fact]
@@ -165,7 +165,7 @@ public class EnumerableExtensionsTests
         var result = numbers.WhereIf(true, x => x > 0);
 
         // Assert
-        result.Should().BeEmpty();
+        result.ShouldBeEmpty();
     }
 
     // Helper class for testing

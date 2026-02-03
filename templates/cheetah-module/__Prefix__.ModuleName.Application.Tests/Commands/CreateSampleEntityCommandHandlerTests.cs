@@ -2,7 +2,7 @@ using __Prefix__.ModuleName.Application.Commands;
 using __Prefix__.ModuleName.Domain;
 using __Prefix__.ModuleName.Domain.Repositories;
 using Cheetah.Core.Events;
-using FluentAssertions;
+using Shouldly;
 using Moq;
 
 namespace __Prefix__.ModuleName.Application.Tests.Commands;
@@ -39,10 +39,10 @@ public class CreateSampleEntityCommandHandlerTests
         var result = await _handler.HandleAsync(command);
 
         // Assert
-        result.Should().NotBeEmpty();
-        capturedEntity.Should().NotBeNull();
-        capturedEntity!.Name.Should().Be("Test Entity");
-        capturedEntity.Description.Should().Be("Test Description");
+        result.ShouldNotBe(Guid.Empty);
+        capturedEntity.ShouldNotBeNull();
+        capturedEntity!.Name.ShouldBe("Test Entity");
+        capturedEntity.Description.ShouldBe("Test Description");
 
         _repositoryMock.Verify(r => r.Add(It.IsAny<SampleEntity>()), Times.Once);
         _repositoryMock.Verify(r => r.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
@@ -58,6 +58,6 @@ public class CreateSampleEntityCommandHandlerTests
         var act = async () => await _handler.HandleAsync(command);
 
         // Assert
-        await act.Should().ThrowAsync<ArgumentException>();
+        await Should.ThrowAsync<ArgumentException>(act);
     }
 }

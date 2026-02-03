@@ -1,6 +1,6 @@
 using Cheetah.Core.Events;
 using Cheetah.Frontend.Events;
-using FluentAssertions;
+using Shouldly;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Cheetah.Frontend.Events.Tests;
@@ -32,7 +32,7 @@ public class CrmInMemoryEventBusTests
         var act = async () => await _eventBus.PublishAsync(testEvent);
 
         // Assert
-        await act.Should().NotThrowAsync();
+        await Should.NotThrowAsync(act);
     }
 
     [Fact]
@@ -48,8 +48,8 @@ public class CrmInMemoryEventBusTests
         await _eventBus.PublishAsync(testEvent);
 
         // Assert
-        TestEventHandler.InvokedEvents.Should().ContainSingle();
-        TestEventHandler.InvokedEvents[0].Message.Should().Be("Test");
+        TestEventHandler.InvokedEvents.Count.ShouldBe(1);
+        TestEventHandler.InvokedEvents[0].Message.ShouldBe("Test");
     }
 
     [Fact]
@@ -67,8 +67,8 @@ public class CrmInMemoryEventBusTests
         await _eventBus.PublishAsync(testEvent);
 
         // Assert
-        TestEventHandler.InvokedEvents.Should().ContainSingle();
-        AnotherTestEventHandler.InvokedEvents.Should().ContainSingle();
+        TestEventHandler.InvokedEvents.Count.ShouldBe(1);
+        AnotherTestEventHandler.InvokedEvents.Count.ShouldBe(1);
     }
 
     [Fact]
@@ -89,10 +89,10 @@ public class CrmInMemoryEventBusTests
         await _eventBus.PublishManyAsync(events);
 
         // Assert
-        TestEventHandler.InvokedEvents.Should().HaveCount(3);
-        TestEventHandler.InvokedEvents[0].Message.Should().Be("Message 1");
-        TestEventHandler.InvokedEvents[1].Message.Should().Be("Message 2");
-        TestEventHandler.InvokedEvents[2].Message.Should().Be("Message 3");
+        TestEventHandler.InvokedEvents.Count.ShouldBe(3);
+        TestEventHandler.InvokedEvents[0].Message.ShouldBe("Message 1");
+        TestEventHandler.InvokedEvents[1].Message.ShouldBe("Message 2");
+        TestEventHandler.InvokedEvents[2].Message.ShouldBe("Message 3");
     }
 
     [Fact]
@@ -109,7 +109,7 @@ public class CrmInMemoryEventBusTests
 
         // Assert - Handler should be invoked only once per event
         await _eventBus.PublishAsync(testEvent);
-        TestEventHandler.InvokedEvents.Should().ContainSingle();
+        TestEventHandler.InvokedEvents.Count.ShouldBe(1);
     }
 
     [Fact]
@@ -128,7 +128,7 @@ public class CrmInMemoryEventBusTests
         await _eventBus.PublishAsync(testEvent);
 
         // Assert - Second handler should still be called despite first handler throwing
-        AnotherTestEventHandler.InvokedEvents.Should().ContainSingle();
+        AnotherTestEventHandler.InvokedEvents.Count.ShouldBe(1);
         TestEventHandler.ShouldThrow = false; // Reset for other tests
     }
 
@@ -146,7 +146,7 @@ public class CrmInMemoryEventBusTests
         await _eventBus.PublishAsync(testEvent);
 
         // Assert - Each publish should create a new scope and invoke handler
-        TestEventHandler.InvokedEvents.Should().HaveCount(2);
+        TestEventHandler.InvokedEvents.Count.ShouldBe(2);
     }
 
     [Fact]
@@ -163,7 +163,7 @@ public class CrmInMemoryEventBusTests
         var act = async () => await _eventBus.PublishManyAsync(events);
 
         // Assert
-        await act.Should().NotThrowAsync();
+        await Should.NotThrowAsync(act);
     }
 
     // Test event and handlers

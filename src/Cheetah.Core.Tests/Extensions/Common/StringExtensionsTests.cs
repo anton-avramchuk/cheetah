@@ -1,6 +1,6 @@
 using System.Text;
 using Cheetah.Core.Extensions.Common;
-using FluentAssertions;
+using Shouldly;
 
 namespace Cheetah.Core.Tests.Extensions.Common;
 
@@ -18,7 +18,7 @@ public class StringExtensionsTests
         var result = str.EnsureEndsWith('/');
 
         // Assert
-        result.Should().Be("test/");
+        result.ShouldBe("test/");
     }
 
     [Fact]
@@ -31,7 +31,7 @@ public class StringExtensionsTests
         var result = str.EnsureEndsWith('/');
 
         // Assert
-        result.Should().Be("test/");
+        result.ShouldBe("test/");
     }
 
     [Fact]
@@ -44,7 +44,7 @@ public class StringExtensionsTests
         var result = str.EnsureStartsWith('/');
 
         // Assert
-        result.Should().Be("/test");
+        result.ShouldBe("/test");
     }
 
     [Fact]
@@ -57,7 +57,7 @@ public class StringExtensionsTests
         var result = str.EnsureStartsWith('/');
 
         // Assert
-        result.Should().Be("/test");
+        result.ShouldBe("/test");
     }
 
     #endregion
@@ -74,7 +74,7 @@ public class StringExtensionsTests
         var result = str.IsNullOrEmpty();
 
         // Assert
-        result.Should().Be(expected);
+        result.ShouldBe(expected);
     }
 
     [Theory]
@@ -88,7 +88,7 @@ public class StringExtensionsTests
         var result = str.IsNullOrWhiteSpace();
 
         // Assert
-        result.Should().Be(expected);
+        result.ShouldBe(expected);
     }
 
     #endregion
@@ -105,7 +105,7 @@ public class StringExtensionsTests
         var result = str.Left(5);
 
         // Assert
-        result.Should().Be("Hello");
+        result.ShouldBe("Hello");
     }
 
     [Fact]
@@ -118,7 +118,7 @@ public class StringExtensionsTests
         var act = () => str.Left(10);
 
         // Assert
-        act.Should().Throw<ArgumentException>();
+        Should.Throw<ArgumentException>(act);
     }
 
     [Fact]
@@ -131,7 +131,7 @@ public class StringExtensionsTests
         var result = str.Right(5);
 
         // Assert
-        result.Should().Be("World");
+        result.ShouldBe("World");
     }
 
     [Fact]
@@ -144,7 +144,7 @@ public class StringExtensionsTests
         var act = () => str.Right(10);
 
         // Assert
-        act.Should().Throw<ArgumentException>();
+        Should.Throw<ArgumentException>(act);
     }
 
     #endregion
@@ -162,7 +162,7 @@ public class StringExtensionsTests
 
         // Assert
         var expected = $"Line1{Environment.NewLine}Line2{Environment.NewLine}Line3{Environment.NewLine}Line4";
-        result.Should().Be(expected);
+        result.ShouldBe(expected);
     }
 
     #endregion
@@ -179,7 +179,7 @@ public class StringExtensionsTests
         var result = str.NthIndexOf(',', 3);
 
         // Assert
-        result.Should().Be(5); // Position of third comma
+        result.ShouldBe(5); // Position of third comma
     }
 
     [Fact]
@@ -192,7 +192,7 @@ public class StringExtensionsTests
         var result = str.NthIndexOf(',', 5);
 
         // Assert
-        result.Should().Be(-1);
+        result.ShouldBe(-1);
     }
 
     #endregion
@@ -209,7 +209,7 @@ public class StringExtensionsTests
         var result = str.RemovePostFix("Controller");
 
         // Assert
-        result.Should().Be("Test");
+        result.ShouldBe("Test");
     }
 
     [Fact]
@@ -222,7 +222,7 @@ public class StringExtensionsTests
         var result = str.RemovePostFix("Controller");
 
         // Assert
-        result.Should().Be("TestService");
+        result.ShouldBe("TestService");
     }
 
     [Fact]
@@ -235,7 +235,7 @@ public class StringExtensionsTests
         var result = str.RemovePostFix("Controller", "AppService", "Service");
 
         // Assert
-        result.Should().Be("Test");
+        result.ShouldBe("Test");
     }
 
     [Fact]
@@ -248,7 +248,7 @@ public class StringExtensionsTests
         var result = str.RemovePreFix("I");
 
         // Assert
-        result.Should().Be("TestService");
+        result.ShouldBe("TestService");
     }
 
     [Fact]
@@ -261,7 +261,7 @@ public class StringExtensionsTests
         var result = str.RemovePreFix("I");
 
         // Assert
-        result.Should().Be("TestService");
+        result.ShouldBe("TestService");
     }
 
     #endregion
@@ -278,7 +278,7 @@ public class StringExtensionsTests
         var result = str.ReplaceFirst("hello", "hi");
 
         // Assert
-        result.Should().Be("hi world, hello universe");
+        result.ShouldBe("hi world, hello universe");
     }
 
     [Fact]
@@ -291,7 +291,7 @@ public class StringExtensionsTests
         var result = str.ReplaceFirst("goodbye", "hi");
 
         // Assert
-        result.Should().Be("hello world");
+        result.ShouldBe("hello world");
     }
 
     #endregion
@@ -308,7 +308,7 @@ public class StringExtensionsTests
         var result = str.Split("::");
 
         // Assert
-        result.Should().Equal("one", "two", "three");
+        result.ShouldBe(new[] {"one", "two", "three"});
     }
 
     [Fact]
@@ -321,7 +321,7 @@ public class StringExtensionsTests
         var result = str.SplitToLines();
 
         // Assert
-        result.Should().Equal("Line1", "Line2", "Line3");
+        result.ShouldBe(new[] {"Line1", "Line2", "Line3"});
     }
 
     #endregion
@@ -338,7 +338,7 @@ public class StringExtensionsTests
         var result = input.ToCamelCase();
 
         // Assert
-        result.Should().Be(expected);
+        result.ShouldBe(expected);
     }
 
     [Fact]
@@ -351,7 +351,7 @@ public class StringExtensionsTests
         var result = str.ToCamelCase(handleAbbreviations: true);
 
         // Assert
-        result.Should().Be("xyz");
+        result.ShouldBe("xyz");
     }
 
     [Theory]
@@ -364,7 +364,7 @@ public class StringExtensionsTests
         var result = input.ToPascalCase();
 
         // Assert
-        result.Should().Be(expected);
+        result.ShouldBe(expected);
     }
 
     #endregion
@@ -381,7 +381,7 @@ public class StringExtensionsTests
         var result = str.ToSentenceCase();
 
         // Assert
-        result.Should().Be("This is sample sentence");
+        result.ShouldBe("This is sample sentence");
     }
 
     [Fact]
@@ -394,7 +394,7 @@ public class StringExtensionsTests
         var result = str.ToKebabCase();
 
         // Assert
-        result.Should().Be("this-is-kebab-case");
+        result.ShouldBe("this-is-kebab-case");
     }
 
     [Fact]
@@ -407,7 +407,7 @@ public class StringExtensionsTests
         var result = str.ToSnakeCase();
 
         // Assert
-        result.Should().Be("this_is_snake_case");
+        result.ShouldBe("this_is_snake_case");
     }
 
     [Fact]
@@ -420,7 +420,7 @@ public class StringExtensionsTests
         var result = str.ToSnakeCase();
 
         // Assert
-        result.Should().Be("test123value");
+        result.ShouldBe("test123value");
     }
 
     #endregion
@@ -437,7 +437,7 @@ public class StringExtensionsTests
         var result = str.ToEnum<DayOfWeek>();
 
         // Assert
-        result.Should().Be(DayOfWeek.Sunday);
+        result.ShouldBe(DayOfWeek.Sunday);
     }
 
     [Fact]
@@ -450,7 +450,7 @@ public class StringExtensionsTests
         var result = str.ToEnum<DayOfWeek>(ignoreCase: true);
 
         // Assert
-        result.Should().Be(DayOfWeek.Sunday);
+        result.ShouldBe(DayOfWeek.Sunday);
     }
 
     #endregion
@@ -467,8 +467,8 @@ public class StringExtensionsTests
         var result = str.ToMd5();
 
         // Assert
-        result.Should().NotBeNullOrEmpty();
-        result.Length.Should().Be(32); // MD5 hash is 32 characters in hex
+        result.ShouldNotBeNullOrEmpty();
+        result.Length.ShouldBe(32); // MD5 hash is 32 characters in hex
     }
 
     [Fact]
@@ -482,7 +482,7 @@ public class StringExtensionsTests
         var hash2 = str.ToMd5();
 
         // Assert
-        hash1.Should().Be(hash2);
+        hash1.ShouldBe(hash2);
     }
 
     #endregion
@@ -499,7 +499,7 @@ public class StringExtensionsTests
         var result = str.Truncate(10);
 
         // Assert
-        result.Should().Be("short");
+        result.ShouldBe("short");
     }
 
     [Fact]
@@ -512,7 +512,7 @@ public class StringExtensionsTests
         var result = str.Truncate(10);
 
         // Assert
-        result.Should().Be("This is a ");
+        result.ShouldBe("This is a ");
     }
 
     [Fact]
@@ -525,7 +525,7 @@ public class StringExtensionsTests
         var result = str!.Truncate(10);
 
         // Assert
-        result.Should().BeNull();
+        result.ShouldBeNull();
     }
 
     [Fact]
@@ -538,7 +538,7 @@ public class StringExtensionsTests
         var result = str.TruncateFromBeginning(6);
 
         // Assert
-        result.Should().Be("string");
+        result.ShouldBe("string");
     }
 
     [Fact]
@@ -551,8 +551,8 @@ public class StringExtensionsTests
         var result = str.TruncateWithPostfix(10);
 
         // Assert
-        result.Should().Be("This is...");
-        result!.Length.Should().Be(10);
+        result.ShouldBe("This is...");
+        result!.Length.ShouldBe(10);
     }
 
     [Fact]
@@ -565,7 +565,7 @@ public class StringExtensionsTests
         var result = str.TruncateWithPostfix(10, "---");
 
         // Assert
-        result.Should().Be("This is---");
+        result.ShouldBe("This is---");
     }
 
     #endregion
@@ -582,8 +582,8 @@ public class StringExtensionsTests
         var result = str.GetBytes();
 
         // Assert
-        result.Should().NotBeNull();
-        result.Should().BeEquivalentTo(Encoding.UTF8.GetBytes("test"));
+        result.ShouldNotBeNull();
+        result.ShouldBe(Encoding.UTF8.GetBytes("test"));
     }
 
     [Fact]
@@ -596,7 +596,7 @@ public class StringExtensionsTests
         var result = str.GetBytes(Encoding.ASCII);
 
         // Assert
-        result.Should().BeEquivalentTo(Encoding.ASCII.GetBytes("test"));
+        result.ShouldBe(Encoding.ASCII.GetBytes("test"));
     }
 
     #endregion

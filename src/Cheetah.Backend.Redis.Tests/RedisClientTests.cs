@@ -1,5 +1,5 @@
 using Cheetah.Backend.Redis;
-using FluentAssertions;
+using Shouldly;
 using Moq;
 using StackExchange.Redis;
 using System.Text.Json;
@@ -38,9 +38,9 @@ public class RedisClientTests
         var result = await _client.GetAsync<TestData>("test-key");
 
         // Assert
-        result.Should().NotBeNull();
-        result!.Id.Should().Be(1);
-        result.Name.Should().Be("Test");
+        result.ShouldNotBeNull();
+        result!.Id.ShouldBe(1);
+        result.Name.ShouldBe("Test");
     }
 
     [Fact]
@@ -55,7 +55,7 @@ public class RedisClientTests
         var result = await _client.GetAsync<TestData>("nonexistent-key");
 
         // Assert
-        result.Should().BeNull();
+        result.ShouldBeNull();
     }
 
     [Fact]
@@ -77,7 +77,7 @@ public class RedisClientTests
         var result = await _client.SetAsync("test-key", testData);
 
         // Assert
-        result.Should().BeTrue();
+        result.ShouldBeTrue();
         _databaseMock.Verify(x => x.StringSetAsync(
             It.IsAny<RedisKey>(),
             It.Is<RedisValue>(v => v.ToString().Contains("Test")),
@@ -107,7 +107,7 @@ public class RedisClientTests
         var result = await _client.SetAsync("test-key", testData, expiry);
 
         // Assert
-        result.Should().BeTrue();
+        result.ShouldBeTrue();
         _databaseMock.Verify(x => x.StringSetAsync(
             It.IsAny<RedisKey>(),
             It.IsAny<RedisValue>(),
@@ -129,7 +129,7 @@ public class RedisClientTests
         var result = await _client.DeleteAsync("test-key");
 
         // Assert
-        result.Should().BeTrue();
+        result.ShouldBeTrue();
         _databaseMock.Verify(x => x.KeyDeleteAsync(
             It.IsAny<RedisKey>(),
             It.IsAny<CommandFlags>()), Times.Once);
@@ -147,7 +147,7 @@ public class RedisClientTests
         var result = await _client.ExistsAsync("test-key");
 
         // Assert
-        result.Should().BeTrue();
+        result.ShouldBeTrue();
     }
 
     [Fact]
@@ -162,7 +162,7 @@ public class RedisClientTests
         var result = await _client.ExistsAsync("test-key");
 
         // Assert
-        result.Should().BeFalse();
+        result.ShouldBeFalse();
     }
 
     [Fact]
@@ -185,9 +185,9 @@ public class RedisClientTests
         var result = await _client.GetManyAsync<TestData>(new[] { "key1", "key2" });
 
         // Assert
-        result.Should().HaveCount(2);
-        result["key1"]!.Name.Should().Be("Test1");
-        result["key2"]!.Name.Should().Be("Test2");
+        result.Count.ShouldBe(2);
+        result["key1"]!.Name.ShouldBe("Test1");
+        result["key2"]!.Name.ShouldBe("Test2");
     }
 
     [Fact]
@@ -219,7 +219,7 @@ public class RedisClientTests
         var result = await _client.SetManyAsync(values);
 
         // Assert
-        result.Should().BeTrue();
+        result.ShouldBeTrue();
         batchMock.Verify(x => x.StringSetAsync(
             It.IsAny<RedisKey>(),
             It.IsAny<RedisValue>(),

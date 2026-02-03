@@ -17,11 +17,11 @@ public class DialogInstanceTests
         var instance = new DialogInstance(componentType, parameters, options);
 
         // Assert
-        instance.Id.Should().NotBeEmpty();
-        instance.ComponentType.Should().Be(componentType);
-        instance.Parameters.Should().ContainKey("Id");
-        instance.Parameters["Id"].Should().Be(1);
-        instance.Options.Title.Should().Be("Test");
+        instance.Id.ShouldNotBe(Guid.Empty);
+        instance.ComponentType.ShouldBe(componentType);
+        instance.Parameters.ShouldContainKey("Id");
+        instance.Parameters["Id"].ShouldBe(1);
+        instance.Options.Title.ShouldBe("Test");
     }
 
     [Fact]
@@ -34,8 +34,8 @@ public class DialogInstanceTests
         var instance = new DialogInstance(componentType, null, null);
 
         // Assert
-        instance.Parameters.Should().NotBeNull();
-        instance.Parameters.Should().BeEmpty();
+        instance.Parameters.ShouldNotBeNull();
+        instance.Parameters.ShouldBeEmpty();
     }
 
     [Fact]
@@ -48,8 +48,8 @@ public class DialogInstanceTests
         var instance = new DialogInstance(componentType, null, null);
 
         // Assert
-        instance.Options.Should().NotBeNull();
-        instance.Options.Title.Should().BeNull();
+        instance.Options.ShouldNotBeNull();
+        instance.Options.Title.ShouldBeNull();
     }
 
     [Fact]
@@ -60,7 +60,7 @@ public class DialogInstanceTests
         var instance2 = new DialogInstance(typeof(TestComponent), null, null);
 
         // Assert
-        instance1.Id.Should().NotBe(instance2.Id);
+        instance1.Id.ShouldNotBe(instance2.Id);
     }
 
     [Fact]
@@ -73,7 +73,7 @@ public class DialogInstanceTests
         var isValid = instance.IsFormValid;
 
         // Assert
-        isValid.Should().BeTrue();
+        isValid.ShouldBeTrue();
     }
 
     [Fact]
@@ -89,7 +89,7 @@ public class DialogInstanceTests
         var isValid = instance.IsFormValid;
 
         // Assert
-        isValid.Should().BeTrue();
+        isValid.ShouldBeTrue();
     }
 
     [Fact]
@@ -105,7 +105,7 @@ public class DialogInstanceTests
         instance.RegisterEditContext(editContext);
 
         // Assert
-        eventRaised.Should().BeTrue();
+        eventRaised.ShouldBeTrue();
     }
 
     [Fact]
@@ -124,7 +124,7 @@ public class DialogInstanceTests
         instance.RegisterEditContext(null);
 
         // Assert
-        changeCount.Should().Be(1); // Only from RegisterEditContext(null) call
+        changeCount.ShouldBe(1); // Only from RegisterEditContext(null) call
     }
 
     [Fact]
@@ -139,7 +139,7 @@ public class DialogInstanceTests
         var result = await instance.Result;
 
         // Assert
-        result.Should().BeSameAs(expectedResult);
+        result.ShouldBeSameAs(expectedResult);
     }
 
     [Fact]
@@ -156,7 +156,7 @@ public class DialogInstanceTests
         var result = await instance.Result;
 
         // Assert
-        result.Should().BeSameAs(firstResult);
+        result.ShouldBeSameAs(firstResult);
     }
 
     [Fact]
@@ -172,7 +172,7 @@ public class DialogInstanceTests
         var act = () => instance.Dispose();
 
         // Assert
-        act.Should().NotThrow();
+        Should.NotThrow(act);
     }
 
     [Fact]
@@ -189,7 +189,7 @@ public class DialogInstanceTests
         };
 
         // Assert
-        act.Should().NotThrow();
+        Should.NotThrow(act);
     }
 
     [Fact]
@@ -208,7 +208,7 @@ public class DialogInstanceTests
         editContext.NotifyValidationStateChanged();
 
         // Assert
-        stateChangedCount.Should().Be(1);
+        stateChangedCount.ShouldBe(1);
     }
 
     private class TestComponent : Microsoft.AspNetCore.Components.ComponentBase

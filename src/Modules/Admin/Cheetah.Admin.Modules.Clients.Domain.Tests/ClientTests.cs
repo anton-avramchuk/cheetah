@@ -1,4 +1,4 @@
-using FluentAssertions;
+using Shouldly;
 
 namespace Cheetah.Admin.Modules.Clients.Domain.Tests;
 
@@ -16,11 +16,11 @@ public class ClientTests
         var client = Client.Create(name);
 
         // Assert
-        client.Should().NotBeNull();
-        client.Id.Should().NotBeEmpty();
-        client.Name.Should().Be(name);
-        client.Description.Should().BeNull();
-        client.TenantId.Should().BeNull();
+        client.ShouldNotBeNull();
+        client.Id.ShouldNotBe(Guid.Empty);
+        client.Name.ShouldBe(name);
+        client.Description.ShouldBeNull();
+        client.TenantId.ShouldBeNull();
     }
 
     [Fact]
@@ -34,8 +34,8 @@ public class ClientTests
         var client = Client.Create(name, description);
 
         // Assert
-        client.Name.Should().Be(name);
-        client.Description.Should().Be(description);
+        client.Name.ShouldBe(name);
+        client.Description.ShouldBe(description);
     }
 
     [Fact]
@@ -50,9 +50,9 @@ public class ClientTests
         var client = Client.Create(name, description, tenantId);
 
         // Assert
-        client.Name.Should().Be(name);
-        client.Description.Should().Be(description);
-        client.TenantId.Should().Be(tenantId);
+        client.Name.ShouldBe(name);
+        client.Description.ShouldBe(description);
+        client.TenantId.ShouldBe(tenantId);
     }
 
     [Fact]
@@ -63,7 +63,7 @@ public class ClientTests
         var client2 = Client.Create("Client 2");
 
         // Assert
-        client1.Id.Should().NotBe(client2.Id);
+        client1.Id.ShouldNotBe(client2.Id);
     }
 
     [Theory]
@@ -77,7 +77,7 @@ public class ClientTests
         var act = () => Client.Create(name!);
 
         // Assert
-        act.Should().Throw<ArgumentException>();
+        Should.Throw<ArgumentException>(act);
     }
 
     #endregion
@@ -94,8 +94,8 @@ public class ClientTests
         client.Update("Updated Name", "Updated Description");
 
         // Assert
-        client.Name.Should().Be("Updated Name");
-        client.Description.Should().Be("Updated Description");
+        client.Name.ShouldBe("Updated Name");
+        client.Description.ShouldBe("Updated Description");
     }
 
     [Fact]
@@ -108,8 +108,8 @@ public class ClientTests
         client.Update("Updated Name", null);
 
         // Assert
-        client.Name.Should().Be("Updated Name");
-        client.Description.Should().BeNull();
+        client.Name.ShouldBe("Updated Name");
+        client.Description.ShouldBeNull();
     }
 
     [Fact]
@@ -123,7 +123,7 @@ public class ClientTests
         client.Update("Updated Name");
 
         // Assert
-        client.Id.Should().Be(originalId);
+        client.Id.ShouldBe(originalId);
     }
 
     [Fact]
@@ -137,7 +137,7 @@ public class ClientTests
         client.Update("Updated Name");
 
         // Assert
-        client.TenantId.Should().Be(tenantId);
+        client.TenantId.ShouldBe(tenantId);
     }
 
     [Theory]
@@ -153,7 +153,7 @@ public class ClientTests
         var act = () => client.Update(name!);
 
         // Assert
-        act.Should().Throw<ArgumentException>();
+        Should.Throw<ArgumentException>(act);
     }
 
     #endregion
@@ -171,7 +171,7 @@ public class ClientTests
         client.AssignToTenant(tenantId);
 
         // Assert
-        client.TenantId.Should().Be(tenantId);
+        client.TenantId.ShouldBe(tenantId);
     }
 
     [Fact]
@@ -186,7 +186,7 @@ public class ClientTests
         client.AssignToTenant(newTenantId);
 
         // Assert
-        client.TenantId.Should().Be(newTenantId);
+        client.TenantId.ShouldBe(newTenantId);
     }
 
     #endregion
@@ -200,7 +200,7 @@ public class ClientTests
         var client = Client.Create("Test Client");
 
         // Assert
-        client.DomainEvents.Should().BeEmpty();
+        client.DomainEvents.ShouldBeEmpty();
     }
 
     [Fact]
@@ -213,7 +213,7 @@ public class ClientTests
         client.ClearDomainEvents();
 
         // Assert
-        client.DomainEvents.Should().BeEmpty();
+        client.DomainEvents.ShouldBeEmpty();
     }
 
     #endregion

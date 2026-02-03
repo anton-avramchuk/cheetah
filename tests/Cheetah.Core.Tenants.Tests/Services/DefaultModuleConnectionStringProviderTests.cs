@@ -1,5 +1,5 @@
 using Cheetah.Core.Tenants.Services;
-using FluentAssertions;
+using Shouldly;
 
 namespace Cheetah.Core.Tenants.Tests.Services;
 
@@ -15,7 +15,7 @@ public class DefaultModuleConnectionStringProviderTests
         var provider = new DefaultModuleConnectionStringProvider(moduleName);
 
         // Assert
-        provider.ModuleName.Should().Be(moduleName);
+        provider.ModuleName.ShouldBe(moduleName);
     }
 
     [Fact]
@@ -31,11 +31,11 @@ public class DefaultModuleConnectionStringProviderTests
         var result = provider.GenerateConnectionString(tenantId, tenantName, baseConnectionString);
 
         // Assert
-        result.Should().Contain("tenant_AcmeCorp_identity");
-        result.ToLowerInvariant().Should().Contain("host=localhost");
-        result.Should().Contain("5432");
-        result.ToLowerInvariant().Should().Contain("username=postgres");
-        result.ToLowerInvariant().Should().Contain("password=secret");
+        result.ShouldContain("tenant_AcmeCorp_identity");
+        result.ToLowerInvariant().ShouldContain("host=localhost");
+        result.ShouldContain("5432");
+        result.ToLowerInvariant().ShouldContain("username=postgres");
+        result.ToLowerInvariant().ShouldContain("password=secret");
     }
 
     [Fact]
@@ -51,10 +51,10 @@ public class DefaultModuleConnectionStringProviderTests
         var result = provider.GenerateConnectionString(tenantId, tenantName, baseConnectionString);
 
         // Assert
-        result.Should().Contain("tenant_TestCompany_features");
-        result.ToLowerInvariant().Should().Contain("server=localhost");
-        result.ToLowerInvariant().Should().Contain("user id=sa");
-        result.ToLowerInvariant().Should().Contain("password=test123");
+        result.ShouldContain("tenant_TestCompany_features");
+        result.ToLowerInvariant().ShouldContain("server=localhost");
+        result.ToLowerInvariant().ShouldContain("user id=sa");
+        result.ToLowerInvariant().ShouldContain("password=test123");
     }
 
     [Fact]
@@ -70,10 +70,10 @@ public class DefaultModuleConnectionStringProviderTests
         var result = provider.GenerateConnectionString(tenantId, tenantName, baseConnectionString);
 
         // Assert
-        result.Should().Contain("tenant_MyOrg_permissions");
-        result.ToLowerInvariant().Should().Contain("server=localhost");
-        result.ToLowerInvariant().Should().Contain("uid=root");
-        result.ToLowerInvariant().Should().Contain("pwd=password");
+        result.ShouldContain("tenant_MyOrg_permissions");
+        result.ToLowerInvariant().ShouldContain("server=localhost");
+        result.ToLowerInvariant().ShouldContain("uid=root");
+        result.ToLowerInvariant().ShouldContain("pwd=password");
     }
 
     [Fact]
@@ -89,8 +89,8 @@ public class DefaultModuleConnectionStringProviderTests
         var result = provider.GenerateConnectionString(tenantId, tenantName, baseConnectionString);
 
         // Assert
-        result.Should().Contain("tenant_TestTenant_identity");
-        result.Should().NotContain("IDENTITY");
+        result.ShouldContain("tenant_TestTenant_identity");
+        result.ShouldNotContain("IDENTITY", Case.Sensitive);
     }
 
     [Fact]
@@ -106,7 +106,7 @@ public class DefaultModuleConnectionStringProviderTests
         var result = provider.GenerateConnectionString(tenantId, tenantName, baseConnectionString);
 
         // Assert
-        result.Should().Contain("tenant_UniqueCompany_identity");
+        result.ShouldContain("tenant_UniqueCompany_identity");
     }
 
     [Fact]
@@ -125,9 +125,9 @@ public class DefaultModuleConnectionStringProviderTests
         var result2 = provider.GenerateConnectionString(tenantId2, tenantName2, baseConnectionString);
 
         // Assert
-        result1.Should().Contain("tenant_Tenant1_identity");
-        result2.Should().Contain("tenant_Tenant2_identity");
-        result1.Should().NotBe(result2);
+        result1.ShouldContain("tenant_Tenant1_identity");
+        result2.ShouldContain("tenant_Tenant2_identity");
+        result1.ShouldNotBe(result2);
     }
 
     [Fact]
@@ -143,7 +143,7 @@ public class DefaultModuleConnectionStringProviderTests
         var result = provider.GenerateConnectionString(tenantId, tenantName, baseConnectionString);
 
         // Assert
-        result.Should().Contain("tenant_Acme Corporation_identity");
+        result.ShouldContain("tenant_Acme Corporation_identity");
     }
 
     [Fact]
@@ -159,7 +159,7 @@ public class DefaultModuleConnectionStringProviderTests
         var result = provider.GenerateConnectionString(tenantId, tenantName, baseConnectionString);
 
         // Assert
-        result.Should().Contain("tenant_test_company_123_features");
+        result.ShouldContain("tenant_test_company_123_features");
     }
 
     [Fact]
@@ -177,9 +177,9 @@ public class DefaultModuleConnectionStringProviderTests
         var featuresResult = featuresProvider.GenerateConnectionString(tenantId, tenantName, baseConnectionString);
 
         // Assert
-        identityResult.Should().Contain("tenant_SameTenant_identity");
-        featuresResult.Should().Contain("tenant_SameTenant_features");
-        identityResult.Should().NotBe(featuresResult);
+        identityResult.ShouldContain("tenant_SameTenant_identity");
+        featuresResult.ShouldContain("tenant_SameTenant_features");
+        identityResult.ShouldNotBe(featuresResult);
     }
 
     [Fact]
@@ -195,13 +195,13 @@ public class DefaultModuleConnectionStringProviderTests
         var result = provider.GenerateConnectionString(tenantId, tenantName, baseConnectionString);
 
         // Assert
-        result.ToLowerInvariant().Should().Contain("host=db.example.com");
-        result.Should().Contain("5432");
-        result.ToLowerInvariant().Should().Contain("username=user");
-        result.ToLowerInvariant().Should().Contain("password=pass");
-        result.ToLowerInvariant().Should().Contain("pooling=true");
-        result.Should().Contain("30");
-        result.Should().Contain("tenant_Test_identity");
+        result.ToLowerInvariant().ShouldContain("host=db.example.com");
+        result.ShouldContain("5432");
+        result.ToLowerInvariant().ShouldContain("username=user");
+        result.ToLowerInvariant().ShouldContain("password=pass");
+        result.ToLowerInvariant().ShouldContain("pooling=true");
+        result.ShouldContain("30");
+        result.ShouldContain("tenant_Test_identity");
     }
 
     [Fact]
@@ -217,7 +217,7 @@ public class DefaultModuleConnectionStringProviderTests
         var result = provider.GenerateConnectionString(tenantId, tenantName, baseConnectionString);
 
         // Assert
-        result.Should().Contain("tenant_TestTenant_");
+        result.ShouldContain("tenant_TestTenant_");
     }
 
     [Fact]
@@ -233,7 +233,7 @@ public class DefaultModuleConnectionStringProviderTests
         var result = provider.GenerateConnectionString(tenantId, tenantName, baseConnectionString);
 
         // Assert
-        result.Should().Contain("tenant_Tenant_mymodulename");
+        result.ShouldContain("tenant_Tenant_mymodulename");
     }
 
     [Theory]
@@ -255,6 +255,6 @@ public class DefaultModuleConnectionStringProviderTests
         var result = provider.GenerateConnectionString(tenantId, tenantName, baseConnectionString);
 
         // Assert
-        result.Should().Contain(expectedDbName);
+        result.ShouldContain(expectedDbName);
     }
 }

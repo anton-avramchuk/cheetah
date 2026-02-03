@@ -1,5 +1,5 @@
 using Cheetah.Core.Extensions.Common;
-using FluentAssertions;
+using Shouldly;
 
 namespace Cheetah.Core.Tests.Extensions.Common;
 
@@ -19,7 +19,7 @@ public class DayOfWeekExtensionsTests
         var result = dayOfWeek.IsWeekend();
 
         // Assert
-        result.Should().Be(expected);
+        result.ShouldBe(expected);
     }
 
     [Theory]
@@ -36,7 +36,7 @@ public class DayOfWeekExtensionsTests
         var result = dayOfWeek.IsWeekday();
 
         // Assert
-        result.Should().Be(expected);
+        result.ShouldBe(expected);
     }
 
     [Fact]
@@ -48,7 +48,7 @@ public class DayOfWeekExtensionsTests
         // Act & Assert
         foreach (var day in allDays)
         {
-            day.IsWeekend().Should().Be(!day.IsWeekday());
+            day.IsWeekend().ShouldBe(!day.IsWeekday());
         }
     }
 }

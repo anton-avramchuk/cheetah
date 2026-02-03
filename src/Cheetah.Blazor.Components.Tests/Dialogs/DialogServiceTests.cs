@@ -16,7 +16,7 @@ public class DialogServiceTests
         var dialogs = service.Dialogs;
 
         // Assert
-        dialogs.Should().BeEmpty();
+        dialogs.ShouldBeEmpty();
     }
 
     [Fact]
@@ -39,8 +39,8 @@ public class DialogServiceTests
         await dialogAddedTcs.Task.WaitAsync(TimeSpan.FromSeconds(1));
 
         // Assert
-        service.Dialogs.Should().HaveCount(1);
-        service.Dialogs[0].Options.Title.Should().Be("Test");
+        service.Dialogs.Count.ShouldBe(1);
+        service.Dialogs[0].Options.Title.ShouldBe("Test");
 
         // Cleanup - close the dialog
         service.CloseDialog(service.Dialogs[0], DialogResult.Cancel());
@@ -62,7 +62,7 @@ public class DialogServiceTests
         await showTask;
 
         // Assert
-        service.Dialogs.Should().BeEmpty();
+        service.Dialogs.ShouldBeEmpty();
     }
 
     [Fact]
@@ -80,8 +80,8 @@ public class DialogServiceTests
         var result = await showTask;
 
         // Assert
-        result.Confirmed.Should().BeTrue();
-        result.Data.Should().Be(expectedData);
+        result.Confirmed.ShouldBeTrue();
+        result.Data.ShouldBe(expectedData);
     }
 
     [Fact]
@@ -98,8 +98,8 @@ public class DialogServiceTests
         var result = await showTask;
 
         // Assert
-        result.Confirmed.Should().BeFalse();
-        result.Data.Should().BeNull();
+        result.Confirmed.ShouldBeFalse();
+        result.Data.ShouldBeNull();
     }
 
     [Fact]
@@ -117,9 +117,9 @@ public class DialogServiceTests
         await WaitForDialogCountAsync(service, 1);
 
         // Assert
-        service.Dialogs[0].Parameters.Should().ContainKey("Id");
-        service.Dialogs[0].Parameters["Id"].Should().Be(42);
-        service.Dialogs[0].Parameters["Name"].Should().Be("Test");
+        service.Dialogs[0].Parameters.ShouldContainKey("Id");
+        service.Dialogs[0].Parameters["Id"].ShouldBe(42);
+        service.Dialogs[0].Parameters["Name"].ShouldBe("Test");
 
         // Cleanup
         service.CloseDialog(service.Dialogs[0], DialogResult.Cancel());
@@ -141,7 +141,7 @@ public class DialogServiceTests
         var result = await showTask;
 
         // Assert
-        result.Confirmed.Should().BeFalse();
+        result.Confirmed.ShouldBeFalse();
     }
 
     [Fact]
@@ -159,9 +159,9 @@ public class DialogServiceTests
         await WaitForDialogCountAsync(service, 2);
 
         // Assert
-        service.Dialogs.Should().HaveCount(2);
-        service.Dialogs.Should().Contain(d => d.Options.Title == "Dialog 1");
-        service.Dialogs.Should().Contain(d => d.Options.Title == "Dialog 2");
+        service.Dialogs.Count.ShouldBe(2);
+        service.Dialogs.ShouldContain(d => d.Options.Title == "Dialog 1");
+        service.Dialogs.ShouldContain(d => d.Options.Title == "Dialog 2");
 
         // Cleanup - close in reverse order
         var dialog2 = service.Dialogs.First(d => d.Options.Title == "Dialog 2");
@@ -183,7 +183,7 @@ public class DialogServiceTests
         await WaitForDialogCountAsync(service, 1);
 
         // Assert
-        service.Dialogs[0].ComponentType.Should().Be(typeof(FormTestComponent));
+        service.Dialogs[0].ComponentType.ShouldBe(typeof(FormTestComponent));
 
         // Cleanup
         service.CloseDialog(service.Dialogs[0], DialogResult.Cancel());
@@ -202,7 +202,7 @@ public class DialogServiceTests
         _ = service.ShowAsync<SimpleTestComponent>();
 
         // Assert
-        changeCount.Should().BeGreaterThan(0);
+        changeCount.ShouldBeGreaterThan(0);
     }
 
     [Fact]
@@ -221,7 +221,7 @@ public class DialogServiceTests
         await showTask;
 
         // Assert
-        changeCount.Should().BeGreaterThan(0);
+        changeCount.ShouldBeGreaterThan(0);
     }
 
     [Fact]
@@ -240,7 +240,7 @@ public class DialogServiceTests
 
         // Assert - dialog should be disposed and not throw when accessing Result
         var result = await dialog.Result;
-        result.Confirmed.Should().BeTrue();
+        result.Confirmed.ShouldBeTrue();
     }
 
     private static IDialogServiceInternal CreateService()

@@ -1,6 +1,6 @@
 using Cheetah.Core.Extensions.DependencyInjection;
 using Cheetah.Core.Modularity;
-using FluentAssertions;
+using Shouldly;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Cheetah.Core.Tests.Extensions;
@@ -18,7 +18,7 @@ public class ServiceCollectionCommonExtensionsTests
         var result = services.IsAdded<ITestService>();
 
         // Assert
-        result.Should().BeTrue();
+        result.ShouldBeTrue();
     }
 
     [Fact]
@@ -31,7 +31,7 @@ public class ServiceCollectionCommonExtensionsTests
         var result = services.IsAdded<ITestService>();
 
         // Assert
-        result.Should().BeFalse();
+        result.ShouldBeFalse();
     }
 
     [Fact]
@@ -45,7 +45,7 @@ public class ServiceCollectionCommonExtensionsTests
         var result = services.IsAdded(typeof(ITestService));
 
         // Assert
-        result.Should().BeTrue();
+        result.ShouldBeTrue();
     }
 
     [Fact]
@@ -58,7 +58,7 @@ public class ServiceCollectionCommonExtensionsTests
         var result = services.IsAdded(typeof(ITestService));
 
         // Assert
-        result.Should().BeFalse();
+        result.ShouldBeFalse();
     }
 
     [Fact]
@@ -73,7 +73,7 @@ public class ServiceCollectionCommonExtensionsTests
         var result = services.GetSingletonInstanceOrNull<ITestService>();
 
         // Assert
-        result.Should().BeSameAs(instance);
+        result.ShouldBeSameAs(instance);
     }
 
     [Fact]
@@ -86,7 +86,7 @@ public class ServiceCollectionCommonExtensionsTests
         var result = services.GetSingletonInstanceOrNull<ITestService>();
 
         // Assert
-        result.Should().BeNull();
+        result.ShouldBeNull();
     }
 
     [Fact]
@@ -100,7 +100,7 @@ public class ServiceCollectionCommonExtensionsTests
         var result = services.GetSingletonInstanceOrNull<ITestService>();
 
         // Assert
-        result.Should().BeNull();
+        result.ShouldBeNull();
     }
 
     [Fact]
@@ -115,7 +115,7 @@ public class ServiceCollectionCommonExtensionsTests
         var result = services.GetSingletonInstance<ITestService>();
 
         // Assert
-        result.Should().BeSameAs(instance);
+        result.ShouldBeSameAs(instance);
     }
 
     [Fact]
@@ -128,8 +128,7 @@ public class ServiceCollectionCommonExtensionsTests
         var act = () => services.GetSingletonInstance<ITestService>();
 
         // Assert
-        act.Should().Throw<InvalidOperationException>()
-            .WithMessage("Could not find singleton service: *");
+        Should.Throw<InvalidOperationException>(act).Message.ShouldContain("Could not find singleton service");
     }
 
     [Fact]
@@ -143,8 +142,8 @@ public class ServiceCollectionCommonExtensionsTests
         var provider = services.BuildServiceProviderFromFactory();
 
         // Assert
-        provider.Should().NotBeNull();
-        provider.GetService<ITestService>().Should().NotBeNull();
+        provider.ShouldNotBeNull();
+        provider.GetService<ITestService>().ShouldNotBeNull();
     }
 
     [Fact]
@@ -159,7 +158,7 @@ public class ServiceCollectionCommonExtensionsTests
         var result = services.GetServiceProviderOrNull();
 
         // Assert
-        result.Should().BeSameAs(provider);
+        result.ShouldBeSameAs(provider);
     }
 
     [Fact]
@@ -172,7 +171,7 @@ public class ServiceCollectionCommonExtensionsTests
         var result = services.GetServiceProviderOrNull();
 
         // Assert
-        result.Should().BeNull();
+        result.ShouldBeNull();
     }
 
     [Fact]
@@ -190,11 +189,11 @@ public class ServiceCollectionCommonExtensionsTests
         var lazy = services.GetServiceLazy<ITestService>();
 
         // Assert
-        lazy.Should().NotBeNull();
-        lazy.IsValueCreated.Should().BeFalse();
+        lazy.ShouldNotBeNull();
+        lazy.IsValueCreated.ShouldBeFalse();
         var value = lazy.Value;
-        value.Should().NotBeNull();
-        lazy.IsValueCreated.Should().BeTrue();
+        value.ShouldNotBeNull();
+        lazy.IsValueCreated.ShouldBeTrue();
     }
 
     [Fact]
@@ -212,11 +211,11 @@ public class ServiceCollectionCommonExtensionsTests
         var lazy = services.GetRequiredServiceLazy<ITestService>();
 
         // Assert
-        lazy.Should().NotBeNull();
-        lazy.IsValueCreated.Should().BeFalse();
+        lazy.ShouldNotBeNull();
+        lazy.IsValueCreated.ShouldBeFalse();
         var value = lazy.Value;
-        value.Should().NotBeNull();
-        lazy.IsValueCreated.Should().BeTrue();
+        value.ShouldNotBeNull();
+        lazy.IsValueCreated.ShouldBeTrue();
     }
 
     // Test interfaces and classes

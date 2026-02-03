@@ -2,7 +2,7 @@ using System.Net;
 using System.Text.Json;
 using Cheetah.Admin.Modules.Clients.Contracts.Requests;
 using Cheetah.Admin.Modules.Clients.Contracts.Response;
-using FluentAssertions;
+using Shouldly;
 
 namespace Cheetah.Admin.Modules.Clients.Api.Client.Tests;
 
@@ -35,9 +35,9 @@ public class AdminClientsServiceTests
         var result = await service.GetAllAsync();
 
         // Assert
-        result.Should().HaveCount(2);
-        handler.RequestUri!.PathAndQuery.Should().Be($"/{BasePath}");
-        handler.Method.Should().Be(HttpMethod.Get);
+        result.Count.ShouldBe(2);
+        handler.RequestUri!.PathAndQuery.ShouldBe($"/{BasePath}");
+        handler.Method.ShouldBe(HttpMethod.Get);
     }
 
     [Fact]
@@ -51,7 +51,7 @@ public class AdminClientsServiceTests
         var result = await service.GetAllAsync();
 
         // Assert
-        result.Should().BeEmpty();
+        result.ShouldBeEmpty();
     }
 
     #endregion
@@ -72,9 +72,9 @@ public class AdminClientsServiceTests
         var result = await service.GetByIdAsync(clientId);
 
         // Assert
-        result.Should().NotBeNull();
-        result!.Id.Should().Be(clientId);
-        handler.RequestUri!.PathAndQuery.Should().Be($"/{BasePath}/{clientId}");
+        result.ShouldNotBeNull();
+        result!.Id.ShouldBe(clientId);
+        handler.RequestUri!.PathAndQuery.ShouldBe($"/{BasePath}/{clientId}");
     }
 
     [Fact]
@@ -89,7 +89,7 @@ public class AdminClientsServiceTests
         var result = await service.GetByIdAsync(clientId);
 
         // Assert
-        result.Should().BeNull();
+        result.ShouldBeNull();
     }
 
     #endregion
@@ -111,9 +111,9 @@ public class AdminClientsServiceTests
         var result = await service.CreateAsync(request);
 
         // Assert
-        result.Should().Be(expectedId);
-        handler.RequestUri!.PathAndQuery.Should().Be($"/{BasePath}");
-        handler.Method.Should().Be(HttpMethod.Post);
+        result.ShouldBe(expectedId);
+        handler.RequestUri!.PathAndQuery.ShouldBe($"/{BasePath}");
+        handler.Method.ShouldBe(HttpMethod.Post);
     }
 
     [Fact]
@@ -128,7 +128,7 @@ public class AdminClientsServiceTests
         var act = () => service.CreateAsync(request).AsTask();
 
         // Assert
-        await act.Should().ThrowAsync<HttpRequestException>();
+        await Should.ThrowAsync<HttpRequestException>(act);
     }
 
     #endregion
@@ -148,8 +148,8 @@ public class AdminClientsServiceTests
         await service.UpdateAsync(clientId, request);
 
         // Assert
-        handler.RequestUri!.PathAndQuery.Should().Be($"/{BasePath}/{clientId}");
-        handler.Method.Should().Be(HttpMethod.Put);
+        handler.RequestUri!.PathAndQuery.ShouldBe($"/{BasePath}/{clientId}");
+        handler.Method.ShouldBe(HttpMethod.Put);
     }
 
     [Fact]
@@ -165,7 +165,7 @@ public class AdminClientsServiceTests
         var act = () => service.UpdateAsync(clientId, request).AsTask();
 
         // Assert
-        await act.Should().ThrowAsync<HttpRequestException>();
+        await Should.ThrowAsync<HttpRequestException>(act);
     }
 
     #endregion
@@ -189,9 +189,9 @@ public class AdminClientsServiceTests
         var result = await service.GetAllTariffsAsync();
 
         // Assert
-        result.Should().HaveCount(2);
-        handler.RequestUri!.PathAndQuery.Should().Be("/api/tariffs");
-        handler.Method.Should().Be(HttpMethod.Get);
+        result.Count.ShouldBe(2);
+        handler.RequestUri!.PathAndQuery.ShouldBe("/api/tariffs");
+        handler.Method.ShouldBe(HttpMethod.Get);
     }
 
     [Fact]
@@ -205,7 +205,7 @@ public class AdminClientsServiceTests
         var result = await service.GetAllTariffsAsync();
 
         // Assert
-        result.Should().BeEmpty();
+        result.ShouldBeEmpty();
     }
 
     #endregion
@@ -226,9 +226,9 @@ public class AdminClientsServiceTests
         var result = await service.GetTariffByIdAsync(tariffId);
 
         // Assert
-        result.Should().NotBeNull();
-        result!.Id.Should().Be(tariffId);
-        handler.RequestUri!.PathAndQuery.Should().Be($"/api/tariffs/{tariffId}");
+        result.ShouldNotBeNull();
+        result!.Id.ShouldBe(tariffId);
+        handler.RequestUri!.PathAndQuery.ShouldBe($"/api/tariffs/{tariffId}");
     }
 
     [Fact]
@@ -243,7 +243,7 @@ public class AdminClientsServiceTests
         var result = await service.GetTariffByIdAsync(tariffId);
 
         // Assert
-        result.Should().BeNull();
+        result.ShouldBeNull();
     }
 
     #endregion
@@ -265,9 +265,9 @@ public class AdminClientsServiceTests
         var result = await service.CreateTariffAsync(request);
 
         // Assert
-        result.Should().Be(expectedId);
-        handler.RequestUri!.PathAndQuery.Should().Be("/api/tariffs");
-        handler.Method.Should().Be(HttpMethod.Post);
+        result.ShouldBe(expectedId);
+        handler.RequestUri!.PathAndQuery.ShouldBe("/api/tariffs");
+        handler.Method.ShouldBe(HttpMethod.Post);
     }
 
     #endregion
@@ -287,8 +287,8 @@ public class AdminClientsServiceTests
         await service.UpdateTariffAsync(tariffId, request);
 
         // Assert
-        handler.RequestUri!.PathAndQuery.Should().Be($"/api/tariffs/{tariffId}");
-        handler.Method.Should().Be(HttpMethod.Put);
+        handler.RequestUri!.PathAndQuery.ShouldBe($"/api/tariffs/{tariffId}");
+        handler.Method.ShouldBe(HttpMethod.Put);
     }
 
     #endregion
@@ -307,8 +307,8 @@ public class AdminClientsServiceTests
         await service.DeleteTariffAsync(tariffId);
 
         // Assert
-        handler.RequestUri!.PathAndQuery.Should().Be($"/api/tariffs/{tariffId}");
-        handler.Method.Should().Be(HttpMethod.Delete);
+        handler.RequestUri!.PathAndQuery.ShouldBe($"/api/tariffs/{tariffId}");
+        handler.Method.ShouldBe(HttpMethod.Delete);
     }
 
     [Fact]
@@ -323,7 +323,7 @@ public class AdminClientsServiceTests
         var act = () => service.DeleteTariffAsync(tariffId).AsTask();
 
         // Assert
-        await act.Should().ThrowAsync<HttpRequestException>();
+        await Should.ThrowAsync<HttpRequestException>(act);
     }
 
     #endregion

@@ -9,7 +9,7 @@ public class ModuleDependencyCodeFixProviderTests
         var codeFixProvider = new ModuleDependencyCodeFixProvider();
 
         // Assert
-        codeFixProvider.Should().NotBeNull();
+        codeFixProvider.ShouldNotBeNull();
     }
 
     [Fact]
@@ -22,8 +22,8 @@ public class ModuleDependencyCodeFixProviderTests
         var fixableDiagnosticIds = codeFixProvider.FixableDiagnosticIds.ToList();
 
         // Assert
-        fixableDiagnosticIds.Should().Contain("CHT001");
-        fixableDiagnosticIds.Should().Contain("CHT002");
+        fixableDiagnosticIds.ShouldContain("CHT001");
+        fixableDiagnosticIds.ShouldContain("CHT002");
     }
 
     [Fact]
@@ -36,6 +36,6 @@ public class ModuleDependencyCodeFixProviderTests
         var fixAllProvider = codeFixProvider.GetFixAllProvider();
 
         // Assert
-        fixAllProvider.Should().NotBeNull();
+        fixAllProvider.ShouldNotBeNull();
     }
 }

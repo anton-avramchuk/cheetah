@@ -1,5 +1,5 @@
 using Cheetah.Backend.Redis;
-using FluentAssertions;
+using Shouldly;
 using Microsoft.Extensions.Options;
 
 namespace Cheetah.Backend.Redis.Tests;
@@ -40,7 +40,7 @@ public class RedisConnectionProviderTests : IDisposable
         var act = () => provider.GetConnection("default");
 
         // Assert
-        act.Should().NotThrow();
+        Should.NotThrow(act);
     }
 
     [Fact]
@@ -55,7 +55,7 @@ public class RedisConnectionProviderTests : IDisposable
         var act = () => provider.GetConnection("cache");
 
         // Assert
-        act.Should().NotThrow();
+        Should.NotThrow(act);
     }
 
     [Fact]
@@ -69,8 +69,7 @@ public class RedisConnectionProviderTests : IDisposable
         var act = () => provider.GetConnection("nonexistent");
 
         // Assert
-        act.Should().Throw<InvalidOperationException>()
-            .WithMessage("*nonexistent*");
+        Should.Throw<InvalidOperationException>(act).Message.ShouldContain("nonexistent");
     }
 
     [Fact]
@@ -85,7 +84,7 @@ public class RedisConnectionProviderTests : IDisposable
         var act = () => provider.GetDatabase("default");
 
         // Assert
-        act.Should().NotThrow();
+        Should.NotThrow(act);
     }
 
     [Fact]
@@ -100,7 +99,7 @@ public class RedisConnectionProviderTests : IDisposable
         var act = () => provider.GetDatabase("cache");
 
         // Assert
-        act.Should().NotThrow();
+        Should.NotThrow(act);
     }
 
     [Fact]
@@ -114,7 +113,7 @@ public class RedisConnectionProviderTests : IDisposable
         var act = () => provider.GetDatabase("nonexistent");
 
         // Assert
-        act.Should().Throw<InvalidOperationException>();
+        Should.Throw<InvalidOperationException>(act);
     }
 
     [Fact]
@@ -130,7 +129,7 @@ public class RedisConnectionProviderTests : IDisposable
         var connection2 = provider.GetConnection("default");
 
         // Assert
-        connection1.Should().BeSameAs(connection2);
+        connection1.ShouldBeSameAs(connection2);
     }
 
     public void Dispose()

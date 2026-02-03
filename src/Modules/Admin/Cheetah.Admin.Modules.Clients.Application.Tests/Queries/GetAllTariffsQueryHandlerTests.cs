@@ -1,7 +1,7 @@
 using Cheetah.Admin.Modules.Clients.Application.Queries;
 using Cheetah.Admin.Modules.Clients.Domain;
 using Cheetah.Admin.Modules.Clients.Domain.Repositories;
-using FluentAssertions;
+using Shouldly;
 using Moq;
 
 namespace Cheetah.Admin.Modules.Clients.Application.Tests.Queries;
@@ -37,13 +37,13 @@ public class GetAllTariffsQueryHandlerTests
         var result = await _handler.HandleAsync(query);
 
         // Assert
-        result.Should().HaveCount(2);
-        result[0].Name.Should().Be("Basic");
-        result[0].Price.Should().Be(9.99m);
-        result[0].Currency.Should().Be("USD");
-        result[0].IsActive.Should().BeTrue();
-        result[1].Name.Should().Be("Premium");
-        result[1].IsActive.Should().BeFalse();
+        result.Count.ShouldBe(2);
+        result[0].Name.ShouldBe("Basic");
+        result[0].Price.ShouldBe(9.99m);
+        result[0].Currency.ShouldBe("USD");
+        result[0].IsActive.ShouldBeTrue();
+        result[1].Name.ShouldBe("Premium");
+        result[1].IsActive.ShouldBeFalse();
     }
 
     [Fact]
@@ -60,6 +60,6 @@ public class GetAllTariffsQueryHandlerTests
         var result = await _handler.HandleAsync(query);
 
         // Assert
-        result.Should().BeEmpty();
+        result.ShouldBeEmpty();
     }
 }

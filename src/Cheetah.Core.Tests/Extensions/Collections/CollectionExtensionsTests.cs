@@ -1,5 +1,5 @@
 using Cheetah.Core.Extensions.Collections;
-using FluentAssertions;
+using Shouldly;
 
 namespace Cheetah.Core.Tests.Extensions.Collections;
 
@@ -15,7 +15,7 @@ public class CollectionExtensionsTests
         var result = collection.IsNullOrEmpty();
 
         // Assert
-        result.Should().BeTrue();
+        result.ShouldBeTrue();
     }
 
     [Fact]
@@ -28,7 +28,7 @@ public class CollectionExtensionsTests
         var result = collection.IsNullOrEmpty();
 
         // Assert
-        result.Should().BeTrue();
+        result.ShouldBeTrue();
     }
 
     [Fact]
@@ -41,7 +41,7 @@ public class CollectionExtensionsTests
         var result = collection.IsNullOrEmpty();
 
         // Assert
-        result.Should().BeFalse();
+        result.ShouldBeFalse();
     }
 
     [Fact]
@@ -54,9 +54,9 @@ public class CollectionExtensionsTests
         var result = collection.AddIfNotContains("item2");
 
         // Assert
-        result.Should().BeTrue();
-        collection.Should().Contain("item2");
-        collection.Should().HaveCount(2);
+        result.ShouldBeTrue();
+        collection.ShouldContain("item2");
+        collection.Count.ShouldBe(2);
     }
 
     [Fact]
@@ -69,8 +69,8 @@ public class CollectionExtensionsTests
         var result = collection.AddIfNotContains("item1");
 
         // Assert
-        result.Should().BeFalse();
-        collection.Should().HaveCount(2);
+        result.ShouldBeFalse();
+        collection.Count.ShouldBe(2);
     }
 
     [Fact]
@@ -84,9 +84,9 @@ public class CollectionExtensionsTests
         var addedItems = collection.AddIfNotContains(itemsToAdd);
 
         // Assert
-        addedItems.Should().BeEquivalentTo(new[] { "item3", "item4" });
-        collection.Should().HaveCount(4);
-        collection.Should().Contain(new[] { "item1", "item2", "item3", "item4" });
+        addedItems.ShouldBe(new[] { "item3", "item4" });
+        collection.Count.ShouldBe(4);
+        collection.ShouldBe(new[] { "item1", "item2", "item3", "item4" });
     }
 
     [Fact]
@@ -100,8 +100,8 @@ public class CollectionExtensionsTests
         var addedItems = collection.AddIfNotContains(itemsToAdd);
 
         // Assert
-        addedItems.Should().BeEmpty();
-        collection.Should().HaveCount(2);
+        addedItems.ShouldBeEmpty();
+        collection.Count.ShouldBe(2);
     }
 
     [Fact]
@@ -114,9 +114,9 @@ public class CollectionExtensionsTests
         var result = collection.AddIfNotContains(x => x > 5, () => 10);
 
         // Assert
-        result.Should().BeTrue();
-        collection.Should().Contain(10);
-        collection.Should().HaveCount(4);
+        result.ShouldBeTrue();
+        collection.ShouldContain(10);
+        collection.Count.ShouldBe(4);
     }
 
     [Fact]
@@ -129,9 +129,9 @@ public class CollectionExtensionsTests
         var result = collection.AddIfNotContains(x => x > 2, () => 10);
 
         // Assert
-        result.Should().BeFalse();
-        collection.Should().HaveCount(3);
-        collection.Should().NotContain(10);
+        result.ShouldBeFalse();
+        collection.Count.ShouldBe(3);
+        collection.ShouldNotContain(10);
     }
 
     [Fact]
@@ -144,9 +144,9 @@ public class CollectionExtensionsTests
         var removedItems = collection.RemoveAll(x => x > 3);
 
         // Assert
-        removedItems.Should().HaveCount(2);
-        removedItems.Should().Contain(new[] { 4, 5 });
-        collection.Should().BeEquivalentTo(new[] { 1, 2, 3 });
+        removedItems.Count.ShouldBe(2);
+        removedItems.ShouldBe(new[] { 4, 5 });
+        collection.ShouldBe(new[] { 1, 2, 3 });
     }
 
     [Fact]
@@ -159,8 +159,8 @@ public class CollectionExtensionsTests
         var removedItems = collection.RemoveAll(x => x > 10);
 
         // Assert
-        removedItems.Should().BeEmpty();
-        collection.Should().HaveCount(3);
+        removedItems.ShouldBeEmpty();
+        collection.Count.ShouldBe(3);
     }
 
     [Fact]
@@ -174,7 +174,7 @@ public class CollectionExtensionsTests
         collection.RemoveAll(itemsToRemove);
 
         // Assert
-        collection.Should().BeEquivalentTo(new[] { "a", "c" });
+        collection.ShouldBe(new[] { "a", "c" });
     }
 
     [Fact]
@@ -188,7 +188,7 @@ public class CollectionExtensionsTests
         collection.RemoveAll(itemsToRemove);
 
         // Assert
-        collection.Should().BeEquivalentTo(new[] { "a", "c" });
+        collection.ShouldBe(new[] { "a", "c" });
     }
 
     [Fact]
@@ -202,6 +202,6 @@ public class CollectionExtensionsTests
         collection.RemoveAll(itemsToRemove);
 
         // Assert
-        collection.Should().BeEquivalentTo(new[] { "a", "b", "c" });
+        collection.ShouldBe(new[] { "a", "b", "c" });
     }
 }

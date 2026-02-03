@@ -1,5 +1,5 @@
 using Crm.Recruitment.Domain;
-using FluentAssertions;
+using Shouldly;
 
 namespace Crm.Recruitment.Domain.Tests;
 
@@ -15,10 +15,10 @@ public class VacancyTests
         var entity = Vacancy.Create(name);
 
         // Assert
-        entity.Should().NotBeNull();
-        entity.Id.Should().NotBeEmpty();
-        entity.Name.Should().Be(name);
-        entity.Description.Should().BeNull();
+        entity.ShouldNotBeNull();
+        entity.Id.ShouldNotBe(Guid.Empty);
+        entity.Name.ShouldBe(name);
+        entity.Description.ShouldBeNull();
     }
 
     [Fact]
@@ -32,8 +32,8 @@ public class VacancyTests
         var entity = Vacancy.Create(name, description);
 
         // Assert
-        entity.Name.Should().Be(name);
-        entity.Description.Should().Be(description);
+        entity.Name.ShouldBe(name);
+        entity.Description.ShouldBe(description);
     }
 
     [Fact]
@@ -44,7 +44,7 @@ public class VacancyTests
         var entity2 = Vacancy.Create("Entity 2");
 
         // Assert
-        entity1.Id.Should().NotBe(entity2.Id);
+        entity1.Id.ShouldNotBe(entity2.Id);
     }
 
     [Theory]
@@ -57,7 +57,7 @@ public class VacancyTests
         var act = () => Vacancy.Create(name!);
 
         // Assert
-        act.Should().Throw<ArgumentException>();
+        Should.Throw<ArgumentException>(act);
     }
 
     [Fact]
@@ -70,8 +70,8 @@ public class VacancyTests
         entity.Update("Updated Name", "Updated Description");
 
         // Assert
-        entity.Name.Should().Be("Updated Name");
-        entity.Description.Should().Be("Updated Description");
+        entity.Name.ShouldBe("Updated Name");
+        entity.Description.ShouldBe("Updated Description");
     }
 
     [Fact]
@@ -85,7 +85,7 @@ public class VacancyTests
         entity.Update("Updated Name");
 
         // Assert
-        entity.Id.Should().Be(originalId);
+        entity.Id.ShouldBe(originalId);
     }
 
     [Theory]
@@ -101,6 +101,6 @@ public class VacancyTests
         var act = () => entity.Update(name!);
 
         // Assert
-        act.Should().Throw<ArgumentException>();
+        Should.Throw<ArgumentException>(act);
     }
 }

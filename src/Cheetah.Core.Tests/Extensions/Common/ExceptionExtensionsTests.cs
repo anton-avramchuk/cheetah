@@ -1,6 +1,6 @@
 using Cheetah.Core.Extensions.Common;
 using Cheetah.Core.Logging;
-using FluentAssertions;
+using Shouldly;
 using Microsoft.Extensions.Logging;
 
 namespace Cheetah.Core.Tests.Extensions.Common;
@@ -23,11 +23,10 @@ public class ExceptionExtensionsTests
         }
 
         // Act & Assert
-        capturedException.Should().NotBeNull();
+        capturedException.ShouldNotBeNull();
         var act = () => capturedException!.ReThrow();
 
-        act.Should().Throw<InvalidOperationException>()
-            .Which.StackTrace.Should().Contain(nameof(ThrowException));
+        Should.Throw<InvalidOperationException>(act).StackTrace.ShouldContain(nameof(ThrowException));
     }
 
     [Fact]
@@ -40,7 +39,7 @@ public class ExceptionExtensionsTests
         var logLevel = exception.GetLogLevel();
 
         // Assert
-        logLevel.Should().Be(LogLevel.Warning);
+        logLevel.ShouldBe(LogLevel.Warning);
     }
 
     [Fact]
@@ -53,7 +52,7 @@ public class ExceptionExtensionsTests
         var logLevel = exception.GetLogLevel();
 
         // Assert
-        logLevel.Should().Be(LogLevel.Error);
+        logLevel.ShouldBe(LogLevel.Error);
     }
 
     [Fact]
@@ -66,7 +65,7 @@ public class ExceptionExtensionsTests
         var logLevel = exception.GetLogLevel(LogLevel.Critical);
 
         // Assert
-        logLevel.Should().Be(LogLevel.Critical);
+        logLevel.ShouldBe(LogLevel.Critical);
     }
 
     [Fact]
@@ -79,7 +78,7 @@ public class ExceptionExtensionsTests
         var logLevel = exception.GetLogLevel(LogLevel.Critical);
 
         // Assert
-        logLevel.Should().Be(LogLevel.Information);
+        logLevel.ShouldBe(LogLevel.Information);
     }
 
     // Helper methods and classes

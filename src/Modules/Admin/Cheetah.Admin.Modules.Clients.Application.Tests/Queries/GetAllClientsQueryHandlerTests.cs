@@ -2,7 +2,7 @@ using Cheetah.Admin.Modules.Clients.Application.Queries;
 using Cheetah.Admin.Modules.Clients.Domain;
 using Cheetah.Admin.Modules.Clients.Domain.Repositories;
 using Cheetah.Core.Specification;
-using FluentAssertions;
+using Shouldly;
 using Moq;
 
 namespace Cheetah.Admin.Modules.Clients.Application.Tests.Queries;
@@ -39,10 +39,10 @@ public class GetAllClientsQueryHandlerTests
         var result = await _handler.HandleAsync(query);
 
         // Assert
-        result.Should().HaveCount(3);
-        result[0].Name.Should().Be("Client 1");
-        result[1].Name.Should().Be("Client 2");
-        result[2].Name.Should().Be("Client 3");
+        result.Count.ShouldBe(3);
+        result[0].Name.ShouldBe("Client 1");
+        result[1].Name.ShouldBe("Client 2");
+        result[2].Name.ShouldBe("Client 3");
     }
 
     [Fact]
@@ -59,7 +59,7 @@ public class GetAllClientsQueryHandlerTests
         var result = await _handler.HandleAsync(query);
 
         // Assert
-        result.Should().BeEmpty();
+        result.ShouldBeEmpty();
     }
 
     [Fact]
@@ -79,9 +79,9 @@ public class GetAllClientsQueryHandlerTests
         var result = await _handler.HandleAsync(query);
 
         // Assert
-        result.Should().HaveCount(1);
-        result[0].Tenant.Should().NotBeNull();
-        result[0].Tenant!.Id.Should().Be(tenantId);
+        result.Count.ShouldBe(1);
+        result[0].Tenant.ShouldNotBeNull();
+        result[0].Tenant!.Id.ShouldBe(tenantId);
     }
 
     [Fact]
@@ -100,8 +100,8 @@ public class GetAllClientsQueryHandlerTests
         var result = await _handler.HandleAsync(query);
 
         // Assert
-        result.Should().HaveCount(1);
-        result[0].Tenant.Should().BeNull();
+        result.Count.ShouldBe(1);
+        result[0].Tenant.ShouldBeNull();
     }
 
     private static Client CreateClient(Guid id, string name, string? description, Guid? tenantId = null)

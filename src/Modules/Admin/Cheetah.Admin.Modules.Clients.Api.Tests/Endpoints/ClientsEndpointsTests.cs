@@ -3,7 +3,7 @@ using System.Net.Http.Json;
 using Cheetah.Admin.Modules.Clients.Api.Tests.Fixtures;
 using Cheetah.Admin.Modules.Clients.Contracts.Requests;
 using Cheetah.Admin.Modules.Clients.Contracts.Response;
-using FluentAssertions;
+using Shouldly;
 
 namespace Cheetah.Admin.Modules.Clients.Api.Tests.Endpoints;
 
@@ -26,9 +26,9 @@ public class ClientsEndpointsTests
         var response = await _client.GetAsync("/api/clients");
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
         var clients = await response.Content.ReadFromJsonAsync<List<ClientViewModel>>();
-        clients.Should().NotBeNull();
+        clients.ShouldNotBeNull();
     }
 
     [Fact]
@@ -42,10 +42,10 @@ public class ClientsEndpointsTests
         var response = await _client.GetAsync("/api/clients");
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
         var clients = await response.Content.ReadFromJsonAsync<List<ClientViewModel>>();
-        clients.Should().NotBeNull();
-        clients.Should().Contain(c => c.Name == "Test Client for List");
+        clients.ShouldNotBeNull();
+        clients.ShouldContain(c => c.Name == "Test Client for List");
     }
 
     #endregion
@@ -62,8 +62,8 @@ public class ClientsEndpointsTests
         var response = await _client.PostAsJsonAsync("/api/clients", request);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.Created);
-        response.Headers.Location.Should().NotBeNull();
+        response.StatusCode.ShouldBe(HttpStatusCode.Created);
+        response.Headers.Location.ShouldNotBeNull();
     }
 
     [Fact]
@@ -76,7 +76,7 @@ public class ClientsEndpointsTests
         var response = await _client.PostAsJsonAsync("/api/clients", request);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.Created);
+        response.StatusCode.ShouldBe(HttpStatusCode.Created);
     }
 
     [Fact]
@@ -89,7 +89,7 @@ public class ClientsEndpointsTests
         var response = await _client.PostAsJsonAsync("/api/clients", request);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
     }
 
     #endregion
@@ -108,10 +108,10 @@ public class ClientsEndpointsTests
         var response = await _client.GetAsync(location);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
         var client = await response.Content.ReadFromJsonAsync<ClientViewModel>();
-        client.Should().NotBeNull();
-        client!.Name.Should().Be("Client To Get");
+        client.ShouldNotBeNull();
+        client!.Name.ShouldBe("Client To Get");
     }
 
     [Fact]
@@ -124,7 +124,7 @@ public class ClientsEndpointsTests
         var response = await _client.GetAsync($"/api/clients/{nonExistingId}");
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
     [Fact]
@@ -134,7 +134,7 @@ public class ClientsEndpointsTests
         var response = await _client.GetAsync("/api/clients/invalid-guid");
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
     #endregion
@@ -156,12 +156,12 @@ public class ClientsEndpointsTests
         var response = await _client.PutAsJsonAsync(location.ToString(), updateRequest);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 
         // Verify update
         var getResponse = await _client.GetAsync(location);
         var updatedClient = await getResponse.Content.ReadFromJsonAsync<ClientViewModel>();
-        updatedClient!.Name.Should().Be("Updated Client Name");
+        updatedClient!.Name.ShouldBe("Updated Client Name");
     }
 
     [Fact]
@@ -175,7 +175,7 @@ public class ClientsEndpointsTests
         var response = await _client.PutAsJsonAsync($"/api/clients/{nonExistingId}", updateRequest);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
     [Fact]
@@ -193,7 +193,7 @@ public class ClientsEndpointsTests
         var response = await _client.PutAsJsonAsync(location.ToString(), updateRequest);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
     }
 
     #endregion

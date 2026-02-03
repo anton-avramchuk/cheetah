@@ -2,7 +2,7 @@ using System.Net;
 using System.Text.Json;
 using __Prefix__.ModuleName.Contracts.Requests;
 using __Prefix__.ModuleName.Contracts.Response;
-using FluentAssertions;
+using Shouldly;
 
 namespace __Prefix__.ModuleName.ApiClient.Tests;
 
@@ -33,9 +33,9 @@ public class ModuleNameServiceTests
         var result = await service.GetAllAsync();
 
         // Assert
-        result.Should().HaveCount(2);
-        handler.RequestUri!.PathAndQuery.Should().Be($"/{BasePath}");
-        handler.Method.Should().Be(HttpMethod.Get);
+        result.Count.ShouldBe(2);
+        handler.RequestUri!.PathAndQuery.ShouldBe($"/{BasePath}");
+        handler.Method.ShouldBe(HttpMethod.Get);
     }
 
     [Fact]
@@ -52,9 +52,9 @@ public class ModuleNameServiceTests
         var result = await service.GetByIdAsync(entityId);
 
         // Assert
-        result.Should().NotBeNull();
-        result!.Id.Should().Be(entityId);
-        handler.RequestUri!.PathAndQuery.Should().Be($"/{BasePath}/{entityId}");
+        result.ShouldNotBeNull();
+        result!.Id.ShouldBe(entityId);
+        handler.RequestUri!.PathAndQuery.ShouldBe($"/{BasePath}/{entityId}");
     }
 
     [Fact]
@@ -69,7 +69,7 @@ public class ModuleNameServiceTests
         var result = await service.GetByIdAsync(entityId);
 
         // Assert
-        result.Should().BeNull();
+        result.ShouldBeNull();
     }
 
     [Fact]
@@ -87,9 +87,9 @@ public class ModuleNameServiceTests
         var result = await service.CreateAsync(request);
 
         // Assert
-        result.Should().Be(expectedId);
-        handler.RequestUri!.PathAndQuery.Should().Be($"/{BasePath}");
-        handler.Method.Should().Be(HttpMethod.Post);
+        result.ShouldBe(expectedId);
+        handler.RequestUri!.PathAndQuery.ShouldBe($"/{BasePath}");
+        handler.Method.ShouldBe(HttpMethod.Post);
     }
 
     [Fact]
@@ -104,8 +104,8 @@ public class ModuleNameServiceTests
         await service.DeleteAsync(entityId);
 
         // Assert
-        handler.RequestUri!.PathAndQuery.Should().Be($"/{BasePath}/{entityId}");
-        handler.Method.Should().Be(HttpMethod.Delete);
+        handler.RequestUri!.PathAndQuery.ShouldBe($"/{BasePath}/{entityId}");
+        handler.Method.ShouldBe(HttpMethod.Delete);
     }
 
     private class MockHttpMessageHandler : HttpMessageHandler

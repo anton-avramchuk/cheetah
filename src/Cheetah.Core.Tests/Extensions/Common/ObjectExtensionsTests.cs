@@ -1,5 +1,5 @@
 using Cheetah.Core.Extensions.Common;
-using FluentAssertions;
+using Shouldly;
 
 namespace Cheetah.Core.Tests.Extensions.Common;
 
@@ -15,7 +15,7 @@ public class ObjectExtensionsTests
         var result = ObjectExtensions.As<string>(obj);
 
         // Assert
-        result.Should().Be("Hello");
+        result.ShouldBe("Hello");
     }
 
     [Fact]
@@ -28,7 +28,7 @@ public class ObjectExtensionsTests
         var act = () => ObjectExtensions.As<BaseClass>(obj);
 
         // Assert
-        act.Should().Throw<InvalidCastException>();
+        Should.Throw<InvalidCastException>(act);
     }
 
     [Fact]
@@ -41,7 +41,7 @@ public class ObjectExtensionsTests
         var result = ObjectExtensions.As<BaseClass>(obj);
 
         // Assert
-        result.Should().BeOfType<DerivedClass>();
+        result.ShouldBeOfType<DerivedClass>();
     }
 
     [Fact]
@@ -54,7 +54,7 @@ public class ObjectExtensionsTests
         var result = obj.To<double>();
 
         // Assert
-        result.Should().Be(42.0);
+        result.ShouldBe(42.0);
     }
 
     [Fact]
@@ -67,7 +67,7 @@ public class ObjectExtensionsTests
         var result = obj.To<int>();
 
         // Assert
-        result.Should().Be(123);
+        result.ShouldBe(123);
     }
 
     [Fact]
@@ -81,7 +81,7 @@ public class ObjectExtensionsTests
         var result = obj.To<Guid>();
 
         // Assert
-        result.Should().Be(guid);
+        result.ShouldBe(guid);
     }
 
     [Fact]
@@ -94,7 +94,7 @@ public class ObjectExtensionsTests
         var result = obj.To<decimal>();
 
         // Assert
-        result.Should().Be(123.45m);
+        result.ShouldBe(123.45m);
     }
 
     [Fact]
@@ -107,7 +107,7 @@ public class ObjectExtensionsTests
         var result = value.IsIn(1, 2, 3, 4, 5);
 
         // Assert
-        result.Should().BeTrue();
+        result.ShouldBeTrue();
     }
 
     [Fact]
@@ -120,7 +120,7 @@ public class ObjectExtensionsTests
         var result = value.IsIn(1, 2, 3, 4, 5);
 
         // Assert
-        result.Should().BeFalse();
+        result.ShouldBeFalse();
     }
 
     [Fact]
@@ -134,7 +134,7 @@ public class ObjectExtensionsTests
         var result = value.IsIn(list);
 
         // Assert
-        result.Should().BeTrue();
+        result.ShouldBeTrue();
     }
 
     [Fact]
@@ -148,7 +148,7 @@ public class ObjectExtensionsTests
         var result = value.IsIn(list);
 
         // Assert
-        result.Should().BeFalse();
+        result.ShouldBeFalse();
     }
 
     [Fact]
@@ -161,7 +161,7 @@ public class ObjectExtensionsTests
         var result = value.If(true, x => x * 2);
 
         // Assert
-        result.Should().Be(10);
+        result.ShouldBe(10);
     }
 
     [Fact]
@@ -174,7 +174,7 @@ public class ObjectExtensionsTests
         var result = value.If(false, x => x * 2);
 
         // Assert
-        result.Should().Be(5);
+        result.ShouldBe(5);
     }
 
     [Fact]
@@ -188,8 +188,8 @@ public class ObjectExtensionsTests
         var result = value.If(true, x => executed = true);
 
         // Assert
-        executed.Should().BeTrue();
-        result.Should().Be(5); // Original value returned
+        executed.ShouldBeTrue();
+        result.ShouldBe(5); // Original value returned
     }
 
     [Fact]
@@ -203,8 +203,8 @@ public class ObjectExtensionsTests
         var result = value.If(false, x => executed = true);
 
         // Assert
-        executed.Should().BeFalse();
-        result.Should().Be(5);
+        executed.ShouldBeFalse();
+        result.ShouldBe(5);
     }
 
     [Fact]
@@ -220,7 +220,7 @@ public class ObjectExtensionsTests
             .If(true, x => x - 3);
 
         // Assert
-        result.Should().Be(12); // 10 + 5 - 3
+        result.ShouldBe(12); // 10 + 5 - 3
     }
 
     // Helper classes

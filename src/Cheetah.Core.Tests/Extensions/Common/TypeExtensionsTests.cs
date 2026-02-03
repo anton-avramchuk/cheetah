@@ -1,5 +1,5 @@
 using Cheetah.Core.Extensions.Common;
-using FluentAssertions;
+using Shouldly;
 
 namespace Cheetah.Core.Tests.Extensions.Common;
 
@@ -15,8 +15,8 @@ public class TypeExtensionsTests
         var result = type.GetFullNameWithAssemblyName();
 
         // Assert
-        result.Should().Contain("System.String");
-        result.Should().Contain("System.Private.CoreLib");
+        result.ShouldContain("System.String");
+        result.ShouldContain("System.Private.CoreLib");
     }
 
     [Fact]
@@ -29,7 +29,7 @@ public class TypeExtensionsTests
         var result = type.IsAssignableTo<BaseClass>();
 
         // Assert
-        result.Should().BeTrue();
+        result.ShouldBeTrue();
     }
 
     [Fact]
@@ -42,7 +42,7 @@ public class TypeExtensionsTests
         var result = type.IsAssignableTo<int>();
 
         // Assert
-        result.Should().BeFalse();
+        result.ShouldBeFalse();
     }
 
     [Fact]
@@ -55,7 +55,7 @@ public class TypeExtensionsTests
         var result = type.IsAssignableTo<BaseClass>();
 
         // Assert
-        result.Should().BeTrue();
+        result.ShouldBeTrue();
     }
 
     [Fact]
@@ -69,7 +69,7 @@ public class TypeExtensionsTests
         var result = type.IsAssignableTo(targetType);
 
         // Assert
-        result.Should().BeTrue();
+        result.ShouldBeTrue();
     }
 
     [Fact]
@@ -82,7 +82,7 @@ public class TypeExtensionsTests
         var result = type.IsAssignableTo<ITestInterface>();
 
         // Assert
-        result.Should().BeTrue();
+        result.ShouldBeTrue();
     }
 
     [Fact]
@@ -95,9 +95,9 @@ public class TypeExtensionsTests
         var result = type.GetBaseClasses(includeObject: false);
 
         // Assert
-        result.Should().Contain(typeof(ChildClass));
-        result.Should().Contain(typeof(BaseClass));
-        result.Should().NotContain(typeof(object));
+        result.ShouldContain(typeof(ChildClass));
+        result.ShouldContain(typeof(BaseClass));
+        result.ShouldNotContain(typeof(object));
     }
 
     [Fact]
@@ -110,8 +110,8 @@ public class TypeExtensionsTests
         var result = type.GetBaseClasses(includeObject: true);
 
         // Assert
-        result.Should().Contain(typeof(BaseClass));
-        result.Should().Contain(typeof(object));
+        result.ShouldContain(typeof(BaseClass));
+        result.ShouldContain(typeof(object));
     }
 
     [Fact]
@@ -124,7 +124,7 @@ public class TypeExtensionsTests
         var result = type.GetBaseClasses(includeObject: false);
 
         // Assert
-        result.Should().BeEmpty();
+        result.ShouldBeEmpty();
     }
 
     [Fact]
@@ -137,7 +137,7 @@ public class TypeExtensionsTests
         var result = type.GetBaseClasses(stoppingType: typeof(ChildClass), includeObject: false);
 
         // Assert
-        result.Should().BeEmpty(); // Should not include ChildClass itself
+        result.ShouldBeEmpty(); // Should not include ChildClass itself
     }
 
     [Fact]
@@ -151,9 +151,9 @@ public class TypeExtensionsTests
 
         // Assert
         // Should be ordered from base to most derived
-        result[0].Should().Be(typeof(object));
-        result[1].Should().Be(typeof(BaseClass));
-        result[2].Should().Be(typeof(ChildClass));
+        result[0].ShouldBe(typeof(object));
+        result[1].ShouldBe(typeof(BaseClass));
+        result[2].ShouldBe(typeof(ChildClass));
     }
 
     [Fact]
@@ -166,8 +166,8 @@ public class TypeExtensionsTests
         var result = type.GetBaseClasses(includeObject: true);
 
         // Assert
-        result.Should().Contain(typeof(object));
-        result.Should().Contain(typeof(ValueType));
+        result.ShouldContain(typeof(object));
+        result.ShouldContain(typeof(ValueType));
     }
 
     // Test classes and interfaces

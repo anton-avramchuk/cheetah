@@ -3,7 +3,7 @@ using System.Net.Http.Json;
 using __Prefix__.ModuleName.Api.Tests.Fixtures;
 using __Prefix__.ModuleName.Contracts.Requests;
 using __Prefix__.ModuleName.Contracts.Response;
-using FluentAssertions;
+using Shouldly;
 
 namespace __Prefix__.ModuleName.Api.Tests.Endpoints;
 
@@ -24,9 +24,9 @@ public class SampleEntityEndpointsTests
         var response = await _client.GetAsync("/api/moduleschema");
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
         var entities = await response.Content.ReadFromJsonAsync<List<SampleEntityViewModel>>();
-        entities.Should().NotBeNull();
+        entities.ShouldNotBeNull();
     }
 
     [Fact]
@@ -39,8 +39,8 @@ public class SampleEntityEndpointsTests
         var response = await _client.PostAsJsonAsync("/api/moduleschema", request);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.Created);
-        response.Headers.Location.Should().NotBeNull();
+        response.StatusCode.ShouldBe(HttpStatusCode.Created);
+        response.Headers.Location.ShouldNotBeNull();
     }
 
     [Fact]
@@ -53,7 +53,7 @@ public class SampleEntityEndpointsTests
         var response = await _client.PostAsJsonAsync("/api/moduleschema", request);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
     }
 
     [Fact]
@@ -68,10 +68,10 @@ public class SampleEntityEndpointsTests
         var response = await _client.GetAsync(location);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
         var entity = await response.Content.ReadFromJsonAsync<SampleEntityViewModel>();
-        entity.Should().NotBeNull();
-        entity!.Name.Should().Be("Entity To Get");
+        entity.ShouldNotBeNull();
+        entity!.Name.ShouldBe("Entity To Get");
     }
 
     [Fact]
@@ -81,7 +81,7 @@ public class SampleEntityEndpointsTests
         var response = await _client.GetAsync($"/api/moduleschema/{Guid.NewGuid()}");
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
     [Fact]
@@ -99,11 +99,11 @@ public class SampleEntityEndpointsTests
         var response = await _client.PutAsJsonAsync(location.ToString(), updateRequest);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 
         var getResponse = await _client.GetAsync(location);
         var updatedEntity = await getResponse.Content.ReadFromJsonAsync<SampleEntityViewModel>();
-        updatedEntity!.Name.Should().Be("Updated Entity");
+        updatedEntity!.Name.ShouldBe("Updated Entity");
     }
 
     [Fact]
@@ -118,9 +118,9 @@ public class SampleEntityEndpointsTests
         var response = await _client.DeleteAsync(location);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 
         var getResponse = await _client.GetAsync(location);
-        getResponse.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        getResponse.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 }

@@ -1,5 +1,5 @@
 using Cheetah.Backend.Redis;
-using FluentAssertions;
+using Shouldly;
 using Moq;
 using StackExchange.Redis;
 using System.Text.Json;
@@ -131,9 +131,9 @@ public class RedisEventBusTests
         await Task.WhenAny(tcs.Task, Task.Delay(1000));
 
         // Assert
-        receivedEvent.Should().NotBeNull();
-        receivedEvent!.Id.Should().Be(42);
-        receivedEvent.Message.Should().Be("Hello");
+        receivedEvent.ShouldNotBeNull();
+        receivedEvent!.Id.ShouldBe(42);
+        receivedEvent.Message.ShouldBe("Hello");
     }
 
     [Fact]
@@ -203,7 +203,7 @@ public class RedisEventBusTests
         var act = async () => await _eventBus.UnsubscribeAsync("nonexistent-channel");
 
         // Assert
-        await act.Should().NotThrowAsync();
+        await Should.NotThrowAsync(act);
     }
 
     [Fact]

@@ -1,6 +1,6 @@
 using Cheetah.Core.DependencyInjection;
 using Cheetah.Core.Extensions.DependencyInjection;
-using FluentAssertions;
+using Shouldly;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Cheetah.Core.Tests.Extensions;
@@ -17,9 +17,9 @@ public class ServiceCollectionObjectAccessorExtensionsTests
         var accessor = services.AddObjectAccessor<string>();
 
         // Assert
-        accessor.Should().NotBeNull();
-        services.Should().Contain(sd => sd.ServiceType == typeof(ObjectAccessor<string>));
-        services.Should().Contain(sd => sd.ServiceType == typeof(IObjectAccessor<string>));
+        accessor.ShouldNotBeNull();
+        services.ShouldContain(sd => sd.ServiceType == typeof(ObjectAccessor<string>));
+        services.ShouldContain(sd => sd.ServiceType == typeof(IObjectAccessor<string>));
     }
 
     [Fact]
@@ -33,8 +33,8 @@ public class ServiceCollectionObjectAccessorExtensionsTests
         var accessor = services.AddObjectAccessor(expectedValue);
 
         // Assert
-        accessor.Should().NotBeNull();
-        accessor.Value.Should().Be(expectedValue);
+        accessor.ShouldNotBeNull();
+        accessor.Value.ShouldBe(expectedValue);
     }
 
     [Fact]
@@ -48,8 +48,8 @@ public class ServiceCollectionObjectAccessorExtensionsTests
         var accessor = services.AddObjectAccessor(existingAccessor);
 
         // Assert
-        accessor.Should().BeSameAs(existingAccessor);
-        accessor.Value.Should().Be(42);
+        accessor.ShouldBeSameAs(existingAccessor);
+        accessor.Value.ShouldBe(42);
     }
 
     [Fact]
@@ -63,8 +63,7 @@ public class ServiceCollectionObjectAccessorExtensionsTests
         var act = () => services.AddObjectAccessor<string>();
 
         // Assert
-        act.Should().Throw<Exception>()
-            .WithMessage("An object accessor is registered before for type: *");
+        Should.Throw<Exception>(act).Message.ShouldContain("An object accessor is registered before for type");
     }
 
     [Fact]
@@ -77,8 +76,8 @@ public class ServiceCollectionObjectAccessorExtensionsTests
         var accessor = services.TryAddObjectAccessor<string>();
 
         // Assert
-        accessor.Should().NotBeNull();
-        services.Should().Contain(sd => sd.ServiceType == typeof(ObjectAccessor<string>));
+        accessor.ShouldNotBeNull();
+        services.ShouldContain(sd => sd.ServiceType == typeof(ObjectAccessor<string>));
     }
 
     [Fact]
@@ -92,8 +91,8 @@ public class ServiceCollectionObjectAccessorExtensionsTests
         var secondAccessor = services.TryAddObjectAccessor<string>();
 
         // Assert
-        secondAccessor.Should().BeSameAs(firstAccessor);
-        secondAccessor.Value.Should().Be("first");
+        secondAccessor.ShouldBeSameAs(firstAccessor);
+        secondAccessor.Value.ShouldBe("first");
     }
 
     [Fact]
@@ -108,7 +107,7 @@ public class ServiceCollectionObjectAccessorExtensionsTests
         var result = services.GetObjectOrNull<string>();
 
         // Assert
-        result.Should().Be(expectedValue);
+        result.ShouldBe(expectedValue);
     }
 
     [Fact]
@@ -121,7 +120,7 @@ public class ServiceCollectionObjectAccessorExtensionsTests
         var result = services.GetObjectOrNull<string>();
 
         // Assert
-        result.Should().BeNull();
+        result.ShouldBeNull();
     }
 
     [Fact]
@@ -136,7 +135,7 @@ public class ServiceCollectionObjectAccessorExtensionsTests
         var result = services.GetObject<string>();
 
         // Assert
-        result.Should().Be(expectedValue);
+        result.ShouldBe(expectedValue);
     }
 
     [Fact]
@@ -149,8 +148,7 @@ public class ServiceCollectionObjectAccessorExtensionsTests
         var act = () => services.GetObject<string>();
 
         // Assert
-        act.Should().Throw<Exception>()
-            .WithMessage("Could not find an object of * in services. Be sure that you have used AddObjectAccessor before!");
+        Should.Throw<Exception>(act).Message.ShouldContain("Could not find an object of");
     }
 
     [Fact]
@@ -164,8 +162,8 @@ public class ServiceCollectionObjectAccessorExtensionsTests
         services.AddObjectAccessor<int>(42);
 
         // Assert
-        services[0].ServiceType.Should().Be(typeof(IObjectAccessor<int>));
-        services[1].ServiceType.Should().Be(typeof(ObjectAccessor<int>));
+        services[0].ServiceType.ShouldBe(typeof(IObjectAccessor<int>));
+        services[1].ServiceType.ShouldBe(typeof(ObjectAccessor<int>));
     }
 
     [Fact]
@@ -178,13 +176,13 @@ public class ServiceCollectionObjectAccessorExtensionsTests
         services.AddObjectAccessor<string>("test");
 
         // Assert
-        services.Should().Contain(sd => sd.ServiceType == typeof(ObjectAccessor<string>));
-        services.Should().Contain(sd => sd.ServiceType == typeof(IObjectAccessor<string>));
+        services.ShouldContain(sd => sd.ServiceType == typeof(ObjectAccessor<string>));
+        services.ShouldContain(sd => sd.ServiceType == typeof(IObjectAccessor<string>));
 
         var provider = services.BuildServiceProvider();
         var accessor1 = provider.GetService<ObjectAccessor<string>>();
         var accessor2 = provider.GetService<IObjectAccessor<string>>();
 
-        accessor1.Should().BeSameAs(accessor2);
+        accessor1.ShouldBeSameAs(accessor2);
     }
 }

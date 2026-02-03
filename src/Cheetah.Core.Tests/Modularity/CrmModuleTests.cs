@@ -1,5 +1,5 @@
 using Cheetah.Core.Modularity;
-using FluentAssertions;
+using Shouldly;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Cheetah.Core.Tests.Modularity;
@@ -16,7 +16,7 @@ public class CrmModuleTests
         var result = CrmModule.IsCrmModule(moduleType);
 
         // Assert
-        result.Should().BeTrue();
+        result.ShouldBeTrue();
     }
 
     [Fact]
@@ -29,7 +29,7 @@ public class CrmModuleTests
         var result = CrmModule.IsCrmModule(moduleType);
 
         // Assert
-        result.Should().BeFalse();
+        result.ShouldBeFalse();
     }
 
     [Fact]
@@ -42,7 +42,7 @@ public class CrmModuleTests
         var result = CrmModule.IsCrmModule(moduleType);
 
         // Assert
-        result.Should().BeFalse();
+        result.ShouldBeFalse();
     }
 
     [Fact]
@@ -55,7 +55,7 @@ public class CrmModuleTests
         var result = CrmModule.IsCrmModule(moduleType);
 
         // Assert
-        result.Should().BeFalse();
+        result.ShouldBeFalse();
     }
 
     [Fact]
@@ -68,7 +68,7 @@ public class CrmModuleTests
         var result = CrmModule.IsCrmModule(moduleType);
 
         // Assert
-        result.Should().BeFalse();
+        result.ShouldBeFalse();
     }
 
     [Fact]
@@ -83,7 +83,7 @@ public class CrmModuleTests
         var act = () => module.ConfigureServices(context);
 
         // Assert
-        act.Should().NotThrow();
+        Should.NotThrow(act);
     }
 
     [Fact]
@@ -99,7 +99,7 @@ public class CrmModuleTests
         var act = () => module.OnApplicationInitialization(context);
 
         // Assert
-        act.Should().NotThrow();
+        Should.NotThrow(act);
     }
 
     [Fact]
@@ -115,7 +115,7 @@ public class CrmModuleTests
         await module.OnApplicationInitializationAsync(context);
 
         // Assert
-        module.OnApplicationInitializationCalled.Should().BeTrue();
+        module.OnApplicationInitializationCalled.ShouldBeTrue();
     }
 
     // Test modules

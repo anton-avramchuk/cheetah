@@ -1,5 +1,5 @@
-﻿using System.Linq.Expressions;
-using FluentAssertions;
+using System.Linq.Expressions;
+using Shouldly;
 
 namespace Cheetah.Core.Specification.Tests;
 
@@ -30,7 +30,7 @@ public class SpecificationTests
         _customers
             .Where(new AnySpecification<Customer>()) //Implicitly converted to Expression!
             .Count()
-            .Should().Be(_customers.Count());
+            .ShouldBe(_customers.Count());
     }
 
     [Fact]
@@ -39,7 +39,7 @@ public class SpecificationTests
         _customers
             .Where(new NoneSpecification<Customer>().ToExpression())
             .Count()
-            .Should().Be(0);
+            .ShouldBe(0);
     }
 
     [Fact]
@@ -48,7 +48,7 @@ public class SpecificationTests
         _customers
             .Where(new EuropeanCustomerSpecification().Not().ToExpression())
             .Count()
-            .Should().Be(3);
+            .ShouldBe(3);
     }
 
     [Fact]
@@ -57,12 +57,12 @@ public class SpecificationTests
         _customers
             .Where(new ExpressionSpecification<Customer>(c => c.Age >= 18).ToExpression())
             .Count()
-            .Should().Be(6);
+            .ShouldBe(6);
 
         _customers
             .Where(new EuropeanCustomerSpecification().And(new ExpressionSpecification<Customer>(c => c.Age >= 18)).ToExpression())
             .Count()
-            .Should().Be(4);
+            .ShouldBe(4);
     }
 
     [Fact]
@@ -71,31 +71,31 @@ public class SpecificationTests
         _customers
             .Where(new EuropeanCustomerSpecification().ToExpression())
             .Count()
-            .Should().Be(7);
+            .ShouldBe(7);
 
         _customers
             .Where(new Age18PlusCustomerSpecification().ToExpression())
             .Count()
-            .Should().Be(6);
+            .ShouldBe(6);
 
         _customers
             .Where(new BalanceCustomerSpecification(10000, 30000).ToExpression())
             .Count()
-            .Should().Be(2);
+            .ShouldBe(2);
 
         _customers
             .Where(new PremiumCustomerSpecification().ToExpression())
             .Count()
-            .Should().Be(3);
+            .ShouldBe(3);
     }
 
     [Fact]
     public void IsSatisfiedBy_Tests()
     {
-        new PremiumCustomerSpecification().IsSatisfiedBy(new Customer("David", 49, 55000, "USA")).Should().BeTrue();
+        new PremiumCustomerSpecification().IsSatisfiedBy(new Customer("David", 49, 55000, "USA")).ShouldBeTrue();
 
-        new PremiumCustomerSpecification().IsSatisfiedBy(new Customer("David", 49, 200, "USA")).Should().BeFalse();
-        new PremiumCustomerSpecification().IsSatisfiedBy(new Customer("David", 12, 55000, "USA")).Should().BeFalse();
+        new PremiumCustomerSpecification().IsSatisfiedBy(new Customer("David", 49, 200, "USA")).ShouldBeFalse();
+        new PremiumCustomerSpecification().IsSatisfiedBy(new Customer("David", 12, 55000, "USA")).ShouldBeFalse();
     }
 
     [Fact]
@@ -104,17 +104,17 @@ public class SpecificationTests
         _customers
             .Where(new EuropeanCustomerSpecification().And(new Age18PlusCustomerSpecification()).ToExpression())
             .Count()
-            .Should().Be(4);
+            .ShouldBe(4);
 
         _customers
            .Where(new EuropeanCustomerSpecification().Not().And(new Age18PlusCustomerSpecification()).ToExpression())
            .Count()
-           .Should().Be(2);
+           .ShouldBe(2);
 
         _customers
             .Where(new Age18PlusCustomerSpecification().AndNot(new EuropeanCustomerSpecification()).ToExpression())
             .Count()
-            .Should().Be(2);
+            .ShouldBe(2);
     }
 
     private class Customer

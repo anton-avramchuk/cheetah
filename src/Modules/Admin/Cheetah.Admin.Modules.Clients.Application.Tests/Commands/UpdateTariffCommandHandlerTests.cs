@@ -3,7 +3,7 @@ using Cheetah.Admin.Modules.Clients.Domain;
 using Cheetah.Admin.Modules.Clients.Domain.Repositories;
 using Cheetah.Core.Domain.Exceptions;
 using Cheetah.Core.Events;
-using FluentAssertions;
+using Shouldly;
 using Moq;
 
 namespace Cheetah.Admin.Modules.Clients.Application.Tests.Commands;
@@ -43,11 +43,11 @@ public class UpdateTariffCommandHandlerTests
         await _handler.HandleAsync(command);
 
         // Assert
-        existingTariff.Name.Should().Be("Updated");
-        existingTariff.Description.Should().Be("Updated desc");
-        existingTariff.Price.Should().Be(20m);
-        existingTariff.Currency.Should().Be("EUR");
-        existingTariff.IsActive.Should().BeFalse();
+        existingTariff.Name.ShouldBe("Updated");
+        existingTariff.Description.ShouldBe("Updated desc");
+        existingTariff.Price.ShouldBe(20m);
+        existingTariff.Currency.ShouldBe("EUR");
+        existingTariff.IsActive.ShouldBeFalse();
 
         _repositoryMock.Verify(r => r.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
@@ -67,7 +67,7 @@ public class UpdateTariffCommandHandlerTests
         var act = async () => await _handler.HandleAsync(command);
 
         // Assert
-        await act.Should().ThrowAsync<EntityNotFoundException>();
+        await Should.ThrowAsync<EntityNotFoundException>(act);
     }
 
     [Fact]
@@ -88,6 +88,6 @@ public class UpdateTariffCommandHandlerTests
         var act = async () => await _handler.HandleAsync(command);
 
         // Assert
-        await act.Should().ThrowAsync<ArgumentException>();
+        await Should.ThrowAsync<ArgumentException>(act);
     }
 }

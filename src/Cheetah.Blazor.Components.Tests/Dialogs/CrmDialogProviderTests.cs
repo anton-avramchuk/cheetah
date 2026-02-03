@@ -19,7 +19,7 @@ public class CrmDialogProviderTests : TestContext
         var cut = RenderComponent<CrmDialogProvider>();
 
         // Assert
-        cut.FindAll(".modal").Should().BeEmpty();
+        cut.FindAll(".modal").ShouldBeEmpty();
     }
 
     [Fact]
@@ -40,7 +40,7 @@ public class CrmDialogProviderTests : TestContext
         cut.WaitForState(() => cut.FindAll(".modal").Count == 1);
 
         // Assert
-        cut.Find(".modal-title").TextContent.Should().Be("Test Dialog");
+        cut.Find(".modal-title").TextContent.ShouldBe("Test Dialog");
 
         // Cleanup
         service.CloseDialog(service.Dialogs[0], DialogResult.Cancel());
@@ -68,7 +68,7 @@ public class CrmDialogProviderTests : TestContext
         cut.WaitForState(() => cut.FindAll(".modal").Count == 0);
 
         // Assert
-        cut.FindAll(".modal").Should().BeEmpty();
+        cut.FindAll(".modal").ShouldBeEmpty();
     }
 
     [Fact]
@@ -92,11 +92,11 @@ public class CrmDialogProviderTests : TestContext
 
         // Assert
         var modals = cut.FindAll(".modal");
-        modals.Should().HaveCount(2);
+        modals.Count.ShouldBe(2);
 
         var titles = cut.FindAll(".modal-title").Select(e => e.TextContent).ToList();
-        titles.Should().Contain("Dialog 1");
-        titles.Should().Contain("Dialog 2");
+        titles.ShouldContain("Dialog 1");
+        titles.ShouldContain("Dialog 2");
 
         // Cleanup
         service.CloseDialog(service.Dialogs[1], DialogResult.Cancel());
@@ -125,7 +125,7 @@ public class CrmDialogProviderTests : TestContext
         var result = await showTask;
 
         // Assert
-        result.Confirmed.Should().BeFalse();
+        result.Confirmed.ShouldBeFalse();
     }
 
     [Fact]
@@ -137,13 +137,13 @@ public class CrmDialogProviderTests : TestContext
         Services.AddSingleton<IDialogServiceInternal>(service);
 
         var cut = RenderComponent<CrmDialogProvider>();
-        service.OnChangeSubscriberCount.Should().Be(1); // Verify subscription happened
+        service.OnChangeSubscriberCount.ShouldBe(1); // Verify subscription happened
 
         // Act
         DisposeComponents();
 
         // Assert
-        service.OnChangeSubscriberCount.Should().Be(0);
+        service.OnChangeSubscriberCount.ShouldBe(0);
     }
 
     private class TestDialogService : IDialogServiceInternal

@@ -2,7 +2,7 @@ using Cheetah.Admin.Modules.Clients.Application.Commands;
 using Cheetah.Admin.Modules.Clients.Domain;
 using Cheetah.Admin.Modules.Clients.Domain.Repositories;
 using Cheetah.Core.Domain.Exceptions;
-using FluentAssertions;
+using Shouldly;
 using Moq;
 
 namespace Cheetah.Admin.Modules.Clients.Application.Tests.Commands;
@@ -59,6 +59,6 @@ public class DeleteTariffCommandHandlerTests
         var act = async () => await _handler.HandleAsync(command);
 
         // Assert
-        await act.Should().ThrowAsync<EntityNotFoundException>();
+        await Should.ThrowAsync<EntityNotFoundException>(act);
     }
 }

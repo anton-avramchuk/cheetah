@@ -1,5 +1,5 @@
 using Cheetah.Core.Extensions.Common;
-using FluentAssertions;
+using Shouldly;
 
 namespace Cheetah.Core.Tests.Extensions.Common;
 
@@ -15,7 +15,7 @@ public class ComparableExtensionsTests
         var result = value.IsBetween(1, 10);
 
         // Assert
-        result.Should().BeTrue();
+        result.ShouldBeTrue();
     }
 
     [Fact]
@@ -28,7 +28,7 @@ public class ComparableExtensionsTests
         var result = value.IsBetween(1, 10);
 
         // Assert
-        result.Should().BeTrue();
+        result.ShouldBeTrue();
     }
 
     [Fact]
@@ -41,7 +41,7 @@ public class ComparableExtensionsTests
         var result = value.IsBetween(1, 10);
 
         // Assert
-        result.Should().BeTrue();
+        result.ShouldBeTrue();
     }
 
     [Fact]
@@ -54,7 +54,7 @@ public class ComparableExtensionsTests
         var result = value.IsBetween(1, 10);
 
         // Assert
-        result.Should().BeFalse();
+        result.ShouldBeFalse();
     }
 
     [Fact]
@@ -67,7 +67,7 @@ public class ComparableExtensionsTests
         var result = value.IsBetween(1, 10);
 
         // Assert
-        result.Should().BeFalse();
+        result.ShouldBeFalse();
     }
 
     [Fact]
@@ -80,7 +80,7 @@ public class ComparableExtensionsTests
         var result = value.IsBetween(1.0, 10.0);
 
         // Assert
-        result.Should().BeTrue();
+        result.ShouldBeTrue();
     }
 
     [Fact]
@@ -93,7 +93,7 @@ public class ComparableExtensionsTests
         var result = value.IsBetween("apple", "dog");
 
         // Assert
-        result.Should().BeTrue();
+        result.ShouldBeTrue();
     }
 
     [Fact]
@@ -106,7 +106,7 @@ public class ComparableExtensionsTests
         var result = value.IsBetween("apple", "dog");
 
         // Assert
-        result.Should().BeFalse();
+        result.ShouldBeFalse();
     }
 
     [Fact]
@@ -121,7 +121,7 @@ public class ComparableExtensionsTests
         var result = value.IsBetween(min, max);
 
         // Assert
-        result.Should().BeTrue();
+        result.ShouldBeTrue();
     }
 
     [Fact]
@@ -134,7 +134,7 @@ public class ComparableExtensionsTests
         var result = value.IsBetween(-10, 0);
 
         // Assert
-        result.Should().BeTrue();
+        result.ShouldBeTrue();
     }
 
     [Fact]
@@ -149,7 +149,7 @@ public class ComparableExtensionsTests
         var result2 = value2.IsBetween(5, 5);
 
         // Assert
-        result1.Should().BeTrue();
-        result2.Should().BeFalse();
+        result1.ShouldBeTrue();
+        result2.ShouldBeFalse();
     }
 }

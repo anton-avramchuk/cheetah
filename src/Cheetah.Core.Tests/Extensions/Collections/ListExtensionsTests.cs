@@ -1,5 +1,5 @@
 using Cheetah.Core.Extensions.Collections;
-using FluentAssertions;
+using Shouldly;
 
 namespace Cheetah.Core.Tests.Extensions.Collections;
 
@@ -16,7 +16,7 @@ public class ListExtensionsTests
         list.InsertRange(2, itemsToInsert);
 
         // Assert
-        list.Should().Equal(1, 2, 3, 4, 5, 6);
+        list.ShouldBe(new[] {1, 2, 3, 4, 5, 6});
     }
 
     [Fact]
@@ -30,7 +30,7 @@ public class ListExtensionsTests
         list.InsertRange(0, itemsToInsert);
 
         // Assert
-        list.Should().Equal("a", "b", "c", "d");
+        list.ShouldBe(new[] {"a", "b", "c", "d"});
     }
 
     [Fact]
@@ -43,7 +43,7 @@ public class ListExtensionsTests
         var index = list.FindIndex(x => x == 3);
 
         // Assert
-        index.Should().Be(2);
+        index.ShouldBe(2);
     }
 
     [Fact]
@@ -56,7 +56,7 @@ public class ListExtensionsTests
         var index = list.FindIndex(x => x > 10);
 
         // Assert
-        index.Should().Be(-1);
+        index.ShouldBe(-1);
     }
 
     [Fact]
@@ -69,7 +69,7 @@ public class ListExtensionsTests
         list.AddFirst("a");
 
         // Assert
-        list.Should().Equal("a", "b", "c");
+        list.ShouldBe(new[] {"a", "b", "c"});
     }
 
     [Fact]
@@ -82,7 +82,7 @@ public class ListExtensionsTests
         list.AddLast("c");
 
         // Assert
-        list.Should().Equal("a", "b", "c");
+        list.ShouldBe(new[] {"a", "b", "c"});
     }
 
     [Fact]
@@ -95,7 +95,7 @@ public class ListExtensionsTests
         list.InsertAfter(2, 3);
 
         // Assert
-        list.Should().Equal(1, 2, 3, 4);
+        list.ShouldBe(new[] {1, 2, 3, 4});
     }
 
     [Fact]
@@ -108,7 +108,7 @@ public class ListExtensionsTests
         list.InsertAfter(99, 0);
 
         // Assert
-        list.Should().Equal(0, 1, 2, 3);
+        list.ShouldBe(new[] {0, 1, 2, 3});
     }
 
     [Fact]
@@ -121,7 +121,7 @@ public class ListExtensionsTests
         list.InsertAfter(x => x == 20, 30);
 
         // Assert
-        list.Should().Equal(10, 20, 30, 40);
+        list.ShouldBe(new[] {10, 20, 30, 40});
     }
 
     [Fact]
@@ -134,7 +134,7 @@ public class ListExtensionsTests
         list.InsertAfter(x => x > 100, 0);
 
         // Assert
-        list.Should().Equal(0, 1, 2, 3);
+        list.ShouldBe(new[] {0, 1, 2, 3});
     }
 
     [Fact]
@@ -147,7 +147,7 @@ public class ListExtensionsTests
         list.InsertBefore(3, 2);
 
         // Assert
-        list.Should().Equal(1, 2, 3, 4);
+        list.ShouldBe(new[] {1, 2, 3, 4});
     }
 
     [Fact]
@@ -160,7 +160,7 @@ public class ListExtensionsTests
         list.InsertBefore(99, 4);
 
         // Assert
-        list.Should().Equal(1, 2, 3, 4);
+        list.ShouldBe(new[] {1, 2, 3, 4});
     }
 
     [Fact]
@@ -173,7 +173,7 @@ public class ListExtensionsTests
         list.InsertBefore(x => x == 30, 20);
 
         // Assert
-        list.Should().Equal(10, 20, 30, 40);
+        list.ShouldBe(new[] {10, 20, 30, 40});
     }
 
     [Fact]
@@ -186,7 +186,7 @@ public class ListExtensionsTests
         list.InsertBefore(x => x > 100, 4);
 
         // Assert
-        list.Should().Equal(1, 2, 3, 4);
+        list.ShouldBe(new[] {1, 2, 3, 4});
     }
 
     [Fact]
@@ -199,7 +199,7 @@ public class ListExtensionsTests
         list.ReplaceWhile(x => x > 3, 99);
 
         // Assert
-        list.Should().Equal(1, 2, 3, 99, 99);
+        list.ShouldBe(new[] {1, 2, 3, 99, 99});
     }
 
     [Fact]
@@ -212,7 +212,7 @@ public class ListExtensionsTests
         list.ReplaceWhile(x => x % 2 == 0, x => x * 10);
 
         // Assert
-        list.Should().Equal(1, 20, 3, 40);
+        list.ShouldBe(new[] {1, 20, 3, 40});
     }
 
     [Fact]
@@ -225,7 +225,7 @@ public class ListExtensionsTests
         list.ReplaceOne(x => x == 5, 2);
 
         // Assert
-        list.Should().Equal(1, 2, 3, 5);
+        list.ShouldBe(new[] {1, 2, 3, 5});
     }
 
     [Fact]
@@ -238,7 +238,7 @@ public class ListExtensionsTests
         list.ReplaceOne(x => x > 10, 99);
 
         // Assert
-        list.Should().Equal(1, 2, 3);
+        list.ShouldBe(new[] {1, 2, 3});
     }
 
     [Fact]
@@ -251,7 +251,7 @@ public class ListExtensionsTests
         list.ReplaceOne(x => x == 2, x => x * 100);
 
         // Assert
-        list.Should().Equal(1, 200, 3, 2);
+        list.ShouldBe(new[] {1, 200, 3, 2});
     }
 
     [Fact]
@@ -264,7 +264,7 @@ public class ListExtensionsTests
         list.ReplaceOne("b", "x");
 
         // Assert
-        list.Should().Equal("a", "x", "c", "b");
+        list.ShouldBe(new[] {"a", "x", "c", "b"});
     }
 
     [Fact]
@@ -277,7 +277,7 @@ public class ListExtensionsTests
         list.MoveItem(x => x == "d", 1);
 
         // Assert
-        list.Should().Equal("a", "d", "b", "c");
+        list.ShouldBe(new[] {"a", "d", "b", "c"});
     }
 
     [Fact]
@@ -290,7 +290,7 @@ public class ListExtensionsTests
         list.MoveItem(x => x == 2, 1);
 
         // Assert
-        list.Should().Equal(1, 2, 3);
+        list.ShouldBe(new[] {1, 2, 3});
     }
 
     [Fact]
@@ -301,8 +301,7 @@ public class ListExtensionsTests
 
         // Act & Assert
         var act = () => list.MoveItem(x => x == 2, 10);
-        act.Should().Throw<IndexOutOfRangeException>()
-            .WithMessage("targetIndex should be between 0 and *");
+        Should.Throw<IndexOutOfRangeException>(act).Message.ShouldContain("targetIndex should be between 0 and");
     }
 
     [Fact]
@@ -315,8 +314,8 @@ public class ListExtensionsTests
         var result = list.GetOrAdd(x => x == "b", () => "x");
 
         // Assert
-        result.Should().Be("b");
-        list.Should().HaveCount(3);
+        result.ShouldBe("b");
+        list.Count.ShouldBe(3);
     }
 
     [Fact]
@@ -329,9 +328,9 @@ public class ListExtensionsTests
         var result = list.GetOrAdd(x => x == "c", () => "c");
 
         // Assert
-        result.Should().Be("c");
-        list.Should().Contain("c");
-        list.Should().HaveCount(3);
+        result.ShouldBe("c");
+        list.ShouldContain("c");
+        list.Count.ShouldBe(3);
     }
 
     [Fact]
@@ -351,7 +350,7 @@ public class ListExtensionsTests
         );
 
         // Assert
-        sorted.Select(x => x.Name).Should().Equal("C", "B", "A");
+        sorted.Select(x => x.Name).ShouldBe(new[] {"C", "B", "A"});
     }
 
     [Fact]
@@ -370,7 +369,7 @@ public class ListExtensionsTests
         );
 
         // Assert
-        sorted.Select(x => x.Name).Should().Equal("A", "B");
+        sorted.Select(x => x.Name).ShouldBe(new[] {"A", "B"});
     }
 
     [Fact]
@@ -388,8 +387,7 @@ public class ListExtensionsTests
             item => items.Where(i => item.Dependencies.Contains(i.Name))
         );
 
-        act.Should().Throw<ArgumentException>()
-            .WithMessage("Cyclic dependency found! Item: *");
+        Should.Throw<ArgumentException>(act).Message.ShouldContain("Cyclic dependency found! Item:");
     }
 
     // Helper class for testing

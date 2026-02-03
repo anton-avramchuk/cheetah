@@ -1,5 +1,5 @@
 using Cheetah.Core.Modularity;
-using FluentAssertions;
+using Shouldly;
 
 namespace Cheetah.Core.Tests.Modularity;
 
@@ -16,11 +16,11 @@ public class CrmModuleDescriptorTests
         var descriptor = new CrmModuleDescriptor(moduleType, module);
 
         // Assert
-        descriptor.Should().NotBeNull();
-        descriptor.Type.Should().Be(moduleType);
-        descriptor.Instance.Should().BeSameAs(module);
-        descriptor.Assembly.Should().BeSameAs(moduleType.Assembly);
-        descriptor.Dependencies.Should().BeEmpty();
+        descriptor.ShouldNotBeNull();
+        descriptor.Type.ShouldBe(moduleType);
+        descriptor.Instance.ShouldBeSameAs(module);
+        descriptor.Assembly.ShouldBeSameAs(moduleType.Assembly);
+        descriptor.Dependencies.ShouldBeEmpty();
     }
 
     [Fact]
@@ -34,8 +34,7 @@ public class CrmModuleDescriptorTests
         var act = () => new CrmModuleDescriptor(differentModuleType, module);
 
         // Assert
-        act.Should().Throw<ArgumentException>()
-            .WithMessage("Given module instance * is not an instance of given module type: *");
+        Should.Throw<ArgumentException>(act).Message.ShouldContain("is not an instance of given module type");
     }
 
     [Fact]
@@ -52,8 +51,8 @@ public class CrmModuleDescriptorTests
         descriptor.AddDependency(dependencyDescriptor);
 
         // Assert
-        descriptor.Dependencies.Should().ContainSingle();
-        descriptor.Dependencies.Should().Contain(dependencyDescriptor);
+        descriptor.Dependencies.Count.ShouldBe(1);
+        descriptor.Dependencies.ShouldContain(dependencyDescriptor);
     }
 
     [Fact]
@@ -71,7 +70,7 @@ public class CrmModuleDescriptorTests
         descriptor.AddDependency(dependencyDescriptor);
 
         // Assert
-        descriptor.Dependencies.Should().ContainSingle();
+        descriptor.Dependencies.Count.ShouldBe(1);
     }
 
     [Fact]
@@ -89,9 +88,9 @@ public class CrmModuleDescriptorTests
         descriptor.AddDependency(dependency2);
 
         // Assert
-        descriptor.Dependencies.Should().HaveCount(2);
-        descriptor.Dependencies.Should().Contain(dependency1);
-        descriptor.Dependencies.Should().Contain(dependency2);
+        descriptor.Dependencies.Count.ShouldBe(2);
+        descriptor.Dependencies.ShouldContain(dependency1);
+        descriptor.Dependencies.ShouldContain(dependency2);
     }
 
     [Fact]
@@ -105,8 +104,8 @@ public class CrmModuleDescriptorTests
         var result = descriptor.ToString();
 
         // Assert
-        result.Should().Contain("CrmModuleDescriptor");
-        result.Should().Contain(typeof(TestModule).FullName!);
+        result.ShouldContain("CrmModuleDescriptor");
+        result.ShouldContain(typeof(TestModule).FullName!);
     }
 
     [Fact]
@@ -117,7 +116,7 @@ public class CrmModuleDescriptorTests
         var descriptor = new CrmModuleDescriptor(typeof(TestModule), module);
 
         // Act & Assert
-        descriptor.Dependencies.Should().BeAssignableTo<IReadOnlyList<ICrmModuleDescriptor>>();
+        descriptor.Dependencies.ShouldBeAssignableTo<IReadOnlyList<ICrmModuleDescriptor>>();
     }
 
     [Fact]
@@ -128,8 +127,8 @@ public class CrmModuleDescriptorTests
         var descriptor = new CrmModuleDescriptor(typeof(TestModule), module);
 
         // Act & Assert
-        descriptor.AllAssemblies.Should().NotBeEmpty();
-        descriptor.AllAssemblies.Should().Contain(descriptor.Assembly);
+        descriptor.AllAssemblies.ShouldNotBeEmpty();
+        descriptor.AllAssemblies.ShouldContain(descriptor.Assembly);
     }
 
     // Test modules

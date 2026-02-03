@@ -1,6 +1,6 @@
 using System.Collections.Concurrent;
 using Cheetah.Core.Extensions.Collections;
-using FluentAssertions;
+using Shouldly;
 
 namespace Cheetah.Core.Tests.Extensions.Collections;
 
@@ -20,7 +20,7 @@ public class DictionaryExtensionsTests
         var result = dictionary.GetOrDefault("key1");
 
         // Assert
-        result.Should().Be(10);
+        result.ShouldBe(10);
     }
 
     [Fact]
@@ -36,7 +36,7 @@ public class DictionaryExtensionsTests
         var result = dictionary.GetOrDefault("nonexistent");
 
         // Assert
-        result.Should().Be(0);
+        result.ShouldBe(0);
     }
 
     [Fact]
@@ -53,7 +53,7 @@ public class DictionaryExtensionsTests
         var result = dictionary.GetOrDefault("key2");
 
         // Assert
-        result.Should().Be("value2");
+        result.ShouldBe("value2");
     }
 
     [Fact]
@@ -69,7 +69,7 @@ public class DictionaryExtensionsTests
         var result = dictionary.GetOrDefault("nonexistent");
 
         // Assert
-        result.Should().BeNull();
+        result.ShouldBeNull();
     }
 
     [Fact]
@@ -86,7 +86,7 @@ public class DictionaryExtensionsTests
         var result = dictionary.GetOrDefault(2);
 
         // Assert
-        result.Should().Be("two");
+        result.ShouldBe("two");
     }
 
     [Fact]
@@ -102,7 +102,7 @@ public class DictionaryExtensionsTests
         var result = dictionary.GetOrDefault(99);
 
         // Assert
-        result.Should().BeNull();
+        result.ShouldBeNull();
     }
 
     [Fact]
@@ -116,7 +116,7 @@ public class DictionaryExtensionsTests
         var result = dictionary.GetOrDefault("key1");
 
         // Assert
-        result.Should().Be(100);
+        result.ShouldBe(100);
     }
 
     [Fact]
@@ -129,7 +129,7 @@ public class DictionaryExtensionsTests
         var result = dictionary.GetOrDefault("nonexistent");
 
         // Assert
-        result.Should().Be(0);
+        result.ShouldBe(0);
     }
 
     [Fact]
@@ -142,9 +142,9 @@ public class DictionaryExtensionsTests
         var result = dictionary.GetOrAdd("key1", k => 42);
 
         // Assert
-        result.Should().Be(42);
-        dictionary.Should().ContainKey("key1");
-        dictionary["key1"].Should().Be(42);
+        result.ShouldBe(42);
+        dictionary.ShouldContainKey("key1");
+        dictionary["key1"].ShouldBe(42);
     }
 
     [Fact]
@@ -160,8 +160,8 @@ public class DictionaryExtensionsTests
         var result = dictionary.GetOrAdd("key1", k => 99);
 
         // Assert
-        result.Should().Be(10);
-        dictionary["key1"].Should().Be(10);
+        result.ShouldBe(10);
+        dictionary["key1"].ShouldBe(10);
     }
 
     [Fact]
@@ -174,8 +174,8 @@ public class DictionaryExtensionsTests
         var result = dictionary.GetOrAdd("key1", () => "created value");
 
         // Assert
-        result.Should().Be("created value");
-        dictionary.Should().ContainKey("key1");
+        result.ShouldBe("created value");
+        dictionary.ShouldContainKey("key1");
     }
 
     [Fact]
@@ -188,8 +188,8 @@ public class DictionaryExtensionsTests
         var result = dictionary.GetOrAdd("key1", () => 123);
 
         // Assert
-        result.Should().Be(123);
-        dictionary.Should().ContainKey("key1");
+        result.ShouldBe(123);
+        dictionary.ShouldContainKey("key1");
     }
 
     [Fact]
@@ -203,7 +203,7 @@ public class DictionaryExtensionsTests
         var result = dictionary.GetOrAdd("key1", () => 999);
 
         // Assert
-        result.Should().Be(50);
+        result.ShouldBe(50);
     }
 
     [Fact]
@@ -221,10 +221,10 @@ public class DictionaryExtensionsTests
         dynamic result = dictionary.ConvertToDynamicObject();
 
         // Assert
-        ((object)result).Should().NotBeNull();
-        ((string)result.Name).Should().Be("John");
-        ((int)result.Age).Should().Be(30);
-        ((bool)result.IsActive).Should().BeTrue();
+        ((object)result).ShouldNotBeNull();
+        ((string)result.Name).ShouldBe("John");
+        ((int)result.Age).ShouldBe(30);
+        ((bool)result.IsActive).ShouldBeTrue();
     }
 
     [Fact]
@@ -237,7 +237,7 @@ public class DictionaryExtensionsTests
         dynamic result = dictionary.ConvertToDynamicObject();
 
         // Assert
-        ((object)result).Should().NotBeNull();
+        ((object)result).ShouldNotBeNull();
     }
 
     [Fact]
@@ -254,8 +254,8 @@ public class DictionaryExtensionsTests
         result.NewProperty = "new value";
 
         // Assert
-        ((string)result.Initial).Should().Be("value");
-        ((string)result.NewProperty).Should().Be("new value");
+        ((string)result.Initial).ShouldBe("value");
+        ((string)result.NewProperty).ShouldBe("new value");
     }
 
     [Fact]
@@ -273,7 +273,7 @@ public class DictionaryExtensionsTests
         });
 
         // Assert
-        receivedKey.Should().Be("myKey");
-        result.Should().Be("value for myKey");
+        receivedKey.ShouldBe("myKey");
+        result.ShouldBe("value for myKey");
     }
 }

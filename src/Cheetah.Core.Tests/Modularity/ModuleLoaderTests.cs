@@ -1,5 +1,5 @@
 using Cheetah.Core.Modularity;
-using FluentAssertions;
+using Shouldly;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Cheetah.Core.Tests.Modularity;
@@ -17,8 +17,8 @@ public class ModuleLoaderTests
         var modules = loader.LoadModules(services, typeof(TestModule));
 
         // Assert
-        modules.Should().NotBeNull();
-        modules.Should().BeOfType<ICrmModuleDescriptor[]>();
+        modules.ShouldNotBeNull();
+        modules.ShouldBeOfType<ICrmModuleDescriptor[]>();
     }
 
     [Fact]
@@ -33,7 +33,7 @@ public class ModuleLoaderTests
         var modules = loader.LoadModules(services, typeof(TestModule));
 
         // Assert
-        services.Should().Contain(sd =>
+        services.ShouldContain(sd =>
             sd.ServiceType == typeof(TestModule) &&
             sd.Lifetime == ServiceLifetime.Singleton);
     }
@@ -50,7 +50,8 @@ public class ModuleLoaderTests
         var modules = loader.LoadModules(services, typeof(TestModule));
 
         // Assert
-        modules.Should().AllSatisfy(m => m.Instance.Should().NotBeNull());
+        foreach (var m in modules)
+            m.Instance.ShouldNotBeNull();
     }
 
     // Test module

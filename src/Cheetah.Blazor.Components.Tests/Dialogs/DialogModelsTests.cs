@@ -16,9 +16,9 @@ public class DialogFormResultTests
         var result = DialogFormResult<string>.Ok(data);
 
         // Assert
-        result.Success.Should().BeTrue();
-        result.Data.Should().Be(data);
-        result.ErrorMessage.Should().BeNull();
+        result.Success.ShouldBeTrue();
+        result.Data.ShouldBe(data);
+        result.ErrorMessage.ShouldBeNull();
     }
 
     [Fact]
@@ -31,9 +31,9 @@ public class DialogFormResultTests
         var result = DialogFormResult<string>.Fail(error);
 
         // Assert
-        result.Success.Should().BeFalse();
-        result.Data.Should().BeNull();
-        result.ErrorMessage.Should().Be(error);
+        result.Success.ShouldBeFalse();
+        result.Data.ShouldBeNull();
+        result.ErrorMessage.ShouldBe(error);
     }
 
     [Fact]
@@ -46,10 +46,10 @@ public class DialogFormResultTests
         var result = DialogFormResult<TestData>.Ok(data);
 
         // Assert
-        result.Success.Should().BeTrue();
-        result.Data.Should().NotBeNull();
-        result.Data!.Id.Should().Be(1);
-        result.Data.Name.Should().Be("Test");
+        result.Success.ShouldBeTrue();
+        result.Data.ShouldNotBeNull();
+        result.Data!.Id.ShouldBe(1);
+        result.Data.Name.ShouldBe("Test");
     }
 
     private class TestData
@@ -68,8 +68,8 @@ public class DialogResultTests
         var result = DialogResult.Ok();
 
         // Assert
-        result.Confirmed.Should().BeTrue();
-        result.Data.Should().BeNull();
+        result.Confirmed.ShouldBeTrue();
+        result.Data.ShouldBeNull();
     }
 
     [Fact]
@@ -82,8 +82,8 @@ public class DialogResultTests
         var result = DialogResult.Ok(data);
 
         // Assert
-        result.Confirmed.Should().BeTrue();
-        result.Data.Should().Be(data);
+        result.Confirmed.ShouldBeTrue();
+        result.Data.ShouldBe(data);
     }
 
     [Fact]
@@ -93,8 +93,8 @@ public class DialogResultTests
         var result = DialogResult.Cancel();
 
         // Assert
-        result.Confirmed.Should().BeFalse();
-        result.Data.Should().BeNull();
+        result.Confirmed.ShouldBeFalse();
+        result.Data.ShouldBeNull();
     }
 
     [Fact]
@@ -108,7 +108,7 @@ public class DialogResultTests
         var retrieved = result.GetData<string>();
 
         // Assert
-        retrieved.Should().Be(data);
+        retrieved.ShouldBe(data);
     }
 
     [Fact]
@@ -122,7 +122,7 @@ public class DialogResultTests
         var retrieved = result.GetData<int>();
 
         // Assert
-        retrieved.Should().Be(default);
+        retrieved.ShouldBe(default);
     }
 
     [Fact]
@@ -135,7 +135,7 @@ public class DialogResultTests
         var retrieved = result.GetData<string>();
 
         // Assert
-        retrieved.Should().BeNull();
+        retrieved.ShouldBeNull();
     }
 }
 
@@ -148,12 +148,12 @@ public class DialogButtonTests
         var button = new DialogButton();
 
         // Assert
-        button.Text.Should().BeEmpty();
-        button.Icon.Should().BeNull();
-        button.Variant.Should().Be(CrmButton.ButtonVariant.Secondary);
-        button.IsConfirm.Should().BeFalse();
-        button.IsCancel.Should().BeFalse();
-        button.DisableWhenInvalid.Should().BeTrue();
+        button.Text.ShouldBeEmpty();
+        button.Icon.ShouldBeNull();
+        button.Variant.ShouldBe(CrmButton.ButtonVariant.Secondary);
+        button.IsConfirm.ShouldBeFalse();
+        button.IsCancel.ShouldBeFalse();
+        button.DisableWhenInvalid.ShouldBeTrue();
     }
 
     [Fact]
@@ -171,12 +171,12 @@ public class DialogButtonTests
         };
 
         // Assert
-        button.Text.Should().Be("Submit");
-        button.Icon.Should().Be("check");
-        button.Variant.Should().Be(CrmButton.ButtonVariant.Primary);
-        button.IsConfirm.Should().BeTrue();
-        button.IsCancel.Should().BeFalse();
-        button.DisableWhenInvalid.Should().BeFalse();
+        button.Text.ShouldBe("Submit");
+        button.Icon.ShouldBe("check");
+        button.Variant.ShouldBe(CrmButton.ButtonVariant.Primary);
+        button.IsConfirm.ShouldBeTrue();
+        button.IsCancel.ShouldBeFalse();
+        button.DisableWhenInvalid.ShouldBeFalse();
     }
 }
 
@@ -189,7 +189,7 @@ public class DialogButtonsPresetsTests
         var buttons = DialogButtons.SaveCancel;
 
         // Assert
-        buttons.Should().HaveCount(2);
+        buttons.Count.ShouldBe(2);
     }
 
     [Fact]
@@ -200,10 +200,10 @@ public class DialogButtonsPresetsTests
         var cancelButton = buttons.FirstOrDefault(b => b.IsCancel);
 
         // Assert
-        cancelButton.Should().NotBeNull();
-        cancelButton!.Text.Should().Be("Отмена");
-        cancelButton.Variant.Should().Be(CrmButton.ButtonVariant.Secondary);
-        cancelButton.DisableWhenInvalid.Should().BeFalse();
+        cancelButton.ShouldNotBeNull();
+        cancelButton!.Text.ShouldBe("Отмена");
+        cancelButton.Variant.ShouldBe(CrmButton.ButtonVariant.Secondary);
+        cancelButton.DisableWhenInvalid.ShouldBeFalse();
     }
 
     [Fact]
@@ -214,11 +214,11 @@ public class DialogButtonsPresetsTests
         var saveButton = buttons.FirstOrDefault(b => b.IsConfirm);
 
         // Assert
-        saveButton.Should().NotBeNull();
-        saveButton!.Text.Should().Be("Сохранить");
-        saveButton.Icon.Should().Be("check");
-        saveButton.Variant.Should().Be(CrmButton.ButtonVariant.Primary);
-        saveButton.DisableWhenInvalid.Should().BeTrue();
+        saveButton.ShouldNotBeNull();
+        saveButton!.Text.ShouldBe("Сохранить");
+        saveButton.Icon.ShouldBe("check");
+        saveButton.Variant.ShouldBe(CrmButton.ButtonVariant.Primary);
+        saveButton.DisableWhenInvalid.ShouldBeTrue();
     }
 
     [Fact]
@@ -228,9 +228,9 @@ public class DialogButtonsPresetsTests
         var buttons = DialogButtons.OkCancel;
 
         // Assert
-        buttons.Should().HaveCount(2);
-        buttons.Should().Contain(b => b.IsCancel && b.Text == "Отмена");
-        buttons.Should().Contain(b => b.IsConfirm && b.Text == "OK");
+        buttons.Count.ShouldBe(2);
+        buttons.ShouldContain(b => b.IsCancel && b.Text == "Отмена");
+        buttons.ShouldContain(b => b.IsConfirm && b.Text == "OK");
     }
 
     [Fact]
@@ -240,9 +240,9 @@ public class DialogButtonsPresetsTests
         var buttons = DialogButtons.YesNo;
 
         // Assert
-        buttons.Should().HaveCount(2);
-        buttons.Should().Contain(b => b.IsCancel && b.Text == "Нет");
-        buttons.Should().Contain(b => b.IsConfirm && b.Text == "Да");
+        buttons.Count.ShouldBe(2);
+        buttons.ShouldContain(b => b.IsCancel && b.Text == "Нет");
+        buttons.ShouldContain(b => b.IsConfirm && b.Text == "Да");
     }
 
     [Fact]
@@ -252,7 +252,8 @@ public class DialogButtonsPresetsTests
         var buttons = DialogButtons.YesNo;
 
         // Assert
-        buttons.Should().AllSatisfy(b => b.DisableWhenInvalid.Should().BeFalse());
+        foreach (var b in buttons)
+            b.DisableWhenInvalid.ShouldBeFalse();
     }
 
     [Fact]
@@ -263,10 +264,10 @@ public class DialogButtonsPresetsTests
         var deleteButton = buttons.FirstOrDefault(b => b.IsConfirm);
 
         // Assert
-        deleteButton.Should().NotBeNull();
-        deleteButton!.Text.Should().Be("Удалить");
-        deleteButton.Icon.Should().Be("trash");
-        deleteButton.Variant.Should().Be(CrmButton.ButtonVariant.Danger);
+        deleteButton.ShouldNotBeNull();
+        deleteButton!.Text.ShouldBe("Удалить");
+        deleteButton.Icon.ShouldBe("trash");
+        deleteButton.Variant.ShouldBe(CrmButton.ButtonVariant.Danger);
     }
 }
 
@@ -279,13 +280,13 @@ public class DialogOptionsTests
         var options = new DialogOptions();
 
         // Assert
-        options.Title.Should().BeNull();
-        options.Size.Should().Be(CrmModal.ModalSize.Default);
-        options.Centered.Should().BeFalse();
-        options.Scrollable.Should().BeFalse();
-        options.ShowCloseButton.Should().BeTrue();
-        options.CloseOnBackdropClick.Should().BeFalse();
-        options.Buttons.Should().BeNull();
+        options.Title.ShouldBeNull();
+        options.Size.ShouldBe(CrmModal.ModalSize.Default);
+        options.Centered.ShouldBeFalse();
+        options.Scrollable.ShouldBeFalse();
+        options.ShowCloseButton.ShouldBeTrue();
+        options.CloseOnBackdropClick.ShouldBeFalse();
+        options.Buttons.ShouldBeNull();
     }
 
     [Fact]
@@ -304,12 +305,12 @@ public class DialogOptionsTests
         };
 
         // Assert
-        options.Title.Should().Be("Test Dialog");
-        options.Size.Should().Be(CrmModal.ModalSize.Large);
-        options.Centered.Should().BeTrue();
-        options.Scrollable.Should().BeTrue();
-        options.ShowCloseButton.Should().BeFalse();
-        options.CloseOnBackdropClick.Should().BeTrue();
-        options.Buttons.Should().BeEquivalentTo(DialogButtons.YesNo);
+        options.Title.ShouldBe("Test Dialog");
+        options.Size.ShouldBe(CrmModal.ModalSize.Large);
+        options.Centered.ShouldBeTrue();
+        options.Scrollable.ShouldBeTrue();
+        options.ShowCloseButton.ShouldBeFalse();
+        options.CloseOnBackdropClick.ShouldBeTrue();
+        options.Buttons.Count.ShouldBe(DialogButtons.YesNo.Count);
     }
 }

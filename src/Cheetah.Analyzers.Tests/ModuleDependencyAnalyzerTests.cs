@@ -9,8 +9,8 @@ public class ModuleDependencyAnalyzerTests
         var analyzer = new ModuleDependencyAnalyzer();
 
         // Assert
-        analyzer.Should().NotBeNull();
-        analyzer.SupportedDiagnostics.Should().HaveCount(2);
+        analyzer.ShouldNotBeNull();
+        analyzer.SupportedDiagnostics.Length.ShouldBe(2);
     }
 
     [Fact]
@@ -23,8 +23,8 @@ public class ModuleDependencyAnalyzerTests
         var diagnosticIds = analyzer.SupportedDiagnostics.Select(d => d.Id).ToList();
 
         // Assert
-        diagnosticIds.Should().Contain("CHT001");
-        diagnosticIds.Should().Contain("CHT002");
+        diagnosticIds.ShouldContain("CHT001");
+        diagnosticIds.ShouldContain("CHT002");
     }
 
     [Fact]
@@ -37,7 +37,7 @@ public class ModuleDependencyAnalyzerTests
         var missingDependencyDiagnostic = analyzer.SupportedDiagnostics.First(d => d.Id == "CHT001");
 
         // Assert
-        missingDependencyDiagnostic.DefaultSeverity.Should().Be(Microsoft.CodeAnalysis.DiagnosticSeverity.Error);
+        missingDependencyDiagnostic.DefaultSeverity.ShouldBe(Microsoft.CodeAnalysis.DiagnosticSeverity.Error);
     }
 
     [Fact]
@@ -50,6 +50,6 @@ public class ModuleDependencyAnalyzerTests
         var unusedDependencyDiagnostic = analyzer.SupportedDiagnostics.First(d => d.Id == "CHT002");
 
         // Assert
-        unusedDependencyDiagnostic.DefaultSeverity.Should().Be(Microsoft.CodeAnalysis.DiagnosticSeverity.Warning);
+        unusedDependencyDiagnostic.DefaultSeverity.ShouldBe(Microsoft.CodeAnalysis.DiagnosticSeverity.Warning);
     }
 }

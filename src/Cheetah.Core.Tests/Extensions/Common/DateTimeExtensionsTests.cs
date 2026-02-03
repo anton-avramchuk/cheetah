@@ -1,5 +1,5 @@
 using Cheetah.Core.Extensions.Common;
-using FluentAssertions;
+using Shouldly;
 
 namespace Cheetah.Core.Tests.Extensions.Common;
 
@@ -15,13 +15,13 @@ public class DateTimeExtensionsTests
         var result = dateTime.ClearTime();
 
         // Assert
-        result.Year.Should().Be(2023);
-        result.Month.Should().Be(6);
-        result.Day.Should().Be(15);
-        result.Hour.Should().Be(0);
-        result.Minute.Should().Be(0);
-        result.Second.Should().Be(0);
-        result.Millisecond.Should().Be(0);
+        result.Year.ShouldBe(2023);
+        result.Month.ShouldBe(6);
+        result.Day.ShouldBe(15);
+        result.Hour.ShouldBe(0);
+        result.Minute.ShouldBe(0);
+        result.Second.ShouldBe(0);
+        result.Millisecond.ShouldBe(0);
     }
 
     [Fact]
@@ -34,7 +34,7 @@ public class DateTimeExtensionsTests
         var result = dateTime.ClearTime();
 
         // Assert
-        result.Should().Be(dateTime);
+        result.ShouldBe(dateTime);
     }
 
     [Fact]
@@ -47,7 +47,7 @@ public class DateTimeExtensionsTests
         var result = dateTime.ClearTime();
 
         // Assert
-        result.Should().Be(new DateTime(2023, 1, 1, 0, 0, 0, 0));
+        result.ShouldBe(new DateTime(2023, 1, 1, 0, 0, 0, 0));
     }
 
     [Fact]
@@ -60,7 +60,7 @@ public class DateTimeExtensionsTests
         var result = utcDateTime.ClearTime();
 
         // Assert
-        result.Kind.Should().Be(DateTimeKind.Utc);
+        result.Kind.ShouldBe(DateTimeKind.Utc);
     }
 
     [Fact]
@@ -73,6 +73,6 @@ public class DateTimeExtensionsTests
         var result = dateTime.ClearTime();
 
         // Assert
-        result.Should().Be(new DateTime(2020, 2, 29, 0, 0, 0));
+        result.ShouldBe(new DateTime(2020, 2, 29, 0, 0, 0));
     }
 }

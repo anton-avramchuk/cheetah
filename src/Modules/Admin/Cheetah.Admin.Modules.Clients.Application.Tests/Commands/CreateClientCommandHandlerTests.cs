@@ -2,7 +2,7 @@ using Cheetah.Admin.Modules.Clients.Application.Commands;
 using Cheetah.Admin.Modules.Clients.Domain;
 using Cheetah.Admin.Modules.Clients.Domain.Repositories;
 using Cheetah.Core.Events;
-using FluentAssertions;
+using Shouldly;
 using Moq;
 
 namespace Cheetah.Admin.Modules.Clients.Application.Tests.Commands;
@@ -39,10 +39,10 @@ public class CreateClientCommandHandlerTests
         var result = await _handler.HandleAsync(command);
 
         // Assert
-        result.Should().NotBeEmpty();
-        capturedClient.Should().NotBeNull();
-        capturedClient!.Name.Should().Be("Test Client");
-        capturedClient.Description.Should().Be("Test Description");
+        result.ShouldNotBe(Guid.Empty);
+        capturedClient.ShouldNotBeNull();
+        capturedClient!.Name.ShouldBe("Test Client");
+        capturedClient.Description.ShouldBe("Test Description");
 
         _repositoryMock.Verify(r => r.Add(It.IsAny<Client>()), Times.Once);
         _repositoryMock.Verify(r => r.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
@@ -67,10 +67,10 @@ public class CreateClientCommandHandlerTests
         var result = await _handler.HandleAsync(command);
 
         // Assert
-        result.Should().NotBeEmpty();
-        capturedClient.Should().NotBeNull();
-        capturedClient!.Name.Should().Be("Test Client");
-        capturedClient.Description.Should().BeNull();
+        result.ShouldNotBe(Guid.Empty);
+        capturedClient.ShouldNotBeNull();
+        capturedClient!.Name.ShouldBe("Test Client");
+        capturedClient.Description.ShouldBeNull();
     }
 
     [Fact]
@@ -101,7 +101,7 @@ public class CreateClientCommandHandlerTests
         var act = async () => await _handler.HandleAsync(command);
 
         // Assert
-        await act.Should().ThrowAsync<ArgumentException>();
+        await Should.ThrowAsync<ArgumentException>(act);
     }
 
     [Fact]
@@ -114,6 +114,6 @@ public class CreateClientCommandHandlerTests
         var act = async () => await _handler.HandleAsync(command);
 
         // Assert
-        await act.Should().ThrowAsync<ArgumentException>();
+        await Should.ThrowAsync<ArgumentException>(act);
     }
 }

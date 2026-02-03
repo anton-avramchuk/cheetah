@@ -1,7 +1,7 @@
 using Cheetah.Admin.Modules.Clients.Application.Queries;
 using Cheetah.Admin.Modules.Clients.Domain;
 using Cheetah.Admin.Modules.Clients.Domain.Repositories;
-using FluentAssertions;
+using Shouldly;
 using Moq;
 
 namespace Cheetah.Admin.Modules.Clients.Application.Tests.Queries;
@@ -35,11 +35,11 @@ public class GetClientByIdQueryHandlerTests
         var result = await _handler.HandleAsync(query);
 
         // Assert
-        result.Should().NotBeNull();
-        result!.Id.Should().Be(clientId);
-        result.Name.Should().Be("Test Client");
-        result.Tenant.Should().NotBeNull();
-        result.Tenant!.Id.Should().Be(tenantId);
+        result.ShouldNotBeNull();
+        result!.Id.ShouldBe(clientId);
+        result.Name.ShouldBe("Test Client");
+        result.Tenant.ShouldNotBeNull();
+        result.Tenant!.Id.ShouldBe(tenantId);
     }
 
     [Fact]
@@ -58,7 +58,7 @@ public class GetClientByIdQueryHandlerTests
         var result = await _handler.HandleAsync(query);
 
         // Assert
-        result.Should().BeNull();
+        result.ShouldBeNull();
     }
 
     [Fact]
@@ -78,8 +78,8 @@ public class GetClientByIdQueryHandlerTests
         var result = await _handler.HandleAsync(query);
 
         // Assert
-        result.Should().NotBeNull();
-        result!.Tenant.Should().BeNull();
+        result.ShouldNotBeNull();
+        result!.Tenant.ShouldBeNull();
     }
 
     [Fact]

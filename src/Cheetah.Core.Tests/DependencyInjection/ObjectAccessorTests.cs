@@ -1,5 +1,5 @@
 using Cheetah.Core.DependencyInjection;
-using FluentAssertions;
+using Shouldly;
 
 namespace Cheetah.Core.Tests.DependencyInjection;
 
@@ -12,8 +12,8 @@ public class ObjectAccessorTests
         var accessor = new ObjectAccessor<string>();
 
         // Assert
-        accessor.Should().NotBeNull();
-        accessor.Value.Should().BeNull();
+        accessor.ShouldNotBeNull();
+        accessor.Value.ShouldBeNull();
     }
 
     [Fact]
@@ -26,8 +26,8 @@ public class ObjectAccessorTests
         var accessor = new ObjectAccessor<string>(expectedValue);
 
         // Assert
-        accessor.Should().NotBeNull();
-        accessor.Value.Should().Be(expectedValue);
+        accessor.ShouldNotBeNull();
+        accessor.Value.ShouldBe(expectedValue);
     }
 
     [Fact]
@@ -41,7 +41,7 @@ public class ObjectAccessorTests
         accessor.Value = expectedValue;
 
         // Assert
-        accessor.Value.Should().Be(expectedValue);
+        accessor.Value.ShouldBe(expectedValue);
     }
 
     [Fact]
@@ -54,7 +54,7 @@ public class ObjectAccessorTests
         accessor.Value = null;
 
         // Assert
-        accessor.Value.Should().BeNull();
+        accessor.Value.ShouldBeNull();
     }
 
     [Fact]
@@ -65,9 +65,9 @@ public class ObjectAccessorTests
         var accessor = new ObjectAccessor<TestClass>(testObject);
 
         // Act & Assert
-        accessor.Value.Should().BeSameAs(testObject);
-        accessor.Value!.Name.Should().Be("Test");
-        accessor.Value.Value.Should().Be(123);
+        accessor.Value.ShouldBeSameAs(testObject);
+        accessor.Value!.Name.ShouldBe("Test");
+        accessor.Value.Value.ShouldBe(123);
     }
 
     [Fact]
@@ -80,7 +80,7 @@ public class ObjectAccessorTests
         accessor.Value = 200;
 
         // Assert
-        accessor.Value.Should().Be(200);
+        accessor.Value.ShouldBe(200);
     }
 
     [Fact]
@@ -90,7 +90,7 @@ public class ObjectAccessorTests
         var accessor = new ObjectAccessor<string>("test");
 
         // Act & Assert
-        accessor.Should().BeAssignableTo<IObjectAccessor<string>>();
+        accessor.ShouldBeAssignableTo<IObjectAccessor<string>>();
     }
 
     private class TestClass

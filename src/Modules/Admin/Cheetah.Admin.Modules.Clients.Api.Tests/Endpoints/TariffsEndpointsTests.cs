@@ -3,7 +3,7 @@ using System.Net.Http.Json;
 using Cheetah.Admin.Modules.Clients.Api.Tests.Fixtures;
 using Cheetah.Admin.Modules.Clients.Contracts.Requests;
 using Cheetah.Admin.Modules.Clients.Contracts.Response;
-using FluentAssertions;
+using Shouldly;
 
 namespace Cheetah.Admin.Modules.Clients.Api.Tests.Endpoints;
 
@@ -26,9 +26,9 @@ public class TariffsEndpointsTests
         var response = await _client.GetAsync("/api/tariffs");
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
         var tariffs = await response.Content.ReadFromJsonAsync<List<TariffViewModel>>();
-        tariffs.Should().NotBeNull();
+        tariffs.ShouldNotBeNull();
     }
 
     [Fact]
@@ -42,10 +42,10 @@ public class TariffsEndpointsTests
         var response = await _client.GetAsync("/api/tariffs");
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
         var tariffs = await response.Content.ReadFromJsonAsync<List<TariffViewModel>>();
-        tariffs.Should().NotBeNull();
-        tariffs.Should().Contain(t => t.Name == "Test Tariff for List");
+        tariffs.ShouldNotBeNull();
+        tariffs.ShouldContain(t => t.Name == "Test Tariff for List");
     }
 
     #endregion
@@ -62,8 +62,8 @@ public class TariffsEndpointsTests
         var response = await _client.PostAsJsonAsync("/api/tariffs", request);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.Created);
-        response.Headers.Location.Should().NotBeNull();
+        response.StatusCode.ShouldBe(HttpStatusCode.Created);
+        response.Headers.Location.ShouldNotBeNull();
     }
 
     [Fact]
@@ -76,7 +76,7 @@ public class TariffsEndpointsTests
         var response = await _client.PostAsJsonAsync("/api/tariffs", request);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.Created);
+        response.StatusCode.ShouldBe(HttpStatusCode.Created);
     }
 
     [Fact]
@@ -89,7 +89,7 @@ public class TariffsEndpointsTests
         var response = await _client.PostAsJsonAsync("/api/tariffs", request);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.Created);
+        response.StatusCode.ShouldBe(HttpStatusCode.Created);
     }
 
     [Fact]
@@ -102,13 +102,13 @@ public class TariffsEndpointsTests
         var response = await _client.PostAsJsonAsync("/api/tariffs", request);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.Created);
+        response.StatusCode.ShouldBe(HttpStatusCode.Created);
 
         // Verify the tariff is inactive
         var location = response.Headers.Location;
         var getResponse = await _client.GetAsync(location);
         var tariff = await getResponse.Content.ReadFromJsonAsync<TariffViewModel>();
-        tariff!.IsActive.Should().BeFalse();
+        tariff!.IsActive.ShouldBeFalse();
     }
 
     [Fact]
@@ -121,7 +121,7 @@ public class TariffsEndpointsTests
         var response = await _client.PostAsJsonAsync("/api/tariffs", request);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
     }
 
     [Fact]
@@ -134,7 +134,7 @@ public class TariffsEndpointsTests
         var response = await _client.PostAsJsonAsync("/api/tariffs", request);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
     }
 
     [Fact]
@@ -147,7 +147,7 @@ public class TariffsEndpointsTests
         var response = await _client.PostAsJsonAsync("/api/tariffs", request);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
     }
 
     #endregion
@@ -166,13 +166,13 @@ public class TariffsEndpointsTests
         var response = await _client.GetAsync(location);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
         var tariff = await response.Content.ReadFromJsonAsync<TariffViewModel>();
-        tariff.Should().NotBeNull();
-        tariff!.Name.Should().Be("Tariff To Get");
-        tariff.Price.Should().Be(15.99m);
-        tariff.Currency.Should().Be("USD");
-        tariff.IsActive.Should().BeTrue();
+        tariff.ShouldNotBeNull();
+        tariff!.Name.ShouldBe("Tariff To Get");
+        tariff.Price.ShouldBe(15.99m);
+        tariff.Currency.ShouldBe("USD");
+        tariff.IsActive.ShouldBeTrue();
     }
 
     [Fact]
@@ -185,7 +185,7 @@ public class TariffsEndpointsTests
         var response = await _client.GetAsync($"/api/tariffs/{nonExistingId}");
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
     [Fact]
@@ -195,7 +195,7 @@ public class TariffsEndpointsTests
         var response = await _client.GetAsync("/api/tariffs/invalid-guid");
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
     #endregion
@@ -217,16 +217,16 @@ public class TariffsEndpointsTests
         var response = await _client.PutAsJsonAsync(location.ToString(), updateRequest);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 
         // Verify update
         var getResponse = await _client.GetAsync(location);
         var updatedTariff = await getResponse.Content.ReadFromJsonAsync<TariffViewModel>();
-        updatedTariff!.Name.Should().Be("Updated Tariff");
-        updatedTariff.Description.Should().Be("Updated Description");
-        updatedTariff.Price.Should().Be(25.99m);
-        updatedTariff.Currency.Should().Be("EUR");
-        updatedTariff.IsActive.Should().BeFalse();
+        updatedTariff!.Name.ShouldBe("Updated Tariff");
+        updatedTariff.Description.ShouldBe("Updated Description");
+        updatedTariff.Price.ShouldBe(25.99m);
+        updatedTariff.Currency.ShouldBe("EUR");
+        updatedTariff.IsActive.ShouldBeFalse();
     }
 
     [Fact]
@@ -240,7 +240,7 @@ public class TariffsEndpointsTests
         var response = await _client.PutAsJsonAsync($"/api/tariffs/{nonExistingId}", updateRequest);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
     [Fact]
@@ -258,7 +258,7 @@ public class TariffsEndpointsTests
         var response = await _client.PutAsJsonAsync(location.ToString(), updateRequest);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
     }
 
     [Fact]
@@ -276,7 +276,7 @@ public class TariffsEndpointsTests
         var response = await _client.PutAsJsonAsync(location.ToString(), updateRequest);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
     }
 
     [Fact]
@@ -294,11 +294,11 @@ public class TariffsEndpointsTests
         var response = await _client.PutAsJsonAsync(location.ToString(), updateRequest);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 
         var getResponse = await _client.GetAsync(location);
         var tariff = await getResponse.Content.ReadFromJsonAsync<TariffViewModel>();
-        tariff!.IsActive.Should().BeTrue();
+        tariff!.IsActive.ShouldBeTrue();
     }
 
     #endregion
@@ -317,11 +317,11 @@ public class TariffsEndpointsTests
         var response = await _client.DeleteAsync(location);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 
         // Verify deletion
         var getResponse = await _client.GetAsync(location);
-        getResponse.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        getResponse.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
     [Fact]
@@ -334,7 +334,7 @@ public class TariffsEndpointsTests
         var response = await _client.DeleteAsync($"/api/tariffs/{nonExistingId}");
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
     [Fact]
@@ -354,7 +354,7 @@ public class TariffsEndpointsTests
         var tariffs = await response.Content.ReadFromJsonAsync<List<TariffViewModel>>();
 
         // Assert
-        tariffs.Should().NotContain(t => t.Id == tariffId);
+        tariffs.ShouldNotContain(t => t.Id == tariffId);
     }
 
     #endregion

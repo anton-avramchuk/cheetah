@@ -1,4 +1,4 @@
-using FluentAssertions;
+using Shouldly;
 
 namespace Cheetah.Admin.Modules.Clients.Domain.Tests;
 
@@ -18,13 +18,13 @@ public class TariffTests
         var tariff = Tariff.Create(name, price, currency);
 
         // Assert
-        tariff.Should().NotBeNull();
-        tariff.Id.Should().NotBeEmpty();
-        tariff.Name.Should().Be(name);
-        tariff.Price.Should().Be(price);
-        tariff.Currency.Should().Be("USD");
-        tariff.Description.Should().BeNull();
-        tariff.IsActive.Should().BeTrue();
+        tariff.ShouldNotBeNull();
+        tariff.Id.ShouldNotBe(Guid.Empty);
+        tariff.Name.ShouldBe(name);
+        tariff.Price.ShouldBe(price);
+        tariff.Currency.ShouldBe("USD");
+        tariff.Description.ShouldBeNull();
+        tariff.IsActive.ShouldBeTrue();
     }
 
     [Fact]
@@ -41,11 +41,11 @@ public class TariffTests
         var tariff = Tariff.Create(name, price, currency, description, isActive);
 
         // Assert
-        tariff.Name.Should().Be(name);
-        tariff.Price.Should().Be(price);
-        tariff.Currency.Should().Be("EUR"); // Should be uppercase
-        tariff.Description.Should().Be(description);
-        tariff.IsActive.Should().BeFalse();
+        tariff.Name.ShouldBe(name);
+        tariff.Price.ShouldBe(price);
+        tariff.Currency.ShouldBe("EUR"); // Should be uppercase
+        tariff.Description.ShouldBe(description);
+        tariff.IsActive.ShouldBeFalse();
     }
 
     [Fact]
@@ -56,7 +56,7 @@ public class TariffTests
         var tariff2 = Tariff.Create("Plan 2", 20m, "EUR");
 
         // Assert
-        tariff1.Id.Should().NotBe(tariff2.Id);
+        tariff1.Id.ShouldNotBe(tariff2.Id);
     }
 
     [Fact]
@@ -66,7 +66,7 @@ public class TariffTests
         var tariff = Tariff.Create("Plan", 10m, "usd");
 
         // Assert
-        tariff.Currency.Should().Be("USD");
+        tariff.Currency.ShouldBe("USD");
     }
 
     [Theory]
@@ -80,7 +80,7 @@ public class TariffTests
         var act = () => Tariff.Create(name!, 10m, "USD");
 
         // Assert
-        act.Should().Throw<ArgumentException>();
+        Should.Throw<ArgumentException>(act);
     }
 
     [Theory]
@@ -93,7 +93,7 @@ public class TariffTests
         var act = () => Tariff.Create("Plan", 10m, currency!);
 
         // Assert
-        act.Should().Throw<ArgumentException>();
+        Should.Throw<ArgumentException>(act);
     }
 
     [Theory]
@@ -106,8 +106,7 @@ public class TariffTests
         var act = () => Tariff.Create("Plan", 10m, currency);
 
         // Assert
-        act.Should().Throw<ArgumentException>()
-            .WithMessage("*3-character*");
+        Should.Throw<ArgumentException>(act).Message.ShouldContain("3-character");
     }
 
     [Fact]
@@ -117,7 +116,7 @@ public class TariffTests
         var act = () => Tariff.Create("Plan", -1m, "USD");
 
         // Assert
-        act.Should().Throw<ArgumentOutOfRangeException>();
+        Should.Throw<ArgumentOutOfRangeException>(act);
     }
 
     [Fact]
@@ -127,7 +126,7 @@ public class TariffTests
         var tariff = Tariff.Create("Free Plan", 0m, "USD");
 
         // Assert
-        tariff.Price.Should().Be(0m);
+        tariff.Price.ShouldBe(0m);
     }
 
     #endregion
@@ -144,11 +143,11 @@ public class TariffTests
         tariff.Update("Updated", 20m, "EUR", "Updated desc", false);
 
         // Assert
-        tariff.Name.Should().Be("Updated");
-        tariff.Price.Should().Be(20m);
-        tariff.Currency.Should().Be("EUR");
-        tariff.Description.Should().Be("Updated desc");
-        tariff.IsActive.Should().BeFalse();
+        tariff.Name.ShouldBe("Updated");
+        tariff.Price.ShouldBe(20m);
+        tariff.Currency.ShouldBe("EUR");
+        tariff.Description.ShouldBe("Updated desc");
+        tariff.IsActive.ShouldBeFalse();
     }
 
     [Fact]
@@ -162,7 +161,7 @@ public class TariffTests
         tariff.Update("Updated", 20m, "EUR", null, true);
 
         // Assert
-        tariff.Id.Should().Be(originalId);
+        tariff.Id.ShouldBe(originalId);
     }
 
     [Fact]
@@ -175,7 +174,7 @@ public class TariffTests
         tariff.Update("Plan", 10m, "USD", null, true);
 
         // Assert
-        tariff.Description.Should().BeNull();
+        tariff.Description.ShouldBeNull();
     }
 
     [Fact]
@@ -188,7 +187,7 @@ public class TariffTests
         tariff.Update("Plan", 10m, "eur", null, true);
 
         // Assert
-        tariff.Currency.Should().Be("EUR");
+        tariff.Currency.ShouldBe("EUR");
     }
 
     [Theory]
@@ -204,7 +203,7 @@ public class TariffTests
         var act = () => tariff.Update(name!, 10m, "USD", null, true);
 
         // Assert
-        act.Should().Throw<ArgumentException>();
+        Should.Throw<ArgumentException>(act);
     }
 
     [Theory]
@@ -219,7 +218,7 @@ public class TariffTests
         var act = () => tariff.Update("Plan", 10m, currency, null, true);
 
         // Assert
-        act.Should().Throw<ArgumentException>();
+        Should.Throw<ArgumentException>(act);
     }
 
     [Fact]
@@ -232,7 +231,7 @@ public class TariffTests
         var act = () => tariff.Update("Plan", -1m, "USD", null, true);
 
         // Assert
-        act.Should().Throw<ArgumentOutOfRangeException>();
+        Should.Throw<ArgumentOutOfRangeException>(act);
     }
 
     #endregion
@@ -246,7 +245,7 @@ public class TariffTests
         var tariff = Tariff.Create("Plan", 10m, "USD");
 
         // Assert
-        tariff.DomainEvents.Should().BeEmpty();
+        tariff.DomainEvents.ShouldBeEmpty();
     }
 
     [Fact]
@@ -259,7 +258,7 @@ public class TariffTests
         tariff.ClearDomainEvents();
 
         // Assert
-        tariff.DomainEvents.Should().BeEmpty();
+        tariff.DomainEvents.ShouldBeEmpty();
     }
 
     #endregion

@@ -2,7 +2,7 @@ using Cheetah.Admin.Modules.Clients.Application.Commands;
 using Cheetah.Admin.Modules.Clients.Domain;
 using Cheetah.Admin.Modules.Clients.Domain.Repositories;
 using Cheetah.Core.Events;
-using FluentAssertions;
+using Shouldly;
 using Moq;
 
 namespace Cheetah.Admin.Modules.Clients.Application.Tests.Commands;
@@ -39,13 +39,13 @@ public class CreateTariffCommandHandlerTests
         var result = await _handler.HandleAsync(command);
 
         // Assert
-        result.Should().NotBeEmpty();
-        capturedTariff.Should().NotBeNull();
-        capturedTariff!.Name.Should().Be("Basic Plan");
-        capturedTariff.Description.Should().Be("Description");
-        capturedTariff.Price.Should().Be(9.99m);
-        capturedTariff.Currency.Should().Be("USD");
-        capturedTariff.IsActive.Should().BeTrue();
+        result.ShouldNotBe(Guid.Empty);
+        capturedTariff.ShouldNotBeNull();
+        capturedTariff!.Name.ShouldBe("Basic Plan");
+        capturedTariff.Description.ShouldBe("Description");
+        capturedTariff.Price.ShouldBe(9.99m);
+        capturedTariff.Currency.ShouldBe("USD");
+        capturedTariff.IsActive.ShouldBeTrue();
 
         _repositoryMock.Verify(r => r.Add(It.IsAny<Tariff>()), Times.Once);
         _repositoryMock.Verify(r => r.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
@@ -70,7 +70,7 @@ public class CreateTariffCommandHandlerTests
         await _handler.HandleAsync(command);
 
         // Assert
-        capturedTariff!.IsActive.Should().BeFalse();
+        capturedTariff!.IsActive.ShouldBeFalse();
     }
 
     [Fact]
@@ -83,7 +83,7 @@ public class CreateTariffCommandHandlerTests
         var act = async () => await _handler.HandleAsync(command);
 
         // Assert
-        await act.Should().ThrowAsync<ArgumentException>();
+        await Should.ThrowAsync<ArgumentException>(act);
     }
 
     [Fact]
@@ -96,7 +96,7 @@ public class CreateTariffCommandHandlerTests
         var act = async () => await _handler.HandleAsync(command);
 
         // Assert
-        await act.Should().ThrowAsync<ArgumentException>();
+        await Should.ThrowAsync<ArgumentException>(act);
     }
 
     [Fact]
@@ -109,6 +109,6 @@ public class CreateTariffCommandHandlerTests
         var act = async () => await _handler.HandleAsync(command);
 
         // Assert
-        await act.Should().ThrowAsync<ArgumentOutOfRangeException>();
+        await Should.ThrowAsync<ArgumentOutOfRangeException>(act);
     }
 }

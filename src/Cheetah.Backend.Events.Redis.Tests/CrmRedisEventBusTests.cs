@@ -1,7 +1,7 @@
 using Cheetah.Backend.Events.Redis;
 using Cheetah.Backend.Redis;
 using Cheetah.Core.Events;
-using FluentAssertions;
+using Shouldly;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Moq;

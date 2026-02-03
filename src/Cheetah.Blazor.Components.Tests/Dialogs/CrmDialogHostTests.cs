@@ -20,7 +20,7 @@ public class CrmDialogHostTests : TestContext
             .Add(p => p.Instance, instance));
 
         // Assert
-        cut.Find(".modal-title").TextContent.Should().Be("Test Dialog");
+        cut.Find(".modal-title").TextContent.ShouldBe("Test Dialog");
     }
 
     [Fact]
@@ -34,8 +34,8 @@ public class CrmDialogHostTests : TestContext
             .Add(p => p.Instance, instance));
 
         // Assert
-        cut.Find(".test-content").Should().NotBeNull();
-        cut.Find(".test-content p").TextContent.Should().Be("Dialog content");
+        cut.Find(".test-content").ShouldNotBeNull();
+        cut.Find(".test-content p").TextContent.ShouldBe("Dialog content");
     }
 
     [Fact]
@@ -50,7 +50,7 @@ public class CrmDialogHostTests : TestContext
             .Add(p => p.Instance, instance));
 
         // Assert
-        cut.Find(".message").TextContent.Should().Be("Hello World");
+        cut.Find(".message").TextContent.ShouldBe("Hello World");
     }
 
     [Fact]
@@ -65,7 +65,7 @@ public class CrmDialogHostTests : TestContext
 
         // Assert
         var buttons = cut.FindAll(".modal-footer button");
-        buttons.Should().HaveCount(2); // Cancel + Save from SaveCancel preset
+        buttons.Count.ShouldBe(2); // Cancel + Save from SaveCancel preset
     }
 
     [Fact]
@@ -81,9 +81,9 @@ public class CrmDialogHostTests : TestContext
 
         // Assert
         var buttons = cut.FindAll(".modal-footer button");
-        buttons.Should().HaveCount(2);
-        buttons[0].TextContent.Should().Contain("Нет");
-        buttons[1].TextContent.Should().Contain("Да");
+        buttons.Count.ShouldBe(2);
+        buttons[0].TextContent.ShouldContain("Нет");
+        buttons[1].TextContent.ShouldContain("Да");
     }
 
     [Fact]
@@ -102,8 +102,8 @@ public class CrmDialogHostTests : TestContext
         cancelButton.Click();
 
         // Assert
-        closedResult.Should().NotBeNull();
-        closedResult!.Confirmed.Should().BeFalse();
+        closedResult.ShouldNotBeNull();
+        closedResult!.Confirmed.ShouldBeFalse();
     }
 
     [Fact]
@@ -123,8 +123,8 @@ public class CrmDialogHostTests : TestContext
         closeButton.Click();
 
         // Assert
-        closedResult.Should().NotBeNull();
-        closedResult!.Confirmed.Should().BeFalse();
+        closedResult.ShouldNotBeNull();
+        closedResult!.Confirmed.ShouldBeFalse();
     }
 
     [Fact]
@@ -139,7 +139,7 @@ public class CrmDialogHostTests : TestContext
             .Add(p => p.Instance, instance));
 
         // Assert
-        cut.Find(".modal-dialog").ClassList.Should().Contain("modal-lg");
+        cut.Find(".modal-dialog").ClassList.ShouldContain("modal-lg");
     }
 
     [Fact]
@@ -154,7 +154,7 @@ public class CrmDialogHostTests : TestContext
             .Add(p => p.Instance, instance));
 
         // Assert
-        cut.Find(".modal-dialog").ClassList.Should().Contain("modal-dialog-centered");
+        cut.Find(".modal-dialog").ClassList.ShouldContain("modal-dialog-centered");
     }
 
     [Fact]
@@ -169,7 +169,7 @@ public class CrmDialogHostTests : TestContext
             .Add(p => p.Instance, instance));
 
         // Assert
-        cut.Find(".modal-dialog").ClassList.Should().Contain("modal-dialog-scrollable");
+        cut.Find(".modal-dialog").ClassList.ShouldContain("modal-dialog-scrollable");
     }
 
     [Fact]
@@ -188,8 +188,8 @@ public class CrmDialogHostTests : TestContext
         confirmButton.Click();
 
         // Assert
-        closedResult.Should().NotBeNull();
-        closedResult!.Confirmed.Should().BeTrue();
+        closedResult.ShouldNotBeNull();
+        closedResult!.Confirmed.ShouldBeTrue();
     }
 
     [Fact]
@@ -209,11 +209,11 @@ public class CrmDialogHostTests : TestContext
         confirmButton.Click();
 
         // Assert
-        closedResult.Should().NotBeNull();
-        closedResult!.Confirmed.Should().BeTrue();
+        closedResult.ShouldNotBeNull();
+        closedResult!.Confirmed.ShouldBeTrue();
         var data = closedResult.GetData<FormDialogResult>();
-        data.Should().NotBeNull();
-        data!.Name.Should().Be("Test Name");
+        data.ShouldNotBeNull();
+        data!.Name.ShouldBe("Test Name");
     }
 
     [Fact]
@@ -237,7 +237,7 @@ public class CrmDialogHostTests : TestContext
         confirmButton.Click();
 
         // Assert
-        closedResult.Should().BeNull(); // Dialog should not close when form fails
+        closedResult.ShouldBeNull(); // Dialog should not close when form fails
     }
 
     [Fact]
@@ -252,6 +252,6 @@ public class CrmDialogHostTests : TestContext
         var act = () => cut.Dispose();
 
         // Assert
-        act.Should().NotThrow();
+        Should.NotThrow(act);
     }
 }
