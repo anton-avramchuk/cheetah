@@ -1,0 +1,95 @@
+@namespace Cheetah.Blazor.Layout.Components
+
+<li class="crm-menu-item @GetItemClasses()">
+    @if (Item.Children.Any(c => c.IsVisible))
+    {
+        <div class="crm-menu-link crm-menu-parent" @onclick="ToggleExpanded">
+            @if (!string.IsNullOrEmpty(Item.Icon))
+            {
+                <i class="crm-menu-icon @Item.Icon"></i>
+            }
+            @if (!IsCollapsed)
+            {
+                <span class="crm-menu-text">@Item.Name</span>
+                <i class="crm-menu-arrow bi @(_isExpanded ? "bi-chevron-down" : "bi-chevron-right")"></i>
+            }
+        </div>
+
+        @if (_isExpanded && !IsCollapsed)
+        {
+            <ul class="crm-submenu">
+                @foreach (var child in Item.Children.Where(c => c.IsVisible).OrderBy(c => c.Order))
+                {
+                    <CrmMenuItem Item="@child" IsCollapsed="@IsCollapsed" CurrentUrl="@CurrentUrl" />
+                }
+            </ul>
+        }
+    }
+    else if (!string.IsNullOrEmpty(Item.Url))
+    {
+        <a href="@Item.Url" class="crm-menu-link @(Item.IsDisabled ? "disabled" : "")" target="@Item.Target">
+            @if (!string.IsNullOrEmpty(Item.Icon))
+            {
+                <i class="crm-menu-icon @Item.Icon"></i>
+            }
+            @if (!IsCollapsed)
+            {
+                <span class="crm-menu-text">@Item.Name</span>
+            }
+        </a>
+    }
+</li>
+
+@code {
+    [Parameter, EditorRequired]
+    public MenuItem Item { get; set; } = null!;
+
+    [Parameter]
+    public bool IsCollapsed { get; set; }
+
+    [Parameter]
+    public string CurrentUrl { get; set; } = "";
+
+    private bool _isExpanded;
+
+    protected override void OnInitialized()
+    {
+        // Auto-expand if any child is active
+        _isExpanded = Item.Children.Any(c => IsActive(c));
+    }
+
+    private void ToggleExpanded()
+    {
+        _isExpanded = !_isExpanded;
+    }
+
+    private bool IsActive(MenuItem item)
+    {
+        if (!string.IsNullOrEmpty(item.Url))
+        {
+            var itemPath = item.Url.TrimStart('/');
+            return CurrentUrl.Equals(itemPath, StringComparison.OrdinalIgnoreCase) ||
+                   CurrentUrl.StartsWith(itemPath + "/", StringComparison.OrdinalIgnoreCase);
+        }
+        return item.Children.Any(IsActive);
+    }
+
+    private string GetItemClasses()
+    {
+        var classes = new List<string>();
+
+        if (IsActive(Item))
+            classes.Add("active");
+
+        if (Item.Children.Any(c => c.IsVisible))
+            classes.Add("has-children");
+
+        if (_isExpanded)
+            classes.Add("expanded");
+
+        if (!string.IsNullOrEmpty(Item.CssClass))
+            classes.Add(Item.CssClass);
+
+        return string.Join(" ", classes);
+    }
+}

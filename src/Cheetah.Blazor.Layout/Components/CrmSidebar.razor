@@ -1,0 +1,46 @@
+@namespace Cheetah.Blazor.Layout.Components
+
+@inject IMenuProvider MenuProvider
+@inject ILayoutConfiguration Config
+@inject NavigationManager Navigation
+
+<aside class="crm-sidebar @(IsCollapsed ? "collapsed" : "")">
+    <nav class="crm-sidebar-nav">
+        @if (_menu != null)
+        {
+            <ul class="crm-menu">
+                @foreach (var item in _menu.Items.Where(i => i.IsVisible).OrderBy(i => i.Order))
+                {
+                    <CrmMenuItem Item="@item" IsCollapsed="@IsCollapsed" CurrentUrl="@_currentUrl" />
+                }
+            </ul>
+        }
+    </nav>
+</aside>
+
+@code {
+    [Parameter]
+    public bool IsCollapsed { get; set; }
+
+    private Menu? _menu;
+    private string _currentUrl = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        _currentUrl = Navigation.ToBaseRelativePath(Navigation.Uri);
+        Navigation.LocationChanged += OnLocationChanged;
+
+        _menu = await MenuProvider.GetMenuAsync(Config.MainMenuName);
+    }
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        _currentUrl = Navigation.ToBaseRelativePath(e.Location);
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        Navigation.LocationChanged -= OnLocationChanged;
+    }
+}
