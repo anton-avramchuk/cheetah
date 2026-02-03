@@ -1,3 +1,4 @@
+using Cheetah.Blazor.Components.Icons;
 using Cheetah.Core.DependencyInjection;
 using Cheetah.Frontend.Navigation.Constants;
 using Cheetah.Frontend.Navigation.Extensions;
@@ -16,19 +17,19 @@ public class AdminClientMenuContributor : IMenuContributor
             .AddItem(
                 id: "Home",
                 name: "Home",
-                icon: "bi bi-house-door-fill-nav-menu",
+                iconName: MenuIcons.HomeFill,
                 url: "",
                 order: 0)
             .AddItem(
                 id: "Counter",
                 name: "Counter",
-                icon: "bi bi-plus-square-fill-nav-menu",
+                iconName: MenuIcons.PlusSquare,
                 url: "counter",
                 order: 1)
             .AddItem(
                 id: "Weather",
                 name: "Weather",
-                icon: "bi bi-list-nested-nav-menu",
+                iconName: MenuIcons.Cloud,
                 url: "weather",
                 order: 2);
 

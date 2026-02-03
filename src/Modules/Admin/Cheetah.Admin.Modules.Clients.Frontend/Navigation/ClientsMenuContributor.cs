@@ -1,3 +1,4 @@
+using Cheetah.Blazor.Components.Icons;
 using Cheetah.Core.DependencyInjection;
 using Cheetah.Frontend.Navigation.Constants;
 using Cheetah.Frontend.Navigation.Extensions;
@@ -14,8 +15,8 @@ public class ClientsMenuContributor : IMenuContributor
 
         mainMenu.AddItem(
             id: "Clients",
-            name: "Клиенты",
-            icon: "bi bi-people-fill-nav-menu",
+            name: "Clients",
+            iconName: MenuIcons.PeopleFill,
             url: "clients",
             order: 3);
 

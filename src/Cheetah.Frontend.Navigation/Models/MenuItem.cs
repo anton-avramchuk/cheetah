@@ -1,3 +1,5 @@
+using Cheetah.Blazor.Components.Icons;
+
 namespace Cheetah.Frontend.Navigation.Models;
 
 /// <summary>
@@ -16,8 +18,20 @@ public class MenuItem
     public string Name { get; set; } = null!;
 
     /// <summary>
-    /// Icon CSS class (e.g., "fas fa-home", "mdi-account").
+    /// Icon name (e.g., "house", "people", "settings").
+    /// Use with <see cref="IconSet"/> to specify the icon set.
     /// </summary>
+    public string? IconName { get; set; }
+
+    /// <summary>
+    /// Icon set to use. Defaults to Bootstrap.
+    /// </summary>
+    public IconSet IconSet { get; set; } = IconSet.Bootstrap;
+
+    /// <summary>
+    /// Legacy icon CSS class. Deprecated - use <see cref="IconName"/> and <see cref="IconSet"/> instead.
+    /// </summary>
+    [Obsolete("Use IconName and IconSet instead")]
     public string? Icon { get; set; }
 
     /// <summary>

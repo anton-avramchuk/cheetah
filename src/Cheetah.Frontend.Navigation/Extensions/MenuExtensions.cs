@@ -1,3 +1,4 @@
+using Cheetah.Blazor.Components.Icons;
 using Cheetah.Frontend.Navigation.Models;
 
 namespace Cheetah.Frontend.Navigation.Extensions;
@@ -8,13 +9,14 @@ namespace Cheetah.Frontend.Navigation.Extensions;
 public static class MenuExtensions
 {
     /// <summary>
-    /// Adds a menu item to the menu.
+    /// Adds a menu item to the menu with icon support.
     /// </summary>
     public static Menu AddItem(
         this Menu menu,
         string id,
         string name,
-        string? icon = null,
+        string? iconName = null,
+        IconSet iconSet = IconSet.Bootstrap,
         string? url = null,
         string? permission = null,
         int order = 0,
@@ -24,7 +26,8 @@ public static class MenuExtensions
         {
             Id = id,
             Name = name,
-            Icon = icon,
+            IconName = iconName,
+            IconSet = iconSet,
             Url = url,
             Permission = permission,
             Order = order
@@ -36,13 +39,14 @@ public static class MenuExtensions
     }
 
     /// <summary>
-    /// Adds a child menu item.
+    /// Adds a child menu item with icon support.
     /// </summary>
     public static MenuItem AddChild(
         this MenuItem parent,
         string id,
         string name,
-        string? icon = null,
+        string? iconName = null,
+        IconSet iconSet = IconSet.Bootstrap,
         string? url = null,
         string? permission = null,
         int order = 0,
@@ -52,7 +56,8 @@ public static class MenuExtensions
         {
             Id = id,
             Name = name,
-            Icon = icon,
+            IconName = iconName,
+            IconSet = iconSet,
             Url = url,
             Permission = permission,
             Order = order
@@ -61,6 +66,16 @@ public static class MenuExtensions
         configure?.Invoke(item);
         parent.Children.Add(item);
         return parent;
+    }
+
+    /// <summary>
+    /// Sets the icon for a menu item.
+    /// </summary>
+    public static MenuItem WithIcon(this MenuItem item, string iconName, IconSet iconSet = IconSet.Bootstrap)
+    {
+        item.IconName = iconName;
+        item.IconSet = iconSet;
+        return item;
     }
 
     /// <summary>
@@ -144,7 +159,11 @@ public static class MenuExtensions
         {
             Id = item.Id,
             Name = item.Name,
+            IconName = item.IconName,
+            IconSet = item.IconSet,
+#pragma warning disable CS0618 // Type or member is obsolete
             Icon = item.Icon,
+#pragma warning restore CS0618
             Url = item.Url,
             Permission = item.Permission,
             Order = item.Order,

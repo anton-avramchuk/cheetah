@@ -4,14 +4,14 @@
     @if (Item.Children.Any(c => c.IsVisible))
     {
         <div class="crm-menu-link crm-menu-parent" @onclick="ToggleExpanded">
-            @if (!string.IsNullOrEmpty(Item.Icon))
-            {
-                <i class="crm-menu-icon @Item.Icon"></i>
-            }
+            @RenderIcon()
             @if (!IsCollapsed)
             {
                 <span class="crm-menu-text">@Item.Name</span>
-                <i class="crm-menu-arrow bi @(_isExpanded ? "bi-chevron-down" : "bi-chevron-right")"></i>
+                <Icon Name="@(_isExpanded ? "chevron-down" : "chevron-right")"
+                      Set="IconSet.Bootstrap"
+                      Size="IconSize.Small"
+                      Class="crm-menu-arrow" />
             }
         </div>
 
@@ -28,10 +28,7 @@
     else if (!string.IsNullOrEmpty(Item.Url))
     {
         <a href="@Item.Url" class="crm-menu-link @(Item.IsDisabled ? "disabled" : "")" target="@Item.Target">
-            @if (!string.IsNullOrEmpty(Item.Icon))
-            {
-                <i class="crm-menu-icon @Item.Icon"></i>
-            }
+            @RenderIcon()
             @if (!IsCollapsed)
             {
                 <span class="crm-menu-text">@Item.Name</span>
@@ -92,4 +89,27 @@
 
         return string.Join(" ", classes);
     }
+
+    private RenderFragment RenderIcon() => builder =>
+    {
+        // New format: IconName + IconSet
+        if (!string.IsNullOrEmpty(Item.IconName))
+        {
+            builder.OpenComponent<Icon>(0);
+            builder.AddAttribute(1, "Name", Item.IconName);
+            builder.AddAttribute(2, "Set", Item.IconSet);
+            builder.AddAttribute(3, "Size", IconSize.Medium);
+            builder.AddAttribute(4, "Class", "crm-menu-icon");
+            builder.CloseComponent();
+        }
+        // Legacy format: Icon as CSS class
+#pragma warning disable CS0618 // Type or member is obsolete
+        else if (!string.IsNullOrEmpty(Item.Icon))
+        {
+            builder.OpenElement(0, "i");
+            builder.AddAttribute(1, "class", $"crm-menu-icon {Item.Icon}");
+            builder.CloseElement();
+        }
+#pragma warning restore CS0618
+    };
 }
