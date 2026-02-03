@@ -1,5 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk.Razor">
 
+  <PropertyGroup>
+    <StaticWebAssetBasePath>_content/Cheetah.Blazor.Components</StaticWebAssetBasePath>
+  </PropertyGroup>
+
   <ItemGroup>
     <InternalsVisibleTo Include="Cheetah.Blazor.Components.Tests" />
   </ItemGroup>
