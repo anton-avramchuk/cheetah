@@ -1,6 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
     <ItemGroup>
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="$(MsPackageVersion)">
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        <PrivateAssets>all</PrivateAssets>
+      </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
       <ProjectReference Include="..\..\..\..\Cheetah.ServiceDefaults\Cheetah.ServiceDefaults.csproj" />
       <ProjectReference Include="..\..\..\Cheetah.AspNetCore\Cheetah.AspNetCore.csproj" />
       <ProjectReference Include="..\..\..\Cheetah.Backend.CQRS\Cheetah.Backend.CQRS.csproj" />
@@ -10,11 +17,13 @@
       <ProjectReference Include="..\..\..\Cheetah.Mapping.Mapster\Cheetah.Mapping.Mapster.csproj" />
       <ProjectReference Include="..\..\..\Cheetah.Scalar\Cheetah.Scalar.csproj" />
       <ProjectReference Include="..\Crm.Recruitment.Application\Crm.Recruitment.Application.csproj" />
+      <ProjectReference Include="..\Crm.Recruitment.DataAccess\Crm.Recruitment.DataAccess.csproj" />
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\..\..\Cheetah.Generators.Module\Cheetah.Generators.Module.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
         <ProjectReference Include="..\..\..\Cheetah.Generators.Application\Cheetah.Generators.Application.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
+        <ProjectReference Include="..\..\..\Cheetah.Generators.Endpoints\Cheetah.Generators.Endpoints.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
     </ItemGroup>
 
 </Project>

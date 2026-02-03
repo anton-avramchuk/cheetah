@@ -7,6 +7,7 @@ using Cheetah.Core.Modularity;
 using Cheetah.Mapping.Mapster;
 using Cheetah.Scalar;
 using Crm.Recruitment.Application;
+using Crm.Recruitment.DataAccess;
 
 namespace Crm.Recruitment.Api;
 
@@ -18,7 +19,8 @@ namespace Crm.Recruitment.Api;
     typeof(CrmBackendCQRSModule),
     typeof(CrmBackendEventsRedisModule),
     typeof(CrmBackendEndpointsModule),
-    typeof(CrmRecruitmentApplicationModule)
+    typeof(CrmRecruitmentApplicationModule),
+    typeof(CrmRecruitmentDataAccessModule)
 )]
 [Bootstrapper]
 public partial class CrmRecruitmentBootstrapperModule : CrmModule
