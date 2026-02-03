@@ -18,6 +18,12 @@
       "description": "Include sample entity with CRUD operations",
       "defaultValue": "true"
     },
+    "includeBlazorClient": {
+      "type": "parameter",
+      "datatype": "bool",
+      "description": "Include Blazor Frontend project",
+      "defaultValue": "false"
+    },
     "prefix": {
       "type": "parameter",
       "datatype": "string",
@@ -85,7 +91,18 @@
             "**/Mapping/**",
             "**/Constants.cs",
             "**/SampleEntityModel.cs",
+            "**/SampleEntityListPage.razor",
+            "**/SampleEntityForm.razor",
+            "**/SampleEntityGridViewModel.cs",
+            "**/SampleEntityFormModel.cs",
+            "**/SampleEntityCrudService.cs",
             "**/*.Tests/**"
+          ]
+        },
+        {
+          "condition": "(!includeBlazorClient)",
+          "exclude": [
+            "**/*.Frontend/**"
           ]
         }
       ]
