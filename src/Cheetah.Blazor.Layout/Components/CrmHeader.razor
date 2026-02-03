@@ -1,4 +1,5 @@
 @namespace Cheetah.Blazor.Layout.Components
+@using Cheetah.Blazor.Components.Icons
 
 @inject ILayoutConfiguration Config
 @inject IHeaderComponentProvider HeaderComponents
@@ -6,7 +7,7 @@
 <header class="crm-header">
     <div class="crm-header-left">
         <button class="crm-sidebar-toggle btn btn-link" @onclick="OnToggleSidebar">
-            <i class="bi bi-list"></i>
+            <Icon Name="list" Size="IconSize.Large" />
         </button>
 
         <a href="@Config.HomeUrl" class="crm-brand">
@@ -17,7 +18,7 @@
             else
             {
                 <div class="crm-logo-placeholder">
-                    <i class="bi bi-lightning-charge-fill"></i>
+                    <Icon Name="lightning-charge-fill" Size="IconSize.Large" />
                 </div>
             }
             <span class="crm-app-name">@Config.ApplicationName</span>
