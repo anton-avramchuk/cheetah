@@ -1,0 +1,44 @@
+/* Cheetah Icon Component Styles */
+
+/* Icon sizes */
+.cheetah-icon-sm {
+    font-size: 1rem;      /* 16px */
+    line-height: 1;
+}
+
+.cheetah-icon-md {
+    font-size: 1.5rem;    /* 24px */
+    line-height: 1;
+}
+
+.cheetah-icon-lg {
+    font-size: 2rem;      /* 32px */
+    line-height: 1;
+}
+
+.cheetah-icon-xl {
+    font-size: 3rem;      /* 48px */
+    line-height: 1;
+}
+
+/* Spin animation for loading icons */
+.cheetah-icon-spin {
+    animation: cheetah-icon-spin 1s linear infinite;
+}
+
+@keyframes cheetah-icon-spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Ensure proper vertical alignment */
+.bi,
+.material-symbols-outlined,
+.material-symbols-rounded,
+.material-symbols-sharp {
+    vertical-align: middle;
+}
