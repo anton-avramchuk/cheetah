@@ -3,6 +3,7 @@ using Cheetah.Admin.Modules.Clients.Contracts.Requests;
 using Cheetah.Admin.Modules.Clients.Frontend.Models;
 using Cheetah.Blazor.Components.Crud;
 using Cheetah.Core.DependencyInjection;
+using Cheetah.Mapping.Core;
 
 namespace Cheetah.Admin.Modules.Clients.Frontend.Services;
 
@@ -13,16 +14,19 @@ namespace Cheetah.Admin.Modules.Clients.Frontend.Services;
 public sealed class ClientsCrudService : ICrudService<ClientGridViewModel, ClientFormModel, ClientFormModel>
 {
     private readonly IAdminClientsService _clientsService;
+    private readonly IObjectMapper _objectMapper;
 
-    public ClientsCrudService(IAdminClientsService clientsService)
+    public ClientsCrudService(IAdminClientsService clientsService, IObjectMapper objectMapper)
     {
         _clientsService = clientsService;
+        _objectMapper = objectMapper;
     }
 
     public async Task<IReadOnlyList<ClientGridViewModel>> GetAllAsync(CancellationToken ct = default)
     {
         var clients = await _clientsService.GetAllAsync(ct);
-        return clients.Select(ClientGridViewModel.FromResponse).ToList();
+        
+        return  _objectMapper.Map<IReadOnlyList<ClientGridViewModel>>(clients);
     }
 
     public async Task<ClientFormModel?> GetByIdAsync(Guid id, CancellationToken ct = default)
@@ -30,13 +34,8 @@ public sealed class ClientsCrudService : ICrudService<ClientGridViewModel, Clien
         var client = await _clientsService.GetByIdAsync(id, ct);
         if (client == null)
             return null;
-
-        return new ClientFormModel
-        {
-            Id = client.Id,
-            Name = client.Name,
-            Description = client.Description ?? ""
-        };
+        
+        return  _objectMapper.Map<ClientFormModel>(client);
     }
 
     public async Task<Guid> CreateAsync(ClientFormModel model, CancellationToken ct = default)

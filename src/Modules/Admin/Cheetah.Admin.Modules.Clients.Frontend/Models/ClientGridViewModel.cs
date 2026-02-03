@@ -18,12 +18,4 @@ public sealed class ClientGridViewModel : IGridViewModel
 
     [GridColumn(DisplayName = "Тенант", Order = 3)]
     public string? TenantName { get; init; }
-
-    public static ClientGridViewModel FromResponse(ClientViewModel response) => new()
-    {
-        Id = response.Id,
-        Name = response.Name,
-        Description = response.Description,
-        TenantName = response.Tenant?.Name
-    };
 }

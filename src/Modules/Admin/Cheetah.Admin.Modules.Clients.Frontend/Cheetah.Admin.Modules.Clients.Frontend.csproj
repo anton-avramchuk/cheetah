@@ -20,6 +20,8 @@
       <ProjectReference Include="..\..\..\Cheetah.Blazor.Components\Cheetah.Blazor.Components.csproj" />
       <ProjectReference Include="..\..\..\Cheetah.Frontend.Navigation\Cheetah.Frontend.Navigation.csproj" />
       <ProjectReference Include="..\..\..\Cheetah.Generators.Module\Cheetah.Generators.Module.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer"/>
+      <ProjectReference Include="..\..\..\Cheetah.Mapping.Core\Cheetah.Mapping.Core.csproj" />
+      <ProjectReference Include="..\..\..\Cheetah.Mapping.Mapster\Cheetah.Mapping.Mapster.csproj" />
       <ProjectReference Include="..\Cheetah.Admin.Modules.Clients.Api.Client\Cheetah.Admin.Modules.Clients.Api.Client.csproj" />
     </ItemGroup>
 
