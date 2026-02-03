@@ -1,3 +1,4 @@
+using Cheetah.Core.DataAccess.Attributes;
 using Cheetah.Core.EntityFramework;
 using Crm.Features.DataAccess.Configurations;
 using Crm.Features.Domain;
@@ -5,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Crm.Features.DataAccess;
 
+[ConnectionStringName("FeaturesDb")]
 public class CrmFeatureDbContext(DbContextOptions<CrmFeatureDbContext> options)
     : CrmDbContext<CrmFeatureDbContext>(options)
 {

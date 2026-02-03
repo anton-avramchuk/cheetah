@@ -8,6 +8,8 @@ var postgres = builder.AddPostgres("postgres")
 
 var adminDb = postgres.AddDatabase("AdminDb", "cheetah_admin");
 
+var featuresDb = postgres.AddDatabase("FeaturesDb", "cheetah_features");
+
 var redis = builder.AddRedis("redis")
     .WithDataVolume()
     .WithRedisInsight();
@@ -26,9 +28,11 @@ builder.AddProject<Projects.Cheetah_Admin_Client>("admin-client")
 
 
 builder.AddProject<Projects.Crm_Features_Api>("crm-features-api")
+    .WithReference(featuresDb)
     .WithEnvironment("Redis__Instances__default__ConnectionString",
         redis.Resource.ConnectionStringExpression)
     .WaitFor(redis)
+    .WaitFor(featuresDb)
     ;
 
 
