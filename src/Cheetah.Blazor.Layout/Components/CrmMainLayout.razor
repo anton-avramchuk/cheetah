@@ -1,5 +1,6 @@
 @namespace Cheetah.Blazor.Layout.Components
 @inherits LayoutComponentBase
+@using Cheetah.Blazor.Components.Dialogs
 
 @inject ILayoutConfiguration Config
 
@@ -16,6 +17,8 @@
         </main>
     </div>
 </div>
+
+<CrmDialogProvider />
 
 @code {
     private bool _sidebarCollapsed;
