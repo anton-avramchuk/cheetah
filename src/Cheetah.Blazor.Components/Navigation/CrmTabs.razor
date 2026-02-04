@@ -1,0 +1,166 @@
+@namespace Cheetah.Blazor.Components.Navigation
+
+@* Tab container component *@
+
+<CascadingValue Value="this" IsFixed="true">
+    <ul class="@GetNavClass()" role="tablist">
+        @foreach (var tab in _tabs)
+        {
+            <li class="nav-item" role="presentation">
+                <button type="button"
+                        class="nav-link @(tab.IsActive ? "active" : "") @(tab.Disabled ? "disabled" : "")"
+                        role="tab"
+                        disabled="@tab.Disabled"
+                        aria-selected="@tab.IsActive"
+                        @onclick="() => SelectTab(tab)">
+                    @if (!string.IsNullOrEmpty(tab.Icon))
+                    {
+                        <i class="bi bi-@tab.Icon me-1"></i>
+                    }
+                    @tab.Title
+                </button>
+            </li>
+        }
+    </ul>
+
+    <div class="tab-content @ContentCssClass">
+        @ChildContent
+    </div>
+</CascadingValue>
+
+@code {
+    private readonly List<CrmTab> _tabs = new();
+
+    /// <summary>
+    /// Tab panels (CrmTab components)
+    /// </summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>
+    /// Tab style variant
+    /// </summary>
+    [Parameter]
+    public TabStyle Style { get; set; } = TabStyle.Tabs;
+
+    /// <summary>
+    /// Fill available width
+    /// </summary>
+    [Parameter]
+    public bool Fill { get; set; }
+
+    /// <summary>
+    /// Justify tabs to equal width
+    /// </summary>
+    [Parameter]
+    public bool Justified { get; set; }
+
+    /// <summary>
+    /// Additional CSS classes for nav
+    /// </summary>
+    [Parameter]
+    public string? CssClass { get; set; }
+
+    /// <summary>
+    /// Additional CSS classes for content area
+    /// </summary>
+    [Parameter]
+    public string? ContentCssClass { get; set; }
+
+    /// <summary>
+    /// Active tab ID
+    /// </summary>
+    [Parameter]
+    public string? ActiveTabId { get; set; }
+
+    /// <summary>
+    /// Event when active tab changes
+    /// </summary>
+    [Parameter]
+    public EventCallback<string> ActiveTabIdChanged { get; set; }
+
+    /// <summary>
+    /// Event when tab is selected
+    /// </summary>
+    [Parameter]
+    public EventCallback<CrmTab> OnTabSelected { get; set; }
+
+    internal void AddTab(CrmTab tab)
+    {
+        if (!_tabs.Contains(tab))
+        {
+            _tabs.Add(tab);
+
+            // Activate first tab by default
+            if (_tabs.Count == 1 && string.IsNullOrEmpty(ActiveTabId))
+            {
+                ActiveTabId = tab.TabId;
+            }
+
+            StateHasChanged();
+        }
+    }
+
+    internal void RemoveTab(CrmTab tab)
+    {
+        _tabs.Remove(tab);
+        StateHasChanged();
+    }
+
+    private async Task SelectTab(CrmTab tab)
+    {
+        if (tab.Disabled || tab.IsActive)
+            return;
+
+        ActiveTabId = tab.TabId;
+        await ActiveTabIdChanged.InvokeAsync(ActiveTabId);
+        await OnTabSelected.InvokeAsync(tab);
+        StateHasChanged();
+    }
+
+    /// <summary>
+    /// Select tab by index
+    /// </summary>
+    public async Task SelectTabAsync(int index)
+    {
+        if (index >= 0 && index < _tabs.Count)
+        {
+            await SelectTab(_tabs[index]);
+        }
+    }
+
+    /// <summary>
+    /// Select tab by ID
+    /// </summary>
+    public async Task SelectTabAsync(string tabId)
+    {
+        var tab = _tabs.FirstOrDefault(t => t.TabId == tabId);
+        if (tab != null)
+        {
+            await SelectTab(tab);
+        }
+    }
+
+    private string GetNavClass()
+    {
+        var classes = new List<string> { "nav" };
+
+        classes.Add(Style switch
+        {
+            TabStyle.Pills => "nav-pills",
+            TabStyle.Underline => "nav-underline",
+            _ => "nav-tabs"
+        });
+
+        if (Fill)
+            classes.Add("nav-fill");
+
+        if (Justified)
+            classes.Add("nav-justified");
+
+        if (!string.IsNullOrEmpty(CssClass))
+            classes.Add(CssClass);
+
+        return string.Join(" ", classes);
+    }
+}
