@@ -1,4 +1,4 @@
-using Cheetah.Blazor.Components.Buttons;
+using Cheetah.Blazor.Components;
 using Cheetah.Blazor.Components.Dialogs;
 using Cheetah.Blazor.Components.Modals;
 
@@ -150,7 +150,7 @@ public class DialogButtonTests
         // Assert
         button.Text.ShouldBeEmpty();
         button.Icon.ShouldBeNull();
-        button.Variant.ShouldBe(CrmButton.ButtonVariant.Secondary);
+        button.Variant.ShouldBe(ColorVariant.Secondary);
         button.IsConfirm.ShouldBeFalse();
         button.IsCancel.ShouldBeFalse();
         button.DisableWhenInvalid.ShouldBeTrue();
@@ -164,7 +164,7 @@ public class DialogButtonTests
         {
             Text = "Submit",
             Icon = "check",
-            Variant = CrmButton.ButtonVariant.Primary,
+            Variant = ColorVariant.Primary,
             IsConfirm = true,
             IsCancel = false,
             DisableWhenInvalid = false
@@ -173,7 +173,7 @@ public class DialogButtonTests
         // Assert
         button.Text.ShouldBe("Submit");
         button.Icon.ShouldBe("check");
-        button.Variant.ShouldBe(CrmButton.ButtonVariant.Primary);
+        button.Variant.ShouldBe(ColorVariant.Primary);
         button.IsConfirm.ShouldBeTrue();
         button.IsCancel.ShouldBeFalse();
         button.DisableWhenInvalid.ShouldBeFalse();
@@ -202,7 +202,7 @@ public class DialogButtonsPresetsTests
         // Assert
         cancelButton.ShouldNotBeNull();
         cancelButton!.Text.ShouldBe("Отмена");
-        cancelButton.Variant.ShouldBe(CrmButton.ButtonVariant.Secondary);
+        cancelButton.Variant.ShouldBe(ColorVariant.Secondary);
         cancelButton.DisableWhenInvalid.ShouldBeFalse();
     }
 
@@ -217,7 +217,7 @@ public class DialogButtonsPresetsTests
         saveButton.ShouldNotBeNull();
         saveButton!.Text.ShouldBe("Сохранить");
         saveButton.Icon.ShouldBe("check");
-        saveButton.Variant.ShouldBe(CrmButton.ButtonVariant.Primary);
+        saveButton.Variant.ShouldBe(ColorVariant.Primary);
         saveButton.DisableWhenInvalid.ShouldBeTrue();
     }
 
@@ -267,7 +267,7 @@ public class DialogButtonsPresetsTests
         deleteButton.ShouldNotBeNull();
         deleteButton!.Text.ShouldBe("Удалить");
         deleteButton.Icon.ShouldBe("trash");
-        deleteButton.Variant.ShouldBe(CrmButton.ButtonVariant.Danger);
+        deleteButton.Variant.ShouldBe(ColorVariant.Danger);
     }
 }
 

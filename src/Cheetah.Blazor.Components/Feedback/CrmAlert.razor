@@ -31,7 +31,7 @@
     /// Alert variant (Primary, Secondary, Success, Danger, Warning, Info, Light, Dark)
     /// </summary>
     [Parameter]
-    public AlertVariant Variant { get; set; } = AlertVariant.Info;
+    public ColorVariant Variant { get; set; } = ColorVariant.Info;
 
     /// <summary>
     /// Alert message
@@ -83,7 +83,7 @@
 
     private string GetCssClass()
     {
-        var classes = new List<string> { "alert", $"alert-{GetVariantName()}" };
+        var classes = new List<string> { "alert", $"alert-{Variant.ToCssClass()}" };
 
         if (Dismissible)
             classes.Add("alert-dismissible fade show");
@@ -92,30 +92,5 @@
             classes.Add(CssClass);
 
         return string.Join(" ", classes);
-    }
-
-    private string GetVariantName() => Variant switch
-    {
-        AlertVariant.Primary => "primary",
-        AlertVariant.Secondary => "secondary",
-        AlertVariant.Success => "success",
-        AlertVariant.Danger => "danger",
-        AlertVariant.Warning => "warning",
-        AlertVariant.Info => "info",
-        AlertVariant.Light => "light",
-        AlertVariant.Dark => "dark",
-        _ => "info"
-    };
-
-    public enum AlertVariant
-    {
-        Primary,
-        Secondary,
-        Success,
-        Danger,
-        Warning,
-        Info,
-        Light,
-        Dark
     }
 }

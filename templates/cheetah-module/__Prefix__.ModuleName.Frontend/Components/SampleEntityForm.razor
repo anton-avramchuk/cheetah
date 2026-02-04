@@ -2,6 +2,7 @@
 
 @using __Prefix__.ModuleName.Frontend.Models
 @using __Prefix__.ModuleName.ApiClient
+@using Cheetah.Blazor.Components
 @using Cheetah.Blazor.Components.Dialogs
 @using Cheetah.Blazor.Components.Feedback
 @using Cheetah.Blazor.Components.Forms
@@ -35,7 +36,7 @@ else
 
         @if (!string.IsNullOrEmpty(_errorMessage))
         {
-            <CrmAlert Variant="CrmAlert.AlertVariant.Danger" Message="@_errorMessage" />
+            <CrmAlert Variant="ColorVariant.Danger" Message="@_errorMessage" />
         }
     </EditForm>
 }

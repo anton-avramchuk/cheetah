@@ -2,32 +2,49 @@
 
 @* Card component with header, content, and footer *@
 
-<div class="@GetCssClass()">
-    @if (Header != null)
+<div class="@GetCssClass()" @onclick="HandleClick" style="@(Clickable ? "cursor: pointer;" : "")" tabindex="@(Clickable ? 0 : -1)" role="@(Clickable ? "button" : null)">
+    @if (IsLoading)
     {
-        <div class="card-header">
-            @Header
+        <div class="card-body">
+            <div class="crm-card-loading">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
         </div>
     }
-    else if (!string.IsNullOrEmpty(Title))
+    else
     {
-        <div class="card-header">
-            <h5 class="card-title mb-0">@Title</h5>
-        </div>
-    }
-
-    <div class="card-body">
-        @if (ChildContent != null)
+        @if (Header != null)
         {
-            @ChildContent
+            <div class="card-header">
+                @Header
+            </div>
         }
-    </div>
+        else if (!string.IsNullOrEmpty(Title) || !string.IsNullOrEmpty(Subtitle))
+        {
+            <div class="card-header">
+                @if (!string.IsNullOrEmpty(Title))
+                {
+                    <h5 class="card-title mb-0">@Title</h5>
+                }
+                @if (!string.IsNullOrEmpty(Subtitle))
+                {
+                    <p class="card-subtitle text-muted @(string.IsNullOrEmpty(Title) ? "mb-0" : "mt-1 mb-0")">@Subtitle</p>
+                }
+            </div>
+        }
 
-    @if (Footer != null)
-    {
-        <div class="card-footer">
-            @Footer
+        <div class="card-body">
+            @ChildContent
         </div>
+
+        @if (Footer != null)
+        {
+            <div class="card-footer">
+                @Footer
+            </div>
+        }
     }
 </div>
 
@@ -37,6 +54,12 @@
     /// </summary>
     [Parameter]
     public string? Title { get; set; }
+
+    /// <summary>
+    /// Card subtitle
+    /// </summary>
+    [Parameter]
+    public string? Subtitle { get; set; }
 
     /// <summary>
     /// Card header content
@@ -62,13 +85,74 @@
     [Parameter]
     public string? CssClass { get; set; }
 
+    /// <summary>
+    /// Shadow variant (None, Small, Default, Large)
+    /// </summary>
+    [Parameter]
+    public CardShadow Shadow { get; set; } = CardShadow.None;
+
+    /// <summary>
+    /// Border color variant (null = no colored border)
+    /// </summary>
+    [Parameter]
+    public ColorVariant? Border { get; set; }
+
+    /// <summary>
+    /// Is card clickable
+    /// </summary>
+    [Parameter]
+    public bool Clickable { get; set; }
+
+    /// <summary>
+    /// Is card in loading state
+    /// </summary>
+    [Parameter]
+    public bool IsLoading { get; set; }
+
+    /// <summary>
+    /// Click event handler (when Clickable = true)
+    /// </summary>
+    [Parameter]
+    public EventCallback OnClick { get; set; }
+
+    private async Task HandleClick()
+    {
+        if (Clickable)
+        {
+            await OnClick.InvokeAsync();
+        }
+    }
+
     private string GetCssClass()
     {
         var classes = new List<string> { "card" };
 
+        // Shadow
+        if (Shadow != CardShadow.None)
+        {
+            classes.Add(Shadow switch
+            {
+                CardShadow.Small => "shadow-sm",
+                CardShadow.Default => "shadow",
+                CardShadow.Large => "shadow-lg",
+                _ => ""
+            });
+        }
+
+        // Border
+        if (Border.HasValue)
+        {
+            classes.Add($"border-{Border.Value.ToCssClass()}");
+        }
+
+        // Clickable hover effect
+        if (Clickable)
+            classes.Add("crm-card-clickable");
+
+        // Custom classes
         if (!string.IsNullOrEmpty(CssClass))
             classes.Add(CssClass);
 
-        return string.Join(" ", classes);
+        return string.Join(" ", classes.Where(c => !string.IsNullOrEmpty(c)));
     }
 }

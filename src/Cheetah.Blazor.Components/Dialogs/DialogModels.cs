@@ -1,4 +1,3 @@
-using Cheetah.Blazor.Components.Buttons;
 using Cheetah.Blazor.Components.Modals;
 
 namespace Cheetah.Blazor.Components.Dialogs;
@@ -51,7 +50,7 @@ public sealed class DialogButton
 {
     public string Text { get; set; } = "";
     public string? Icon { get; set; }
-    public CrmButton.ButtonVariant Variant { get; set; } = CrmButton.ButtonVariant.Secondary;
+    public ColorVariant Variant { get; set; } = ColorVariant.Secondary;
     public bool IsConfirm { get; set; }
     public bool IsCancel { get; set; }
     public bool DisableWhenInvalid { get; set; } = true;
@@ -67,7 +66,7 @@ public static class DialogButtons
         new DialogButton
         {
             Text = "Отмена",
-            Variant = CrmButton.ButtonVariant.Secondary,
+            Variant = ColorVariant.Secondary,
             IsCancel = true,
             DisableWhenInvalid = false
         },
@@ -75,7 +74,7 @@ public static class DialogButtons
         {
             Text = "Сохранить",
             Icon = "check",
-            Variant = CrmButton.ButtonVariant.Primary,
+            Variant = ColorVariant.Primary,
             IsConfirm = true,
             DisableWhenInvalid = true
         }
@@ -86,14 +85,14 @@ public static class DialogButtons
         new DialogButton
         {
             Text = "Отмена",
-            Variant = CrmButton.ButtonVariant.Secondary,
+            Variant = ColorVariant.Secondary,
             IsCancel = true,
             DisableWhenInvalid = false
         },
         new DialogButton
         {
             Text = "OK",
-            Variant = CrmButton.ButtonVariant.Primary,
+            Variant = ColorVariant.Primary,
             IsConfirm = true,
             DisableWhenInvalid = true
         }
@@ -104,14 +103,14 @@ public static class DialogButtons
         new DialogButton
         {
             Text = "Нет",
-            Variant = CrmButton.ButtonVariant.Secondary,
+            Variant = ColorVariant.Secondary,
             IsCancel = true,
             DisableWhenInvalid = false
         },
         new DialogButton
         {
             Text = "Да",
-            Variant = CrmButton.ButtonVariant.Primary,
+            Variant = ColorVariant.Primary,
             IsConfirm = true,
             DisableWhenInvalid = false
         }
@@ -122,7 +121,7 @@ public static class DialogButtons
         new DialogButton
         {
             Text = "Отмена",
-            Variant = CrmButton.ButtonVariant.Secondary,
+            Variant = ColorVariant.Secondary,
             IsCancel = true,
             DisableWhenInvalid = false
         },
@@ -130,7 +129,7 @@ public static class DialogButtons
         {
             Text = "Удалить",
             Icon = "trash",
-            Variant = CrmButton.ButtonVariant.Danger,
+            Variant = ColorVariant.Danger,
             IsConfirm = true,
             DisableWhenInvalid = false
         }

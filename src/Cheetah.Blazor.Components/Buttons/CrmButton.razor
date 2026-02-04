@@ -45,7 +45,7 @@
     /// Button variant (Primary, Secondary, Success, Danger, Warning, Info, Light, Dark)
     /// </summary>
     [Parameter]
-    public ButtonVariant Variant { get; set; } = ButtonVariant.Primary;
+    public ColorVariant Variant { get; set; } = ColorVariant.Primary;
 
     /// <summary>
     /// Button size (Small, Normal, Large)
@@ -108,7 +108,7 @@
         var classes = new List<string> { "btn" };
 
         // Variant
-        var variantName = GetVariantName();
+        var variantName = Variant.ToCssClass();
         classes.Add(Outline ? $"btn-outline-{variantName}" : $"btn-{variantName}");
 
         // Size
@@ -126,31 +126,6 @@
             classes.Add(CssClass);
 
         return string.Join(" ", classes);
-    }
-
-    private string GetVariantName() => Variant switch
-    {
-        ButtonVariant.Primary => "primary",
-        ButtonVariant.Secondary => "secondary",
-        ButtonVariant.Success => "success",
-        ButtonVariant.Danger => "danger",
-        ButtonVariant.Warning => "warning",
-        ButtonVariant.Info => "info",
-        ButtonVariant.Light => "light",
-        ButtonVariant.Dark => "dark",
-        _ => "primary"
-    };
-
-    public enum ButtonVariant
-    {
-        Primary,
-        Secondary,
-        Success,
-        Danger,
-        Warning,
-        Info,
-        Light,
-        Dark
     }
 
     public enum ButtonSize

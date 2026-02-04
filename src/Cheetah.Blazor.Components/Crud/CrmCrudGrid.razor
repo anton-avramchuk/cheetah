@@ -21,7 +21,7 @@
     <ChildContent>
         @if (!string.IsNullOrEmpty(_errorMessage))
         {
-            <CrmAlert Variant="CrmAlert.AlertVariant.Danger" Message="@_errorMessage" Dismissible="true" />
+            <CrmAlert Variant="ColorVariant.Danger" Message="@_errorMessage" Dismissible="true" />
         }
 
         @if (_isLoading)
@@ -76,14 +76,14 @@
                                             @if (AllowEdit && EditFormType != null)
                                             {
                                                 <CrmButton Icon="pencil"
-                                                           Variant="CrmButton.ButtonVariant.Secondary"
+                                                           Variant="ColorVariant.Secondary"
                                                            Size="CrmButton.ButtonSize.Small"
                                                            OnClick="() => OpenEditDialogAsync(item.Id)" />
                                             }
                                             @if (AllowDelete)
                                             {
                                                 <CrmButton Icon="trash"
-                                                           Variant="CrmButton.ButtonVariant.Danger"
+                                                           Variant="ColorVariant.Danger"
                                                            Size="CrmButton.ButtonSize.Small"
                                                            OnClick="() => DeleteAsync(item)" />
                                             }
