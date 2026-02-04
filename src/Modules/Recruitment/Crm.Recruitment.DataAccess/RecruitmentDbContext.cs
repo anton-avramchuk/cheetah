@@ -1,3 +1,4 @@
+using Cheetah.Core.DataAccess.Attributes;
 using Cheetah.Core.EntityFramework;
 using Crm.Recruitment.DataAccess.Configurations;
 using Crm.Recruitment.Domain;
@@ -5,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Crm.Recruitment.DataAccess;
 
+[ConnectionStringName("Recruitment")]
 public class RecruitmentDbContext(DbContextOptions<RecruitmentDbContext> options)
     : CrmDbContext<RecruitmentDbContext>(options)
 {

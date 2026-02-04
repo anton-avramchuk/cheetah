@@ -3,6 +3,7 @@ using Cheetah.Core.DataAccess;
 using Cheetah.Core.Domain;
 using Cheetah.Core.EntityFramework.Migrations;
 using Cheetah.Core.EntityFramework.Providers;
+using Cheetah.Core.EntityFramework.Seeding;
 using Cheetah.Core.Modularity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -20,21 +21,24 @@ public partial class CrmEntityFrameworkModule : CrmModule
         context.Services.TryAddTransient(typeof(IDbContextProvider<>), typeof(DbContextProvider<>));
     }
 
-    public override void OnApplicationInitialization(ApplicationInitializationContext context)
+    public override async Task OnApplicationInitializationAsync(ApplicationInitializationContext context)
     {
         var logger = context.ServiceProvider.GetRequiredService<ILogger<CrmEntityFrameworkModule>>();
 
-        logger.LogInformation("Applying database migrations...");
-
+        // Apply migrations
         var migrationManager = context.ServiceProvider.GetService<DatabaseMigrationManager>();
-
         if (migrationManager != null)
         {
-            migrationManager.MigrateAllAsync().GetAwaiter().GetResult();
+            logger.LogInformation("Applying database migrations...");
+            await migrationManager.MigrateAllAsync();
         }
-        else
+
+        // Seed default data
+        var seedManager = context.ServiceProvider.GetService<DatabaseSeedManager>();
+        if (seedManager != null)
         {
-            logger.LogInformation("No DatabaseMigrationManager registered. Skipping automatic migrations.");
+            logger.LogInformation("Seeding database with default data...");
+            await seedManager.SeedAllAsync();
         }
     }
 }
