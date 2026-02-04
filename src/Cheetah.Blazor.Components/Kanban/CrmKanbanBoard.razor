@@ -1,0 +1,121 @@
+@namespace Cheetah.Blazor.Components.Kanban
+@typeparam TItem
+
+@* Kanban board component *@
+
+<div class="crm-kanban-board @CssClass" style="@GetStyle()">
+    <CascadingValue Value="this" IsFixed="true">
+        @ChildContent
+    </CascadingValue>
+</div>
+
+@code {
+    private readonly List<CrmKanbanColumn<TItem>> _columns = new();
+
+    /// <summary>
+    /// Board content (CrmKanbanColumn components)
+    /// </summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>
+    /// Card template for rendering items
+    /// </summary>
+    [Parameter]
+    public RenderFragment<TItem>? CardTemplate { get; set; }
+
+    /// <summary>
+    /// Additional CSS classes
+    /// </summary>
+    [Parameter]
+    public string? CssClass { get; set; }
+
+    /// <summary>
+    /// Minimum height of the board (default: 400px, null for auto)
+    /// </summary>
+    [Parameter]
+    public string? MinHeight { get; set; } = "400px";
+
+    /// <summary>
+    /// Event when item is moved between columns
+    /// </summary>
+    [Parameter]
+    public EventCallback<KanbanItemMovedEventArgs<TItem>> OnItemMoved { get; set; }
+
+    /// <summary>
+    /// Event when card is clicked
+    /// </summary>
+    [Parameter]
+    public EventCallback<TItem> OnCardClick { get; set; }
+
+    internal TItem DraggedItem { get; private set; } = default!;
+    internal CrmKanbanColumn<TItem>? SourceColumn { get; private set; }
+    internal bool IsDragging { get; private set; }
+    internal int DraggedItemIndex { get; private set; } = -1;
+
+    internal void RegisterColumn(CrmKanbanColumn<TItem> column)
+    {
+        if (!_columns.Contains(column))
+        {
+            _columns.Add(column);
+        }
+    }
+
+    internal void UnregisterColumn(CrmKanbanColumn<TItem> column)
+    {
+        _columns.Remove(column);
+    }
+
+    internal void StartDrag(TItem item, CrmKanbanColumn<TItem> sourceColumn, int itemIndex)
+    {
+        DraggedItem = item;
+        SourceColumn = sourceColumn;
+        DraggedItemIndex = itemIndex;
+        IsDragging = true;
+        StateHasChanged();
+    }
+
+    internal void EndDrag()
+    {
+        DraggedItem = default!;
+        SourceColumn = null;
+        DraggedItemIndex = -1;
+        IsDragging = false;
+
+        foreach (var column in _columns)
+        {
+            column.IsDropTarget = false;
+            column.DropTargetIndex = -1;
+        }
+
+        StateHasChanged();
+    }
+
+    internal async Task DropItem(CrmKanbanColumn<TItem> targetColumn, int targetIndex)
+    {
+        if (!IsDragging || SourceColumn == null) return;
+
+        var args = new KanbanItemMovedEventArgs<TItem>
+        {
+            Item = DraggedItem,
+            SourceColumnId = SourceColumn.Id,
+            SourceIndex = DraggedItemIndex,
+            TargetColumnId = targetColumn.Id,
+            TargetIndex = targetIndex
+        };
+
+        await OnItemMoved.InvokeAsync(args);
+
+        EndDrag();
+    }
+
+    internal async Task HandleCardClick(TItem item)
+    {
+        await OnCardClick.InvokeAsync(item);
+    }
+
+    private string? GetStyle()
+    {
+        return !string.IsNullOrEmpty(MinHeight) ? $"min-height: {MinHeight};" : null;
+    }
+}

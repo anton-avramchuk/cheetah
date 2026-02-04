@@ -1,0 +1,92 @@
+@namespace Cheetah.Blazor.Components.Kanban
+@typeparam TItem
+
+@* Kanban card component *@
+
+<div class="crm-kanban-card @(IsDragging ? "dragging" : "") @CssClass"
+     draggable="@(Disabled ? "false" : "true")"
+     @ondragstart="HandleDragStart"
+     @ondragend="HandleDragEnd"
+     @onclick="HandleClick">
+    @if (CardTemplate != null)
+    {
+        @CardTemplate(Item)
+    }
+    else
+    {
+        <div class="crm-kanban-card-content">
+            @ChildContent
+        </div>
+    }
+</div>
+
+@code {
+    /// <summary>
+    /// Data item associated with this card
+    /// </summary>
+    [Parameter]
+    public TItem Item { get; set; } = default!;
+
+    /// <summary>
+    /// Index of the item in the column
+    /// </summary>
+    [Parameter]
+    public int ItemIndex { get; set; }
+
+    /// <summary>
+    /// Card content (simple mode)
+    /// </summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>
+    /// Card template (template mode)
+    /// </summary>
+    [Parameter]
+    public RenderFragment<TItem>? CardTemplate { get; set; }
+
+    /// <summary>
+    /// Is card disabled for dragging
+    /// </summary>
+    [Parameter]
+    public bool Disabled { get; set; }
+
+    /// <summary>
+    /// Additional CSS classes
+    /// </summary>
+    [Parameter]
+    public string? CssClass { get; set; }
+
+    /// <summary>
+    /// Click event
+    /// </summary>
+    [Parameter]
+    public EventCallback<TItem> OnClick { get; set; }
+
+    [CascadingParameter]
+    private CrmKanbanBoard<TItem>? Board { get; set; }
+
+    [CascadingParameter]
+    private CrmKanbanColumn<TItem>? Column { get; set; }
+
+    private bool IsDragging { get; set; }
+
+    private void HandleDragStart(DragEventArgs e)
+    {
+        if (Disabled || Board == null || Column == null) return;
+
+        IsDragging = true;
+        Board.StartDrag(Item, Column, ItemIndex);
+    }
+
+    private void HandleDragEnd(DragEventArgs e)
+    {
+        IsDragging = false;
+        Board?.EndDrag();
+    }
+
+    private async Task HandleClick()
+    {
+        await OnClick.InvokeAsync(Item);
+    }
+}
