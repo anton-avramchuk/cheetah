@@ -2,6 +2,7 @@
 @typeparam TGridViewModel where TGridViewModel : IGridViewModel
 @typeparam TCreateViewModel
 @typeparam TEditViewModel
+@implements IDisposable
 
 @using Cheetah.Blazor.Components.Buttons
 @using Cheetah.Blazor.Components.Dialogs
@@ -10,12 +11,33 @@
 
 <CrmCard>
     <Header>
-        <div class="d-flex justify-content-between align-items-center">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
             <h5 class="mb-0">@Title</h5>
-            @if (AllowCreate && CreateFormType != null)
-            {
-                <CrmButton Text="@CreateButtonText" Icon="plus" OnClick="OpenCreateDialogAsync" />
-            }
+            <div class="d-flex align-items-center gap-2">
+                @if (AllowSearch)
+                {
+                    <div class="input-group input-group-sm" style="width: 250px;">
+                        <span class="input-group-text">
+                            <i class="bi bi-search"></i>
+                        </span>
+                        <input type="text"
+                               class="form-control"
+                               placeholder="@SearchPlaceholder"
+                               value="@_searchText"
+                               @oninput="OnSearchInput" />
+                        @if (!string.IsNullOrEmpty(_searchText))
+                        {
+                            <button class="btn btn-outline-secondary" type="button" @onclick="ClearSearchAsync">
+                                <i class="bi bi-x"></i>
+                            </button>
+                        }
+                    </div>
+                }
+                @if (AllowCreate && CreateFormType != null)
+                {
+                    <CrmButton Text="@CreateButtonText" Icon="plus" OnClick="OpenCreateDialogAsync" />
+                }
+            </div>
         </div>
     </Header>
     <ChildContent>
@@ -95,6 +117,63 @@
                     </tbody>
                 </table>
             </div>
+
+            @* Pagination *@
+            @if (_totalPages > 1 || PageSizeOptions.Length > 1)
+            {
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mt-3">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="text-muted small">Показано:</span>
+                        <select class="form-select form-select-sm" style="width: auto;" @onchange="OnPageSizeChangedAsync">
+                            @foreach (var size in PageSizeOptions)
+                            {
+                                <option value="@size" selected="@(size == _currentPageSize)">@size</option>
+                            }
+                        </select>
+                        <span class="text-muted small">
+                            из @_totalItems
+                        </span>
+                    </div>
+
+                    @if (_totalPages > 1)
+                    {
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination pagination-sm mb-0">
+                                <li class="page-item @(_currentPage == 1 ? "disabled" : "")">
+                                    <button class="page-link" @onclick="GoToFirstPageAsync" disabled="@(_currentPage == 1)">
+                                        <i class="bi bi-chevron-double-left"></i>
+                                    </button>
+                                </li>
+                                <li class="page-item @(_currentPage == 1 ? "disabled" : "")">
+                                    <button class="page-link" @onclick="GoToPreviousPageAsync" disabled="@(_currentPage == 1)">
+                                        <i class="bi bi-chevron-left"></i>
+                                    </button>
+                                </li>
+
+                                @foreach (var pageNum in GetVisiblePageNumbers())
+                                {
+                                    <li class="page-item @(pageNum == _currentPage ? "active" : "")">
+                                        <button class="page-link" @onclick="() => GoToPageAsync(pageNum)">
+                                            @pageNum
+                                        </button>
+                                    </li>
+                                }
+
+                                <li class="page-item @(_currentPage == _totalPages ? "disabled" : "")">
+                                    <button class="page-link" @onclick="GoToNextPageAsync" disabled="@(_currentPage == _totalPages)">
+                                        <i class="bi bi-chevron-right"></i>
+                                    </button>
+                                </li>
+                                <li class="page-item @(_currentPage == _totalPages ? "disabled" : "")">
+                                    <button class="page-link" @onclick="GoToLastPageAsync" disabled="@(_currentPage == _totalPages)">
+                                        <i class="bi bi-chevron-double-right"></i>
+                                    </button>
+                                </li>
+                            </ul>
+                        </nav>
+                    }
+                </div>
+            }
         }
     </ChildContent>
 </CrmCard>

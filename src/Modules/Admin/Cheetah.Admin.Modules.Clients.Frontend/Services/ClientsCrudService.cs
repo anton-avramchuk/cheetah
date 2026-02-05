@@ -2,6 +2,8 @@ using Cheetah.Admin.Modules.Clients.Api.Client;
 using Cheetah.Admin.Modules.Clients.Contracts.Requests;
 using Cheetah.Admin.Modules.Clients.Frontend.Models;
 using Cheetah.Blazor.Components.Crud;
+using Cheetah.Contracts.Requests;
+using Cheetah.Contracts.Responses;
 using Cheetah.Core.DependencyInjection;
 using Cheetah.Mapping.Core;
 
@@ -22,11 +24,20 @@ public sealed class ClientsCrudService : ICrudService<ClientGridViewModel, Clien
         _objectMapper = objectMapper;
     }
 
-    public async Task<IReadOnlyList<ClientGridViewModel>> GetAllAsync(CancellationToken ct = default)
+    public async Task<GridResult<ClientGridViewModel>> GetAllAsync(GridRequest request, CancellationToken ct = default)
     {
-        var result = await _clientsService.GetAllAsync(null, ct);
+        var apiRequest = new GetAllClientsRequest
+        {
+            Page = request.Page,
+            PageSize = request.PageSize,
+            Sort = request.Sort,
+            Filter = request.Filter
+        };
 
-        return _objectMapper.Map<IReadOnlyList<ClientGridViewModel>>(result.Data);
+        var result = await _clientsService.GetAllAsync(apiRequest, ct);
+        var mappedData = _objectMapper.Map<IReadOnlyList<ClientGridViewModel>>(result.Data);
+
+        return new GridResult<ClientGridViewModel>(mappedData, result.Total);
     }
 
     public async Task<ClientFormModel?> GetByIdAsync(Guid id, CancellationToken ct = default)

@@ -1,3 +1,4 @@
+using Cheetah.Contracts;
 using Cheetah.Core;
 using Cheetah.Core.Modularity;
 
@@ -8,6 +9,7 @@ namespace Cheetah.Blazor.Components;
 /// Provides reusable UI components for all Blazor WASM applications.
 /// </summary>
 [DependsOn(typeof(CoreModule))]
+[DependsOn(typeof(CrmContractsModule))]
 public partial class CrmBlazorComponentsModule : CrmModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)

@@ -1,4 +1,5 @@
 using Cheetah.Blazor.Components.Dialogs;
+using Cheetah.Contracts.Requests;
 using Microsoft.AspNetCore.Components;
 
 namespace Cheetah.Blazor.Components.Crud;
@@ -40,6 +41,18 @@ public partial class CrmCrudGrid<TGridViewModel, TCreateViewModel, TEditViewMode
     /// </summary>
     [Parameter]
     public bool AllowDelete { get; set; } = true;
+
+    /// <summary>
+    /// Enable search/filter input.
+    /// </summary>
+    [Parameter]
+    public bool AllowSearch { get; set; } = true;
+
+    /// <summary>
+    /// Field name for search filter.
+    /// </summary>
+    [Parameter]
+    public string SearchField { get; set; } = "Name";
 
     /// <summary>
     /// Type of component for create form.
@@ -105,6 +118,24 @@ public partial class CrmCrudGrid<TGridViewModel, TCreateViewModel, TEditViewMode
     public string ActionsColumnWidth { get; set; } = "120px";
 
     /// <summary>
+    /// Placeholder for search input.
+    /// </summary>
+    [Parameter]
+    public string SearchPlaceholder { get; set; } = "Поиск...";
+
+    /// <summary>
+    /// Default page size.
+    /// </summary>
+    [Parameter]
+    public int PageSize { get; set; } = 10;
+
+    /// <summary>
+    /// Available page size options.
+    /// </summary>
+    [Parameter]
+    public int[] PageSizeOptions { get; set; } = [10, 25, 50, 100];
+
+    /// <summary>
     /// Event callback after successful create.
     /// </summary>
     [Parameter]
@@ -124,16 +155,31 @@ public partial class CrmCrudGrid<TGridViewModel, TCreateViewModel, TEditViewMode
 
     #endregion
 
+    #region State
+
     private IReadOnlyList<TGridViewModel>? _items;
     private IReadOnlyList<GridColumnInfo> _columns = [];
     private bool _isLoading = true;
     private string? _errorMessage;
+
+    // Pagination state
+    private int _currentPage = 1;
+    private int _currentPageSize;
+    private int _totalItems;
+    private int _totalPages => _currentPageSize > 0 ? (int)Math.Ceiling((double)_totalItems / _currentPageSize) : 1;
+
+    // Filter state
+    private string _searchText = string.Empty;
+    private System.Timers.Timer? _debounceTimer;
+
+    #endregion
 
     private bool HasActions => (AllowEdit && EditFormType != null) || AllowDelete;
 
     protected override void OnInitialized()
     {
         _columns = GridColumnInfo.FromType<TGridViewModel>();
+        _currentPageSize = PageSize;
     }
 
     protected override async Task OnInitializedAsync()
@@ -150,6 +196,27 @@ public partial class CrmCrudGrid<TGridViewModel, TCreateViewModel, TEditViewMode
         StateHasChanged();
     }
 
+    private GridRequest BuildGridRequest()
+    {
+        var request = new GridRequest
+        {
+            Page = _currentPage,
+            PageSize = _currentPageSize
+        };
+
+        if (!string.IsNullOrWhiteSpace(_searchText))
+        {
+            request.Filter = new FilterDescriptor
+            {
+                Field = SearchField,
+                Operator = "contains",
+                Value = _searchText.Trim()
+            };
+        }
+
+        return request;
+    }
+
     private async Task LoadDataAsync()
     {
         _isLoading = true;
@@ -157,17 +224,103 @@ public partial class CrmCrudGrid<TGridViewModel, TCreateViewModel, TEditViewMode
 
         try
         {
-            _items = await Service.GetAllAsync();
+            var request = BuildGridRequest();
+            var result = await Service.GetAllAsync(request);
+            _items = result.Data.ToList();
+            _totalItems = result.Total;
         }
         catch (Exception ex)
         {
             _errorMessage = $"Ошибка загрузки: {ex.Message}";
+            _items = [];
+            _totalItems = 0;
         }
         finally
         {
             _isLoading = false;
         }
     }
+
+    #region Pagination
+
+    private async Task GoToPageAsync(int page)
+    {
+        if (page < 1 || page > _totalPages || page == _currentPage)
+            return;
+
+        _currentPage = page;
+        await LoadDataAsync();
+    }
+
+    private async Task GoToFirstPageAsync() => await GoToPageAsync(1);
+    private async Task GoToPreviousPageAsync() => await GoToPageAsync(_currentPage - 1);
+    private async Task GoToNextPageAsync() => await GoToPageAsync(_currentPage + 1);
+    private async Task GoToLastPageAsync() => await GoToPageAsync(_totalPages);
+
+    private async Task OnPageSizeChangedAsync(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out var newSize) && newSize > 0)
+        {
+            _currentPageSize = newSize;
+            _currentPage = 1; // Reset to first page
+            await LoadDataAsync();
+        }
+    }
+
+    private IEnumerable<int> GetVisiblePageNumbers()
+    {
+        const int maxVisible = 5;
+        var start = Math.Max(1, _currentPage - maxVisible / 2);
+        var end = Math.Min(_totalPages, start + maxVisible - 1);
+
+        if (end - start + 1 < maxVisible)
+        {
+            start = Math.Max(1, end - maxVisible + 1);
+        }
+
+        for (var i = start; i <= end; i++)
+        {
+            yield return i;
+        }
+    }
+
+    #endregion
+
+    #region Search/Filter
+
+    private void OnSearchInput(ChangeEventArgs e)
+    {
+        _searchText = e.Value?.ToString() ?? string.Empty;
+
+        // Debounce search
+        _debounceTimer?.Stop();
+        _debounceTimer?.Dispose();
+
+        _debounceTimer = new System.Timers.Timer(300);
+        _debounceTimer.Elapsed += async (_, _) =>
+        {
+            _debounceTimer?.Stop();
+            await InvokeAsync(async () =>
+            {
+                _currentPage = 1; // Reset to first page on search
+                await LoadDataAsync();
+                StateHasChanged();
+            });
+        };
+        _debounceTimer.AutoReset = false;
+        _debounceTimer.Start();
+    }
+
+    private async Task ClearSearchAsync()
+    {
+        _searchText = string.Empty;
+        _currentPage = 1;
+        await LoadDataAsync();
+    }
+
+    #endregion
+
+    #region CRUD Operations
 
     private async Task OpenCreateDialogAsync()
     {
@@ -269,5 +422,13 @@ public partial class CrmCrudGrid<TGridViewModel, TCreateViewModel, TEditViewMode
                 StateHasChanged();
             }
         }
+    }
+
+    #endregion
+
+    public void Dispose()
+    {
+        _debounceTimer?.Stop();
+        _debounceTimer?.Dispose();
     }
 }

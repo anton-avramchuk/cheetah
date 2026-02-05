@@ -1,3 +1,6 @@
+using Cheetah.Contracts.Requests;
+using Cheetah.Contracts.Responses;
+
 namespace Cheetah.Blazor.Components.Crud;
 
 /// <summary>
@@ -10,9 +13,9 @@ public interface ICrudService<TGridViewModel, TCreateViewModel, TEditViewModel>
     where TGridViewModel : IGridViewModel
 {
     /// <summary>
-    /// Gets all items for grid display.
+    /// Gets items with pagination, sorting and filtering.
     /// </summary>
-    Task<IReadOnlyList<TGridViewModel>> GetAllAsync(CancellationToken ct = default);
+    Task<GridResult<TGridViewModel>> GetAllAsync(GridRequest request, CancellationToken ct = default);
 
     /// <summary>
     /// Gets item by id for editing.
