@@ -20,5 +20,8 @@ public class MappingProfile : IMapsterMappingProfile
         config.NewConfig<CreateVacancyRequest, CreateVacancyCommand>();
         config.NewConfig<UpdateVacancyRequest, UpdateVacancyCommand>();
         config.NewConfig<DeleteVacancyRequest, DeleteVacancyCommand>();
+
+        config.NewConfig<VacancyRoleModel, VacancyRoleViewModel>();
+        config.NewConfig<GetAllVacancyRolesRequest, GetAllVacancyRolesQuery>();
     }
 }
