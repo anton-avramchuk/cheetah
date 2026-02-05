@@ -19,6 +19,7 @@
         <ProjectReference Include="..\Modules\Admin\Cheetah.Admin.Api\Cheetah.Admin.Api.csproj" />
         <ProjectReference Include="..\Modules\Admin\Cheetah.Admin.Client\Cheetah.Admin.Client.csproj" />
         <ProjectReference Include="..\Modules\Features\Crm.Features.Api\Crm.Features.Api.csproj" />
+        <ProjectReference Include="..\Modules\Recruitment\Crm.Recruitment.Api\Crm.Recruitment.Api.csproj" />
     </ItemGroup>
 
 </Project>

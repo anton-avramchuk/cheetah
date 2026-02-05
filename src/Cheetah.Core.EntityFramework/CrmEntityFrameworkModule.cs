@@ -21,7 +21,9 @@ public partial class CrmEntityFrameworkModule : CrmModule
         context.Services.TryAddTransient(typeof(IDbContextProvider<>), typeof(DbContextProvider<>));
     }
 
-    public override async Task OnApplicationInitializationAsync(ApplicationInitializationContext context)
+    
+
+    public override void OnApplicationInitialization(ApplicationInitializationContext context)
     {
         var logger = context.ServiceProvider.GetRequiredService<ILogger<CrmEntityFrameworkModule>>();
 
@@ -30,7 +32,7 @@ public partial class CrmEntityFrameworkModule : CrmModule
         if (migrationManager != null)
         {
             logger.LogInformation("Applying database migrations...");
-            await migrationManager.MigrateAllAsync();
+            migrationManager.MigrateAllAsync().GetAwaiter().GetResult();
         }
 
         // Seed default data
@@ -38,7 +40,7 @@ public partial class CrmEntityFrameworkModule : CrmModule
         if (seedManager != null)
         {
             logger.LogInformation("Seeding database with default data...");
-            await seedManager.SeedAllAsync();
+            seedManager.SeedAllAsync().GetAwaiter().GetResult();
         }
     }
 }
