@@ -3,7 +3,6 @@ var builder = DistributedApplication.CreateBuilder(args);
 
 
 
-
 var postgres = builder.AddPostgres("postgres")
     .WithDataVolume()
     .WithPgAdmin();
@@ -41,7 +40,7 @@ builder.AddProject<Projects.Crm_Features_Api>("crm-features-api")
     ;
 
 
-builder.AddProject<Projects.Crm_Recruitment_Api>("crm-recruitment-api")
+var recruitment = builder.AddProject<Projects.Crm_Recruitment_Api>("crm-recruitment-api")
     .WithReference(recruitmentDb)
     .WithEnvironment("Redis__Instances__default__ConnectionString",
         redis.Resource.ConnectionStringExpression)
@@ -49,5 +48,10 @@ builder.AddProject<Projects.Crm_Recruitment_Api>("crm-recruitment-api")
     .WaitFor(recruitmentDb)
     ;
 
+
+builder.AddProject<Projects.Crm_Proxy>("crm-proxy")
+    .WithReference(recruitment)
+    .WaitFor(recruitment)
+    ;
 
 builder.Build().Run();

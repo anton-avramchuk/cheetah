@@ -4,19 +4,21 @@
         <OutputType>Library</OutputType>
         <NoDefaultLaunchSettingsFile>true</NoDefaultLaunchSettingsFile>
     </PropertyGroup>
-
+    
+    
     <ItemGroup>
       <ProjectReference Include="..\Cheetah.AspNetCore\Cheetah.AspNetCore.csproj" />
       <ProjectReference Include="..\Cheetah.Core\Cheetah.Core.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="$(MsPackageVersion)" />
-      <PackageReference Include="Microsoft.OpenApi.Readers" Version="2.0.0-preview3" />
+      <ProjectReference Include="..\Cheetah.OpenApi\Cheetah.OpenApi.csproj" />
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\Cheetah.Generators.Module\Cheetah.Generators.Module.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.Extensions.ServiceDiscovery.Yarp" Version="10.1.0" />
+      <PackageReference Include="Yarp.ReverseProxy" Version="2.3.0" />
     </ItemGroup>
 
 </Project>
