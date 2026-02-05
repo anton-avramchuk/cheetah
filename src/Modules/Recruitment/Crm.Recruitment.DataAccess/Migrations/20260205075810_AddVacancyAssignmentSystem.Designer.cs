@@ -3,6 +3,7 @@ using System;
 using Crm.Recruitment.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Crm.Recruitment.DataAccess.Migrations
 {
     [DbContext(typeof(RecruitmentDbContext))]
-    partial class RecruitmentDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260205075810_AddVacancyAssignmentSystem")]
+    partial class AddVacancyAssignmentSystem
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
