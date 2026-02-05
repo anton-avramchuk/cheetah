@@ -170,6 +170,7 @@ public class EndpointRegistrationGenerator : IIncrementalGenerator
         sb.AppendLine("using Microsoft.AspNetCore.Routing;");
         sb.AppendLine("using Microsoft.Extensions.DependencyInjection;");
         sb.AppendLine("using Cheetah.AspNetCore.Extensions;");
+        sb.AppendLine("using Cheetah.AspNetCore.Contracts.Extensions;");
         sb.AppendLine("using Cheetah.Core;");
         sb.AppendLine("using Cheetah.Core.CQRS;");
         sb.AppendLine("using Cheetah.Mapping.Core;");
@@ -390,9 +391,11 @@ public class EndpointRegistrationGenerator : IIncrementalGenerator
         var queryGridResultType = $"{GridResultTypeName}<{tQueryResult}>";
         var responseGridResultType = $"{GridResultTypeName}<{tResponse}>";
 
-        var parameters = $"[AsParameters] {tRequest} request, [FromServices] IDispatcher dispatcher, [FromServices] IObjectMapper mapper, CancellationToken cancellationToken";
+        // Use HttpContext and BindGridRequest extension for complex query string binding
+        var parameters = $"HttpContext httpContext, [FromServices] IDispatcher dispatcher, [FromServices] IObjectMapper mapper, CancellationToken cancellationToken";
         var body = new List<string>
         {
+            $"var request = httpContext.BindGridRequest<{tRequest}>();",
             $"var query = mapper.Map<{tQuery}>(request);",
             $"var result = await dispatcher.QueryAsync<{tQuery}, {queryGridResultType}>(query, cancellationToken);",
             $"var responseItems = mapper.Map<System.Collections.Generic.IReadOnlyList<{tResponse}>>(result.Data);",

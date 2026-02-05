@@ -1,4 +1,5 @@
 using Cheetah.AspNetCore;
+using Cheetah.AspNetCore.Contracts;
 using Cheetah.Backend.CQRS;
 using Cheetah.Backend.Endpoints;
 using Cheetah.Backend.Events.Redis;
@@ -14,6 +15,7 @@ namespace Crm.Recruitment.Api;
 [DependsOn(
     typeof(Cheetah.Core.CoreModule),
     typeof(CrmAspNetCoreModule),
+    typeof(CrmAspNetCoreContractsModule),
     typeof(ScalarModule),
     typeof(CrmMapsterModule),
     typeof(CrmBackendCQRSModule),
