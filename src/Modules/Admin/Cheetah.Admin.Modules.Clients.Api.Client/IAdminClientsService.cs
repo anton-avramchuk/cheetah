@@ -1,5 +1,6 @@
 using Cheetah.Admin.Modules.Clients.Contracts.Requests;
 using Cheetah.Admin.Modules.Clients.Contracts.Response;
+using Cheetah.Contracts.Responses;
 
 namespace Cheetah.Admin.Modules.Clients.Api.Client;
 
@@ -11,9 +12,11 @@ public interface IAdminClientsService
     #region Clients
 
     /// <summary>
-    /// Gets all clients
+    /// Gets clients with pagination, sorting, and filtering
     /// </summary>
-    ValueTask<IReadOnlyList<ClientViewModel>> GetAllAsync(CancellationToken ct = default);
+    ValueTask<GridResult<ClientViewModel>> GetAllAsync(
+        GetAllClientsRequest? request = null,
+        CancellationToken ct = default);
 
     /// <summary>
     /// Gets a client by ID
@@ -35,9 +38,11 @@ public interface IAdminClientsService
     #region Tariffs
 
     /// <summary>
-    /// Gets all tariffs
+    /// Gets tariffs with pagination, sorting, and filtering
     /// </summary>
-    ValueTask<IReadOnlyList<TariffViewModel>> GetAllTariffsAsync(CancellationToken ct = default);
+    ValueTask<GridResult<TariffViewModel>> GetAllTariffsAsync(
+        GetAllTariffsRequest? request = null,
+        CancellationToken ct = default);
 
     /// <summary>
     /// Gets a tariff by ID

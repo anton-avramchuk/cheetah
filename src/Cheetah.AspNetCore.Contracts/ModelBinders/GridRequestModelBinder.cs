@@ -1,6 +1,6 @@
 using System.Globalization;
 using System.Text.RegularExpressions;
-using Cheetah.AspNetCore.Contracts.Requests;
+using Cheetah.Contracts.Requests;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Cheetah.AspNetCore.Contracts.ModelBinders

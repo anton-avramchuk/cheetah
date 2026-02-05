@@ -1,7 +1,10 @@
 using System.Net;
 using System.Net.Http.Json;
+using System.Web;
 using Cheetah.Admin.Modules.Clients.Contracts.Requests;
 using Cheetah.Admin.Modules.Clients.Contracts.Response;
+using Cheetah.Contracts.Requests;
+using Cheetah.Contracts.Responses;
 
 namespace Cheetah.Admin.Modules.Clients.Api.Client;
 
@@ -20,13 +23,16 @@ public class AdminClientsService : IAdminClientsService
 
     #region Clients
 
-    public async ValueTask<IReadOnlyList<ClientViewModel>> GetAllAsync(CancellationToken ct = default)
+    public async ValueTask<GridResult<ClientViewModel>> GetAllAsync(
+        GetAllClientsRequest? request = null,
+        CancellationToken ct = default)
     {
-        var response = await _httpClient.GetAsync(ClientsPath, ct);
+        var url = BuildGridUrl(ClientsPath, request);
+        var response = await _httpClient.GetAsync(url, ct);
         response.EnsureSuccessStatusCode();
 
-        var clients = await response.Content.ReadFromJsonAsync<List<ClientViewModel>>(ct);
-        return clients ?? [];
+        var result = await response.Content.ReadFromJsonAsync<GridResult<ClientViewModel>>(ct);
+        return result ?? new GridResult<ClientViewModel> { Data = [], Total = 0 };
     }
 
     public async ValueTask<ClientViewModel?> GetByIdAsync(Guid id, CancellationToken ct = default)
@@ -59,13 +65,16 @@ public class AdminClientsService : IAdminClientsService
 
     #region Tariffs
 
-    public async ValueTask<IReadOnlyList<TariffViewModel>> GetAllTariffsAsync(CancellationToken ct = default)
+    public async ValueTask<GridResult<TariffViewModel>> GetAllTariffsAsync(
+        GetAllTariffsRequest? request = null,
+        CancellationToken ct = default)
     {
-        var response = await _httpClient.GetAsync(TariffsPath, ct);
+        var url = BuildGridUrl(TariffsPath, request);
+        var response = await _httpClient.GetAsync(url, ct);
         response.EnsureSuccessStatusCode();
 
-        var tariffs = await response.Content.ReadFromJsonAsync<List<TariffViewModel>>(ct);
-        return tariffs ?? [];
+        var result = await response.Content.ReadFromJsonAsync<GridResult<TariffViewModel>>(ct);
+        return result ?? new GridResult<TariffViewModel> { Data = [], Total = 0 };
     }
 
     public async ValueTask<TariffViewModel?> GetTariffByIdAsync(Guid id, CancellationToken ct = default)
@@ -98,6 +107,43 @@ public class AdminClientsService : IAdminClientsService
     {
         var response = await _httpClient.DeleteAsync($"{TariffsPath}/{id}", ct);
         response.EnsureSuccessStatusCode();
+    }
+
+    #endregion
+
+    #region Private Methods
+
+    private static string BuildGridUrl(string basePath, GridRequest? request)
+    {
+        if (request is null)
+            return basePath;
+
+        var queryParams = HttpUtility.ParseQueryString(string.Empty);
+
+        queryParams["page"] = request.Page.ToString();
+        queryParams["pageSize"] = request.PageSize.ToString();
+
+        for (var i = 0; i < request.Sort.Count; i++)
+        {
+            var sort = request.Sort[i];
+            if (!string.IsNullOrEmpty(sort.Field))
+            {
+                queryParams[$"sort[{i}][field]"] = sort.Field;
+                queryParams[$"sort[{i}][dir]"] = sort.Dir ?? "asc";
+            }
+        }
+
+        // Note: Filter serialization for complex nested filters is simplified here
+        // For production, consider using a proper serialization strategy
+        if (request.Filter is not null && !string.IsNullOrEmpty(request.Filter.Field))
+        {
+            queryParams["filter[field]"] = request.Filter.Field;
+            queryParams["filter[operator]"] = request.Filter.Operator ?? "eq";
+            queryParams["filter[value]"] = request.Filter.Value?.ToString() ?? string.Empty;
+        }
+
+        var queryString = queryParams.ToString();
+        return string.IsNullOrEmpty(queryString) ? basePath : $"{basePath}?{queryString}";
     }
 
     #endregion

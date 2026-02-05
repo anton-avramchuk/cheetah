@@ -1,7 +1,7 @@
 using System.Linq.Expressions;
 using System.Reflection;
-using Cheetah.AspNetCore.Contracts.Requests;
-using Cheetah.AspNetCore.Contracts.Responses;
+using Cheetah.Contracts.Requests;
+using Cheetah.Contracts.Responses;
 using Cheetah.Core.DependencyInjection;
 using Cheetah.Mapping.Core;
 using Microsoft.EntityFrameworkCore;

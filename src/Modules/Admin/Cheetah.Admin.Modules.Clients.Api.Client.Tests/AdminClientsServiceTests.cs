@@ -2,6 +2,7 @@ using System.Net;
 using System.Text.Json;
 using Cheetah.Admin.Modules.Clients.Contracts.Requests;
 using Cheetah.Admin.Modules.Clients.Contracts.Response;
+using Cheetah.Contracts.Responses;
 using Shouldly;
 
 namespace Cheetah.Admin.Modules.Clients.Api.Client.Tests;
@@ -22,36 +23,40 @@ public class AdminClientsServiceTests
     public async Task GetAllAsync_ShouldReturnClients()
     {
         // Arrange
-        var expectedClients = new List<ClientViewModel>
+        var clients = new List<ClientViewModel>
         {
             new(Guid.NewGuid(), "Client 1", "Description 1", new TenantViewModel(Guid.NewGuid(), "Tenant 1")),
             new(Guid.NewGuid(), "Client 2", "Description 2", new TenantViewModel(Guid.NewGuid(), "Tenant 2"))
         };
+        var gridResult = new GridResult<ClientViewModel>(clients, 2);
 
-        var handler = new MockHttpMessageHandler(HttpStatusCode.OK, JsonSerializer.Serialize(expectedClients));
+        var handler = new MockHttpMessageHandler(HttpStatusCode.OK, JsonSerializer.Serialize(gridResult));
         var service = CreateService(handler);
 
         // Act
         var result = await service.GetAllAsync();
 
         // Assert
-        result.Count.ShouldBe(2);
-        handler.RequestUri!.PathAndQuery.ShouldBe($"/{BasePath}");
+        result.Data.Count().ShouldBe(2);
+        result.Total.ShouldBe(2);
+        handler.RequestUri!.PathAndQuery.ShouldStartWith($"/{BasePath}");
         handler.Method.ShouldBe(HttpMethod.Get);
     }
 
     [Fact]
-    public async Task GetAllAsync_WhenEmpty_ShouldReturnEmptyList()
+    public async Task GetAllAsync_WhenEmpty_ShouldReturnEmptyResult()
     {
         // Arrange
-        var handler = new MockHttpMessageHandler(HttpStatusCode.OK, "[]");
+        var gridResult = new GridResult<ClientViewModel>(new List<ClientViewModel>(), 0);
+        var handler = new MockHttpMessageHandler(HttpStatusCode.OK, JsonSerializer.Serialize(gridResult));
         var service = CreateService(handler);
 
         // Act
         var result = await service.GetAllAsync();
 
         // Assert
-        result.ShouldBeEmpty();
+        result.Data.ShouldBeEmpty();
+        result.Total.ShouldBe(0);
     }
 
     #endregion
@@ -176,36 +181,40 @@ public class AdminClientsServiceTests
     public async Task GetAllTariffsAsync_ShouldReturnTariffs()
     {
         // Arrange
-        var expectedTariffs = new List<TariffViewModel>
+        var tariffs = new List<TariffViewModel>
         {
             new(Guid.NewGuid(), "Basic", "Basic plan", 9.99m, "USD", true),
             new(Guid.NewGuid(), "Premium", "Premium plan", 29.99m, "EUR", true)
         };
+        var gridResult = new GridResult<TariffViewModel>(tariffs, 2);
 
-        var handler = new MockHttpMessageHandler(HttpStatusCode.OK, JsonSerializer.Serialize(expectedTariffs));
+        var handler = new MockHttpMessageHandler(HttpStatusCode.OK, JsonSerializer.Serialize(gridResult));
         var service = CreateService(handler);
 
         // Act
         var result = await service.GetAllTariffsAsync();
 
         // Assert
-        result.Count.ShouldBe(2);
-        handler.RequestUri!.PathAndQuery.ShouldBe("/api/tariffs");
+        result.Data.Count().ShouldBe(2);
+        result.Total.ShouldBe(2);
+        handler.RequestUri!.PathAndQuery.ShouldStartWith("/api/tariffs");
         handler.Method.ShouldBe(HttpMethod.Get);
     }
 
     [Fact]
-    public async Task GetAllTariffsAsync_WhenEmpty_ShouldReturnEmptyList()
+    public async Task GetAllTariffsAsync_WhenEmpty_ShouldReturnEmptyResult()
     {
         // Arrange
-        var handler = new MockHttpMessageHandler(HttpStatusCode.OK, "[]");
+        var gridResult = new GridResult<TariffViewModel>(new List<TariffViewModel>(), 0);
+        var handler = new MockHttpMessageHandler(HttpStatusCode.OK, JsonSerializer.Serialize(gridResult));
         var service = CreateService(handler);
 
         // Act
         var result = await service.GetAllTariffsAsync();
 
         // Assert
-        result.ShouldBeEmpty();
+        result.Data.ShouldBeEmpty();
+        result.Total.ShouldBe(0);
     }
 
     #endregion

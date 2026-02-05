@@ -1,7 +1,9 @@
 using Cheetah.Admin.Modules.Clients.Application.Queries;
 using Cheetah.Admin.Modules.Clients.Domain;
 using Cheetah.Admin.Modules.Clients.Domain.Repositories;
-using Cheetah.Core.Specification;
+using Cheetah.Contracts.Requests;
+using Cheetah.Contracts.Responses;
+using Cheetah.Core.Grid;
 using Shouldly;
 using Moq;
 
@@ -10,104 +12,112 @@ namespace Cheetah.Admin.Modules.Clients.Application.Tests.Queries;
 public class GetAllClientsQueryHandlerTests
 {
     private readonly Mock<IClientRepository> _repositoryMock;
+    private readonly Mock<IGridQueryService> _gridServiceMock;
     private readonly GetAllClientsQueryHandler _handler;
 
     public GetAllClientsQueryHandlerTests()
     {
         _repositoryMock = new Mock<IClientRepository>();
-        _handler = new GetAllClientsQueryHandler(_repositoryMock.Object);
+        _gridServiceMock = new Mock<IGridQueryService>();
+        _handler = new GetAllClientsQueryHandler(_repositoryMock.Object, _gridServiceMock.Object);
     }
 
     [Fact]
     public async Task HandleAsync_WithClients_ShouldReturnClientModels()
     {
         // Arrange
-        var clients = new List<Client>
+        var clientModels = new List<ClientModel>
         {
-            CreateClient(Guid.NewGuid(), "Client 1", "Description 1"),
-            CreateClient(Guid.NewGuid(), "Client 2", "Description 2"),
-            CreateClient(Guid.NewGuid(), "Client 3", null)
+            new(Guid.NewGuid(), "Client 1", "Description 1", null),
+            new(Guid.NewGuid(), "Client 2", "Description 2", null),
+            new(Guid.NewGuid(), "Client 3", null, null)
         };
 
-        _repositoryMock
-            .Setup(r => r.GetAllAsync(It.IsAny<ISpecification<Client>?>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(clients);
+        var gridResult = new GridResult<ClientModel>(clientModels, 3);
 
-        var query = new GetAllClientsQuery();
+        _repositoryMock
+            .Setup(r => r.AsNoTrackingQueryable())
+            .Returns(new List<Client>().AsQueryable());
+
+        _gridServiceMock
+            .Setup(g => g.ExecuteAsync<Client, ClientModel>(
+                It.IsAny<IQueryable<Client>>(),
+                It.IsAny<GridRequest>(),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(gridResult);
+
+        var query = new GetAllClientsQuery(1, 10, new List<SortDescriptor>(), null);
 
         // Act
         var result = await _handler.HandleAsync(query);
 
         // Assert
-        result.Count.ShouldBe(3);
-        result[0].Name.ShouldBe("Client 1");
-        result[1].Name.ShouldBe("Client 2");
-        result[2].Name.ShouldBe("Client 3");
+        var dataList = result.Data.ToList();
+        dataList.Count.ShouldBe(3);
+        result.Total.ShouldBe(3);
+        dataList[0].Name.ShouldBe("Client 1");
+        dataList[1].Name.ShouldBe("Client 2");
+        dataList[2].Name.ShouldBe("Client 3");
     }
 
     [Fact]
-    public async Task HandleAsync_WithNoClients_ShouldReturnEmptyList()
+    public async Task HandleAsync_WithNoClients_ShouldReturnEmptyResult()
     {
         // Arrange
-        _repositoryMock
-            .Setup(r => r.GetAllAsync(It.IsAny<ISpecification<Client>?>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new List<Client>());
+        var gridResult = new GridResult<ClientModel>(new List<ClientModel>(), 0);
 
-        var query = new GetAllClientsQuery();
+        _repositoryMock
+            .Setup(r => r.AsNoTrackingQueryable())
+            .Returns(new List<Client>().AsQueryable());
+
+        _gridServiceMock
+            .Setup(g => g.ExecuteAsync<Client, ClientModel>(
+                It.IsAny<IQueryable<Client>>(),
+                It.IsAny<GridRequest>(),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(gridResult);
+
+        var query = new GetAllClientsQuery(1, 10, new List<SortDescriptor>(), null);
 
         // Act
         var result = await _handler.HandleAsync(query);
 
         // Assert
-        result.ShouldBeEmpty();
+        result.Data.ShouldBeEmpty();
+        result.Total.ShouldBe(0);
     }
 
     [Fact]
-    public async Task HandleAsync_ShouldMapTenantCorrectly()
+    public async Task HandleAsync_ShouldPassCorrectGridRequestToService()
     {
         // Arrange
-        var tenantId = Guid.NewGuid();
-        var client = CreateClient(Guid.NewGuid(), "Client 1", "Description", tenantId);
+        var gridResult = new GridResult<ClientModel>(new List<ClientModel>(), 0);
+        GridRequest? capturedRequest = null;
 
         _repositoryMock
-            .Setup(r => r.GetAllAsync(It.IsAny<ISpecification<Client>?>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new List<Client> { client });
+            .Setup(r => r.AsNoTrackingQueryable())
+            .Returns(new List<Client>().AsQueryable());
 
-        var query = new GetAllClientsQuery();
+        _gridServiceMock
+            .Setup(g => g.ExecuteAsync<Client, ClientModel>(
+                It.IsAny<IQueryable<Client>>(),
+                It.IsAny<GridRequest>(),
+                It.IsAny<CancellationToken>()))
+            .Callback<IQueryable<Client>, GridRequest, CancellationToken>((_, req, _) => capturedRequest = req)
+            .ReturnsAsync(gridResult);
 
-        // Act
-        var result = await _handler.HandleAsync(query);
-
-        // Assert
-        result.Count.ShouldBe(1);
-        result[0].Tenant.ShouldNotBeNull();
-        result[0].Tenant!.Id.ShouldBe(tenantId);
-    }
-
-    [Fact]
-    public async Task HandleAsync_WithNullTenantId_ShouldMapToNullTenant()
-    {
-        // Arrange
-        var client = CreateClient(Guid.NewGuid(), "Client 1", "Description", null);
-
-        _repositoryMock
-            .Setup(r => r.GetAllAsync(It.IsAny<ISpecification<Client>?>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new List<Client> { client });
-
-        var query = new GetAllClientsQuery();
+        var sort = new List<SortDescriptor> { new() { Field = "Name", Dir = "asc" } };
+        var filter = new FilterDescriptor { Field = "Name", Operator = "contains", Value = "test" };
+        var query = new GetAllClientsQuery(2, 25, sort, filter);
 
         // Act
-        var result = await _handler.HandleAsync(query);
+        await _handler.HandleAsync(query);
 
         // Assert
-        result.Count.ShouldBe(1);
-        result[0].Tenant.ShouldBeNull();
-    }
-
-    private static Client CreateClient(Guid id, string name, string? description, Guid? tenantId = null)
-    {
-        var client = Client.Create(name, description, tenantId);
-        typeof(Client).GetProperty("Id")!.SetValue(client, id);
-        return client;
+        capturedRequest.ShouldNotBeNull();
+        capturedRequest!.Page.ShouldBe(2);
+        capturedRequest.PageSize.ShouldBe(25);
+        capturedRequest.Sort.ShouldBe(sort);
+        capturedRequest.Filter.ShouldBe(filter);
     }
 }

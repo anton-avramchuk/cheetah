@@ -1,4 +1,4 @@
-namespace Cheetah.AspNetCore.Contracts.Requests
+namespace Cheetah.Contracts.Requests
 {
     /// <summary>
     /// Дескриптор фильтрации (рекурсивная структура для поддержки AND/OR)

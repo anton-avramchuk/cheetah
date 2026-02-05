@@ -11,7 +11,7 @@ public class EndpointRegistrationGenerator : IIncrementalGenerator
 {
     private const string ErrorCode = "ENDPGEN001";
     private const string ErrorCategory = nameof(EndpointRegistrationGenerator);
-    private const string GridResultTypeName = "Cheetah.AspNetCore.Contracts.Responses.GridResult";
+    private const string GridResultTypeName = "Cheetah.Contracts.Responses.GridResult";
 
     // Base endpoint types to look for
     private static readonly string[] EndpointBaseTypes = new[]
@@ -19,7 +19,7 @@ public class EndpointRegistrationGenerator : IIncrementalGenerator
         "Cheetah.Backend.Endpoints.Http.QueryEndpoint`4",
         "Cheetah.Backend.Endpoints.Http.QueryOrNotFoundEndpoint`4",
         "Cheetah.Backend.Endpoints.Http.QueryCollectionEndpoint`4",
-        "Cheetah.Backend.Endpoints.Http.QueryGridEndpoint`3",
+        "Cheetah.Backend.Endpoints.Http.QueryGridEndpoint`4",
         "Cheetah.Backend.Endpoints.Http.CommandEndpoint`2",
         "Cheetah.Backend.Endpoints.Http.CommandWithResultEndpoint`4",
         "Cheetah.Backend.Endpoints.Http.CreateCommandEndpoint`2",
@@ -275,7 +275,7 @@ public class EndpointRegistrationGenerator : IIncrementalGenerator
             "Cheetah.Backend.Endpoints.Http.QueryCollectionEndpoint`4" =>
                 GenerateQueryCollectionEndpoint(typeArgs),
 
-            "Cheetah.Backend.Endpoints.Http.QueryGridEndpoint`3" =>
+            "Cheetah.Backend.Endpoints.Http.QueryGridEndpoint`4" =>
                 GenerateQueryGridEndpoint(typeArgs),
 
             "Cheetah.Backend.Endpoints.Http.CommandEndpoint`2" =>
@@ -384,21 +384,25 @@ public class EndpointRegistrationGenerator : IIncrementalGenerator
     {
         var tRequest = typeArgs[0].ToDisplayString();
         var tQuery = typeArgs[1].ToDisplayString();
-        var tViewModel = typeArgs[2].ToDisplayString();
+        var tQueryResult = typeArgs[2].ToDisplayString();
+        var tResponse = typeArgs[3].ToDisplayString();
 
-        var gridResultType = $"{GridResultTypeName}<{tViewModel}>";
+        var queryGridResultType = $"{GridResultTypeName}<{tQueryResult}>";
+        var responseGridResultType = $"{GridResultTypeName}<{tResponse}>";
 
         var parameters = $"[AsParameters] {tRequest} request, [FromServices] IDispatcher dispatcher, [FromServices] IObjectMapper mapper, CancellationToken cancellationToken";
         var body = new List<string>
         {
             $"var query = mapper.Map<{tQuery}>(request);",
-            $"var result = await dispatcher.QueryAsync<{tQuery}, {gridResultType}>(query, cancellationToken);",
-            "return Results.Ok(result);"
+            $"var result = await dispatcher.QueryAsync<{tQuery}, {queryGridResultType}>(query, cancellationToken);",
+            $"var responseItems = mapper.Map<System.Collections.Generic.IReadOnlyList<{tResponse}>>(result.Data);",
+            $"var response = new {responseGridResultType}(responseItems, result.Total);",
+            "return Results.Ok(response);"
         };
 
         var produces = new List<string>
         {
-            $"builder.Produces<{gridResultType}>(StatusCodes.Status200OK);"
+            $"builder.Produces<{responseGridResultType}>(StatusCodes.Status200OK);"
         };
 
         return ("MapGet", (parameters, body), produces);

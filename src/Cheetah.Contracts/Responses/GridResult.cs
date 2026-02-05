@@ -1,6 +1,4 @@
-using Cheetah.Contracts.Responses;
-
-namespace Cheetah.AspNetCore.Contracts.Responses
+namespace Cheetah.Contracts.Responses
 {
     /// <summary>
     /// Результат выполнения запроса грида
@@ -8,10 +6,21 @@ namespace Cheetah.AspNetCore.Contracts.Responses
     /// <typeparam name="T">Тип данных</typeparam>
     public class GridResult<T> : ICrmResponse
     {
+        public GridResult()
+        {
+            Data = [];
+        }
+
+        public GridResult(IEnumerable<T> data, int total)
+        {
+            Data = data;
+            Total = total;
+        }
+
         /// <summary>
         /// Данные текущей страницы
         /// </summary>
-        public required IEnumerable<T> Data { get; set; }
+        public IEnumerable<T> Data { get; set; }
 
         /// <summary>
         /// Общее количество записей (без учета пагинации)

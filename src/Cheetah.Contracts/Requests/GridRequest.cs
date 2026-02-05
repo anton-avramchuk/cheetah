@@ -1,6 +1,4 @@
-using Cheetah.Contracts.Requests;
-
-namespace Cheetah.AspNetCore.Contracts.Requests;
+namespace Cheetah.Contracts.Requests;
 
 /// <summary>
 /// Запрос для грида с параметрами пагинации, сортировки и фильтрации
