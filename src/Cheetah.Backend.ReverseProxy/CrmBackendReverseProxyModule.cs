@@ -2,6 +2,7 @@
 using Cheetah.AspNetCore.Extensions;
 using Cheetah.Core;
 using Cheetah.Core.Modularity;
+using Cheetah.OpenApi;
 
 namespace Cheetah.Backend.ReverseProxy;
 
