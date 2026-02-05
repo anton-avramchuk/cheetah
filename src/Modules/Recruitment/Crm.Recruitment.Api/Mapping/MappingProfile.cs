@@ -15,7 +15,7 @@ public class MappingProfile : IMapsterMappingProfile
     public void Configure(TypeAdapterConfig config)
     {
         config.NewConfig<VacancyModel, VacancyViewModel>();
-        config.NewConfig<GetAllSampleEntitiesRequest, GetAllSampleEntitiesQuery>();
+        config.NewConfig<GetAllVacanciesRequest, GetAllVacanciesQuery>();
         config.NewConfig<GetVacancyByIdRequest, GetVacancyByIdQuery>();
         config.NewConfig<CreateVacancyRequest, CreateVacancyCommand>();
         config.NewConfig<UpdateVacancyRequest, UpdateVacancyCommand>();

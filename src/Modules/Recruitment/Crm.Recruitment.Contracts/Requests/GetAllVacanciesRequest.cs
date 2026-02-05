@@ -2,4 +2,4 @@ using Cheetah.Contracts.Requests;
 
 namespace Crm.Recruitment.Contracts.Requests;
 
-public record GetAllSampleEntitiesRequest : ICrmRequest;
+public record GetAllVacanciesRequest : ICrmRequest;

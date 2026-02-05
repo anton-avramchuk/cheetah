@@ -6,8 +6,8 @@ using Crm.Recruitment.Contracts.Response;
 
 namespace Crm.Recruitment.Api.Endpoints;
 
-public class GetAllSampleEntitiesEndpoint : QueryCollectionEndpoint<GetAllSampleEntitiesRequest,
-    GetAllSampleEntitiesQuery, VacancyModel, VacancyViewModel>
+public class GetAllVacanciesEndpoint : QueryCollectionEndpoint<GetAllVacanciesRequest,
+    GetAllVacanciesQuery, VacancyModel, VacancyViewModel>
 {
     public override string Route => Constants.DefaultRoute;
 }

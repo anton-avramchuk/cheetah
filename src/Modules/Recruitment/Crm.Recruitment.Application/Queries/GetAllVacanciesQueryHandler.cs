@@ -4,17 +4,17 @@ using Crm.Recruitment.Domain.Repositories;
 
 namespace Crm.Recruitment.Application.Queries;
 
-[Export(LifetimeType.Scoped, typeof(IQueryHandler<GetAllSampleEntitiesQuery, IReadOnlyList<VacancyModel>>))]
-public class GetAllSampleEntitiesQueryHandler : IQueryHandler<GetAllSampleEntitiesQuery, IReadOnlyList<VacancyModel>>
+[Export(LifetimeType.Scoped, typeof(IQueryHandler<GetAllVacanciesQuery, IReadOnlyList<VacancyModel>>))]
+public class GetAllVacanciesQueryHandler : IQueryHandler<GetAllVacanciesQuery, IReadOnlyList<VacancyModel>>
 {
     private readonly IVacancyRepository _repository;
 
-    public GetAllSampleEntitiesQueryHandler(IVacancyRepository repository)
+    public GetAllVacanciesQueryHandler(IVacancyRepository repository)
     {
         _repository = repository;
     }
 
-    public async ValueTask<IReadOnlyList<VacancyModel>> HandleAsync(GetAllSampleEntitiesQuery query,
+    public async ValueTask<IReadOnlyList<VacancyModel>> HandleAsync(GetAllVacanciesQuery query,
         CancellationToken ct = default)
     {
         var entities = await _repository.GetAllNoTrackingAsync(ct: ct);
