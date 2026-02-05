@@ -1,3 +1,5 @@
+using Cheetah.Contracts.Responses;
+
 namespace Cheetah.AspNetCore.Contracts.Responses
 {
     /// <summary>

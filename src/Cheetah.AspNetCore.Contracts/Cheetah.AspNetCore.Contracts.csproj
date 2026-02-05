@@ -5,6 +5,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Cheetah.Contracts\Cheetah.Contracts.csproj" />
       <ProjectReference Include="..\Cheetah.Core\Cheetah.Core.csproj" />
     </ItemGroup>
 

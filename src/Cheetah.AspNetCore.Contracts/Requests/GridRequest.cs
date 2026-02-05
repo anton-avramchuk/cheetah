@@ -1,3 +1,5 @@
+using Cheetah.Contracts.Requests;
+
 namespace Cheetah.AspNetCore.Contracts.Requests;
 
 /// <summary>
