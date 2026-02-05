@@ -25,5 +25,10 @@ public class VacancyConfiguration : AggregateRootConfiguration<Vacancy, Guid, Va
             .HasMaxLength(1024);
 
         builder.HasIndex(x => x.Name).IsUnique();
+
+        builder.HasOne(x => x.State)
+            .WithMany(x => x.Vacancies)
+            .HasForeignKey(x => x.StateId)
+            .IsRequired(false);
     }
 }

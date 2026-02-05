@@ -12,11 +12,15 @@ public class Vacancy : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEntity
 
     public DateTimeOffset? UpdatedAt { get; set; }
 
+    public Guid? StateId { get; private set; }
+
+    public VacancyState? State { get; private set; }
+
     private Vacancy()
     {
     } // For EF Core
 
-    public static Vacancy Create(string name, string? description = null)
+    public static Vacancy Create(string name, string? description = null, Guid? stateId = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(name);
 
@@ -24,7 +28,8 @@ public class Vacancy : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEntity
         {
             Id = Guid.NewGuid(),
             Name = name,
-            Description = description
+            Description = description,
+            StateId = stateId
         };
 
         // Uncomment when DomainEvents are needed:
@@ -39,5 +44,10 @@ public class Vacancy : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEntity
 
         Name = name;
         Description = description;
+    }
+
+    public void SetState(Guid? stateId)
+    {
+        StateId = stateId;
     }
 }

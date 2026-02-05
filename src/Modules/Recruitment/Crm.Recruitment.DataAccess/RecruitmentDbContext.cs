@@ -10,11 +10,14 @@ namespace Crm.Recruitment.DataAccess;
 public class RecruitmentDbContext(DbContextOptions<RecruitmentDbContext> options)
     : CrmDbContext<RecruitmentDbContext>(options)
 {
-    public DbSet<Vacancy> SampleEntities => Set<Vacancy>();
+    public DbSet<Vacancy> Vacancies => Set<Vacancy>();
+
+    public DbSet<VacancyState> VacancyStates => Set<VacancyState>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfiguration(new VacancyConfiguration());
+        modelBuilder.ApplyConfiguration(new VacancyStateConfiguration());
     }
 }
