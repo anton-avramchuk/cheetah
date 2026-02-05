@@ -29,7 +29,9 @@ public sealed class RedisClient : IRedisClient
     {
         var db = _connectionProvider.GetDatabase(instanceName);
         var serialized = JsonSerializer.Serialize(value);
-        return await db.StringSetAsync(key, serialized, expiry);
+        if (expiry.HasValue)
+            return await db.StringSetAsync(key, serialized, expiry.Value);
+        return await db.StringSetAsync(key, serialized);
     }
 
     public async Task<bool> DeleteAsync(string key, string instanceName = "default", CancellationToken ct = default)
@@ -89,7 +91,10 @@ public sealed class RedisClient : IRedisClient
         foreach (var kvp in values)
         {
             var serialized = JsonSerializer.Serialize(kvp.Value);
-            tasks.Add(batch.StringSetAsync(kvp.Key, serialized, expiry));
+            if (expiry.HasValue)
+                tasks.Add(batch.StringSetAsync(kvp.Key, serialized, expiry.Value));
+            else
+                tasks.Add(batch.StringSetAsync(kvp.Key, serialized));
         }
 
         batch.Execute();

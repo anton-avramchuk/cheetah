@@ -16,7 +16,7 @@ public class CrmDialogProviderTests : TestContext
         Services.AddSingleton<IDialogServiceInternal>(service);
 
         // Act
-        var cut = RenderComponent<CrmDialogProvider>();
+        var cut = Render<CrmDialogProvider>();
 
         // Assert
         cut.FindAll(".modal").ShouldBeEmpty();
@@ -30,7 +30,7 @@ public class CrmDialogProviderTests : TestContext
         Services.AddSingleton<IDialogService>(service);
         Services.AddSingleton<IDialogServiceInternal>(service);
 
-        var cut = RenderComponent<CrmDialogProvider>();
+        var cut = Render<CrmDialogProvider>();
 
         // Act
         var showTask = service.ShowAsync<SimpleDialogContent>(
@@ -55,7 +55,7 @@ public class CrmDialogProviderTests : TestContext
         Services.AddSingleton<IDialogService>(service);
         Services.AddSingleton<IDialogServiceInternal>(service);
 
-        var cut = RenderComponent<CrmDialogProvider>();
+        var cut = Render<CrmDialogProvider>();
 
         var showTask = service.ShowAsync<SimpleDialogContent>();
         cut.WaitForState(() => cut.FindAll(".modal").Count == 1);
@@ -79,7 +79,7 @@ public class CrmDialogProviderTests : TestContext
         Services.AddSingleton<IDialogService>(service);
         Services.AddSingleton<IDialogServiceInternal>(service);
 
-        var cut = RenderComponent<CrmDialogProvider>();
+        var cut = Render<CrmDialogProvider>();
 
         // Act
         var showTask1 = service.ShowAsync<SimpleDialogContent>(
@@ -113,7 +113,7 @@ public class CrmDialogProviderTests : TestContext
         Services.AddSingleton<IDialogService>(service);
         Services.AddSingleton<IDialogServiceInternal>(service);
 
-        var cut = RenderComponent<CrmDialogProvider>();
+        var cut = Render<CrmDialogProvider>();
 
         var showTask = service.ShowAsync<SimpleDialogContent>();
         cut.WaitForState(() => cut.FindAll(".modal").Count == 1);
@@ -136,11 +136,11 @@ public class CrmDialogProviderTests : TestContext
         Services.AddSingleton<IDialogService>(service);
         Services.AddSingleton<IDialogServiceInternal>(service);
 
-        var cut = RenderComponent<CrmDialogProvider>();
+        var cut = Render<CrmDialogProvider>();
         service.OnChangeSubscriberCount.ShouldBe(1); // Verify subscription happened
 
         // Act
-        DisposeComponents();
+        cut.Dispose();
 
         // Assert
         service.OnChangeSubscriberCount.ShouldBe(0);

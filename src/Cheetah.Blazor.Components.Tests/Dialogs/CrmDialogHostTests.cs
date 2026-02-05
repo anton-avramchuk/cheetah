@@ -16,7 +16,7 @@ public class CrmDialogHostTests : TestContext
         var instance = new DialogInstance(typeof(SimpleDialogContent), null, options);
 
         // Act
-        var cut = RenderComponent<CrmDialogHost>(parameters => parameters
+        var cut = Render<CrmDialogHost>(parameters => parameters
             .Add(p => p.Instance, instance));
 
         // Assert
@@ -30,7 +30,7 @@ public class CrmDialogHostTests : TestContext
         var instance = new DialogInstance(typeof(SimpleDialogContent), null, null);
 
         // Act
-        var cut = RenderComponent<CrmDialogHost>(parameters => parameters
+        var cut = Render<CrmDialogHost>(parameters => parameters
             .Add(p => p.Instance, instance));
 
         // Assert
@@ -46,7 +46,7 @@ public class CrmDialogHostTests : TestContext
         var instance = new DialogInstance(typeof(SimpleDialogContent), parameters, null);
 
         // Act
-        var cut = RenderComponent<CrmDialogHost>(parameters => parameters
+        var cut = Render<CrmDialogHost>(parameters => parameters
             .Add(p => p.Instance, instance));
 
         // Assert
@@ -60,7 +60,7 @@ public class CrmDialogHostTests : TestContext
         var instance = new DialogInstance(typeof(SimpleDialogContent), null, null);
 
         // Act
-        var cut = RenderComponent<CrmDialogHost>(parameters => parameters
+        var cut = Render<CrmDialogHost>(parameters => parameters
             .Add(p => p.Instance, instance));
 
         // Assert
@@ -76,7 +76,7 @@ public class CrmDialogHostTests : TestContext
         var instance = new DialogInstance(typeof(SimpleDialogContent), null, options);
 
         // Act
-        var cut = RenderComponent<CrmDialogHost>(parameters => parameters
+        var cut = Render<CrmDialogHost>(parameters => parameters
             .Add(p => p.Instance, instance));
 
         // Assert
@@ -93,7 +93,7 @@ public class CrmDialogHostTests : TestContext
         var instance = new DialogInstance(typeof(SimpleDialogContent), null, null);
         DialogResult? closedResult = null;
 
-        var cut = RenderComponent<CrmDialogHost>(parameters => parameters
+        var cut = Render<CrmDialogHost>(parameters => parameters
             .Add(p => p.Instance, instance)
             .Add(p => p.OnClose, EventCallback.Factory.Create<DialogResult>(this, r => closedResult = r)));
 
@@ -114,7 +114,7 @@ public class CrmDialogHostTests : TestContext
         var instance = new DialogInstance(typeof(SimpleDialogContent), null, options);
         DialogResult? closedResult = null;
 
-        var cut = RenderComponent<CrmDialogHost>(parameters => parameters
+        var cut = Render<CrmDialogHost>(parameters => parameters
             .Add(p => p.Instance, instance)
             .Add(p => p.OnClose, EventCallback.Factory.Create<DialogResult>(this, r => closedResult = r)));
 
@@ -135,7 +135,7 @@ public class CrmDialogHostTests : TestContext
         var instance = new DialogInstance(typeof(SimpleDialogContent), null, options);
 
         // Act
-        var cut = RenderComponent<CrmDialogHost>(parameters => parameters
+        var cut = Render<CrmDialogHost>(parameters => parameters
             .Add(p => p.Instance, instance));
 
         // Assert
@@ -150,7 +150,7 @@ public class CrmDialogHostTests : TestContext
         var instance = new DialogInstance(typeof(SimpleDialogContent), null, options);
 
         // Act
-        var cut = RenderComponent<CrmDialogHost>(parameters => parameters
+        var cut = Render<CrmDialogHost>(parameters => parameters
             .Add(p => p.Instance, instance));
 
         // Assert
@@ -165,7 +165,7 @@ public class CrmDialogHostTests : TestContext
         var instance = new DialogInstance(typeof(SimpleDialogContent), null, options);
 
         // Act
-        var cut = RenderComponent<CrmDialogHost>(parameters => parameters
+        var cut = Render<CrmDialogHost>(parameters => parameters
             .Add(p => p.Instance, instance));
 
         // Assert
@@ -179,7 +179,7 @@ public class CrmDialogHostTests : TestContext
         var instance = new DialogInstance(typeof(SimpleDialogContent), null, null);
         DialogResult? closedResult = null;
 
-        var cut = RenderComponent<CrmDialogHost>(parameters => parameters
+        var cut = Render<CrmDialogHost>(parameters => parameters
             .Add(p => p.Instance, instance)
             .Add(p => p.OnClose, EventCallback.Factory.Create<DialogResult>(this, r => closedResult = r)));
 
@@ -200,7 +200,7 @@ public class CrmDialogHostTests : TestContext
         var instance = new DialogInstance(typeof(FormDialogContent), parameters, null);
         DialogResult? closedResult = null;
 
-        var cut = RenderComponent<CrmDialogHost>(parameters => parameters
+        var cut = Render<CrmDialogHost>(parameters => parameters
             .Add(p => p.Instance, instance)
             .Add(p => p.OnClose, EventCallback.Factory.Create<DialogResult>(this, r => closedResult = r)));
 
@@ -228,7 +228,7 @@ public class CrmDialogHostTests : TestContext
         var instance = new DialogInstance(typeof(FormDialogContent), parameters, null);
         DialogResult? closedResult = null;
 
-        var cut = RenderComponent<CrmDialogHost>(parameters => parameters
+        var cut = Render<CrmDialogHost>(parameters => parameters
             .Add(p => p.Instance, instance)
             .Add(p => p.OnClose, EventCallback.Factory.Create<DialogResult>(this, r => closedResult = r)));
 
@@ -245,7 +245,7 @@ public class CrmDialogHostTests : TestContext
     {
         // Arrange
         var instance = new DialogInstance(typeof(SimpleDialogContent), null, null);
-        var cut = RenderComponent<CrmDialogHost>(parameters => parameters
+        var cut = Render<CrmDialogHost>(parameters => parameters
             .Add(p => p.Instance, instance));
 
         // Act

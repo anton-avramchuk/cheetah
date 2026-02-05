@@ -6,5 +6,5 @@ namespace Cheetah.Admin.Modules.Clients.Api.Endpoints;
 
 public class UpdateClientEndpoint : UpdateCommandEndpoint<UpdateClientRequest, UpdateClientCommand>
 {
-    public override string Route => $"{Constants.DefaultRoute}/{{id:guid}}";
+    public override string Route => $"{Constants.ClientsRoute}/{{id:guid}}";
 }

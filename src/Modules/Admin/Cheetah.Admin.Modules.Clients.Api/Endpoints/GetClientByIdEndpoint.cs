@@ -9,7 +9,7 @@ namespace Cheetah.Admin.Modules.Clients.Api.Endpoints;
 
 public class GetClientByIdEndpoint : QueryOrNotFoundEndpoint<GetClientByIdRequest, GetClientByIdQuery, ClientModel, ClientViewModel>
 {
-    public override string Route => $"{Constants.DefaultRoute}/{{id:guid}}";
+    public override string Route => $"{Constants.ClientsRoute}/{{id:guid}}";
 
     protected override void Configure(EndpointConfiguration config)
     {

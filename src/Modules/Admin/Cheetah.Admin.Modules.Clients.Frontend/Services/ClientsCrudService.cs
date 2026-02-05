@@ -24,9 +24,9 @@ public sealed class ClientsCrudService : ICrudService<ClientGridViewModel, Clien
 
     public async Task<IReadOnlyList<ClientGridViewModel>> GetAllAsync(CancellationToken ct = default)
     {
-        var clients = await _clientsService.GetAllAsync(ct);
-        
-        return  _objectMapper.Map<IReadOnlyList<ClientGridViewModel>>(clients);
+        var result = await _clientsService.GetAllAsync(null, ct);
+
+        return _objectMapper.Map<IReadOnlyList<ClientGridViewModel>>(result.Data);
     }
 
     public async Task<ClientFormModel?> GetByIdAsync(Guid id, CancellationToken ct = default)

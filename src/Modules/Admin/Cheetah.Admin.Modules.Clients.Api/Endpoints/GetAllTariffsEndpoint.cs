@@ -6,7 +6,7 @@ using Cheetah.Backend.Endpoints.Http;
 
 namespace Cheetah.Admin.Modules.Clients.Api.Endpoints;
 
-public class GetAllTariffsEndpoint : QueryCollectionEndpoint<GetAllTariffsRequest, GetAllTariffsQuery, TariffModel, TariffViewModel>
+public class GetAllTariffsEndpoint : QueryGridEndpoint<GetAllTariffsRequest, GetAllTariffsQuery, TariffModel, TariffViewModel>
 {
     public override string Route => Constants.TariffsRoute;
 }

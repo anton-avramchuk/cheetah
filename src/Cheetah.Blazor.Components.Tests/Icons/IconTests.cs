@@ -9,7 +9,7 @@ public class IconTests : TestContext
     public void ShouldRenderBootstrapIconByDefault()
     {
         // Act
-        var cut = RenderComponent<Icon>(parameters => parameters
+        var cut = Render<Icon>(parameters => parameters
             .Add(p => p.Name, "check"));
 
         // Assert
@@ -22,7 +22,7 @@ public class IconTests : TestContext
     public void ShouldRenderMaterialSymbolsOutlined()
     {
         // Act
-        var cut = RenderComponent<Icon>(parameters => parameters
+        var cut = Render<Icon>(parameters => parameters
             .Add(p => p.Name, "home")
             .Add(p => p.Set, IconSet.Material));
 
@@ -36,7 +36,7 @@ public class IconTests : TestContext
     public void ShouldRenderMaterialSymbolsRounded()
     {
         // Act
-        var cut = RenderComponent<Icon>(parameters => parameters
+        var cut = Render<Icon>(parameters => parameters
             .Add(p => p.Name, "settings")
             .Add(p => p.Set, IconSet.MaterialRounded));
 
@@ -50,7 +50,7 @@ public class IconTests : TestContext
     public void ShouldRenderMaterialSymbolsSharp()
     {
         // Act
-        var cut = RenderComponent<Icon>(parameters => parameters
+        var cut = Render<Icon>(parameters => parameters
             .Add(p => p.Name, "favorite")
             .Add(p => p.Set, IconSet.MaterialSharp));
 
@@ -68,7 +68,7 @@ public class IconTests : TestContext
     public void ShouldApplySizeClass(IconSize size, string expectedClass)
     {
         // Act
-        var cut = RenderComponent<Icon>(parameters => parameters
+        var cut = Render<Icon>(parameters => parameters
             .Add(p => p.Name, "check")
             .Add(p => p.Size, size));
 
@@ -81,7 +81,7 @@ public class IconTests : TestContext
     public void ShouldApplyMediumSizeByDefault()
     {
         // Act
-        var cut = RenderComponent<Icon>(parameters => parameters
+        var cut = Render<Icon>(parameters => parameters
             .Add(p => p.Name, "check"));
 
         // Assert
@@ -93,7 +93,7 @@ public class IconTests : TestContext
     public void ShouldApplyColorStyle()
     {
         // Act
-        var cut = RenderComponent<Icon>(parameters => parameters
+        var cut = Render<Icon>(parameters => parameters
             .Add(p => p.Name, "check")
             .Add(p => p.Color, "red"));
 
@@ -106,7 +106,7 @@ public class IconTests : TestContext
     public void ShouldNotApplyStyleWhenNoColor()
     {
         // Act
-        var cut = RenderComponent<Icon>(parameters => parameters
+        var cut = Render<Icon>(parameters => parameters
             .Add(p => p.Name, "check"));
 
         // Assert
@@ -118,7 +118,7 @@ public class IconTests : TestContext
     public void ShouldApplySpinClass()
     {
         // Act
-        var cut = RenderComponent<Icon>(parameters => parameters
+        var cut = Render<Icon>(parameters => parameters
             .Add(p => p.Name, "arrow-repeat")
             .Add(p => p.Spin, true));
 
@@ -131,7 +131,7 @@ public class IconTests : TestContext
     public void ShouldNotApplySpinClassWhenFalse()
     {
         // Act
-        var cut = RenderComponent<Icon>(parameters => parameters
+        var cut = Render<Icon>(parameters => parameters
             .Add(p => p.Name, "check")
             .Add(p => p.Spin, false));
 
@@ -144,7 +144,7 @@ public class IconTests : TestContext
     public void ShouldApplyAdditionalClasses()
     {
         // Act
-        var cut = RenderComponent<Icon>(parameters => parameters
+        var cut = Render<Icon>(parameters => parameters
             .Add(p => p.Name, "check")
             .Add(p => p.Class, "my-custom-class another-class"));
 
@@ -158,7 +158,7 @@ public class IconTests : TestContext
     public void ShouldApplyAriaLabelWhenTitleProvided()
     {
         // Act
-        var cut = RenderComponent<Icon>(parameters => parameters
+        var cut = Render<Icon>(parameters => parameters
             .Add(p => p.Name, "info-circle")
             .Add(p => p.Title, "Information"));
 
@@ -173,7 +173,7 @@ public class IconTests : TestContext
     public void ShouldBeHiddenFromScreenReaderWhenNoTitle()
     {
         // Act
-        var cut = RenderComponent<Icon>(parameters => parameters
+        var cut = Render<Icon>(parameters => parameters
             .Add(p => p.Name, "check"));
 
         // Assert
@@ -186,7 +186,7 @@ public class IconTests : TestContext
     public void ShouldPassAdditionalAttributes()
     {
         // Act
-        var cut = RenderComponent<Icon>(parameters => parameters
+        var cut = Render<Icon>(parameters => parameters
             .Add(p => p.Name, "check")
             .AddUnmatched("data-testid", "my-icon")
             .AddUnmatched("id", "icon-1"));
@@ -201,7 +201,7 @@ public class IconTests : TestContext
     public void ShouldCombineAllOptionsCorrectly()
     {
         // Act
-        var cut = RenderComponent<Icon>(parameters => parameters
+        var cut = Render<Icon>(parameters => parameters
             .Add(p => p.Name, "star")
             .Add(p => p.Set, IconSet.Material)
             .Add(p => p.Size, IconSize.Large)

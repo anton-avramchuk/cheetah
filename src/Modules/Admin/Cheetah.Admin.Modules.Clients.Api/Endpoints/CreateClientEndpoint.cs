@@ -6,7 +6,7 @@ namespace Cheetah.Admin.Modules.Clients.Api.Endpoints;
 
 public class CreateClientEndpoint : CreateCommandEndpoint<CreateClientRequest, CreateClientCommand>
 {
-    public override string Route => Constants.DefaultRoute;
+    public override string Route => Constants.ClientsRoute;
 
     public override string GetByIdRouteName => "GetClientById";
 }
