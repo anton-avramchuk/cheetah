@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using Cheetah.Admin.Modules.Clients.Api.Tests.Fixtures;
 using Cheetah.Admin.Modules.Clients.Contracts.Requests;
 using Cheetah.Admin.Modules.Clients.Contracts.Response;
+using Cheetah.Contracts.Responses;
 using Shouldly;
 
 namespace Cheetah.Admin.Modules.Clients.Api.Tests.Endpoints;
@@ -27,8 +28,9 @@ public class ClientsEndpointsTests
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
-        var clients = await response.Content.ReadFromJsonAsync<List<ClientViewModel>>();
-        clients.ShouldNotBeNull();
+        var result = await response.Content.ReadFromJsonAsync<GridResult<ClientViewModel>>();
+        result.ShouldNotBeNull();
+        result.Data.ShouldNotBeNull();
     }
 
     [Fact]
@@ -43,9 +45,9 @@ public class ClientsEndpointsTests
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
-        var clients = await response.Content.ReadFromJsonAsync<List<ClientViewModel>>();
-        clients.ShouldNotBeNull();
-        clients.ShouldContain(c => c.Name == "Test Client for List");
+        var result = await response.Content.ReadFromJsonAsync<GridResult<ClientViewModel>>();
+        result.ShouldNotBeNull();
+        result.Data.ShouldContain(c => c.Name == "Test Client for List");
     }
 
     #endregion

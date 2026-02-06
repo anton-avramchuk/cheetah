@@ -139,8 +139,8 @@ public class CrmDialogProviderTests : TestContext
         var cut = Render<CrmDialogProvider>();
         service.OnChangeSubscriberCount.ShouldBe(1); // Verify subscription happened
 
-        // Act
-        cut.Dispose();
+        // Act - Disposing the TestContext disposes all rendered components
+        Dispose();
 
         // Assert
         service.OnChangeSubscriberCount.ShouldBe(0);

@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using Cheetah.Admin.Modules.Clients.Api.Tests.Fixtures;
 using Cheetah.Admin.Modules.Clients.Contracts.Requests;
 using Cheetah.Admin.Modules.Clients.Contracts.Response;
+using Cheetah.Contracts.Responses;
 using Shouldly;
 
 namespace Cheetah.Admin.Modules.Clients.Api.Tests.Endpoints;
@@ -27,8 +28,9 @@ public class TariffsEndpointsTests
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
-        var tariffs = await response.Content.ReadFromJsonAsync<List<TariffViewModel>>();
-        tariffs.ShouldNotBeNull();
+        var result = await response.Content.ReadFromJsonAsync<GridResult<TariffViewModel>>();
+        result.ShouldNotBeNull();
+        result.Data.ShouldNotBeNull();
     }
 
     [Fact]
@@ -43,9 +45,9 @@ public class TariffsEndpointsTests
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
-        var tariffs = await response.Content.ReadFromJsonAsync<List<TariffViewModel>>();
-        tariffs.ShouldNotBeNull();
-        tariffs.ShouldContain(t => t.Name == "Test Tariff for List");
+        var result = await response.Content.ReadFromJsonAsync<GridResult<TariffViewModel>>();
+        result.ShouldNotBeNull();
+        result.Data.ShouldContain(t => t.Name == "Test Tariff for List");
     }
 
     #endregion
@@ -351,10 +353,10 @@ public class TariffsEndpointsTests
 
         // Act
         var response = await _client.GetAsync("/api/tariffs");
-        var tariffs = await response.Content.ReadFromJsonAsync<List<TariffViewModel>>();
+        var result = await response.Content.ReadFromJsonAsync<GridResult<TariffViewModel>>();
 
         // Assert
-        tariffs.ShouldNotContain(t => t.Id == tariffId);
+        result!.Data.ShouldNotContain(t => t.Id == tariffId);
     }
 
     #endregion
