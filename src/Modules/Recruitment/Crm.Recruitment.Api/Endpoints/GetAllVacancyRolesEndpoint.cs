@@ -9,5 +9,5 @@ namespace Crm.Recruitment.Api.Endpoints;
 public class GetAllVacancyRolesEndpoint : QueryCollectionEndpoint<GetAllVacancyRolesRequest,
     GetAllVacancyRolesQuery, VacancyRoleModel, VacancyRoleViewModel>
 {
-    public override string Route => "vacancy-roles";
+    public override string Route => "api/vacancy-roles";
 }

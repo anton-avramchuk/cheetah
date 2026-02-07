@@ -10,7 +10,7 @@ namespace Crm.Recruitment.Api.Endpoints;
 public class GetVacancyByIdEndpoint : QueryOrNotFoundEndpoint<GetVacancyByIdRequest, GetVacancyByIdQuery, VacancyModel,
     VacancyViewModel>
 {
-    public override string Route => $"{Constants.DefaultRoute}/{{id:guid}}";
+    public override string Route => $"{Constants.VacancyRoute}/{{id:guid}}";
 
     protected override void Configure(EndpointConfiguration config)
     {

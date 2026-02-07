@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using Cheetah.Contracts.Responses;
 using Crm.Recruitment.Api.Tests.Fixtures;
 using Crm.Recruitment.Contracts.Requests;
 using Crm.Recruitment.Contracts.Response;
@@ -10,6 +11,7 @@ namespace Crm.Recruitment.Api.Tests.Endpoints;
 [Collection("RecruitmentApi")]
 public class VacancyEndpointsTests
 {
+    private const string BasePath = "/api/vacancies";
     private readonly HttpClient _client;
 
     public VacancyEndpointsTests(RecruitmentApiFixture fixture)
@@ -21,12 +23,13 @@ public class VacancyEndpointsTests
     public async Task GetAll_WhenNoEntities_ShouldReturnEmptyList()
     {
         // Act
-        var response = await _client.GetAsync("/api/recruitment");
+        var response = await _client.GetAsync(BasePath);
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
-        var entities = await response.Content.ReadFromJsonAsync<List<VacancyViewModel>>();
-        entities.ShouldNotBeNull();
+        var result = await response.Content.ReadFromJsonAsync<GridResult<VacancyViewModel>>();
+        result.ShouldNotBeNull();
+        result!.Data.ShouldNotBeNull();
     }
 
     [Fact]
@@ -36,7 +39,7 @@ public class VacancyEndpointsTests
         var request = new CreateVacancyRequest("New Entity", "Description");
 
         // Act
-        var response = await _client.PostAsJsonAsync("/api/recruitment", request);
+        var response = await _client.PostAsJsonAsync(BasePath, request);
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.Created);
@@ -50,7 +53,7 @@ public class VacancyEndpointsTests
         var request = new CreateVacancyRequest("", "Description");
 
         // Act
-        var response = await _client.PostAsJsonAsync("/api/recruitment", request);
+        var response = await _client.PostAsJsonAsync(BasePath, request);
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
@@ -61,7 +64,7 @@ public class VacancyEndpointsTests
     {
         // Arrange
         var createRequest = new CreateVacancyRequest("Entity To Get", "Description");
-        var createResponse = await _client.PostAsJsonAsync("/api/recruitment", createRequest);
+        var createResponse = await _client.PostAsJsonAsync(BasePath, createRequest);
         var location = createResponse.Headers.Location;
 
         // Act
@@ -78,7 +81,7 @@ public class VacancyEndpointsTests
     public async Task GetById_WithNonExistingEntity_ShouldReturnNotFound()
     {
         // Act
-        var response = await _client.GetAsync($"/api/recruitment/{Guid.NewGuid()}");
+        var response = await _client.GetAsync($"{BasePath}/{Guid.NewGuid()}");
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
@@ -89,7 +92,7 @@ public class VacancyEndpointsTests
     {
         // Arrange
         var createRequest = new CreateVacancyRequest("Entity To Update", "Original");
-        var createResponse = await _client.PostAsJsonAsync("/api/recruitment", createRequest);
+        var createResponse = await _client.PostAsJsonAsync(BasePath, createRequest);
         var location = createResponse.Headers.Location;
         var entityId = Guid.Parse(location!.Segments.Last());
 
@@ -111,7 +114,7 @@ public class VacancyEndpointsTests
     {
         // Arrange
         var createRequest = new CreateVacancyRequest("Entity To Delete", "Description");
-        var createResponse = await _client.PostAsJsonAsync("/api/recruitment", createRequest);
+        var createResponse = await _client.PostAsJsonAsync(BasePath, createRequest);
         var location = createResponse.Headers.Location;
 
         // Act

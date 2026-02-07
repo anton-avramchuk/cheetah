@@ -6,7 +6,7 @@ namespace Crm.Recruitment.Api.Endpoints;
 
 public class CreateVacancyEndpoint : CreateCommandEndpoint<CreateVacancyRequest, CreateVacancyCommand>
 {
-    public override string Route => Constants.DefaultRoute;
+    public override string Route => Constants.VacancyRoute;
 
     public override string GetByIdRouteName => "GetVacancyById";
 }

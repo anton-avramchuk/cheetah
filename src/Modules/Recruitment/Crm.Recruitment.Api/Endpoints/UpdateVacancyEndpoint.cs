@@ -6,5 +6,5 @@ namespace Crm.Recruitment.Api.Endpoints;
 
 public class UpdateVacancyEndpoint : UpdateCommandEndpoint<UpdateVacancyRequest, UpdateVacancyCommand>
 {
-    public override string Route => $"{Constants.DefaultRoute}/{{id:guid}}";
+    public override string Route => $"{Constants.VacancyRoute}/{{id:guid}}";
 }

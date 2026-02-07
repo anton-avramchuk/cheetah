@@ -2,6 +2,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\..\Cheetah.Core.CQRS\Cheetah.Core.CQRS.csproj"/>
+        <ProjectReference Include="..\..\..\Cheetah.Core.Grid\Cheetah.Core.Grid.csproj"/>
         <ProjectReference Include="..\..\..\Cheetah.Core\Cheetah.Core.csproj"/>
         <ProjectReference Include="..\..\..\Cheetah.Generators.Module\Cheetah.Generators.Module.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer"/>
         <ProjectReference Include="..\Crm.Recruitment.Contracts\Crm.Recruitment.Contracts.csproj"/>
