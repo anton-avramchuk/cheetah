@@ -6,7 +6,7 @@ using Crm.Recruitment.Contracts.Response;
 
 namespace Crm.Recruitment.Api.Endpoints;
 
-public class GetAllVacanciesEndpoint : QueryGridEndpoint<GetAllVacanciesRequest,
+public class GetAllVacanciesEndpoint : QueryGridEndpoint<GetAllVacanciesGridRequest,
     GetVacanciesGridQuery, VacancyModel, VacancyViewModel>
 {
     public override string Route => Constants.VacancyRoute;

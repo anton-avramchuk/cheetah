@@ -1,6 +1,5 @@
 using Cheetah.Admin.Modules.Clients.Application.Queries;
 using Cheetah.Admin.Modules.Clients.Domain;
-using Cheetah.Admin.Modules.Clients.Domain.Repositories;
 using Cheetah.Contracts.Requests;
 using Cheetah.Contracts.Responses;
 using Cheetah.Core.Grid;
@@ -11,15 +10,13 @@ namespace Cheetah.Admin.Modules.Clients.Application.Tests.Queries;
 
 public class GetAllClientsQueryHandlerTests
 {
-    private readonly Mock<IClientRepository> _repositoryMock;
-    private readonly Mock<IGridQueryService> _gridServiceMock;
+    private readonly Mock<IGridRepository<Client>> _repositoryMock;
     private readonly GetAllClientsQueryHandler _handler;
 
     public GetAllClientsQueryHandlerTests()
     {
-        _repositoryMock = new Mock<IClientRepository>();
-        _gridServiceMock = new Mock<IGridQueryService>();
-        _handler = new GetAllClientsQueryHandler(_repositoryMock.Object, _gridServiceMock.Object);
+        _repositoryMock = new Mock<IGridRepository<Client>>();
+        _handler = new GetAllClientsQueryHandler(_repositoryMock.Object);
     }
 
     [Fact]
@@ -36,12 +33,7 @@ public class GetAllClientsQueryHandlerTests
         var gridResult = new GridResult<ClientModel>(clientModels, 3);
 
         _repositoryMock
-            .Setup(r => r.AsNoTrackingQueryable())
-            .Returns(new List<Client>().AsQueryable());
-
-        _gridServiceMock
-            .Setup(g => g.ExecuteAsync<Client, ClientModel>(
-                It.IsAny<IQueryable<Client>>(),
+            .Setup(r => r.GetGridAsync<ClientModel>(
                 It.IsAny<GridRequest>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(gridResult);
@@ -67,12 +59,7 @@ public class GetAllClientsQueryHandlerTests
         var gridResult = new GridResult<ClientModel>(new List<ClientModel>(), 0);
 
         _repositoryMock
-            .Setup(r => r.AsNoTrackingQueryable())
-            .Returns(new List<Client>().AsQueryable());
-
-        _gridServiceMock
-            .Setup(g => g.ExecuteAsync<Client, ClientModel>(
-                It.IsAny<IQueryable<Client>>(),
+            .Setup(r => r.GetGridAsync<ClientModel>(
                 It.IsAny<GridRequest>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(gridResult);
@@ -88,22 +75,17 @@ public class GetAllClientsQueryHandlerTests
     }
 
     [Fact]
-    public async Task HandleAsync_ShouldPassCorrectGridRequestToService()
+    public async Task HandleAsync_ShouldPassCorrectGridRequestToRepository()
     {
         // Arrange
         var gridResult = new GridResult<ClientModel>(new List<ClientModel>(), 0);
         GridRequest? capturedRequest = null;
 
         _repositoryMock
-            .Setup(r => r.AsNoTrackingQueryable())
-            .Returns(new List<Client>().AsQueryable());
-
-        _gridServiceMock
-            .Setup(g => g.ExecuteAsync<Client, ClientModel>(
-                It.IsAny<IQueryable<Client>>(),
+            .Setup(r => r.GetGridAsync<ClientModel>(
                 It.IsAny<GridRequest>(),
                 It.IsAny<CancellationToken>()))
-            .Callback<IQueryable<Client>, GridRequest, CancellationToken>((_, req, _) => capturedRequest = req)
+            .Callback<GridRequest, CancellationToken>((req, _) => capturedRequest = req)
             .ReturnsAsync(gridResult);
 
         var sort = new List<SortDescriptor> { new() { Field = "Name", Dir = "asc" } };

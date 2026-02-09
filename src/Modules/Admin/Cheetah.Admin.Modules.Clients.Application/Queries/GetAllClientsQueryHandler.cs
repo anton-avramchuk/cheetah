@@ -1,5 +1,4 @@
 using Cheetah.Admin.Modules.Clients.Domain;
-using Cheetah.Admin.Modules.Clients.Domain.Repositories;
 using Cheetah.Contracts.Requests;
 using Cheetah.Contracts.Responses;
 using Cheetah.Core.CQRS;
@@ -11,19 +10,15 @@ namespace Cheetah.Admin.Modules.Clients.Application.Queries;
 [Export(LifetimeType.Scoped, typeof(IQueryHandler<GetAllClientsQuery, GridResult<ClientModel>>))]
 public class GetAllClientsQueryHandler : IQueryHandler<GetAllClientsQuery, GridResult<ClientModel>>
 {
-    private readonly IClientRepository _repository;
-    private readonly IGridQueryService _gridService;
+    private readonly IGridRepository<Client> _repository;
 
-    public GetAllClientsQueryHandler(IClientRepository repository, IGridQueryService gridService)
+    public GetAllClientsQueryHandler(IGridRepository<Client> repository)
     {
         _repository = repository;
-        _gridService = gridService;
     }
 
     public async ValueTask<GridResult<ClientModel>> HandleAsync(GetAllClientsQuery query, CancellationToken ct = default)
     {
-        var queryable = _repository.AsNoTrackingQueryable();
-
         var gridRequest = new GridRequest
         {
             Page = query.Page,
@@ -32,6 +27,6 @@ public class GetAllClientsQueryHandler : IQueryHandler<GetAllClientsQuery, GridR
             Filter = query.Filter
         };
 
-        return await _gridService.ExecuteAsync<Client, ClientModel>(queryable, gridRequest, ct);
+        return await _repository.GetGridAsync<ClientModel>(gridRequest, ct);
     }
 }

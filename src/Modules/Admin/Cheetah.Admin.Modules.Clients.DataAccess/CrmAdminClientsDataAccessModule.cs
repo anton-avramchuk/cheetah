@@ -12,6 +12,7 @@ namespace Cheetah.Admin.Modules.Clients.DataAccess;
 
 [DependsOn(typeof(CoreModule),typeof(CrmEntityFrameworkPostgreSqlModule))]
 [DependsOn(typeof(CrmEntityFrameworkModule),typeof(CrmAdminClientsDomainModule))]
+[DependsOn(typeof(Cheetah.Core.Grid.CrmGridModule))]
 
 public partial class CrmAdminClientsDataAccessModule : CrmModule
 {

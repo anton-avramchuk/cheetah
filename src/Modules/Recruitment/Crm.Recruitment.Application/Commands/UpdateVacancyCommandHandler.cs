@@ -1,19 +1,19 @@
 using Cheetah.Core.CQRS;
+using Cheetah.Core.DataAccess.Abstractions;
 using Cheetah.Core.DependencyInjection;
 using Cheetah.Core.Domain.Exceptions;
 using Cheetah.Core.Events;
 using Crm.Recruitment.Domain;
-using Crm.Recruitment.Domain.Repositories;
 
 namespace Crm.Recruitment.Application.Commands;
 
 [Export(LifetimeType.Scoped, typeof(ICommandHandler<UpdateVacancyCommand>))]
 public class UpdateVacancyCommandHandler : ICommandHandler<UpdateVacancyCommand>
 {
-    private readonly IVacancyRepository _repository;
+    private readonly IRepository<Vacancy, Guid> _repository;
     private readonly IEventBus _eventBus;
 
-    public UpdateVacancyCommandHandler(IVacancyRepository repository, IEventBus eventBus)
+    public UpdateVacancyCommandHandler(IRepository<Vacancy, Guid> repository, IEventBus eventBus)
     {
         _repository = repository;
         _eventBus = eventBus;

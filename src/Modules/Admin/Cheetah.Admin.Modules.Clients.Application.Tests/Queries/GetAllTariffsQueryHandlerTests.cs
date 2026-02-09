@@ -1,6 +1,5 @@
 using Cheetah.Admin.Modules.Clients.Application.Queries;
 using Cheetah.Admin.Modules.Clients.Domain;
-using Cheetah.Admin.Modules.Clients.Domain.Repositories;
 using Cheetah.Contracts.Requests;
 using Cheetah.Contracts.Responses;
 using Cheetah.Core.Grid;
@@ -11,22 +10,19 @@ namespace Cheetah.Admin.Modules.Clients.Application.Tests.Queries;
 
 public class GetAllTariffsQueryHandlerTests
 {
-    private readonly Mock<ITariffRepository> _repositoryMock;
-    private readonly Mock<IGridQueryService> _gridServiceMock;
+    private readonly Mock<IGridRepository<Tariff>> _repositoryMock;
     private readonly GetAllTariffsQueryHandler _handler;
 
     public GetAllTariffsQueryHandlerTests()
     {
-        _repositoryMock = new Mock<ITariffRepository>();
-        _gridServiceMock = new Mock<IGridQueryService>();
-        _handler = new GetAllTariffsQueryHandler(_repositoryMock.Object, _gridServiceMock.Object);
+        _repositoryMock = new Mock<IGridRepository<Tariff>>();
+        _handler = new GetAllTariffsQueryHandler(_repositoryMock.Object);
     }
 
     [Fact]
     public async Task HandleAsync_WithTariffs_ShouldReturnTariffModels()
     {
         // Arrange
-        // TariffModel(Guid Id, string Name, string? Description, decimal Price, string Currency, bool IsActive)
         var tariffModels = new List<TariffModel>
         {
             new(Guid.NewGuid(), "Basic", "Basic plan", 9.99m, "USD", true),
@@ -36,12 +32,7 @@ public class GetAllTariffsQueryHandlerTests
         var gridResult = new GridResult<TariffModel>(tariffModels, 2);
 
         _repositoryMock
-            .Setup(r => r.AsNoTrackingQueryable())
-            .Returns(new List<Tariff>().AsQueryable());
-
-        _gridServiceMock
-            .Setup(g => g.ExecuteAsync<Tariff, TariffModel>(
-                It.IsAny<IQueryable<Tariff>>(),
+            .Setup(r => r.GetGridAsync<TariffModel>(
                 It.IsAny<GridRequest>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(gridResult);
@@ -70,12 +61,7 @@ public class GetAllTariffsQueryHandlerTests
         var gridResult = new GridResult<TariffModel>(new List<TariffModel>(), 0);
 
         _repositoryMock
-            .Setup(r => r.AsNoTrackingQueryable())
-            .Returns(new List<Tariff>().AsQueryable());
-
-        _gridServiceMock
-            .Setup(g => g.ExecuteAsync<Tariff, TariffModel>(
-                It.IsAny<IQueryable<Tariff>>(),
+            .Setup(r => r.GetGridAsync<TariffModel>(
                 It.IsAny<GridRequest>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(gridResult);
@@ -91,22 +77,17 @@ public class GetAllTariffsQueryHandlerTests
     }
 
     [Fact]
-    public async Task HandleAsync_ShouldPassCorrectGridRequestToService()
+    public async Task HandleAsync_ShouldPassCorrectGridRequestToRepository()
     {
         // Arrange
         var gridResult = new GridResult<TariffModel>(new List<TariffModel>(), 0);
         GridRequest? capturedRequest = null;
 
         _repositoryMock
-            .Setup(r => r.AsNoTrackingQueryable())
-            .Returns(new List<Tariff>().AsQueryable());
-
-        _gridServiceMock
-            .Setup(g => g.ExecuteAsync<Tariff, TariffModel>(
-                It.IsAny<IQueryable<Tariff>>(),
+            .Setup(r => r.GetGridAsync<TariffModel>(
                 It.IsAny<GridRequest>(),
                 It.IsAny<CancellationToken>()))
-            .Callback<IQueryable<Tariff>, GridRequest, CancellationToken>((_, req, _) => capturedRequest = req)
+            .Callback<GridRequest, CancellationToken>((req, _) => capturedRequest = req)
             .ReturnsAsync(gridResult);
 
         var sort = new List<SortDescriptor> { new() { Field = "Name", Dir = "asc" } };

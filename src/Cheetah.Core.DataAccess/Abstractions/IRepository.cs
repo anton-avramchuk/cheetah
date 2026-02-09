@@ -11,3 +11,8 @@ public interface IRepository<TEntity, TKey> : IReadOnlyRepository<TEntity, TKey>
     void Delete(TEntity entity);
     ValueTask<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }
+
+public interface IRepository<TEntity> : IRepository<TEntity, Guid>, IReadOnlyRepository<TEntity>
+    where TEntity : Entity<Guid>
+{
+}

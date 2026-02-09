@@ -4,19 +4,16 @@ using Cheetah.Core.CQRS;
 using Cheetah.Core.DependencyInjection;
 using Cheetah.Core.Grid;
 using Crm.Recruitment.Domain;
-using Crm.Recruitment.Domain.Repositories;
 
 namespace Crm.Recruitment.Application.Queries;
 
 [Export(LifetimeType.Scoped, typeof(IQueryHandler<GetVacanciesGridQuery, GridResult<VacancyModel>>))]
-public class GetVacanciesGridQueryHandler(IVacancyRepository repository, IGridQueryService gridService)
+public class GetVacanciesGridQueryHandler(IGridRepository<Vacancy> repository)
     : IQueryHandler<GetVacanciesGridQuery, GridResult<VacancyModel>>
 {
     public async ValueTask<GridResult<VacancyModel>> HandleAsync(GetVacanciesGridQuery gridQuery,
         CancellationToken ct = default)
     {
-        var queryable = repository.AsNoTrackingQueryable();
-
         var gridRequest = new GridRequest
         {
             Page = gridQuery.Page,
@@ -25,6 +22,6 @@ public class GetVacanciesGridQueryHandler(IVacancyRepository repository, IGridQu
             Filter = gridQuery.Filter
         };
 
-        return await gridService.ExecuteAsync<Vacancy, VacancyModel>(queryable, gridRequest, ct);
+        return await repository.GetGridAsync<VacancyModel>(gridRequest, ct);
     }
 }

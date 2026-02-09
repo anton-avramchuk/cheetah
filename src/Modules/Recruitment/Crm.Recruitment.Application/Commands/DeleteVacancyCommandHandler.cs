@@ -1,17 +1,17 @@
 using Cheetah.Core.CQRS;
+using Cheetah.Core.DataAccess.Abstractions;
 using Cheetah.Core.DependencyInjection;
 using Cheetah.Core.Domain.Exceptions;
 using Crm.Recruitment.Domain;
-using Crm.Recruitment.Domain.Repositories;
 
 namespace Crm.Recruitment.Application.Commands;
 
 [Export(LifetimeType.Scoped, typeof(ICommandHandler<DeleteVacancyCommand>))]
 public class DeleteVacancyCommandHandler : ICommandHandler<DeleteVacancyCommand>
 {
-    private readonly IVacancyRepository _repository;
+    private readonly IRepository<Vacancy, Guid> _repository;
 
-    public DeleteVacancyCommandHandler(IVacancyRepository repository)
+    public DeleteVacancyCommandHandler(IRepository<Vacancy, Guid> repository)
     {
         _repository = repository;
     }

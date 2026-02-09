@@ -1,4 +1,5 @@
 using Cheetah.Core.CQRS;
+using Cheetah.Core.DataAccess.Abstractions;
 using Cheetah.Core.DependencyInjection;
 using Crm.Recruitment.Domain;
 using Crm.Recruitment.Domain.Repositories;
@@ -9,15 +10,15 @@ namespace Crm.Recruitment.Application.Commands;
 public class AssignUserToVacancyCommandHandler : ICommandHandler<AssignUserToVacancyCommand, Guid>
 {
     private readonly IVacancyAssignmentRepository _assignmentRepository;
-    private readonly IVacancyRepository _vacancyRepository;
-    private readonly IVacancyRoleRepository _roleRepository;
-    private readonly IUserRepository _userRepository;
+    private readonly IRepository<Vacancy, Guid> _vacancyRepository;
+    private readonly IRepository<VacancyRole, Guid> _roleRepository;
+    private readonly IRepository<User, Guid> _userRepository;
 
     public AssignUserToVacancyCommandHandler(
         IVacancyAssignmentRepository assignmentRepository,
-        IVacancyRepository vacancyRepository,
-        IVacancyRoleRepository roleRepository,
-        IUserRepository userRepository)
+        IRepository<Vacancy, Guid> vacancyRepository,
+        IRepository<VacancyRole, Guid> roleRepository,
+        IRepository<User, Guid> userRepository)
     {
         _assignmentRepository = assignmentRepository;
         _vacancyRepository = vacancyRepository;
@@ -33,8 +34,8 @@ public class AssignUserToVacancyCommandHandler : ICommandHandler<AssignUserToVac
             throw new InvalidOperationException($"Vacancy with id '{command.VacancyId}' not found.");
 
         // Validate user exists
-        var userExists = await _userRepository.ExistsAsync(command.UserId, ct);
-        if (!userExists)
+        var user = await _userRepository.GetByIdAsync(command.UserId, ct);
+        if (user is null)
             throw new InvalidOperationException($"User with id '{command.UserId}' not found.");
 
         // Validate role exists

@@ -13,3 +13,8 @@ public interface IReadOnlyRepository<TEntity, TKey>
     IQueryable<TEntity> AsQueryable();
     IQueryable<TEntity> AsNoTrackingQueryable();
 }
+
+public interface IReadOnlyRepository<TEntity> : IReadOnlyRepository<TEntity, Guid>
+    where TEntity : Entity<Guid>
+{
+}

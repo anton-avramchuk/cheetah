@@ -2,4 +2,4 @@ using Cheetah.Contracts.Requests;
 
 namespace Crm.Recruitment.Contracts.Requests;
 
-public class GetAllVacanciesRequest : GridRequest;
+public class GetAllVacanciesGridRequest : GridRequest;

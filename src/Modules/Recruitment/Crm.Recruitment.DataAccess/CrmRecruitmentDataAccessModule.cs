@@ -3,6 +3,7 @@ using Cheetah.Core.EntityFramework.Extensions;
 using Cheetah.Core.EntityFramework.Migrations;
 using Cheetah.Core.EntityFramework.PostgreSql;
 using Cheetah.Core.EntityFramework.PostgreSql.Extensions;
+using Cheetah.Core.Grid;
 using Cheetah.Core.Modularity;
 using Crm.Recruitment.Domain;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,7 +13,8 @@ namespace Crm.Recruitment.DataAccess;
 [DependsOn(typeof(Cheetah.Core.CoreModule),
     typeof(CrmRecruitmentDomainModule),
     typeof(CrmEntityFrameworkModule),
-    typeof(CrmEntityFrameworkPostgreSqlModule)
+    typeof(CrmEntityFrameworkPostgreSqlModule),
+    typeof(CrmGridModule)
 )]
 public partial class CrmRecruitmentDataAccessModule : CrmModule
 {

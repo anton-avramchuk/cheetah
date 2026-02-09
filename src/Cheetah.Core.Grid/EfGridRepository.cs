@@ -2,19 +2,17 @@ using System.Linq.Expressions;
 using System.Reflection;
 using Cheetah.Contracts.Requests;
 using Cheetah.Contracts.Responses;
-using Cheetah.Core.DependencyInjection;
+using Cheetah.Core.Domain;
+using Cheetah.Core.EntityFramework.Repositories;
 using Cheetah.Mapping.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Cheetah.Core.Grid;
 
-/// <summary>
-/// Service for executing grid queries with filtering, sorting, and pagination
-/// Uses Expression trees for database-level execution
-/// </summary>
-[Export(LifetimeType.Scoped, typeof(IGridQueryService))]
-public class GridQueryService : IGridQueryService
+public class EfGridRepository<TDbContext, TEntity, TKey> : EfRepository<TDbContext, TEntity, TKey>, IGridRepository<TEntity, TKey>
+    where TDbContext : DbContext
+    where TEntity : Entity<TKey>
 {
     private static readonly MethodInfo OrderByMethod = typeof(Queryable)
         .GetMethods()
@@ -33,44 +31,38 @@ public class GridQueryService : IGridQueryService
         .First(m => m.Name == nameof(Queryable.ThenByDescending) && m.GetParameters().Length == 2);
 
     private readonly IObjectMapper _mapper;
-    private readonly ILogger<GridQueryService> _logger;
+    private readonly ILogger _logger;
 
-    public GridQueryService(IObjectMapper mapper, ILogger<GridQueryService> logger)
+    public EfGridRepository(TDbContext dbContext, IObjectMapper mapper, ILogger logger)
+        : base(dbContext)
     {
         _mapper = mapper;
         _logger = logger;
     }
 
-    /// <inheritdoc />
-    public async ValueTask<GridResult<TViewModel>> ExecuteAsync<TEntity, TViewModel>(
-        IQueryable<TEntity> queryable,
+    public async ValueTask<GridResult<TViewModel>> GetGridAsync<TViewModel>(
         GridRequest request,
         CancellationToken ct = default)
-        where TEntity : class
         where TViewModel : class
     {
+        var queryable = AsNoTrackingQueryable();
+
         // 1. Apply filtering
         if (request.Filter is not null)
         {
-            var filterExpression = BuildFilterExpression<TEntity>(request.Filter);
+            var filterExpression = BuildFilterExpression(request.Filter);
             if (filterExpression is not null)
-            {
                 queryable = queryable.Where(filterExpression);
-            }
         }
 
         // 2. Get total count (after filtering, before pagination)
-        // Note: This requires a separate database query. For high-performance scenarios,
-        // consider using window functions or returning total only when needed.
         var total = await queryable.CountAsync(ct);
 
         // 3. Apply sorting
         if (request.Sort.Count > 0)
-        {
             queryable = ApplySorting(queryable, request.Sort);
-        }
 
-        // 4. Apply pagination with validation
+        // 4. Apply pagination
         if (request.PageSize > 0)
         {
             var page = Math.Max(1, request.Page);
@@ -89,13 +81,10 @@ public class GridQueryService : IGridQueryService
         };
     }
 
-    /// <summary>
-    /// Builds a filter expression from FilterDescriptor
-    /// </summary>
-    private Expression<Func<TEntity, bool>>? BuildFilterExpression<TEntity>(FilterDescriptor filter)
+    private Expression<Func<TEntity, bool>>? BuildFilterExpression(FilterDescriptor filter)
     {
         var parameter = Expression.Parameter(typeof(TEntity), "e");
-        var expression = BuildFilterExpressionInternal<TEntity>(filter, parameter);
+        var expression = BuildFilterExpressionInternal(filter, parameter);
 
         if (expression is null)
             return null;
@@ -103,7 +92,7 @@ public class GridQueryService : IGridQueryService
         return Expression.Lambda<Func<TEntity, bool>>(expression, parameter);
     }
 
-    private Expression? BuildFilterExpressionInternal<TEntity>(
+    private Expression? BuildFilterExpressionInternal(
         FilterDescriptor filter,
         ParameterExpression parameter)
     {
@@ -111,7 +100,7 @@ public class GridQueryService : IGridQueryService
         if (filter.Filters.Count > 0)
         {
             var expressions = filter.Filters
-                .Select(f => BuildFilterExpressionInternal<TEntity>(f, parameter))
+                .Select(f => BuildFilterExpressionInternal(f, parameter))
                 .Where(e => e is not null)
                 .Cast<Expression>()
                 .ToList();
@@ -137,16 +126,14 @@ public class GridQueryService : IGridQueryService
         var propertyExpression = BuildPropertyExpression(parameter, filter.Field);
         if (propertyExpression is null)
         {
-            _logger.LogWarning("Grid filter: Property '{Field}' not found on type {Type}", filter.Field, typeof(TEntity).Name);
+            _logger.LogWarning("Grid filter: Property '{Field}' not found on type {Type}",
+                filter.Field, typeof(TEntity).Name);
             return null;
         }
 
         return BuildComparisonExpression(propertyExpression, filter.Operator, filter.Value, filter.IgnoreCase);
     }
 
-    /// <summary>
-    /// Builds property access expression supporting nested properties (e.g., "Patient.Name")
-    /// </summary>
     private static Expression? BuildPropertyExpression(Expression parameter, string propertyPath)
     {
         var parts = propertyPath.Split('.');
@@ -166,9 +153,6 @@ public class GridQueryService : IGridQueryService
         return current;
     }
 
-    /// <summary>
-    /// Builds comparison expression based on operator
-    /// </summary>
     private static Expression? BuildComparisonExpression(
         Expression property,
         string op,
@@ -178,7 +162,6 @@ public class GridQueryService : IGridQueryService
         var propertyType = property.Type;
         var underlyingType = Nullable.GetUnderlyingType(propertyType) ?? propertyType;
 
-        // Handle null checks first
         switch (op.ToLowerInvariant())
         {
             case "isnull":
@@ -191,10 +174,9 @@ public class GridQueryService : IGridQueryService
                 return BuildEmptyCheck(property, false);
         }
 
-        // Convert value to property type
         var convertedValue = ConvertValue(value, underlyingType);
         if (convertedValue is null && value is not null)
-            return null; // Conversion failed
+            return null;
 
         var constant = Expression.Constant(convertedValue, propertyType);
 
@@ -224,10 +206,7 @@ public class GridQueryService : IGridQueryService
     private static Expression BuildEmptyCheck(Expression property, bool checkForEmpty)
     {
         if (property.Type != typeof(string))
-        {
-            // For non-string types, treat empty as null
             return BuildNullCheck(property, checkForEmpty);
-        }
 
         var emptyConstant = Expression.Constant(string.Empty, typeof(string));
         var isNullOrEmpty = Expression.OrElse(
@@ -242,8 +221,6 @@ public class GridQueryService : IGridQueryService
         if (property.Type == typeof(string) && ignoreCase)
         {
             var toLowerMethod = typeof(string).GetMethod("ToLower", Type.EmptyTypes)!;
-
-            // Handle null by coalescing to empty string before ToLower
             var nullCoalesce = Expression.Coalesce(property, Expression.Constant(string.Empty));
             var propertyLower = Expression.Call(nullCoalesce, toLowerMethod);
 
@@ -275,16 +252,12 @@ public class GridQueryService : IGridQueryService
         if (method is null)
             return null;
 
-        // Handle null property by returning false
         var nullCheck = Expression.NotEqual(property, Expression.Constant(null, typeof(string)));
         var methodCall = Expression.Call(property, method, constant, Expression.Constant(comparisonValue));
 
         return Expression.AndAlso(nullCheck, methodCall);
     }
 
-    /// <summary>
-    /// Converts value to target type
-    /// </summary>
     private static object? ConvertValue(object? value, Type targetType)
     {
         if (value is null)
@@ -292,11 +265,8 @@ public class GridQueryService : IGridQueryService
 
         try
         {
-            // Handle JsonElement from JSON deserialization
             if (value is System.Text.Json.JsonElement jsonElement)
-            {
                 return ConvertJsonElement(jsonElement, targetType);
-            }
 
             if (targetType == typeof(string))
                 return value.ToString();
@@ -323,7 +293,6 @@ public class GridQueryService : IGridQueryService
         }
         catch
         {
-            // Value conversion failed - will be handled by caller returning null filter
             return null;
         }
     }
@@ -360,10 +329,7 @@ public class GridQueryService : IGridQueryService
         };
     }
 
-    /// <summary>
-    /// Applies sorting to queryable using Expression.Call instead of dynamic
-    /// </summary>
-    private static IQueryable<TEntity> ApplySorting<TEntity>(
+    private static IQueryable<TEntity> ApplySorting(
         IQueryable<TEntity> queryable,
         List<SortDescriptor> sortDescriptors)
     {
@@ -394,5 +360,15 @@ public class GridQueryService : IGridQueryService
         }
 
         return queryable;
+    }
+}
+
+public class EfGridRepository<TDbContext, TEntity> : EfGridRepository<TDbContext, TEntity, Guid>, IGridRepository<TEntity>
+    where TDbContext : DbContext
+    where TEntity : Entity<Guid>
+{
+    public EfGridRepository(TDbContext dbContext, IObjectMapper mapper, ILogger logger)
+        : base(dbContext, mapper, logger)
+    {
     }
 }

@@ -1,6 +1,6 @@
+using Cheetah.Core.DataAccess.Abstractions;
 using Crm.Recruitment.Application.Commands;
 using Crm.Recruitment.Domain;
-using Crm.Recruitment.Domain.Repositories;
 using Cheetah.Core.Events;
 using Shouldly;
 using Moq;
@@ -9,13 +9,13 @@ namespace Crm.Recruitment.Application.Tests.Commands;
 
 public class CreateVacancyCommandHandlerTests
 {
-    private readonly Mock<IVacancyRepository> _repositoryMock;
+    private readonly Mock<IRepository<Vacancy, Guid>> _repositoryMock;
     private readonly Mock<IEventBus> _eventBusMock;
     private readonly CreateVacancyCommandHandler _handler;
 
     public CreateVacancyCommandHandlerTests()
     {
-        _repositoryMock = new Mock<IVacancyRepository>();
+        _repositoryMock = new Mock<IRepository<Vacancy, Guid>>();
         _eventBusMock = new Mock<IEventBus>();
         _handler = new CreateVacancyCommandHandler(_repositoryMock.Object, _eventBusMock.Object);
     }

@@ -1,22 +1,26 @@
 using Cheetah.Core.CQRS;
+using Cheetah.Core.DataAccess.Abstractions;
 using Cheetah.Core.DependencyInjection;
-using Crm.Recruitment.Domain.Repositories;
+using Crm.Recruitment.Domain;
+using Microsoft.EntityFrameworkCore;
 
 namespace Crm.Recruitment.Application.Queries;
 
 [Export(LifetimeType.Scoped, typeof(IQueryHandler<GetVacancyByIdQuery, VacancyModel?>))]
 public class GetVacancyByIdQueryHandler : IQueryHandler<GetVacancyByIdQuery, VacancyModel?>
 {
-    private readonly IVacancyRepository _repository;
+    private readonly IReadOnlyRepository<Vacancy, Guid> _repository;
 
-    public GetVacancyByIdQueryHandler(IVacancyRepository repository)
+    public GetVacancyByIdQueryHandler(IRepository<Vacancy, Guid> repository)
     {
         _repository = repository;
     }
 
     public async ValueTask<VacancyModel?> HandleAsync(GetVacancyByIdQuery query, CancellationToken ct = default)
     {
-        var entity = await _repository.GetByIdNoTrackingAsync(query.Id, ct);
+        var entity = await _repository.AsNoTrackingQueryable()
+            .FirstOrDefaultAsync(e => e.Id == query.Id, ct);
+
         if (entity is null)
             return null;
 
