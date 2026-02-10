@@ -1,0 +1,5 @@
+using Cheetah.Core.CQRS;
+
+namespace Crm.Recruitment.Application.Queries;
+
+public record GetAllCustomerDirectionsQuery : IQuery<IReadOnlyList<CustomerDirectionModel>>;
