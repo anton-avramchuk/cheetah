@@ -96,6 +96,8 @@
     </Folder>
     <Folder Name="/Modules/Identity/" />
     <Folder Name="/Modules/Recruitment/" />
+    <Folder Name="/Modules/Recruitment/Candidate/" />
+    <Folder Name="/Modules/Recruitment/Task/" />
     <Folder Name="/Modules/Recruitment/Vacancy/">
         <Project Path="src/Modules/Recruitment/Crm.Recruitment.Api.Tests/Crm.Recruitment.Api.Tests.csproj" />
         <Project Path="src/Modules/Recruitment/Crm.Recruitment.Api/Crm.Recruitment.Api.csproj" />
