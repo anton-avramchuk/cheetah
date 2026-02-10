@@ -14,6 +14,6 @@ public class GetVacancyByIdEndpoint : QueryOrNotFoundEndpoint<GetVacancyByIdRequ
 
     protected override void Configure(EndpointConfiguration config)
     {
-        config.WithName("GetVacancyById");
+        config.WithName("GetVacancyById").WithTags("Vacancies");
     }
 }

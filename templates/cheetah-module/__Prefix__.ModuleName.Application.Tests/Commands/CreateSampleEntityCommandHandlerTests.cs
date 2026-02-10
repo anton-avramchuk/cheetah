@@ -1,6 +1,6 @@
 using __Prefix__.ModuleName.Application.Commands;
 using __Prefix__.ModuleName.Domain;
-using __Prefix__.ModuleName.Domain.Repositories;
+using Cheetah.Core.DataAccess.Abstractions;
 using Cheetah.Core.Events;
 using Shouldly;
 using Moq;
@@ -9,13 +9,13 @@ namespace __Prefix__.ModuleName.Application.Tests.Commands;
 
 public class CreateSampleEntityCommandHandlerTests
 {
-    private readonly Mock<ISampleEntityRepository> _repositoryMock;
+    private readonly Mock<IRepository<SampleEntity, Guid>> _repositoryMock;
     private readonly Mock<IEventBus> _eventBusMock;
     private readonly CreateSampleEntityCommandHandler _handler;
 
     public CreateSampleEntityCommandHandlerTests()
     {
-        _repositoryMock = new Mock<ISampleEntityRepository>();
+        _repositoryMock = new Mock<IRepository<SampleEntity, Guid>>();
         _eventBusMock = new Mock<IEventBus>();
         _handler = new CreateSampleEntityCommandHandler(_repositoryMock.Object, _eventBusMock.Object);
     }

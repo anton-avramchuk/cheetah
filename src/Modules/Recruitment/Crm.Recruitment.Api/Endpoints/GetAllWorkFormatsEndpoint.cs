@@ -1,3 +1,4 @@
+using Cheetah.Backend.Endpoints.Configuration;
 using Cheetah.Backend.Endpoints.Http;
 using Crm.Recruitment.Application;
 using Crm.Recruitment.Application.Queries;
@@ -10,4 +11,9 @@ public class GetAllWorkFormatsEndpoint : QueryCollectionEndpoint<GetAllWorkForma
     GetAllWorkFormatsQuery, WorkFormatModel, WorkFormatViewModel>
 {
     public override string Route => Constants.WorkFormatRoute;
+
+    protected override void Configure(EndpointConfiguration config)
+    {
+        config.WithTags("Work Formats");
+    }
 }

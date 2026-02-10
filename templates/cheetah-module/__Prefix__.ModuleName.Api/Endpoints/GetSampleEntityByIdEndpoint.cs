@@ -14,5 +14,6 @@ public class GetSampleEntityByIdEndpoint : QueryOrNotFoundEndpoint<GetSampleEnti
     protected override void Configure(EndpointConfiguration config)
     {
         config.WithName("GetSampleEntityById");
+        config.WithTags("SampleEntities");
     }
 }

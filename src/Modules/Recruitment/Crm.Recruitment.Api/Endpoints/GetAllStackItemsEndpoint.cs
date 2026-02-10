@@ -1,3 +1,4 @@
+using Cheetah.Backend.Endpoints.Configuration;
 using Cheetah.Backend.Endpoints.Http;
 using Crm.Recruitment.Application;
 using Crm.Recruitment.Application.Queries;
@@ -10,4 +11,9 @@ public class GetAllStackItemsEndpoint : QueryCollectionEndpoint<GetAllStackItems
     GetAllStackItemsQuery, StackItemModel, StackItemViewModel>
 {
     public override string Route => Constants.StackItemRoute;
+
+    protected override void Configure(EndpointConfiguration config)
+    {
+        config.WithTags("Stack Items");
+    }
 }

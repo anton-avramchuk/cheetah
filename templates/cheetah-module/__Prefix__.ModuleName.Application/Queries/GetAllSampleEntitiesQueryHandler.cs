@@ -1,25 +1,27 @@
+using Cheetah.Contracts.Requests;
+using Cheetah.Contracts.Responses;
 using Cheetah.Core.CQRS;
 using Cheetah.Core.DependencyInjection;
-using __Prefix__.ModuleName.Domain.Repositories;
+using Cheetah.Core.Grid;
+using __Prefix__.ModuleName.Domain;
 
 namespace __Prefix__.ModuleName.Application.Queries;
 
-[Export(LifetimeType.Scoped, typeof(IQueryHandler<GetAllSampleEntitiesQuery, IReadOnlyList<SampleEntityModel>>))]
-public class GetAllSampleEntitiesQueryHandler : IQueryHandler<GetAllSampleEntitiesQuery, IReadOnlyList<SampleEntityModel>>
+[Export(LifetimeType.Scoped, typeof(IQueryHandler<GetAllSampleEntitiesQuery, GridResult<SampleEntityModel>>))]
+public class GetAllSampleEntitiesQueryHandler(IGridRepository<SampleEntity> repository)
+    : IQueryHandler<GetAllSampleEntitiesQuery, GridResult<SampleEntityModel>>
 {
-    private readonly ISampleEntityRepository _repository;
-
-    public GetAllSampleEntitiesQueryHandler(ISampleEntityRepository repository)
+    public async ValueTask<GridResult<SampleEntityModel>> HandleAsync(GetAllSampleEntitiesQuery gridQuery,
+        CancellationToken ct = default)
     {
-        _repository = repository;
-    }
+        var gridRequest = new GridRequest
+        {
+            Page = gridQuery.Page,
+            PageSize = gridQuery.PageSize,
+            Sort = gridQuery.Sort,
+            Filter = gridQuery.Filter
+        };
 
-    public async ValueTask<IReadOnlyList<SampleEntityModel>> HandleAsync(GetAllSampleEntitiesQuery query, CancellationToken ct = default)
-    {
-        var entities = await _repository.GetAllNoTrackingAsync(ct: ct);
-
-        return entities
-            .Select(e => new SampleEntityModel(e.Id, e.Name, e.Description))
-            .ToList();
+        return await repository.GetGridAsync<SampleEntityModel>(gridRequest, ct);
     }
 }

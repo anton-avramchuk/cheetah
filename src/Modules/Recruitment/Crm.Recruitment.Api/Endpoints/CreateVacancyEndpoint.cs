@@ -1,3 +1,4 @@
+using Cheetah.Backend.Endpoints.Configuration;
 using Cheetah.Backend.Endpoints.Http;
 using Crm.Recruitment.Application.Commands;
 using Crm.Recruitment.Contracts.Requests;
@@ -9,4 +10,9 @@ public class CreateVacancyEndpoint : CreateCommandEndpoint<CreateVacancyRequest,
     public override string Route => Constants.VacancyRoute;
 
     public override string GetByIdRouteName => "GetVacancyById";
+
+    protected override void Configure(EndpointConfiguration config)
+    {
+        config.WithTags("Vacancies");
+    }
 }

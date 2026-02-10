@@ -1,3 +1,5 @@
+using Cheetah.Core.CQRS;
+using Cheetah.Core.Grid;
 using Cheetah.Core.Modularity;
 using __Prefix__.ModuleName.Contracts;
 using __Prefix__.ModuleName.DataAccess;
@@ -7,6 +9,8 @@ using __Prefix__.ModuleName.DomainEvents;
 namespace __Prefix__.ModuleName.Application;
 
 [DependsOn(typeof(Cheetah.Core.CoreModule),
+    typeof(CrmCQRSCoreModule),
+    typeof(CrmGridModule),
     typeof(__ClassPrefix__ModuleNameDomainModule),
     typeof(__ClassPrefix__ModuleNameDataAccessModule),
     typeof(__ClassPrefix__ModuleNameContractsModule),

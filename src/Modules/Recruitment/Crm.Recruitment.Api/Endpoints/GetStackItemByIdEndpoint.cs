@@ -14,6 +14,6 @@ public class GetStackItemByIdEndpoint : QueryOrNotFoundEndpoint<GetStackItemById
 
     protected override void Configure(EndpointConfiguration config)
     {
-        config.WithName("GetStackItemById");
+        config.WithName("GetStackItemById").WithTags("Stack Items");
     }
 }

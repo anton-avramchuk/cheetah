@@ -14,6 +14,6 @@ public class GetPositionByIdEndpoint : QueryOrNotFoundEndpoint<GetPositionByIdRe
 
     protected override void Configure(EndpointConfiguration config)
     {
-        config.WithName("GetPositionById");
+        config.WithName("GetPositionById").WithTags("Positions");
     }
 }

@@ -1,3 +1,4 @@
+using Cheetah.Backend.Endpoints.Configuration;
 using Cheetah.Backend.Endpoints.Http;
 using Crm.Recruitment.Application.Commands;
 using Crm.Recruitment.Contracts.Requests;
@@ -9,4 +10,9 @@ public class CreatePositionEndpoint : CreateCommandEndpoint<CreatePositionReques
     public override string Route => Constants.PositionRoute;
 
     public override string GetByIdRouteName => "GetPositionById";
+
+    protected override void Configure(EndpointConfiguration config)
+    {
+        config.WithTags("Positions");
+    }
 }

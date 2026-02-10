@@ -14,6 +14,6 @@ public class GetCustomerDirectionByIdEndpoint : QueryOrNotFoundEndpoint<GetCusto
 
     protected override void Configure(EndpointConfiguration config)
     {
-        config.WithName("GetCustomerDirectionById");
+        config.WithName("GetCustomerDirectionById").WithTags("Customer Directions");
     }
 }

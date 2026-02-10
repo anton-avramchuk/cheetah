@@ -1,3 +1,4 @@
+using Cheetah.Backend.Endpoints.Configuration;
 using Cheetah.Backend.Endpoints.Http;
 using __Prefix__.ModuleName.Application.Commands;
 using __Prefix__.ModuleName.Contracts.Requests;
@@ -9,4 +10,9 @@ public class CreateSampleEntityEndpoint : CreateCommandEndpoint<CreateSampleEnti
     public override string Route => Constants.DefaultRoute;
 
     public override string GetByIdRouteName => "GetSampleEntityById";
+
+    protected override void Configure(EndpointConfiguration config)
+    {
+        config.WithTags("SampleEntities");
+    }
 }

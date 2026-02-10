@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using Cheetah.Contracts.Responses;
 using __Prefix__.ModuleName.Api.Tests.Fixtures;
 using __Prefix__.ModuleName.Contracts.Requests;
 using __Prefix__.ModuleName.Contracts.Response;
@@ -25,8 +26,9 @@ public class SampleEntityEndpointsTests
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
-        var entities = await response.Content.ReadFromJsonAsync<List<SampleEntityViewModel>>();
-        entities.ShouldNotBeNull();
+        var result = await response.Content.ReadFromJsonAsync<GridResult<SampleEntityViewModel>>();
+        result.ShouldNotBeNull();
+        result!.Data.ShouldNotBeNull();
     }
 
     [Fact]

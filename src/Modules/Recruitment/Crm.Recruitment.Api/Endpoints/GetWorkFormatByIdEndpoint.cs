@@ -14,6 +14,6 @@ public class GetWorkFormatByIdEndpoint : QueryOrNotFoundEndpoint<GetWorkFormatBy
 
     protected override void Configure(EndpointConfiguration config)
     {
-        config.WithName("GetWorkFormatById");
+        config.WithName("GetWorkFormatById").WithTags("Work Formats");
     }
 }

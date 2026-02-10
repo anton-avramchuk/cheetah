@@ -1,18 +1,18 @@
 using Cheetah.Core.CQRS;
+using Cheetah.Core.DataAccess.Abstractions;
 using Cheetah.Core.DependencyInjection;
 using Cheetah.Core.Events;
 using __Prefix__.ModuleName.Domain;
-using __Prefix__.ModuleName.Domain.Repositories;
 
 namespace __Prefix__.ModuleName.Application.Commands;
 
 [Export(LifetimeType.Scoped, typeof(ICommandHandler<CreateSampleEntityCommand, Guid>))]
 public class CreateSampleEntityCommandHandler : ICommandHandler<CreateSampleEntityCommand, Guid>
 {
-    private readonly ISampleEntityRepository _repository;
+    private readonly IRepository<SampleEntity, Guid> _repository;
     private readonly IEventBus _eventBus;
 
-    public CreateSampleEntityCommandHandler(ISampleEntityRepository repository, IEventBus eventBus)
+    public CreateSampleEntityCommandHandler(IRepository<SampleEntity, Guid> repository, IEventBus eventBus)
     {
         _repository = repository;
         _eventBus = eventBus;
