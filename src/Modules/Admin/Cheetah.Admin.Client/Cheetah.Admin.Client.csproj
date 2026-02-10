@@ -6,9 +6,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="$(MsPackageVersion)" />
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.3" PrivateAssets="all" />
-        <PackageReference Include="Microsoft.DotNet.HotReload.WebAssembly.Browser" Version="10.0.103" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.DotNet.HotReload.WebAssembly.Browser" />
     </ItemGroup>
 
     <ItemGroup>
@@ -16,8 +16,8 @@
         <ProjectReference Include="..\..\..\Cheetah.Blazor.Layout\Cheetah.Blazor.Layout.csproj" />
         <ProjectReference Include="..\..\..\Cheetah.Core\Cheetah.Core.csproj" />
         <ProjectReference Include="..\..\..\Cheetah.Frontend.Navigation\Cheetah.Frontend.Navigation.csproj" />
-        <ProjectReference Include="..\..\..\Cheetah.Generators.Module\Cheetah.Generators.Module.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer"/>
-        <ProjectReference Include="..\..\..\Cheetah.Generators.Application\Cheetah.Generators.Application.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer"/>
+        <ProjectReference Include="..\..\..\Cheetah.Generators.Module\Cheetah.Generators.Module.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
+        <ProjectReference Include="..\..\..\Cheetah.Generators.Application\Cheetah.Generators.Application.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
         <ProjectReference Include="..\..\..\Cheetah.Mapping.Mapster\Cheetah.Mapping.Mapster.csproj" />
         <ProjectReference Include="..\Cheetah.Admin.Modules.Clients.Frontend\Cheetah.Admin.Modules.Clients.Frontend.csproj" />
     </ItemGroup>

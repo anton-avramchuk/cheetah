@@ -1,18 +1,18 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 
     <ItemGroup>
-        <ProjectReference Include="..\Cheetah.Core.EntityFramework\Cheetah.Core.EntityFramework.csproj"/>
-        <ProjectReference Include="..\Cheetah.Core\Cheetah.Core.csproj"/>
+        <ProjectReference Include="..\Cheetah.Core.EntityFramework\Cheetah.Core.EntityFramework.csproj" />
+        <ProjectReference Include="..\Cheetah.Core\Cheetah.Core.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Cheetah.Generators.Module\Cheetah.Generators.Module.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer"/>
+        <ProjectReference Include="..\Cheetah.Generators.Module\Cheetah.Generators.Module.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.4" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="$(MsPackageVersion)"/>
+        <PackageReference Include="Microsoft.Data.SqlClient" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
     </ItemGroup>
 
 </Project>

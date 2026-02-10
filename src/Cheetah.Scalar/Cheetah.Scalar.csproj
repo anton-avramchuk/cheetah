@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <ItemGroup>
       <ProjectReference Include="..\Cheetah.AspNetCore\Cheetah.AspNetCore.csproj" />
@@ -7,11 +7,11 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Scalar.AspNetCore" Version="2.12.36" />
+      <PackageReference Include="Scalar.AspNetCore" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Cheetah.Generators.Module\Cheetah.Generators.Module.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer"/>
+        <ProjectReference Include="..\Cheetah.Generators.Module\Cheetah.Generators.Module.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
     </ItemGroup>
 
 </Project>

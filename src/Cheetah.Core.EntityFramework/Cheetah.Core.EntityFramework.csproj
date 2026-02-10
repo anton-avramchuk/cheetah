@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <ItemGroup>
       <ProjectReference Include="..\Cheetah.Core.DataAccess\Cheetah.Core.DataAccess.csproj" />
@@ -7,14 +7,14 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="$(MsPackageVersion)" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="$(MsPackageVersion)" />
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="$(MsPackageVersion)" />
-        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="$(MsPackageVersion)" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Cheetah.Generators.Module\Cheetah.Generators.Module.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer"/>
+        <ProjectReference Include="..\Cheetah.Generators.Module\Cheetah.Generators.Module.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
     </ItemGroup>
 
 </Project>

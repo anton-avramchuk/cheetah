@@ -8,21 +8,21 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="coverlet.collector" Version="6.0.4"/>
-        <PackageReference Include="Shouldly" Version="4.2.2"/>
-        <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="$(MsPackageVersion)"/>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
-        <PackageReference Include="Testcontainers.PostgreSql" Version="4.10.0" />
-        <PackageReference Include="xunit" Version="2.9.3"/>
-        <PackageReference Include="xunit.runner.visualstudio" Version="3.1.4"/>
+        <PackageReference Include="coverlet.collector" />
+        <PackageReference Include="Shouldly" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" />
+        <PackageReference Include="Testcontainers.PostgreSql" />
+        <PackageReference Include="xunit" />
+        <PackageReference Include="xunit.runner.visualstudio" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Crm.Recruitment.Api\Crm.Recruitment.Api.csproj"/>
+        <ProjectReference Include="..\Crm.Recruitment.Api\Crm.Recruitment.Api.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <Using Include="Xunit"/>
+        <Using Include="Xunit" />
     </ItemGroup>
 
 </Project>

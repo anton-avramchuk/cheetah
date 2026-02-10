@@ -6,8 +6,6 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
 
-        <!-- Версия пакетов Microsoft -->
-        <MsPackageVersion>10.0.*</MsPackageVersion>
     </PropertyGroup>
 
 </Project>

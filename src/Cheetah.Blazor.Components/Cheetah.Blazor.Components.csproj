@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="$(MsPackageVersion)" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" />
   </ItemGroup>
 
   <ItemGroup>

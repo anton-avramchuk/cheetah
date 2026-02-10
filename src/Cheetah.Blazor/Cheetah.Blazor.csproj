@@ -10,7 +10,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="$(MsPackageVersion)" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" />
     </ItemGroup>
 
 </Project>

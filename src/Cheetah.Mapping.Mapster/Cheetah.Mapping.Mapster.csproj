@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <ItemGroup>
       <ProjectReference Include="..\Cheetah.Core\Cheetah.Core.csproj" />
@@ -6,11 +6,11 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Mapster" Version="7.4.0" />
+      <PackageReference Include="Mapster" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Cheetah.Generators.Module\Cheetah.Generators.Module.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer"/>
+        <ProjectReference Include="..\Cheetah.Generators.Module\Cheetah.Generators.Module.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
     </ItemGroup>
 
 </Project>
