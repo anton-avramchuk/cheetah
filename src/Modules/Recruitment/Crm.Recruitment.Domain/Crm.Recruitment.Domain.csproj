@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <ItemGroup>
+        <ProjectReference Include="..\..\..\Cheetah.Core.DataAccess\Cheetah.Core.DataAccess.csproj" />
         <ProjectReference Include="..\..\..\Cheetah.Core.Domain\Cheetah.Core.Domain.csproj" />
         <ProjectReference Include="..\..\..\Cheetah.Core.Specification\Cheetah.Core.Specification.csproj" />
         <ProjectReference Include="..\..\..\Cheetah.Core\Cheetah.Core.csproj"/>

@@ -16,6 +16,22 @@ public class Vacancy : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEntity
 
     public VacancyState? State { get; private set; }
 
+    public Guid? CustomerId { get; private set; }
+
+    public Customer? Customer { get; private set; }
+
+    public Guid? PositionId { get; private set; }
+
+    public Position? Position { get; private set; }
+
+    public Guid? StackItemId { get; private set; }
+
+    public StackItem? StackItem { get; private set; }
+
+    public Guid? WorkFormatId { get; private set; }
+
+    public WorkFormat? WorkFormat { get; private set; }
+
     private Vacancy()
     {
     } // For EF Core
@@ -49,5 +65,25 @@ public class Vacancy : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEntity
     public void SetState(Guid? stateId)
     {
         StateId = stateId;
+    }
+
+    public void SetCustomer(Guid? customerId)
+    {
+        CustomerId = customerId;
+    }
+
+    public void SetPosition(Guid? positionId)
+    {
+        PositionId = positionId;
+    }
+
+    public void SetStackItem(Guid? stackItemId)
+    {
+        StackItemId = stackItemId;
+    }
+
+    public void SetWorkFormat(Guid? workFormatId)
+    {
+        WorkFormatId = workFormatId;
     }
 }
