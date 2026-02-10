@@ -30,5 +30,25 @@ public class VacancyConfiguration : AggregateRootConfiguration<Vacancy, Guid, Va
             .WithMany(x => x.Vacancies)
             .HasForeignKey(x => x.StateId)
             .IsRequired(false);
+
+        builder.HasOne(x => x.Customer)
+            .WithMany(x => x.Vacancies)
+            .HasForeignKey(x => x.CustomerId)
+            .IsRequired(false);
+
+        builder.HasOne(x => x.Position)
+            .WithMany(x => x.Vacancies)
+            .HasForeignKey(x => x.PositionId)
+            .IsRequired(false);
+
+        builder.HasOne(x => x.StackItem)
+            .WithMany(x => x.Vacancies)
+            .HasForeignKey(x => x.StackItemId)
+            .IsRequired(false);
+
+        builder.HasOne(x => x.WorkFormat)
+            .WithMany(x => x.Vacancies)
+            .HasForeignKey(x => x.WorkFormatId)
+            .IsRequired(false);
     }
 }

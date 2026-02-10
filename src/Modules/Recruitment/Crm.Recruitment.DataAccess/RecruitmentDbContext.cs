@@ -20,6 +20,16 @@ public class RecruitmentDbContext(DbContextOptions<RecruitmentDbContext> options
 
     public DbSet<VacancyAssignment> VacancyAssignments => Set<VacancyAssignment>();
 
+    public DbSet<Customer> Customers => Set<Customer>();
+
+    public DbSet<CustomerDirection> CustomerDirections => Set<CustomerDirection>();
+
+    public DbSet<Position> Positions => Set<Position>();
+
+    public DbSet<StackItem> StackItems => Set<StackItem>();
+
+    public DbSet<WorkFormat> WorkFormats => Set<WorkFormat>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -28,5 +38,10 @@ public class RecruitmentDbContext(DbContextOptions<RecruitmentDbContext> options
         modelBuilder.ApplyConfiguration(new UserConfiguration());
         modelBuilder.ApplyConfiguration(new VacancyRoleConfiguration());
         modelBuilder.ApplyConfiguration(new VacancyAssignmentConfiguration());
+        modelBuilder.ApplyConfiguration(new CustomerConfiguration());
+        modelBuilder.ApplyConfiguration(new CustomerDirectionConfiguration());
+        modelBuilder.ApplyConfiguration(new PositionConfiguration());
+        modelBuilder.ApplyConfiguration(new StackItemConfiguration());
+        modelBuilder.ApplyConfiguration(new WorkFormatConfiguration());
     }
 }
