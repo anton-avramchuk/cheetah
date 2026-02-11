@@ -1,0 +1,19 @@
+using Cheetah.Backend.Endpoints.Configuration;
+using Cheetah.Backend.Endpoints.Http;
+using Crm.Candidates.Application;
+using Crm.Candidates.Application.Queries;
+using Crm.Candidates.Contracts.Requests;
+using Crm.Candidates.Contracts.Response;
+
+namespace Crm.Candidates.Api.Endpoints;
+
+public class GetAllCandidateSourcesEndpoint : QueryCollectionEndpoint<GetAllCandidateSourcesRequest,
+    GetAllCandidateSourcesQuery, CandidateSourceModel, CandidateSourceViewModel>
+{
+    public override string Route => Constants.CandidateSourceRoute;
+
+    protected override void Configure(EndpointConfiguration config)
+    {
+        config.WithTags("CandidateSources");
+    }
+}

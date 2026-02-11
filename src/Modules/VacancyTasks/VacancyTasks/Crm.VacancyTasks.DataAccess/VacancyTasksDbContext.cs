@@ -1,3 +1,4 @@
+using Cheetah.Core.DataAccess.Attributes;
 using Cheetah.Core.EntityFramework;
 using Crm.VacancyTasks.DataAccess.Configurations;
 using Crm.VacancyTasks.Domain;
@@ -5,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Crm.VacancyTasks.DataAccess;
 
+[ConnectionStringName("VacancyTasks")]
 public class VacancyTasksDbContext(DbContextOptions<VacancyTasksDbContext> options)
     : CrmDbContext<VacancyTasksDbContext>(options)
 {

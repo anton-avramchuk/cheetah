@@ -14,6 +14,11 @@ var featuresDb = postgres.AddDatabase("FeaturesDb", "cheetah_features");
 
 var recruitmentDb=postgres.AddDatabase("Recruitment", "cheetah_recruitment");
 
+
+var candidatesDb=postgres.AddDatabase("Candidates", "cheetah_candidates");
+
+var vacancyTasksDb=postgres.AddDatabase("VacancyTasks", "cheetah_vacancy_tasks");
+
 var redis = builder.AddRedis("redis")
     .WithDataVolume()
     .WithRedisInsight();
@@ -49,9 +54,33 @@ var recruitment = builder.AddProject<Projects.Crm_Recruitment_Api>("crm-recruitm
     ;
 
 
+var candidatesApi = builder.AddProject<Projects.Crm_Candidates_Api>("candidates-api")
+        .WithReference(candidatesDb)
+        .WithEnvironment("Redis__Instances__default__ConnectionString",
+            redis.Resource.ConnectionStringExpression)
+        .WaitFor(redis)
+        .WaitFor(candidatesDb)
+    ;
+
+var vacancyTasksApi = builder.AddProject<Projects.Crm_VacancyTasks_Api>("vacancyTasks-api")
+        .WithReference(vacancyTasksDb)
+        .WithEnvironment("Redis__Instances__default__ConnectionString",
+            redis.Resource.ConnectionStringExpression)
+        .WaitFor(redis)
+        .WaitFor(vacancyTasksDb)
+    ;
+
+
+
 builder.AddProject<Projects.Crm_Proxy>("crm-proxy")
     .WithReference(recruitment)
     .WaitFor(recruitment)
+    .WaitFor(candidatesApi)
+    .WaitFor(vacancyTasksApi)
     ;
+
+
+
+
 
 builder.Build().Run();
