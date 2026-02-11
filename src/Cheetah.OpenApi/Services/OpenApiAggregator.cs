@@ -55,9 +55,32 @@ public class OpenApiAggregator(
 
                 if (doc?.Paths != null)
                 {
+                    // Determine the address base path to strip from downstream paths
+                    var addressBasePath = "";
+                    try
+                    {
+                        var addressUri = new Uri(address.TrimEnd('/') + "/");
+                        addressBasePath = addressUri.AbsolutePath.TrimEnd('/');
+                        if (addressBasePath == "/") addressBasePath = "";
+                    }
+                    catch
+                    {
+                        // ignored
+                    }
+
                     foreach (var path in doc.Paths)
                     {
-                        var newPathKey = $"{routePrefix.TrimEnd('/')}{path.Key}";
+                        var pathKey = path.Key;
+
+                        // Strip the address base path from downstream path
+                        // e.g. address "http://svc/api" → strip "/api" from "/api/candidates" → "/candidates"
+                        if (!string.IsNullOrEmpty(addressBasePath)
+                            && pathKey.StartsWith(addressBasePath, StringComparison.OrdinalIgnoreCase))
+                        {
+                            pathKey = pathKey[addressBasePath.Length..];
+                        }
+
+                        var newPathKey = $"{routePrefix.TrimEnd('/')}{pathKey}";
                         combined.Paths[newPathKey] = path.Value;
                         logger.LogDebug("Added path: {Path}", newPathKey);
                     }
