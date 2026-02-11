@@ -7,11 +7,11 @@ using Crm.Candidates.Domain;
 
 namespace Crm.Candidates.Application.Queries;
 
-[Export(LifetimeType.Scoped, typeof(IQueryHandler<GetAllSampleEntitiesQuery, GridResult<CandidateModel>>))]
-public class GetAllSampleEntitiesQueryHandler(IGridRepository<Candidate> repository)
-    : IQueryHandler<GetAllSampleEntitiesQuery, GridResult<CandidateModel>>
+[Export(LifetimeType.Scoped, typeof(IQueryHandler<GetAllCandidatesQuery, GridResult<CandidateModel>>))]
+public class GetAllCandidatesQueryHandler(IGridRepository<Candidate> repository)
+    : IQueryHandler<GetAllCandidatesQuery, GridResult<CandidateModel>>
 {
-    public async ValueTask<GridResult<CandidateModel>> HandleAsync(GetAllSampleEntitiesQuery gridQuery,
+    public async ValueTask<GridResult<CandidateModel>> HandleAsync(GetAllCandidatesQuery gridQuery,
         CancellationToken ct = default)
     {
         var gridRequest = new GridRequest

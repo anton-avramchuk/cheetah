@@ -1,5 +1,6 @@
 using Cheetah.Core.EntityFramework.Configuration;
 using Crm.Candidates.Domain;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Crm.Candidates.DataAccess.Configurations;
@@ -17,13 +18,36 @@ public class CandidateConfiguration : AggregateRootConfiguration<Candidate, Guid
     {
         base.Configure(builder);
 
-        builder.Property(x => x.Name)
+        builder.Property(x => x.FirstName)
             .IsRequired()
             .HasMaxLength(256);
 
-        builder.Property(x => x.Description)
-            .HasMaxLength(1024);
+        builder.Property(x => x.LastName)
+            .IsRequired()
+            .HasMaxLength(256);
 
-        builder.HasIndex(x => x.Name).IsUnique();
+        builder.Property(x => x.Email)
+            .HasMaxLength(256);
+
+        builder.Property(x => x.Phone)
+            .HasMaxLength(50);
+
+        builder.Property(x => x.City)
+            .HasMaxLength(256);
+
+        builder.Property(x => x.CurrentPosition)
+            .HasMaxLength(256);
+
+        builder.Property(x => x.CurrentCompany)
+            .HasMaxLength(256);
+
+        builder.Property(x => x.About)
+            .HasMaxLength(4000);
+
+        builder.Navigation(x => x.ExternalProfiles)
+            .UsePropertyAccessMode(PropertyAccessMode.Field);
+
+        builder.Navigation(x => x.Comments)
+            .UsePropertyAccessMode(PropertyAccessMode.Field);
     }
 }

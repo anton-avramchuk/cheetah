@@ -15,6 +15,6 @@ public class GetCandidateByIdEndpoint : QueryOrNotFoundEndpoint<GetCandidateById
     protected override void Configure(EndpointConfiguration config)
     {
         config.WithName("GetCandidateById");
-        config.WithTags("SampleEntities");
+        config.WithTags("Candidates");
     }
 }

@@ -24,6 +24,16 @@ public class GetCandidateByIdQueryHandler : IQueryHandler<GetCandidateByIdQuery,
         if (entity is null)
             return null;
 
-        return new CandidateModel(entity.Id, entity.Name, entity.Description);
+        return new CandidateModel(
+            entity.Id,
+            entity.FirstName,
+            entity.LastName,
+            entity.Email,
+            entity.Phone,
+            entity.City,
+            entity.CurrentPosition,
+            entity.CurrentCompany,
+            entity.SalaryExpectation,
+            entity.About);
     }
 }

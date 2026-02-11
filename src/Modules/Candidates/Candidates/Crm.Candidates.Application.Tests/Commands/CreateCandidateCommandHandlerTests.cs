@@ -24,7 +24,7 @@ public class CreateCandidateCommandHandlerTests
     public async Task HandleAsync_WithValidCommand_ShouldCreateEntityAndReturnId()
     {
         // Arrange
-        var command = new CreateCandidateCommand("Test Entity", "Test Description");
+        var command = new CreateCandidateCommand("John", "Doe", "john@test.com", null, null, null, null, null, null);
         Candidate? capturedEntity = null;
 
         _repositoryMock
@@ -41,18 +41,19 @@ public class CreateCandidateCommandHandlerTests
         // Assert
         result.ShouldNotBe(Guid.Empty);
         capturedEntity.ShouldNotBeNull();
-        capturedEntity!.Name.ShouldBe("Test Entity");
-        capturedEntity.Description.ShouldBe("Test Description");
+        capturedEntity!.FirstName.ShouldBe("John");
+        capturedEntity.LastName.ShouldBe("Doe");
+        capturedEntity.Email.ShouldBe("john@test.com");
 
         _repositoryMock.Verify(r => r.Add(It.IsAny<Candidate>()), Times.Once);
         _repositoryMock.Verify(r => r.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
-    public async Task HandleAsync_WithEmptyName_ShouldThrowArgumentException()
+    public async Task HandleAsync_WithEmptyFirstName_ShouldThrowArgumentException()
     {
         // Arrange
-        var command = new CreateCandidateCommand("", "Description");
+        var command = new CreateCandidateCommand("", "Doe", null, null, null, null, null, null, null);
 
         // Act
         var act = async () => await _handler.HandleAsync(command);

@@ -37,22 +37,46 @@ public sealed class CandidateCrudService : ICrudService<CandidateGridViewModel, 
         return new CandidateFormModel
         {
             Id = entity.Id,
-            Name = entity.Name,
-            Description = entity.Description ?? ""
+            FirstName = entity.FirstName,
+            LastName = entity.LastName,
+            Email = entity.Email,
+            Phone = entity.Phone,
+            City = entity.City,
+            CurrentPosition = entity.CurrentPosition,
+            CurrentCompany = entity.CurrentCompany,
+            SalaryExpectation = entity.SalaryExpectation,
+            About = entity.About
         };
     }
 
     public async Task<Guid> CreateAsync(CandidateFormModel model, CancellationToken ct = default)
     {
-        var description = string.IsNullOrWhiteSpace(model.Description) ? null : model.Description;
-        var request = new CreateCandidateRequest(model.Name, description);
+        var request = new CreateCandidateRequest(
+            model.FirstName,
+            model.LastName,
+            model.Email,
+            model.Phone,
+            model.City,
+            model.CurrentPosition,
+            model.CurrentCompany,
+            model.SalaryExpectation,
+            model.About);
         return await _service.CreateAsync(request, ct);
     }
 
     public async Task UpdateAsync(Guid id, CandidateFormModel model, CancellationToken ct = default)
     {
-        var description = string.IsNullOrWhiteSpace(model.Description) ? null : model.Description;
-        var request = new UpdateCandidateRequest(id, model.Name, description);
+        var request = new UpdateCandidateRequest(
+            id,
+            model.FirstName,
+            model.LastName,
+            model.Email,
+            model.Phone,
+            model.City,
+            model.CurrentPosition,
+            model.CurrentCompany,
+            model.SalaryExpectation,
+            model.About);
         await _service.UpdateAsync(id, request, ct);
     }
 

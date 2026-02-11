@@ -11,6 +11,6 @@ public class UpdateCandidateEndpoint : UpdateCommandEndpoint<UpdateCandidateRequ
 
     protected override void Configure(EndpointConfiguration config)
     {
-        config.WithTags("SampleEntities");
+        config.WithTags("Candidates");
     }
 }

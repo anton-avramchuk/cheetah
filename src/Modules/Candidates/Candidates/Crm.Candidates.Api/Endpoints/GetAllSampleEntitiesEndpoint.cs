@@ -7,13 +7,13 @@ using Crm.Candidates.Contracts.Response;
 
 namespace Crm.Candidates.Api.Endpoints;
 
-public class GetAllSampleEntitiesEndpoint : QueryGridEndpoint<GetAllSampleEntitiesRequest,
-    GetAllSampleEntitiesQuery, CandidateModel, CandidateViewModel>
+public class GetAllCandidatesEndpoint : QueryGridEndpoint<GetAllCandidatesRequest,
+    GetAllCandidatesQuery, CandidateModel, CandidateViewModel>
 {
     public override string Route => Constants.DefaultRoute;
 
     protected override void Configure(EndpointConfiguration config)
     {
-        config.WithTags("SampleEntities");
+        config.WithTags("Candidates");
     }
 }

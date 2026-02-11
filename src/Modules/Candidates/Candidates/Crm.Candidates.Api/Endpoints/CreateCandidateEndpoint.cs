@@ -13,6 +13,6 @@ public class CreateCandidateEndpoint : CreateCommandEndpoint<CreateCandidateRequ
 
     protected override void Configure(EndpointConfiguration config)
     {
-        config.WithTags("SampleEntities");
+        config.WithTags("Candidates");
     }
 }

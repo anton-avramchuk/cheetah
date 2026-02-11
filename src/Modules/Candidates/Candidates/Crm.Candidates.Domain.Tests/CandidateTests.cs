@@ -6,44 +6,61 @@ namespace Crm.Candidates.Domain.Tests;
 public class CandidateTests
 {
     [Fact]
-    public void Create_WithValidName_ShouldCreateEntity()
+    public void Create_WithValidNames_ShouldCreateEntity()
     {
-        // Arrange
-        var name = "Test Entity";
+        var entity = Candidate.Create("John", "Doe");
 
-        // Act
-        var entity = Candidate.Create(name);
-
-        // Assert
         entity.ShouldNotBeNull();
         entity.Id.ShouldNotBe(Guid.Empty);
-        entity.Name.ShouldBe(name);
-        entity.Description.ShouldBeNull();
+        entity.FirstName.ShouldBe("John");
+        entity.LastName.ShouldBe("Doe");
+        entity.Email.ShouldBeNull();
+        entity.Phone.ShouldBeNull();
+        entity.City.ShouldBeNull();
+        entity.CurrentPosition.ShouldBeNull();
+        entity.CurrentCompany.ShouldBeNull();
+        entity.SalaryExpectation.ShouldBeNull();
+        entity.About.ShouldBeNull();
     }
 
     [Fact]
-    public void Create_WithNameAndDescription_ShouldCreateEntity()
+    public void Create_WithAllFields_ShouldCreateEntity()
     {
-        // Arrange
-        var name = "Test Entity";
-        var description = "Test Description";
+        var entity = Candidate.Create(
+            "John", "Doe",
+            email: "john@test.com",
+            phone: "+1234567890",
+            city: "Moscow",
+            currentPosition: "Developer",
+            currentCompany: "Acme",
+            salaryExpectation: 150000m,
+            about: "Experienced developer");
 
-        // Act
-        var entity = Candidate.Create(name, description);
+        entity.FirstName.ShouldBe("John");
+        entity.LastName.ShouldBe("Doe");
+        entity.Email.ShouldBe("john@test.com");
+        entity.Phone.ShouldBe("+1234567890");
+        entity.City.ShouldBe("Moscow");
+        entity.CurrentPosition.ShouldBe("Developer");
+        entity.CurrentCompany.ShouldBe("Acme");
+        entity.SalaryExpectation.ShouldBe(150000m);
+        entity.About.ShouldBe("Experienced developer");
+    }
 
-        // Assert
-        entity.Name.ShouldBe(name);
-        entity.Description.ShouldBe(description);
+    [Fact]
+    public void Create_ShouldRaiseDomainEvent()
+    {
+        var entity = Candidate.Create("John", "Doe");
+
+        entity.DomainEvents.Count.ShouldBe(1);
     }
 
     [Fact]
     public void Create_ShouldGenerateUniqueIds()
     {
-        // Act
-        var entity1 = Candidate.Create("Entity 1");
-        var entity2 = Candidate.Create("Entity 2");
+        var entity1 = Candidate.Create("John", "Doe");
+        var entity2 = Candidate.Create("Jane", "Smith");
 
-        // Assert
         entity1.Id.ShouldNotBe(entity2.Id);
     }
 
@@ -51,40 +68,45 @@ public class CandidateTests
     [InlineData(null)]
     [InlineData("")]
     [InlineData("   ")]
-    public void Create_WithInvalidName_ShouldThrowArgumentException(string? name)
+    public void Create_WithInvalidFirstName_ShouldThrowArgumentException(string? firstName)
     {
-        // Act
-        var act = () => Candidate.Create(name!);
+        var act = () => Candidate.Create(firstName!, "Doe");
 
-        // Assert
+        Should.Throw<ArgumentException>(act);
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    public void Create_WithInvalidLastName_ShouldThrowArgumentException(string? lastName)
+    {
+        var act = () => Candidate.Create("John", lastName!);
+
         Should.Throw<ArgumentException>(act);
     }
 
     [Fact]
-    public void Update_WithValidName_ShouldUpdateEntity()
+    public void Update_WithValidData_ShouldUpdateEntity()
     {
-        // Arrange
-        var entity = Candidate.Create("Original Name", "Original Description");
+        var entity = Candidate.Create("John", "Doe");
 
-        // Act
-        entity.Update("Updated Name", "Updated Description");
+        entity.Update("Jane", "Smith", email: "jane@test.com", city: "London");
 
-        // Assert
-        entity.Name.ShouldBe("Updated Name");
-        entity.Description.ShouldBe("Updated Description");
+        entity.FirstName.ShouldBe("Jane");
+        entity.LastName.ShouldBe("Smith");
+        entity.Email.ShouldBe("jane@test.com");
+        entity.City.ShouldBe("London");
     }
 
     [Fact]
     public void Update_ShouldNotChangeId()
     {
-        // Arrange
-        var entity = Candidate.Create("Original Name");
+        var entity = Candidate.Create("John", "Doe");
         var originalId = entity.Id;
 
-        // Act
-        entity.Update("Updated Name");
+        entity.Update("Jane", "Smith");
 
-        // Assert
         entity.Id.ShouldBe(originalId);
     }
 
@@ -92,15 +114,75 @@ public class CandidateTests
     [InlineData(null)]
     [InlineData("")]
     [InlineData("   ")]
-    public void Update_WithInvalidName_ShouldThrowArgumentException(string? name)
+    public void Update_WithInvalidFirstName_ShouldThrowArgumentException(string? firstName)
     {
-        // Arrange
-        var entity = Candidate.Create("Original Name");
+        var entity = Candidate.Create("John", "Doe");
 
-        // Act
-        var act = () => entity.Update(name!);
+        var act = () => entity.Update(firstName!, "Smith");
 
-        // Assert
+        Should.Throw<ArgumentException>(act);
+    }
+
+    [Fact]
+    public void AddExternalProfile_ShouldAddProfile()
+    {
+        var entity = Candidate.Create("John", "Doe");
+        var sourceId = Guid.NewGuid();
+
+        var profile = entity.AddExternalProfile(sourceId, "https://linkedin.com/in/johndoe", "ext-123");
+
+        entity.ExternalProfiles.Count.ShouldBe(1);
+        profile.CandidateId.ShouldBe(entity.Id);
+        profile.SourceId.ShouldBe(sourceId);
+        profile.Url.ShouldBe("https://linkedin.com/in/johndoe");
+        profile.ExternalId.ShouldBe("ext-123");
+    }
+
+    [Fact]
+    public void RemoveExternalProfile_ShouldRemoveProfile()
+    {
+        var entity = Candidate.Create("John", "Doe");
+        var profile = entity.AddExternalProfile(Guid.NewGuid());
+
+        entity.RemoveExternalProfile(profile.Id);
+
+        entity.ExternalProfiles.Count.ShouldBe(0);
+    }
+
+    [Fact]
+    public void RemoveExternalProfile_WithNonExistingId_ShouldNotThrow()
+    {
+        var entity = Candidate.Create("John", "Doe");
+
+        entity.RemoveExternalProfile(Guid.NewGuid());
+
+        entity.ExternalProfiles.Count.ShouldBe(0);
+    }
+
+    [Fact]
+    public void AddComment_ShouldAddComment()
+    {
+        var entity = Candidate.Create("John", "Doe");
+        var authorId = Guid.NewGuid();
+
+        var comment = entity.AddComment(authorId, "Great candidate");
+
+        entity.Comments.Count.ShouldBe(1);
+        comment.CandidateId.ShouldBe(entity.Id);
+        comment.AuthorId.ShouldBe(authorId);
+        comment.Text.ShouldBe("Great candidate");
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    public void AddComment_WithInvalidText_ShouldThrowArgumentException(string? text)
+    {
+        var entity = Candidate.Create("John", "Doe");
+
+        var act = () => entity.AddComment(Guid.NewGuid(), text!);
+
         Should.Throw<ArgumentException>(act);
     }
 }

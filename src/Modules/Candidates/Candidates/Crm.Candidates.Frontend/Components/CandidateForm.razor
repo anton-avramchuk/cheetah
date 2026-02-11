@@ -22,17 +22,54 @@ else
         <DataAnnotationsValidator/>
 
         <CrmTextInput TValue="string"
-                      @bind-Value="_model.Name"
-                      Label="Name"
-                      Placeholder="Enter name"
+                      @bind-Value="_model.FirstName"
+                      Label="First Name"
+                      Placeholder="Enter first name"
                       Required="true"
-                      ValidationFor="() => _model.Name"/>
+                      ValidationFor="() => _model.FirstName"/>
 
-        <CrmTextArea @bind-Value="_model.Description"
-                     Label="Description"
-                     Placeholder="Enter description"
+        <CrmTextInput TValue="string"
+                      @bind-Value="_model.LastName"
+                      Label="Last Name"
+                      Placeholder="Enter last name"
+                      Required="true"
+                      ValidationFor="() => _model.LastName"/>
+
+        <CrmTextInput TValue="string?"
+                      @bind-Value="_model.Email"
+                      Label="Email"
+                      Placeholder="Enter email"
+                      ValidationFor="() => _model.Email"/>
+
+        <CrmTextInput TValue="string?"
+                      @bind-Value="_model.Phone"
+                      Label="Phone"
+                      Placeholder="Enter phone"
+                      ValidationFor="() => _model.Phone"/>
+
+        <CrmTextInput TValue="string?"
+                      @bind-Value="_model.City"
+                      Label="City"
+                      Placeholder="Enter city"
+                      ValidationFor="() => _model.City"/>
+
+        <CrmTextInput TValue="string?"
+                      @bind-Value="_model.CurrentPosition"
+                      Label="Current Position"
+                      Placeholder="Enter current position"
+                      ValidationFor="() => _model.CurrentPosition"/>
+
+        <CrmTextInput TValue="string?"
+                      @bind-Value="_model.CurrentCompany"
+                      Label="Current Company"
+                      Placeholder="Enter current company"
+                      ValidationFor="() => _model.CurrentCompany"/>
+
+        <CrmTextArea @bind-Value="_model.About"
+                     Label="About"
+                     Placeholder="Enter about info"
                      Rows="3"
-                     ValidationFor="() => _model.Description"/>
+                     ValidationFor="() => _model.About"/>
 
         @if (!string.IsNullOrEmpty(_errorMessage))
         {
@@ -73,8 +110,15 @@ else
                     _model = new CandidateFormModel
                     {
                         Id = entity.Id,
-                        Name = entity.Name,
-                        Description = entity.Description ?? ""
+                        FirstName = entity.FirstName,
+                        LastName = entity.LastName,
+                        Email = entity.Email,
+                        Phone = entity.Phone,
+                        City = entity.City,
+                        CurrentPosition = entity.CurrentPosition,
+                        CurrentCompany = entity.CurrentCompany,
+                        SalaryExpectation = entity.SalaryExpectation,
+                        About = entity.About
                     };
                 }
                 else

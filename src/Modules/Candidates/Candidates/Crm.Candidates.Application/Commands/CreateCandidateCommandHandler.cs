@@ -20,7 +20,16 @@ public class CreateCandidateCommandHandler : ICommandHandler<CreateCandidateComm
 
     public async ValueTask<Guid> HandleAsync(CreateCandidateCommand command, CancellationToken ct = default)
     {
-        var entity = Candidate.Create(command.Name, command.Description);
+        var entity = Candidate.Create(
+            command.FirstName,
+            command.LastName,
+            command.Email,
+            command.Phone,
+            command.City,
+            command.CurrentPosition,
+            command.CurrentCompany,
+            command.SalaryExpectation,
+            command.About);
         _repository.Add(entity);
         await _repository.SaveChangesAsync(ct);
 

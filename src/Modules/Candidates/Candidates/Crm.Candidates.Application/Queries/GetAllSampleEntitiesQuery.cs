@@ -4,7 +4,7 @@ using Cheetah.Core.CQRS;
 
 namespace Crm.Candidates.Application.Queries;
 
-public record GetAllSampleEntitiesQuery(
+public record GetAllCandidatesQuery(
     int Page,
     int PageSize,
     List<SortDescriptor> Sort,

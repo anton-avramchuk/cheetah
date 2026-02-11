@@ -8,5 +8,13 @@ namespace Crm.Candidates.Contracts.Requests;
 public record UpdateCandidateRequest(
     [FromRoute] Guid Id,
     [property: Required(AllowEmptyStrings = false)]
-    string Name,
-    string? Description) : ICrmRequest;
+    string FirstName,
+    [property: Required(AllowEmptyStrings = false)]
+    string LastName,
+    string? Email,
+    string? Phone,
+    string? City,
+    string? CurrentPosition,
+    string? CurrentCompany,
+    decimal? SalaryExpectation,
+    string? About) : ICrmRequest;

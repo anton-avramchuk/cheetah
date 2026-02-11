@@ -35,7 +35,7 @@ public class CandidateEndpointsTests
     public async Task Create_WithValidData_ShouldReturnCreated()
     {
         // Arrange
-        var request = new CreateCandidateRequest("New Entity", "Description");
+        var request = new CreateCandidateRequest("John", "Doe", "john@test.com", null, null, null, null, null, null);
 
         // Act
         var response = await _client.PostAsJsonAsync("/api/candidates", request);
@@ -46,10 +46,10 @@ public class CandidateEndpointsTests
     }
 
     [Fact]
-    public async Task Create_WithEmptyName_ShouldReturnBadRequest()
+    public async Task Create_WithEmptyFirstName_ShouldReturnBadRequest()
     {
         // Arrange
-        var request = new CreateCandidateRequest("", "Description");
+        var request = new CreateCandidateRequest("", "Doe", null, null, null, null, null, null, null);
 
         // Act
         var response = await _client.PostAsJsonAsync("/api/candidates", request);
@@ -62,7 +62,7 @@ public class CandidateEndpointsTests
     public async Task GetById_WithExistingEntity_ShouldReturnEntity()
     {
         // Arrange
-        var createRequest = new CreateCandidateRequest("Entity To Get", "Description");
+        var createRequest = new CreateCandidateRequest("Jane", "Smith", null, null, null, null, null, null, null);
         var createResponse = await _client.PostAsJsonAsync("/api/candidates", createRequest);
         var location = createResponse.Headers.Location;
 
@@ -73,7 +73,8 @@ public class CandidateEndpointsTests
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
         var entity = await response.Content.ReadFromJsonAsync<CandidateViewModel>();
         entity.ShouldNotBeNull();
-        entity!.Name.ShouldBe("Entity To Get");
+        entity!.FirstName.ShouldBe("Jane");
+        entity.LastName.ShouldBe("Smith");
     }
 
     [Fact]
@@ -90,12 +91,12 @@ public class CandidateEndpointsTests
     public async Task Update_WithExistingEntity_ShouldReturnNoContent()
     {
         // Arrange
-        var createRequest = new CreateCandidateRequest("Entity To Update", "Original");
+        var createRequest = new CreateCandidateRequest("Update", "Test", null, null, null, null, null, null, null);
         var createResponse = await _client.PostAsJsonAsync("/api/candidates", createRequest);
         var location = createResponse.Headers.Location;
         var entityId = Guid.Parse(location!.Segments.Last());
 
-        var updateRequest = new UpdateCandidateRequest(entityId, "Updated Entity", "Updated Description");
+        var updateRequest = new UpdateCandidateRequest(entityId, "Updated", "Name", "updated@test.com", null, null, null, null, null, null);
 
         // Act
         var response = await _client.PutAsJsonAsync(location.ToString(), updateRequest);
@@ -105,14 +106,15 @@ public class CandidateEndpointsTests
 
         var getResponse = await _client.GetAsync(location);
         var updatedEntity = await getResponse.Content.ReadFromJsonAsync<CandidateViewModel>();
-        updatedEntity!.Name.ShouldBe("Updated Entity");
+        updatedEntity!.FirstName.ShouldBe("Updated");
+        updatedEntity.LastName.ShouldBe("Name");
     }
 
     [Fact]
     public async Task Delete_WithExistingEntity_ShouldReturnNoContent()
     {
         // Arrange
-        var createRequest = new CreateCandidateRequest("Entity To Delete", "Description");
+        var createRequest = new CreateCandidateRequest("Delete", "Me", null, null, null, null, null, null, null);
         var createResponse = await _client.PostAsJsonAsync("/api/candidates", createRequest);
         var location = createResponse.Headers.Location;
 

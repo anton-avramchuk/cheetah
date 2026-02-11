@@ -2,4 +2,14 @@ using Cheetah.Core.CQRS;
 
 namespace Crm.Candidates.Application.Commands;
 
-public record UpdateCandidateCommand(Guid Id, string Name, string? Description) : ICommand;
+public record UpdateCandidateCommand(
+    Guid Id,
+    string FirstName,
+    string LastName,
+    string? Email,
+    string? Phone,
+    string? City,
+    string? CurrentPosition,
+    string? CurrentCompany,
+    decimal? SalaryExpectation,
+    string? About) : ICommand;

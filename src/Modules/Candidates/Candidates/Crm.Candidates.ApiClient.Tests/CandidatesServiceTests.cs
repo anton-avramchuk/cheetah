@@ -23,8 +23,8 @@ public class CandidatesServiceTests
         // Arrange
         var expectedEntities = new List<CandidateViewModel>
         {
-            new(Guid.NewGuid(), "Entity 1", "Description 1"),
-            new(Guid.NewGuid(), "Entity 2", "Description 2")
+            new(Guid.NewGuid(), "John", "Doe", null, null, null, null, null, null, null),
+            new(Guid.NewGuid(), "Jane", "Smith", null, null, null, null, null, null, null)
         };
 
         var gridResult = new GridResult<CandidateViewModel>(expectedEntities, expectedEntities.Count);
@@ -45,7 +45,7 @@ public class CandidatesServiceTests
     {
         // Arrange
         var entityId = Guid.NewGuid();
-        var expectedEntity = new CandidateViewModel(entityId, "Test Entity", "Description");
+        var expectedEntity = new CandidateViewModel(entityId, "John", "Doe", "john@test.com", null, null, null, null, null, null);
 
         var handler = new MockHttpMessageHandler(HttpStatusCode.OK, JsonSerializer.Serialize(expectedEntity));
         var service = CreateService(handler);
@@ -79,7 +79,7 @@ public class CandidatesServiceTests
     {
         // Arrange
         var expectedId = Guid.NewGuid();
-        var request = new CreateCandidateRequest("New Entity", "Description");
+        var request = new CreateCandidateRequest("John", "Doe", null, null, null, null, null, null, null);
         var response = new { Id = expectedId };
 
         var handler = new MockHttpMessageHandler(HttpStatusCode.Created, JsonSerializer.Serialize(response));
