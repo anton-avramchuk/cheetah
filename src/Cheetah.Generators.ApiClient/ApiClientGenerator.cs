@@ -127,6 +127,9 @@ public class ApiClientGenerator : IIncrementalGenerator
             return;
 
         var route = attr.ConstructorArguments[0].Value as string ?? "";
+        route = route.TrimStart('/');
+        if (route.StartsWith("api/", System.StringComparison.OrdinalIgnoreCase))
+            route = route.Substring(4);
         var method = (ApiMethod)(int)(attr.ConstructorArguments[1].Value ?? 0);
 
         string? responseTypeName = null;
