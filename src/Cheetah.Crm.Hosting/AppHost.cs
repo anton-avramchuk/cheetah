@@ -74,6 +74,8 @@ var vacancyTasksApi = builder.AddProject<Projects.Crm_VacancyTasks_Api>("vacancy
 
 builder.AddProject<Projects.Crm_Proxy>("crm-proxy")
     .WithReference(recruitment)
+    .WithReference(candidatesApi)
+    .WithReference(vacancyTasksApi)
     .WaitFor(recruitment)
     .WaitFor(candidatesApi)
     .WaitFor(vacancyTasksApi)

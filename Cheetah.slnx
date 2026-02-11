@@ -144,7 +144,6 @@
         <File Path="global.json" />
         <File Path="nuget.config" />
     </Folder>
-    <Folder Name="/src/" />
     <Folder Name="/Tests/">
         <Project Path="src/Cheetah.Backend.Events.Redis.Tests/Cheetah.Backend.Events.Redis.Tests.csproj" />
         <Project Path="src/Cheetah.Backend.Redis.Tests/Cheetah.Backend.Redis.Tests.csproj" />
