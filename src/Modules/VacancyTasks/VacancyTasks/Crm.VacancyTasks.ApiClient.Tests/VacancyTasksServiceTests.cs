@@ -21,10 +21,12 @@ public class VacancyTasksServiceTests
     public async Task GetAllAsync_ShouldReturnEntities()
     {
         // Arrange
+        var vacancyId = Guid.NewGuid();
+        var stateId = Guid.NewGuid();
         var expectedEntities = new List<VacancyTaskViewModel>
         {
-            new(Guid.NewGuid(), "Entity 1", "Description 1"),
-            new(Guid.NewGuid(), "Entity 2", "Description 2")
+            new(Guid.NewGuid(), "Entity 1", "Description 1", vacancyId, stateId, null, null, null, 0),
+            new(Guid.NewGuid(), "Entity 2", "Description 2", vacancyId, stateId, null, null, null, 1)
         };
 
         var gridResult = new GridResult<VacancyTaskViewModel>(expectedEntities, expectedEntities.Count);
@@ -45,7 +47,9 @@ public class VacancyTasksServiceTests
     {
         // Arrange
         var entityId = Guid.NewGuid();
-        var expectedEntity = new VacancyTaskViewModel(entityId, "Test Entity", "Description");
+        var vacancyId = Guid.NewGuid();
+        var stateId = Guid.NewGuid();
+        var expectedEntity = new VacancyTaskViewModel(entityId, "Test Entity", "Description", vacancyId, stateId, null, null, null, 0);
 
         var handler = new MockHttpMessageHandler(HttpStatusCode.OK, JsonSerializer.Serialize(expectedEntity));
         var service = CreateService(handler);
@@ -79,7 +83,9 @@ public class VacancyTasksServiceTests
     {
         // Arrange
         var expectedId = Guid.NewGuid();
-        var request = new CreateVacancyTaskRequest("New Entity", "Description");
+        var vacancyId = Guid.NewGuid();
+        var stateId = Guid.NewGuid();
+        var request = new CreateVacancyTaskRequest("New Entity", vacancyId, stateId, "Description", null, null, null);
         var response = new { Id = expectedId };
 
         var handler = new MockHttpMessageHandler(HttpStatusCode.Created, JsonSerializer.Serialize(response));

@@ -7,11 +7,11 @@ using Crm.VacancyTasks.Domain;
 
 namespace Crm.VacancyTasks.Application.Queries;
 
-[Export(LifetimeType.Scoped, typeof(IQueryHandler<GetAllSampleEntitiesQuery, GridResult<VacancyTaskModel>>))]
-public class GetAllSampleEntitiesQueryHandler(IGridRepository<VacancyTask> repository)
-    : IQueryHandler<GetAllSampleEntitiesQuery, GridResult<VacancyTaskModel>>
+[Export(LifetimeType.Scoped, typeof(IQueryHandler<GetAllVacancyTasksQuery, GridResult<VacancyTaskModel>>))]
+public class GetAllVacancyTasksQueryHandler(IGridRepository<VacancyTask> repository)
+    : IQueryHandler<GetAllVacancyTasksQuery, GridResult<VacancyTaskModel>>
 {
-    public async ValueTask<GridResult<VacancyTaskModel>> HandleAsync(GetAllSampleEntitiesQuery gridQuery,
+    public async ValueTask<GridResult<VacancyTaskModel>> HandleAsync(GetAllVacancyTasksQuery gridQuery,
         CancellationToken ct = default)
     {
         var gridRequest = new GridRequest

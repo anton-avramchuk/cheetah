@@ -11,6 +11,6 @@ public class DeleteVacancyTaskEndpoint : DeleteCommandEndpoint<DeleteVacancyTask
 
     protected override void Configure(EndpointConfiguration config)
     {
-        config.WithTags("SampleEntities");
+        config.WithTags("VacancyTasks");
     }
 }

@@ -11,18 +11,21 @@ namespace Crm.VacancyTasks.Api.Tests.Endpoints;
 [Collection("VacancyTasksApi")]
 public class VacancyTaskEndpointsTests
 {
+    private const string BasePath = "/api/vacancy-tasks";
     private readonly HttpClient _client;
+    private readonly Guid _defaultStateId;
 
     public VacancyTaskEndpointsTests(VacancyTasksApiFixture fixture)
     {
         _client = fixture.CreateClient();
+        _defaultStateId = fixture.DefaultStateId;
     }
 
     [Fact]
     public async Task GetAll_WhenNoEntities_ShouldReturnEmptyList()
     {
         // Act
-        var response = await _client.GetAsync("/api/vacancytasks");
+        var response = await _client.GetAsync(BasePath);
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -35,10 +38,10 @@ public class VacancyTaskEndpointsTests
     public async Task Create_WithValidData_ShouldReturnCreated()
     {
         // Arrange
-        var request = new CreateVacancyTaskRequest("New Entity", "Description");
+        var request = new CreateVacancyTaskRequest("New Entity", Guid.NewGuid(), _defaultStateId, "Description", null, null, null);
 
         // Act
-        var response = await _client.PostAsJsonAsync("/api/vacancytasks", request);
+        var response = await _client.PostAsJsonAsync(BasePath, request);
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.Created);
@@ -46,13 +49,13 @@ public class VacancyTaskEndpointsTests
     }
 
     [Fact]
-    public async Task Create_WithEmptyName_ShouldReturnBadRequest()
+    public async Task Create_WithEmptyTitle_ShouldReturnBadRequest()
     {
         // Arrange
-        var request = new CreateVacancyTaskRequest("", "Description");
+        var request = new CreateVacancyTaskRequest("", Guid.NewGuid(), _defaultStateId, "Description", null, null, null);
 
         // Act
-        var response = await _client.PostAsJsonAsync("/api/vacancytasks", request);
+        var response = await _client.PostAsJsonAsync(BasePath, request);
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
@@ -62,8 +65,8 @@ public class VacancyTaskEndpointsTests
     public async Task GetById_WithExistingEntity_ShouldReturnEntity()
     {
         // Arrange
-        var createRequest = new CreateVacancyTaskRequest("Entity To Get", "Description");
-        var createResponse = await _client.PostAsJsonAsync("/api/vacancytasks", createRequest);
+        var createRequest = new CreateVacancyTaskRequest("Entity To Get", Guid.NewGuid(), _defaultStateId, "Description", null, null, null);
+        var createResponse = await _client.PostAsJsonAsync(BasePath, createRequest);
         var location = createResponse.Headers.Location;
 
         // Act
@@ -73,14 +76,14 @@ public class VacancyTaskEndpointsTests
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
         var entity = await response.Content.ReadFromJsonAsync<VacancyTaskViewModel>();
         entity.ShouldNotBeNull();
-        entity!.Name.ShouldBe("Entity To Get");
+        entity!.Title.ShouldBe("Entity To Get");
     }
 
     [Fact]
     public async Task GetById_WithNonExistingEntity_ShouldReturnNotFound()
     {
         // Act
-        var response = await _client.GetAsync($"/api/vacancytasks/{Guid.NewGuid()}");
+        var response = await _client.GetAsync($"{BasePath}/{Guid.NewGuid()}");
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
@@ -90,8 +93,8 @@ public class VacancyTaskEndpointsTests
     public async Task Update_WithExistingEntity_ShouldReturnNoContent()
     {
         // Arrange
-        var createRequest = new CreateVacancyTaskRequest("Entity To Update", "Original");
-        var createResponse = await _client.PostAsJsonAsync("/api/vacancytasks", createRequest);
+        var createRequest = new CreateVacancyTaskRequest("Entity To Update", Guid.NewGuid(), _defaultStateId, "Original", null, null, null);
+        var createResponse = await _client.PostAsJsonAsync(BasePath, createRequest);
         var location = createResponse.Headers.Location;
         var entityId = Guid.Parse(location!.Segments.Last());
 
@@ -105,15 +108,15 @@ public class VacancyTaskEndpointsTests
 
         var getResponse = await _client.GetAsync(location);
         var updatedEntity = await getResponse.Content.ReadFromJsonAsync<VacancyTaskViewModel>();
-        updatedEntity!.Name.ShouldBe("Updated Entity");
+        updatedEntity!.Title.ShouldBe("Updated Entity");
     }
 
     [Fact]
     public async Task Delete_WithExistingEntity_ShouldReturnNoContent()
     {
         // Arrange
-        var createRequest = new CreateVacancyTaskRequest("Entity To Delete", "Description");
-        var createResponse = await _client.PostAsJsonAsync("/api/vacancytasks", createRequest);
+        var createRequest = new CreateVacancyTaskRequest("Entity To Delete", Guid.NewGuid(), _defaultStateId, "Description", null, null, null);
+        var createResponse = await _client.PostAsJsonAsync(BasePath, createRequest);
         var location = createResponse.Headers.Location;
 
         // Act

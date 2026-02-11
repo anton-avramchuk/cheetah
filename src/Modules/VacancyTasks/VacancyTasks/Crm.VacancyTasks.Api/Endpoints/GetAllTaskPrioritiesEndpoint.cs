@@ -7,13 +7,13 @@ using Crm.VacancyTasks.Contracts.Response;
 
 namespace Crm.VacancyTasks.Api.Endpoints;
 
-public class GetAllSampleEntitiesEndpoint : QueryGridEndpoint<GetAllSampleEntitiesRequest,
-    GetAllSampleEntitiesQuery, VacancyTaskModel, VacancyTaskViewModel>
+public class GetAllTaskPrioritiesEndpoint : QueryCollectionEndpoint<GetAllTaskPrioritiesRequest,
+    GetAllTaskPrioritiesQuery, TaskPriorityModel, TaskPriorityViewModel>
 {
-    public override string Route => Constants.DefaultRoute;
+    public override string Route => Constants.TaskPriorityRoute;
 
     protected override void Configure(EndpointConfiguration config)
     {
-        config.WithTags("SampleEntities");
+        config.WithTags("TaskPriorities");
     }
 }

@@ -4,7 +4,7 @@ using Cheetah.Core.CQRS;
 
 namespace Crm.VacancyTasks.Application.Queries;
 
-public record GetAllSampleEntitiesQuery(
+public record GetAllVacancyTasksQuery(
     int Page,
     int PageSize,
     List<SortDescriptor> Sort,

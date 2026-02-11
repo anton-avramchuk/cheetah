@@ -1,4 +1,5 @@
 using Crm.VacancyTasks.DataAccess;
+using Crm.VacancyTasks.Domain;
 using Cheetah.Core.Events;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -16,6 +17,8 @@ public class VacancyTasksApiFixture : WebApplicationFactory<Program>, IAsyncLife
         .WithUsername("test")
         .WithPassword("test")
         .Build();
+
+    public Guid DefaultStateId { get; private set; }
 
     public async Task InitializeAsync()
     {
@@ -53,6 +56,11 @@ public class VacancyTasksApiFixture : WebApplicationFactory<Program>, IAsyncLife
             using var scope = sp.CreateScope();
             var db = scope.ServiceProvider.GetRequiredService<VacancyTasksDbContext>();
             db.Database.Migrate();
+
+            var defaultState = TaskState.Create("To Do", 0, "#3498db", true);
+            DefaultStateId = defaultState.Id;
+            db.TaskStates.Add(defaultState);
+            db.SaveChanges();
         });
 
         builder.UseEnvironment("Testing");

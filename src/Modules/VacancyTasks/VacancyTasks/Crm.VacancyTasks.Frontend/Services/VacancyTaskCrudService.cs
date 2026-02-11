@@ -39,22 +39,27 @@ public sealed class
         return new VacancyTaskFormModel
         {
             Id = entity.Id,
-            Name = entity.Name,
-            Description = entity.Description ?? ""
+            Title = entity.Title,
+            Description = entity.Description ?? "",
+            VacancyId = entity.VacancyId,
+            StateId = entity.StateId,
+            PriorityId = entity.PriorityId,
+            AssigneeId = entity.AssigneeId,
+            DueDate = entity.DueDate
         };
     }
 
     public async Task<Guid> CreateAsync(VacancyTaskFormModel model, CancellationToken ct = default)
     {
         var description = string.IsNullOrWhiteSpace(model.Description) ? null : model.Description;
-        var request = new CreateVacancyTaskRequest(model.Name, description);
+        var request = new CreateVacancyTaskRequest(model.Title, model.VacancyId, model.StateId, description, model.PriorityId, model.AssigneeId, model.DueDate);
         return await _service.CreateAsync(request, ct);
     }
 
     public async Task UpdateAsync(Guid id, VacancyTaskFormModel model, CancellationToken ct = default)
     {
         var description = string.IsNullOrWhiteSpace(model.Description) ? null : model.Description;
-        var request = new UpdateVacancyTaskRequest(id, model.Name, description);
+        var request = new UpdateVacancyTaskRequest(id, model.Title, description);
         await _service.UpdateAsync(id, request, ct);
     }
 

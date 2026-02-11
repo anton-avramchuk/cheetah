@@ -24,6 +24,8 @@ public class GetVacancyTaskByIdQueryHandler : IQueryHandler<GetVacancyTaskByIdQu
         if (entity is null)
             return null;
 
-        return new VacancyTaskModel(entity.Id, entity.Name, entity.Description);
+        return new VacancyTaskModel(
+            entity.Id, entity.Title, entity.Description, entity.VacancyId,
+            entity.StateId, entity.PriorityId, entity.AssigneeId, entity.DueDate, entity.Order);
     }
 }

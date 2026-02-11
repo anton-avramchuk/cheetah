@@ -9,12 +9,24 @@ public class VacancyTaskFormModel
 {
     public Guid? Id { get; set; }
 
-    [Required(ErrorMessage = "Name is required")]
-    [StringLength(200, ErrorMessage = "Name must not exceed 200 characters")]
-    public string Name { get; set; } = string.Empty;
+    [Required(ErrorMessage = "Title is required")]
+    [StringLength(256, ErrorMessage = "Title must not exceed 256 characters")]
+    public string Title { get; set; } = string.Empty;
 
-    [StringLength(1000, ErrorMessage = "Description must not exceed 1000 characters")]
+    [StringLength(1024, ErrorMessage = "Description must not exceed 1024 characters")]
     public string Description { get; set; } = string.Empty;
+
+    [Required(ErrorMessage = "Vacancy is required")]
+    public Guid VacancyId { get; set; }
+
+    [Required(ErrorMessage = "State is required")]
+    public Guid StateId { get; set; }
+
+    public Guid? PriorityId { get; set; }
+
+    public Guid? AssigneeId { get; set; }
+
+    public DateTimeOffset? DueDate { get; set; }
 
     public bool IsEdit => Id.HasValue;
 }

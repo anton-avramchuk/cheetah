@@ -22,11 +22,11 @@ else
         <DataAnnotationsValidator/>
 
         <CrmTextInput TValue="string"
-                      @bind-Value="_model.Name"
-                      Label="Name"
-                      Placeholder="Enter name"
+                      @bind-Value="_model.Title"
+                      Label="Title"
+                      Placeholder="Enter title"
                       Required="true"
-                      ValidationFor="() => _model.Name"/>
+                      ValidationFor="() => _model.Title"/>
 
         <CrmTextArea @bind-Value="_model.Description"
                      Label="Description"
@@ -73,7 +73,7 @@ else
                     _model = new VacancyTaskFormModel
                     {
                         Id = entity.Id,
-                        Name = entity.Name,
+                        Title = entity.Title,
                         Description = entity.Description ?? ""
                     };
                 }

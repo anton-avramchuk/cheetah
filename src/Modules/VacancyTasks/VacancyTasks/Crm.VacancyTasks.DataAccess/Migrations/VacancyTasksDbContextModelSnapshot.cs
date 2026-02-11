@@ -22,10 +22,68 @@ namespace Crm.VacancyTasks.DataAccess.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Crm.VacancyTasks.Domain.TaskPriority", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Color")
+                        .HasMaxLength(7)
+                        .HasColumnType("character varying(7)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("TaskPriority", "vacancytasks");
+                });
+
+            modelBuilder.Entity("Crm.VacancyTasks.Domain.TaskState", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Color")
+                        .HasMaxLength(7)
+                        .HasColumnType("character varying(7)");
+
+                    b.Property<bool>("IsDefault")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("TaskState", "vacancytasks");
+                });
+
             modelBuilder.Entity("Crm.VacancyTasks.Domain.VacancyTask", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("AssigneeId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTimeOffset?>("CreatedAt")
@@ -35,7 +93,19 @@ namespace Crm.VacancyTasks.DataAccess.Migrations
                         .HasMaxLength(1024)
                         .HasColumnType("character varying(1024)");
 
-                    b.Property<string>("Name")
+                    b.Property<DateTimeOffset?>("DueDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid?>("PriorityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("StateId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
@@ -43,12 +113,48 @@ namespace Crm.VacancyTasks.DataAccess.Migrations
                     b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<Guid>("VacancyId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("Name")
-                        .IsUnique();
+                    b.HasIndex("AssigneeId");
+
+                    b.HasIndex("PriorityId");
+
+                    b.HasIndex("StateId");
+
+                    b.HasIndex("VacancyId");
 
                     b.ToTable("VacancyTask", "vacancytasks");
+                });
+
+            modelBuilder.Entity("Crm.VacancyTasks.Domain.VacancyTask", b =>
+                {
+                    b.HasOne("Crm.VacancyTasks.Domain.TaskPriority", "Priority")
+                        .WithMany("VacancyTasks")
+                        .HasForeignKey("PriorityId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("Crm.VacancyTasks.Domain.TaskState", "State")
+                        .WithMany("VacancyTasks")
+                        .HasForeignKey("StateId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Priority");
+
+                    b.Navigation("State");
+                });
+
+            modelBuilder.Entity("Crm.VacancyTasks.Domain.TaskPriority", b =>
+                {
+                    b.Navigation("VacancyTasks");
+                });
+
+            modelBuilder.Entity("Crm.VacancyTasks.Domain.TaskState", b =>
+                {
+                    b.Navigation("VacancyTasks");
                 });
 #pragma warning restore 612, 618
         }

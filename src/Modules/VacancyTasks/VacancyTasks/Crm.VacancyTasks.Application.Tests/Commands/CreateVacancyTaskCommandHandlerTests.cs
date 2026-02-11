@@ -24,7 +24,9 @@ public class CreateVacancyTaskCommandHandlerTests
     public async Task HandleAsync_WithValidCommand_ShouldCreateEntityAndReturnId()
     {
         // Arrange
-        var command = new CreateVacancyTaskCommand("Test Entity", "Test Description");
+        var vacancyId = Guid.NewGuid();
+        var stateId = Guid.NewGuid();
+        var command = new CreateVacancyTaskCommand("Test Task", vacancyId, stateId, "Test Description", null, null, null);
         VacancyTask? capturedEntity = null;
 
         _repositoryMock
@@ -41,18 +43,20 @@ public class CreateVacancyTaskCommandHandlerTests
         // Assert
         result.ShouldNotBe(Guid.Empty);
         capturedEntity.ShouldNotBeNull();
-        capturedEntity!.Name.ShouldBe("Test Entity");
+        capturedEntity!.Title.ShouldBe("Test Task");
         capturedEntity.Description.ShouldBe("Test Description");
+        capturedEntity.VacancyId.ShouldBe(vacancyId);
+        capturedEntity.StateId.ShouldBe(stateId);
 
         _repositoryMock.Verify(r => r.Add(It.IsAny<VacancyTask>()), Times.Once);
         _repositoryMock.Verify(r => r.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
-    public async Task HandleAsync_WithEmptyName_ShouldThrowArgumentException()
+    public async Task HandleAsync_WithEmptyTitle_ShouldThrowArgumentException()
     {
         // Arrange
-        var command = new CreateVacancyTaskCommand("", "Description");
+        var command = new CreateVacancyTaskCommand("", Guid.NewGuid(), Guid.NewGuid(), "Description", null, null, null);
 
         // Act
         var act = async () => await _handler.HandleAsync(command);

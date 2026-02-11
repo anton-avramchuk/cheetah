@@ -11,6 +11,6 @@ public class UpdateVacancyTaskEndpoint : UpdateCommandEndpoint<UpdateVacancyTask
 
     protected override void Configure(EndpointConfiguration config)
     {
-        config.WithTags("SampleEntities");
+        config.WithTags("VacancyTasks");
     }
 }

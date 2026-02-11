@@ -13,6 +13,6 @@ public class CreateVacancyTaskEndpoint : CreateCommandEndpoint<CreateVacancyTask
 
     protected override void Configure(EndpointConfiguration config)
     {
-        config.WithTags("SampleEntities");
+        config.WithTags("VacancyTasks");
     }
 }

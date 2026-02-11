@@ -5,34 +5,39 @@ namespace Crm.VacancyTasks.Domain.Tests;
 
 public class VacancyTaskTests
 {
+    private static readonly Guid TestVacancyId = Guid.NewGuid();
+    private static readonly Guid TestStateId = Guid.NewGuid();
+
     [Fact]
-    public void Create_WithValidName_ShouldCreateEntity()
+    public void Create_WithValidTitle_ShouldCreateEntity()
     {
         // Arrange
-        var name = "Test Entity";
+        var title = "Test Task";
 
         // Act
-        var entity = VacancyTask.Create(name);
+        var entity = VacancyTask.Create(title, TestVacancyId, TestStateId);
 
         // Assert
         entity.ShouldNotBeNull();
         entity.Id.ShouldNotBe(Guid.Empty);
-        entity.Name.ShouldBe(name);
+        entity.Title.ShouldBe(title);
+        entity.VacancyId.ShouldBe(TestVacancyId);
+        entity.StateId.ShouldBe(TestStateId);
         entity.Description.ShouldBeNull();
     }
 
     [Fact]
-    public void Create_WithNameAndDescription_ShouldCreateEntity()
+    public void Create_WithTitleAndDescription_ShouldCreateEntity()
     {
         // Arrange
-        var name = "Test Entity";
+        var title = "Test Task";
         var description = "Test Description";
 
         // Act
-        var entity = VacancyTask.Create(name, description);
+        var entity = VacancyTask.Create(title, TestVacancyId, TestStateId, description);
 
         // Assert
-        entity.Name.ShouldBe(name);
+        entity.Title.ShouldBe(title);
         entity.Description.ShouldBe(description);
     }
 
@@ -40,8 +45,8 @@ public class VacancyTaskTests
     public void Create_ShouldGenerateUniqueIds()
     {
         // Act
-        var entity1 = VacancyTask.Create("Entity 1");
-        var entity2 = VacancyTask.Create("Entity 2");
+        var entity1 = VacancyTask.Create("Task 1", TestVacancyId, TestStateId);
+        var entity2 = VacancyTask.Create("Task 2", TestVacancyId, TestStateId);
 
         // Assert
         entity1.Id.ShouldNotBe(entity2.Id);
@@ -51,26 +56,26 @@ public class VacancyTaskTests
     [InlineData(null)]
     [InlineData("")]
     [InlineData("   ")]
-    public void Create_WithInvalidName_ShouldThrowArgumentException(string? name)
+    public void Create_WithInvalidTitle_ShouldThrowArgumentException(string? title)
     {
         // Act
-        var act = () => VacancyTask.Create(name!);
+        var act = () => VacancyTask.Create(title!, TestVacancyId, TestStateId);
 
         // Assert
         Should.Throw<ArgumentException>(act);
     }
 
     [Fact]
-    public void Update_WithValidName_ShouldUpdateEntity()
+    public void Update_WithValidTitle_ShouldUpdateEntity()
     {
         // Arrange
-        var entity = VacancyTask.Create("Original Name", "Original Description");
+        var entity = VacancyTask.Create("Original Title", TestVacancyId, TestStateId, "Original Description");
 
         // Act
-        entity.Update("Updated Name", "Updated Description");
+        entity.Update("Updated Title", "Updated Description");
 
         // Assert
-        entity.Name.ShouldBe("Updated Name");
+        entity.Title.ShouldBe("Updated Title");
         entity.Description.ShouldBe("Updated Description");
     }
 
@@ -78,11 +83,11 @@ public class VacancyTaskTests
     public void Update_ShouldNotChangeId()
     {
         // Arrange
-        var entity = VacancyTask.Create("Original Name");
+        var entity = VacancyTask.Create("Original Title", TestVacancyId, TestStateId);
         var originalId = entity.Id;
 
         // Act
-        entity.Update("Updated Name");
+        entity.Update("Updated Title");
 
         // Assert
         entity.Id.ShouldBe(originalId);
@@ -92,15 +97,71 @@ public class VacancyTaskTests
     [InlineData(null)]
     [InlineData("")]
     [InlineData("   ")]
-    public void Update_WithInvalidName_ShouldThrowArgumentException(string? name)
+    public void Update_WithInvalidTitle_ShouldThrowArgumentException(string? title)
     {
         // Arrange
-        var entity = VacancyTask.Create("Original Name");
+        var entity = VacancyTask.Create("Original Title", TestVacancyId, TestStateId);
 
         // Act
-        var act = () => entity.Update(name!);
+        var act = () => entity.Update(title!);
 
         // Assert
         Should.Throw<ArgumentException>(act);
+    }
+
+    [Fact]
+    public void SetState_ShouldUpdateStateId()
+    {
+        // Arrange
+        var entity = VacancyTask.Create("Task", TestVacancyId, TestStateId);
+        var newStateId = Guid.NewGuid();
+
+        // Act
+        entity.SetState(newStateId);
+
+        // Assert
+        entity.StateId.ShouldBe(newStateId);
+    }
+
+    [Fact]
+    public void SetPriority_ShouldUpdatePriorityId()
+    {
+        // Arrange
+        var entity = VacancyTask.Create("Task", TestVacancyId, TestStateId);
+        var priorityId = Guid.NewGuid();
+
+        // Act
+        entity.SetPriority(priorityId);
+
+        // Assert
+        entity.PriorityId.ShouldBe(priorityId);
+    }
+
+    [Fact]
+    public void SetPriority_WithNull_ShouldClearPriority()
+    {
+        // Arrange
+        var entity = VacancyTask.Create("Task", TestVacancyId, TestStateId, priorityId: Guid.NewGuid());
+
+        // Act
+        entity.SetPriority(null);
+
+        // Assert
+        entity.PriorityId.ShouldBeNull();
+    }
+
+    [Fact]
+    public void Move_ShouldUpdateStateAndOrder()
+    {
+        // Arrange
+        var entity = VacancyTask.Create("Task", TestVacancyId, TestStateId);
+        var newStateId = Guid.NewGuid();
+
+        // Act
+        entity.Move(newStateId, 5);
+
+        // Assert
+        entity.StateId.ShouldBe(newStateId);
+        entity.Order.ShouldBe(5);
     }
 }

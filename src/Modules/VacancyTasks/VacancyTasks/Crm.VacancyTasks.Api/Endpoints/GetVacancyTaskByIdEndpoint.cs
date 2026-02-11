@@ -15,6 +15,6 @@ public class GetVacancyTaskByIdEndpoint : QueryOrNotFoundEndpoint<GetVacancyTask
     protected override void Configure(EndpointConfiguration config)
     {
         config.WithName("GetVacancyTaskById");
-        config.WithTags("SampleEntities");
+        config.WithTags("VacancyTasks");
     }
 }
