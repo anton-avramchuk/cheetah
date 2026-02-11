@@ -1,0 +1,21 @@
+@page "/vacancytasks/sampleentities"
+@namespace Crm.VacancyTasks.Frontend.Pages
+
+@inject ICrudService<VacancyTaskGridViewModel, VacancyTaskFormModel, VacancyTaskFormModel> CrudService
+
+<PageTitle>VacancyTask List</PageTitle>
+
+<CrmCrudGrid TGridViewModel="VacancyTaskGridViewModel"
+             TCreateViewModel="VacancyTaskFormModel"
+             TEditViewModel="VacancyTaskFormModel"
+             Service="CrudService"
+             Title="VacancyTask List"
+             CreateFormType="typeof(VacancyTaskForm)"
+             EditFormType="typeof(VacancyTaskForm)"
+             CreateDialogTitle="New VacancyTask"
+             EditDialogTitle="Edit VacancyTask"
+             CreateButtonText="Add"
+             EmptyMessage="No entities found"
+             AllowCreate="true"
+             AllowEdit="true"
+             AllowDelete="true"/>

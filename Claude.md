@@ -338,10 +338,17 @@ Cheetah.MyModule.Application/
 
 ### Project Configuration
 
-Use `$(MsPackageVersion)` for Microsoft packages (defined in `src/Directory.Build.props`):
+**Central Package Management:** Project uses `Directory.Packages.props` at solution root for centralized package versioning.
+- When adding a NuGet package, add `<PackageVersion>` to `Directory.Packages.props` if not already present
+- In `.csproj` files use `<PackageReference Include="PackageName" />` **without** `Version` attribute
+- Do NOT use `$(MsPackageVersion)` — all versions are managed centrally
 
 ```xml
-<PackageReference Include="Microsoft.EntityFrameworkCore" Version="$(MsPackageVersion)" />
+<!-- Directory.Packages.props (root) -->
+<PackageVersion Include="Microsoft.EntityFrameworkCore" Version="10.0.3" />
+
+<!-- .csproj (no version) -->
+<PackageReference Include="Microsoft.EntityFrameworkCore" />
 ```
 
 **Solution File Format:**

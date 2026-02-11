@@ -96,8 +96,34 @@
     </Folder>
     <Folder Name="/Modules/Identity/" />
     <Folder Name="/Modules/Recruitment/" />
-    <Folder Name="/Modules/Recruitment/Candidate/" />
-    <Folder Name="/Modules/Recruitment/Task/" />
+    <Folder Name="/Modules/Recruitment/Candidate/">
+        <Project Path="src/Modules/Candidates/Candidates/Crm.Candidates.Api.Tests/Crm.Candidates.Api.Tests.csproj" />
+        <Project Path="src/Modules/Candidates/Candidates/Crm.Candidates.Api/Crm.Candidates.Api.csproj" />
+        <Project Path="src/Modules/Candidates/Candidates/Crm.Candidates.ApiClient.Tests/Crm.Candidates.ApiClient.Tests.csproj" />
+        <Project Path="src/Modules/Candidates/Candidates/Crm.Candidates.ApiClient/Crm.Candidates.ApiClient.csproj" />
+        <Project Path="src/Modules/Candidates/Candidates/Crm.Candidates.Application.Tests/Crm.Candidates.Application.Tests.csproj" />
+        <Project Path="src/Modules/Candidates/Candidates/Crm.Candidates.Application/Crm.Candidates.Application.csproj" />
+        <Project Path="src/Modules/Candidates/Candidates/Crm.Candidates.Contracts/Crm.Candidates.Contracts.csproj" />
+        <Project Path="src/Modules/Candidates/Candidates/Crm.Candidates.DataAccess/Crm.Candidates.DataAccess.csproj" />
+        <Project Path="src/Modules/Candidates/Candidates/Crm.Candidates.Domain.Tests/Crm.Candidates.Domain.Tests.csproj" />
+        <Project Path="src/Modules/Candidates/Candidates/Crm.Candidates.Domain/Crm.Candidates.Domain.csproj" />
+        <Project Path="src/Modules/Candidates/Candidates/Crm.Candidates.DomainEvents/Crm.Candidates.DomainEvents.csproj" />
+        <Project Path="src/Modules/Candidates/Candidates/Crm.Candidates.Frontend/Crm.Candidates.Frontend.csproj" />
+    </Folder>
+    <Folder Name="/Modules/Recruitment/Task/">
+        <Project Path="src/Modules/VacancyTasks/VacancyTasks/Crm.VacancyTasks.Api.Tests/Crm.VacancyTasks.Api.Tests.csproj" />
+        <Project Path="src/Modules/VacancyTasks/VacancyTasks/Crm.VacancyTasks.Api/Crm.VacancyTasks.Api.csproj" />
+        <Project Path="src/Modules/VacancyTasks/VacancyTasks/Crm.VacancyTasks.ApiClient.Tests/Crm.VacancyTasks.ApiClient.Tests.csproj" />
+        <Project Path="src/Modules/VacancyTasks/VacancyTasks/Crm.VacancyTasks.ApiClient/Crm.VacancyTasks.ApiClient.csproj" />
+        <Project Path="src/Modules/VacancyTasks/VacancyTasks/Crm.VacancyTasks.Application.Tests/Crm.VacancyTasks.Application.Tests.csproj" />
+        <Project Path="src/Modules/VacancyTasks/VacancyTasks/Crm.VacancyTasks.Application/Crm.VacancyTasks.Application.csproj" />
+        <Project Path="src/Modules/VacancyTasks/VacancyTasks/Crm.VacancyTasks.Contracts/Crm.VacancyTasks.Contracts.csproj" />
+        <Project Path="src/Modules/VacancyTasks/VacancyTasks/Crm.VacancyTasks.DataAccess/Crm.VacancyTasks.DataAccess.csproj" />
+        <Project Path="src/Modules/VacancyTasks/VacancyTasks/Crm.VacancyTasks.Domain.Tests/Crm.VacancyTasks.Domain.Tests.csproj" />
+        <Project Path="src/Modules/VacancyTasks/VacancyTasks/Crm.VacancyTasks.Domain/Crm.VacancyTasks.Domain.csproj" />
+        <Project Path="src/Modules/VacancyTasks/VacancyTasks/Crm.VacancyTasks.DomainEvents/Crm.VacancyTasks.DomainEvents.csproj" />
+        <Project Path="src/Modules/VacancyTasks/VacancyTasks/Crm.VacancyTasks.Frontend/Crm.VacancyTasks.Frontend.csproj" />
+    </Folder>
     <Folder Name="/Modules/Recruitment/Vacancy/">
         <Project Path="src/Modules/Recruitment/Crm.Recruitment.Api.Tests/Crm.Recruitment.Api.Tests.csproj" />
         <Project Path="src/Modules/Recruitment/Crm.Recruitment.Api/Crm.Recruitment.Api.csproj" />

@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\..\..\Cheetah.Core\Cheetah.Core.csproj" />
+        <ProjectReference Include="..\Crm.VacancyTasks.Contracts\Crm.VacancyTasks.Contracts.csproj" />
+    </ItemGroup>
+
+</Project>

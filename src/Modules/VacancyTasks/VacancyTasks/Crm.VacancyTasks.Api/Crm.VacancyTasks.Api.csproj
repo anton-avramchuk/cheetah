@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\..\..\..\Cheetah.ServiceDefaults\Cheetah.ServiceDefaults.csproj" />
+        <ProjectReference Include="..\..\..\..\Cheetah.AspNetCore\Cheetah.AspNetCore.csproj" />
+        <ProjectReference Include="..\..\..\..\Cheetah.AspNetCore.Contracts\Cheetah.AspNetCore.Contracts.csproj" />
+        <ProjectReference Include="..\..\..\..\Cheetah.Backend.CQRS\Cheetah.Backend.CQRS.csproj" />
+        <ProjectReference Include="..\..\..\..\Cheetah.Backend.Endpoints\Cheetah.Backend.Endpoints.csproj" />
+        <ProjectReference Include="..\..\..\..\Cheetah.Backend.Events.Redis\Cheetah.Backend.Events.Redis.csproj" />
+        <ProjectReference Include="..\..\..\..\Cheetah.Core\Cheetah.Core.csproj" />
+        <ProjectReference Include="..\..\..\..\Cheetah.Mapping.Mapster\Cheetah.Mapping.Mapster.csproj" />
+        <ProjectReference Include="..\..\..\..\Cheetah.Scalar\Cheetah.Scalar.csproj" />
+        <ProjectReference Include="..\Crm.VacancyTasks.Application\Crm.VacancyTasks.Application.csproj" />
+        <ProjectReference Include="..\Crm.VacancyTasks.DataAccess\Crm.VacancyTasks.DataAccess.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\..\..\Cheetah.Generators.Module\Cheetah.Generators.Module.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
+        <ProjectReference Include="..\..\..\..\Cheetah.Generators.Application\Cheetah.Generators.Application.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
+        <ProjectReference Include="..\..\..\..\Cheetah.Generators.Endpoints\Cheetah.Generators.Endpoints.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
+    </ItemGroup>
+
+</Project>

@@ -1,0 +1,21 @@
+@page "/candidates/sampleentities"
+@namespace Crm.Candidates.Frontend.Pages
+
+@inject ICrudService<CandidateGridViewModel, CandidateFormModel, CandidateFormModel> CrudService
+
+<PageTitle>Candidate List</PageTitle>
+
+<CrmCrudGrid TGridViewModel="CandidateGridViewModel"
+             TCreateViewModel="CandidateFormModel"
+             TEditViewModel="CandidateFormModel"
+             Service="CrudService"
+             Title="Candidate List"
+             CreateFormType="typeof(CandidateForm)"
+             EditFormType="typeof(CandidateForm)"
+             CreateDialogTitle="New Candidate"
+             EditDialogTitle="Edit Candidate"
+             CreateButtonText="Add"
+             EmptyMessage="No entities found"
+             AllowCreate="true"
+             AllowEdit="true"
+             AllowDelete="true"/>
