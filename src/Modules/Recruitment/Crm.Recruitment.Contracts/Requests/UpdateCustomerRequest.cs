@@ -4,6 +4,7 @@ using Cheetah.Contracts.Requests;
 
 namespace Crm.Recruitment.Contracts.Requests;
 
+[ApiRoute("api/customers/{id:guid}", ApiMethod.Update, ServiceName = "Customers")]
 public record UpdateCustomerRequest(
     [FromRoute] Guid Id,
     [property: Required(AllowEmptyStrings = false)]

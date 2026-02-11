@@ -1,19 +1,20 @@
 using System.Net;
 using System.Text.Json;
+using Cheetah.Contracts.Responses;
 using Crm.Recruitment.Contracts.Requests;
 using Crm.Recruitment.Contracts.Response;
 using Shouldly;
 
 namespace Crm.Recruitment.ApiClient.Tests;
 
-public class RecruitmentServiceTests
+public class VacanciesServiceTests
 {
-    private const string BasePath = "api/recruitment";
+    private const string BasePath = "api/vacancies";
 
-    private static RecruitmentService CreateService(MockHttpMessageHandler handler)
+    private static VacanciesService CreateService(MockHttpMessageHandler handler)
     {
         var httpClient = new HttpClient(handler) { BaseAddress = new Uri("http://localhost/") };
-        return new RecruitmentService(httpClient);
+        return new VacanciesService(httpClient);
     }
 
     [Fact]
@@ -26,15 +27,16 @@ public class RecruitmentServiceTests
             new(Guid.NewGuid(), "Entity 2", "Description 2")
         };
 
-        var handler = new MockHttpMessageHandler(HttpStatusCode.OK, JsonSerializer.Serialize(expectedEntities));
+        var gridResult = new GridResult<VacancyViewModel>(expectedEntities, expectedEntities.Count);
+        var handler = new MockHttpMessageHandler(HttpStatusCode.OK, JsonSerializer.Serialize(gridResult));
         var service = CreateService(handler);
 
         // Act
         var result = await service.GetAllAsync();
 
         // Assert
-        result.Count.ShouldBe(2);
-        handler.RequestUri!.PathAndQuery.ShouldBe($"/{BasePath}");
+        result.Total.ShouldBe(2);
+        handler.RequestUri!.PathAndQuery.ShouldStartWith($"/{BasePath}");
         handler.Method.ShouldBe(HttpMethod.Get);
     }
 

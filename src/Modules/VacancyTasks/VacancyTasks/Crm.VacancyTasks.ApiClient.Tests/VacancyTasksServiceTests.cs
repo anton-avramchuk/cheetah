@@ -1,5 +1,6 @@
 using System.Net;
 using System.Text.Json;
+using Cheetah.Contracts.Responses;
 using Crm.VacancyTasks.Contracts.Requests;
 using Crm.VacancyTasks.Contracts.Response;
 using Shouldly;
@@ -8,7 +9,7 @@ namespace Crm.VacancyTasks.ApiClient.Tests;
 
 public class VacancyTasksServiceTests
 {
-    private const string BasePath = "api/vacancytasks";
+    private const string BasePath = "api/vacancy-tasks";
 
     private static VacancyTasksService CreateService(MockHttpMessageHandler handler)
     {
@@ -26,15 +27,16 @@ public class VacancyTasksServiceTests
             new(Guid.NewGuid(), "Entity 2", "Description 2")
         };
 
-        var handler = new MockHttpMessageHandler(HttpStatusCode.OK, JsonSerializer.Serialize(expectedEntities));
+        var gridResult = new GridResult<VacancyTaskViewModel>(expectedEntities, expectedEntities.Count);
+        var handler = new MockHttpMessageHandler(HttpStatusCode.OK, JsonSerializer.Serialize(gridResult));
         var service = CreateService(handler);
 
         // Act
         var result = await service.GetAllAsync();
 
         // Assert
-        result.Count.ShouldBe(2);
-        handler.RequestUri!.PathAndQuery.ShouldBe($"/{BasePath}");
+        result.Total.ShouldBe(2);
+        handler.RequestUri!.PathAndQuery.ShouldStartWith($"/{BasePath}");
         handler.Method.ShouldBe(HttpMethod.Get);
     }
 

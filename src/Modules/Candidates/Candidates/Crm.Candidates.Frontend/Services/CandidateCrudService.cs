@@ -23,9 +23,9 @@ public sealed class CandidateCrudService : ICrudService<CandidateGridViewModel, 
 
     public async Task<GridResult<CandidateGridViewModel>> GetAllAsync(GridRequest request, CancellationToken ct = default)
     {
-        var entities = await _service.GetAllAsync(ct);
-        var mapped = entities.Select(CandidateGridViewModel.FromResponse).ToList();
-        return new GridResult<CandidateGridViewModel>(mapped, mapped.Count);
+        var result = await _service.GetAllAsync(null, ct);
+        var mapped = result.Data.Select(CandidateGridViewModel.FromResponse).ToList();
+        return new GridResult<CandidateGridViewModel>(mapped, result.Total);
     }
 
     public async Task<CandidateFormModel?> GetByIdAsync(Guid id, CancellationToken ct = default)

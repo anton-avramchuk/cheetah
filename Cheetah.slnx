@@ -2,6 +2,7 @@
     <Folder Name="/CodeGen/">
         <Project Path="src/Cheetah.Analyzers.Tests/Cheetah.Analyzers.Tests.csproj" />
         <Project Path="src/Cheetah.Analyzers/Cheetah.Analyzers.csproj" />
+        <Project Path="src/Cheetah.Generators.ApiClient/Cheetah.Generators.ApiClient.csproj" />
         <Project Path="src/Cheetah.Generators.Application/Cheetah.Generators.Application.csproj" />
         <Project Path="src/Cheetah.Generators.Core/Cheetah.Generators.Core.csproj" />
         <Project Path="src/Cheetah.Generators.Endpoints/Cheetah.Generators.Endpoints.csproj" />
@@ -10,6 +11,7 @@
     <Folder Name="/Core/">
         <Project Path="src/Cheetah.AspNetCore.Contracts/Cheetah.AspNetCore.Contracts.csproj" />
         <Project Path="src/Cheetah.AspNetCore/Cheetah.AspNetCore.csproj" />
+        <Project Path="src/Cheetah.Contracts/Cheetah.Contracts.csproj" />
         <Project Path="src/Cheetah.Core.Cache/Cheetah.Core.Cache.csproj" />
         <Project Path="src/Cheetah.Core.CQRS/Cheetah.Core.CQRS.csproj" />
         <Project Path="src/Cheetah.Core.DataAccess/Cheetah.Core.DataAccess.csproj" />
@@ -142,9 +144,7 @@
         <File Path="global.json" />
         <File Path="nuget.config" />
     </Folder>
-    <Folder Name="/src/">
-        <Project Path="src/Cheetah.Contracts/Cheetah.Contracts.csproj" />
-    </Folder>
+    <Folder Name="/src/" />
     <Folder Name="/Tests/">
         <Project Path="src/Cheetah.Backend.Events.Redis.Tests/Cheetah.Backend.Events.Redis.Tests.csproj" />
         <Project Path="src/Cheetah.Backend.Redis.Tests/Cheetah.Backend.Redis.Tests.csproj" />

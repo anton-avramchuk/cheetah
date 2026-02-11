@@ -4,6 +4,7 @@ using Cheetah.Contracts.Requests;
 
 namespace Crm.VacancyTasks.Contracts.Requests;
 
+[ApiRoute("api/vacancy-tasks/{id:guid}", ApiMethod.Update)]
 public record UpdateVacancyTaskRequest(
     [FromRoute] Guid Id,
     [property: Required(AllowEmptyStrings = false)]

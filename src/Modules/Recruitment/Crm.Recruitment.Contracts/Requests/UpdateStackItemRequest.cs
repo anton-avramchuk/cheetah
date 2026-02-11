@@ -4,6 +4,7 @@ using Cheetah.Contracts.Requests;
 
 namespace Crm.Recruitment.Contracts.Requests;
 
+[ApiRoute("api/stack-items/{id:guid}", ApiMethod.Update, ServiceName = "StackItems")]
 public record UpdateStackItemRequest(
     [FromRoute] Guid Id,
     [property: Required(AllowEmptyStrings = false)]

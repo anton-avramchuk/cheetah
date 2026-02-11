@@ -25,9 +25,9 @@ public sealed class
 
     public async Task<GridResult<VacancyTaskGridViewModel>> GetAllAsync(GridRequest request, CancellationToken ct = default)
     {
-        var entities = await _service.GetAllAsync(ct);
-        var mapped = entities.Select(VacancyTaskGridViewModel.FromResponse).ToList();
-        return new GridResult<VacancyTaskGridViewModel>(mapped, mapped.Count);
+        var result = await _service.GetAllAsync(null, ct);
+        var mapped = result.Data.Select(VacancyTaskGridViewModel.FromResponse).ToList();
+        return new GridResult<VacancyTaskGridViewModel>(mapped, result.Total);
     }
 
     public async Task<VacancyTaskFormModel?> GetByIdAsync(Guid id, CancellationToken ct = default)
