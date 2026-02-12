@@ -9,7 +9,7 @@ namespace Crm.VacancyTasks.ApiClient.Tests;
 
 public class VacancyTasksServiceTests
 {
-    private const string BasePath = "api/vacancy-tasks";
+    private const string BasePath = "vacancy-tasks";
 
     private static VacancyTasksService CreateService(MockHttpMessageHandler handler)
     {

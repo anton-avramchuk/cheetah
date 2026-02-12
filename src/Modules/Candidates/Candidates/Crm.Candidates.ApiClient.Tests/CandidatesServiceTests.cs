@@ -9,7 +9,7 @@ namespace Crm.Candidates.ApiClient.Tests;
 
 public class CandidatesServiceTests
 {
-    private const string BasePath = "api/candidates";
+    private const string BasePath = "candidates";
 
     private static CandidatesService CreateService(MockHttpMessageHandler handler)
     {
