@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <SupportedPlatform Include="browser"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Components.Web"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\..\Cheetah.Core\Cheetah.Core.csproj"/>
+        <ProjectReference Include="..\..\..\Cheetah.Blazor.Components\Cheetah.Blazor.Components.csproj"/>
+        <ProjectReference Include="..\..\..\Cheetah.Frontend.Navigation\Cheetah.Frontend.Navigation.csproj"/>
+        <ProjectReference Include="..\..\..\Cheetah.Generators.Module\Cheetah.Generators.Module.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer"/>
+        <ProjectReference Include="..\Crm.Recruitment.ApiClient\Crm.Recruitment.ApiClient.csproj"/>
+        <ProjectReference Include="..\Crm.Recruitment.Contracts\Crm.Recruitment.Contracts.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Folder Include="Components\"/>
+        <Folder Include="wwwroot\"/>
+    </ItemGroup>
+</Project>

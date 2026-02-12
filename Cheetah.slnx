@@ -138,6 +138,7 @@
         <Project Path="src/Modules/Recruitment/Crm.Recruitment.Domain.Tests/Crm.Recruitment.Domain.Tests.csproj" />
         <Project Path="src/Modules/Recruitment/Crm.Recruitment.Domain/Crm.Recruitment.Domain.csproj" />
         <Project Path="src/Modules/Recruitment/Crm.Recruitment.DomainEvents/Crm.Recruitment.DomainEvents.csproj" />
+        <Project Path="src/Modules/Recruitment/Crm.Recruitment.Frontend/Crm.Recruitment.Frontend.csproj" />
     </Folder>
     <Folder Name="/Modules/Tenants/" />
     <Folder Name="/Solution Items/">
