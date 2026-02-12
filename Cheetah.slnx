@@ -97,7 +97,9 @@
         <Project Path="src/Cheetah.Crm.Hosting/Cheetah.Crm.Hosting.csproj" />
     </Folder>
     <Folder Name="/Modules/Identity/" />
-    <Folder Name="/Modules/Recruitment/" />
+    <Folder Name="/Modules/Recruitment/">
+        <Project Path="src/Modules/Recruitment/Crm.Recruitment.Client/Crm.Recruitment.Client.csproj" />
+    </Folder>
     <Folder Name="/Modules/Recruitment/Candidate/">
         <Project Path="src/Modules/Candidates/Candidates/Crm.Candidates.Api.Tests/Crm.Candidates.Api.Tests.csproj" />
         <Project Path="src/Modules/Candidates/Candidates/Crm.Candidates.Api/Crm.Candidates.Api.csproj" />

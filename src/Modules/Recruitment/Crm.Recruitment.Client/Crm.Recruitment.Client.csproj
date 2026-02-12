@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+
+    <PropertyGroup>
+        <OverrideHtmlAssetPlaceholders>true</OverrideHtmlAssetPlaceholders>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" PrivateAssets="all" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\..\Cheetah.Blazor\Cheetah.Blazor.csproj" />
+        <ProjectReference Include="..\..\..\Cheetah.Blazor.Layout\Cheetah.Blazor.Layout.csproj" />
+        <ProjectReference Include="..\..\..\Cheetah.Core\Cheetah.Core.csproj" />
+        <ProjectReference Include="..\..\..\Cheetah.Frontend.Navigation\Cheetah.Frontend.Navigation.csproj" />
+        <ProjectReference Include="..\..\..\Cheetah.Generators.Module\Cheetah.Generators.Module.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
+        <ProjectReference Include="..\..\..\Cheetah.Generators.Application\Cheetah.Generators.Application.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
+        <ProjectReference Include="..\..\..\Cheetah.Mapping.Mapster\Cheetah.Mapping.Mapster.csproj" />
+        <ProjectReference Include="..\Crm.Recruitment.Frontend\Crm.Recruitment.Frontend.csproj" />
+        <ProjectReference Include="..\..\Candidates\Candidates\Crm.Candidates.Frontend\Crm.Candidates.Frontend.csproj" />
+        <ProjectReference Include="..\..\VacancyTasks\VacancyTasks\Crm.VacancyTasks.Frontend\Crm.VacancyTasks.Frontend.csproj" />
+    </ItemGroup>
+
+</Project>

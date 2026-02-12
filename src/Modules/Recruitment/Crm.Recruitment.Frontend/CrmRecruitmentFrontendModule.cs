@@ -23,7 +23,7 @@ public partial class CrmRecruitmentFrontendModule : CrmModule
             .Configure<IOptions<CrmRecruitmentFrontendOptions>>((apiOpts, frontendOpts) =>
             {
                 if (!string.IsNullOrEmpty(frontendOpts.Value.ApiUrl))
-                    apiOpts.BaseUrl = frontendOpts.Value.ApiUrl;
+                    apiOpts.BaseUrl = frontendOpts.Value.ApiUrl.TrimEnd('/') + "/api";
             });
     }
 }

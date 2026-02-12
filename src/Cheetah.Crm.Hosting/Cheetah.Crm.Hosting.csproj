@@ -21,6 +21,7 @@
         <ProjectReference Include="..\Modules\Crm.Proxy\Crm.Proxy.csproj" />
         <ProjectReference Include="..\Modules\Features\Crm.Features.Api\Crm.Features.Api.csproj" />
         <ProjectReference Include="..\Modules\Recruitment\Crm.Recruitment.Api\Crm.Recruitment.Api.csproj" />
+        <ProjectReference Include="..\Modules\Recruitment\Crm.Recruitment.Client\Crm.Recruitment.Client.csproj" />
         <ProjectReference Include="..\Modules\VacancyTasks\VacancyTasks\Crm.VacancyTasks.Api\Crm.VacancyTasks.Api.csproj" />
     </ItemGroup>
 

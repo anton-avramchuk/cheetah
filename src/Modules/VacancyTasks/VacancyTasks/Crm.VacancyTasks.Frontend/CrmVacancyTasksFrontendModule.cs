@@ -23,7 +23,7 @@ public partial class CrmVacancyTasksFrontendModule : CrmModule
             .Configure<IOptions<CrmVacancyTasksFrontendOptions>>((apiOpts, frontendOpts) =>
             {
                 if (!string.IsNullOrEmpty(frontendOpts.Value.ApiUrl))
-                    apiOpts.BaseUrl = frontendOpts.Value.ApiUrl;
+                    apiOpts.BaseUrl = frontendOpts.Value.ApiUrl.TrimEnd('/') + "/api";
             });
     }
 }

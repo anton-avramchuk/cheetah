@@ -72,7 +72,7 @@ var vacancyTasksApi = builder.AddProject<Projects.Crm_VacancyTasks_Api>("vacancy
 
 
 
-builder.AddProject<Projects.Crm_Proxy>("crm-proxy")
+var proxy = builder.AddProject<Projects.Crm_Proxy>("crm-proxy")
     .WithReference(recruitment)
     .WithReference(candidatesApi)
     .WithReference(vacancyTasksApi)
@@ -81,8 +81,10 @@ builder.AddProject<Projects.Crm_Proxy>("crm-proxy")
     .WaitFor(vacancyTasksApi)
     ;
 
-
-
+builder.AddProject<Projects.Crm_Recruitment_Client>("recruitment-client")
+    .WithReference(proxy)
+    .WithEnvironment("Api__ApiUrl", proxy.GetEndpoint("https"))
+    .WaitFor(proxy);
 
 
 builder.Build().Run();
