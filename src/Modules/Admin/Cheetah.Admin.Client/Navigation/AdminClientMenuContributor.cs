@@ -18,7 +18,7 @@ public class AdminClientMenuContributor : IMenuContributor
                 id: "Home",
                 name: "Home",
                 iconName: MenuIcons.HomeFill,
-                url: "",
+                url: "/",
                 order: 0)
             .AddItem(
                 id: "Counter",
