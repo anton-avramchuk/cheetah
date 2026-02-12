@@ -5,10 +5,14 @@ using Cheetah.Core;
 using Cheetah.Core.Modularity;
 using Cheetah.Frontend.Navigation;
 using Cheetah.Mapping.Mapster;
+using Crm.Candidates.ApiClient;
 using Crm.Candidates.Frontend;
+using Crm.Recruitment.ApiClient;
 using Crm.Recruitment.Frontend;
+using Crm.VacancyTasks.ApiClient;
 using Crm.VacancyTasks.Frontend;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace Crm.Recruitment.Client;
 
@@ -24,14 +28,17 @@ namespace Crm.Recruitment.Client;
 public partial class RecruitmentClientBootstrapperModule : CrmModule
 {
     private const string ApiSection = "Api";
+    private const string RecruitmentPath = "/api/recruitment/";
 
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
         RegisterServices(context.Services);
 
         context.Services.AddOptions<CrmRecruitmentFrontendOptions>().BindConfiguration(ApiSection);
-        context.Services.AddOptions<CrmCandidatesFrontendOptions>().BindConfiguration(ApiSection);
-        context.Services.AddOptions<CrmVacancyTasksFrontendOptions>().BindConfiguration(ApiSection);
+
+
+        AddRecruitmentOptions(context.Services);
+
 
         context.Services.ConfigureCrmLayout(config =>
         {
@@ -39,5 +46,29 @@ public partial class RecruitmentClientBootstrapperModule : CrmModule
             config.HomeUrl = "/";
             config.SidebarCollapsedByDefault = false;
         });
+    }
+
+    private static void AddRecruitmentOptions(IServiceCollection services)
+    {
+        services.AddOptions<CrmRecruitmentApiClientOptions>()
+            .Configure<IOptions<CrmRecruitmentFrontendOptions>>((apiOpts, frontendOpts) =>
+            {
+                if (!string.IsNullOrEmpty(frontendOpts.Value.ApiUrl))
+                    apiOpts.BaseUrl = frontendOpts.Value.ApiUrl.TrimEnd('/') + RecruitmentPath;
+            });
+
+        services.AddOptions<CrmCandidatesApiClientOptions>()
+            .Configure<IOptions<CrmRecruitmentFrontendOptions>>((apiOpts, frontendOpts) =>
+            {
+                if (!string.IsNullOrEmpty(frontendOpts.Value.ApiUrl))
+                    apiOpts.BaseUrl = frontendOpts.Value.ApiUrl.TrimEnd('/') + RecruitmentPath;
+            });
+
+        services.AddOptions<CrmVacancyTasksApiClientOptions>()
+            .Configure<IOptions<CrmRecruitmentFrontendOptions>>((apiOpts, frontendOpts) =>
+            {
+                if (!string.IsNullOrEmpty(frontendOpts.Value.ApiUrl))
+                    apiOpts.BaseUrl = frontendOpts.Value.ApiUrl.TrimEnd('/') + RecruitmentPath;
+            });
     }
 }
