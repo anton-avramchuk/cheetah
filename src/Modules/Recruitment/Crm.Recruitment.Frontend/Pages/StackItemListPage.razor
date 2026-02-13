@@ -1,0 +1,21 @@
+@page "/dictionary/stack-items"
+@namespace Crm.Recruitment.Frontend.Pages
+
+@inject ICrudService<StackItemGridViewModel, StackItemFormModel, StackItemFormModel> CrudService
+
+<PageTitle>Stack</PageTitle>
+
+<CrmCrudGrid TGridViewModel="StackItemGridViewModel"
+             TCreateViewModel="StackItemFormModel"
+             TEditViewModel="StackItemFormModel"
+             Service="CrudService"
+             Title="Stack"
+             CreateFormType="typeof(StackItemForm)"
+             EditFormType="typeof(StackItemForm)"
+             CreateDialogTitle="New Stack Item"
+             EditDialogTitle="Edit Stack Item"
+             CreateButtonText="Add"
+             EmptyMessage="No stack items found"
+             AllowCreate="true"
+             AllowEdit="true"
+             AllowDelete="true"/>

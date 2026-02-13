@@ -1,0 +1,21 @@
+@page "/dictionary/task-states"
+@namespace Crm.VacancyTasks.Frontend.Pages
+
+@inject ICrudService<TaskStateGridViewModel, TaskStateFormModel, TaskStateFormModel> CrudService
+
+<PageTitle>Task States</PageTitle>
+
+<CrmCrudGrid TGridViewModel="TaskStateGridViewModel"
+             TCreateViewModel="TaskStateFormModel"
+             TEditViewModel="TaskStateFormModel"
+             Service="CrudService"
+             Title="Task States"
+             CreateFormType="typeof(TaskStateForm)"
+             EditFormType="typeof(TaskStateForm)"
+             CreateDialogTitle="New Task State"
+             EditDialogTitle="Edit Task State"
+             CreateButtonText="Add"
+             EmptyMessage="No task states found"
+             AllowCreate="true"
+             AllowEdit="true"
+             AllowDelete="true"/>

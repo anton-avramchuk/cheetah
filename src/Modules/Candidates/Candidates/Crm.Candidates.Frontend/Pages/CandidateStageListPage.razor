@@ -1,0 +1,21 @@
+@page "/dictionary/candidate-stages"
+@namespace Crm.Candidates.Frontend.Pages
+
+@inject ICrudService<CandidateStageGridViewModel, CandidateStageFormModel, CandidateStageFormModel> CrudService
+
+<PageTitle>Candidate Stages</PageTitle>
+
+<CrmCrudGrid TGridViewModel="CandidateStageGridViewModel"
+             TCreateViewModel="CandidateStageFormModel"
+             TEditViewModel="CandidateStageFormModel"
+             Service="CrudService"
+             Title="Candidate Stages"
+             CreateFormType="typeof(CandidateStageForm)"
+             EditFormType="typeof(CandidateStageForm)"
+             CreateDialogTitle="New Candidate Stage"
+             EditDialogTitle="Edit Candidate Stage"
+             CreateButtonText="Add"
+             EmptyMessage="No candidate stages found"
+             AllowCreate="true"
+             AllowEdit="true"
+             AllowDelete="true"/>

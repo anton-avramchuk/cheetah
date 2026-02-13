@@ -1,0 +1,21 @@
+@page "/dictionary/task-priorities"
+@namespace Crm.VacancyTasks.Frontend.Pages
+
+@inject ICrudService<TaskPriorityGridViewModel, TaskPriorityFormModel, TaskPriorityFormModel> CrudService
+
+<PageTitle>Task Priorities</PageTitle>
+
+<CrmCrudGrid TGridViewModel="TaskPriorityGridViewModel"
+             TCreateViewModel="TaskPriorityFormModel"
+             TEditViewModel="TaskPriorityFormModel"
+             Service="CrudService"
+             Title="Task Priorities"
+             CreateFormType="typeof(TaskPriorityForm)"
+             EditFormType="typeof(TaskPriorityForm)"
+             CreateDialogTitle="New Task Priority"
+             EditDialogTitle="Edit Task Priority"
+             CreateButtonText="Add"
+             EmptyMessage="No task priorities found"
+             AllowCreate="true"
+             AllowEdit="true"
+             AllowDelete="true"/>

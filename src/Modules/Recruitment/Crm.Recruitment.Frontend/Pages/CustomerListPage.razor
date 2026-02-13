@@ -1,0 +1,21 @@
+@page "/dictionary/customers"
+@namespace Crm.Recruitment.Frontend.Pages
+
+@inject ICrudService<CustomerGridViewModel, CustomerFormModel, CustomerFormModel> CrudService
+
+<PageTitle>Customers</PageTitle>
+
+<CrmCrudGrid TGridViewModel="CustomerGridViewModel"
+             TCreateViewModel="CustomerFormModel"
+             TEditViewModel="CustomerFormModel"
+             Service="CrudService"
+             Title="Customers"
+             CreateFormType="typeof(CustomerForm)"
+             EditFormType="typeof(CustomerForm)"
+             CreateDialogTitle="New Customer"
+             EditDialogTitle="Edit Customer"
+             CreateButtonText="Add"
+             EmptyMessage="No customers found"
+             AllowCreate="true"
+             AllowEdit="true"
+             AllowDelete="true"/>

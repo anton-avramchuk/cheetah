@@ -1,0 +1,21 @@
+@page "/dictionary/work-formats"
+@namespace Crm.Recruitment.Frontend.Pages
+
+@inject ICrudService<WorkFormatGridViewModel, WorkFormatFormModel, WorkFormatFormModel> CrudService
+
+<PageTitle>Work Formats</PageTitle>
+
+<CrmCrudGrid TGridViewModel="WorkFormatGridViewModel"
+             TCreateViewModel="WorkFormatFormModel"
+             TEditViewModel="WorkFormatFormModel"
+             Service="CrudService"
+             Title="Work Formats"
+             CreateFormType="typeof(WorkFormatForm)"
+             EditFormType="typeof(WorkFormatForm)"
+             CreateDialogTitle="New Work Format"
+             EditDialogTitle="Edit Work Format"
+             CreateButtonText="Add"
+             EmptyMessage="No work formats found"
+             AllowCreate="true"
+             AllowEdit="true"
+             AllowDelete="true"/>

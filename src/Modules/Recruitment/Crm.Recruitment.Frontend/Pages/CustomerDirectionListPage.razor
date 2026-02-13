@@ -1,0 +1,21 @@
+@page "/dictionary/directions"
+@namespace Crm.Recruitment.Frontend.Pages
+
+@inject ICrudService<CustomerDirectionGridViewModel, CustomerDirectionFormModel, CustomerDirectionFormModel> CrudService
+
+<PageTitle>Directions</PageTitle>
+
+<CrmCrudGrid TGridViewModel="CustomerDirectionGridViewModel"
+             TCreateViewModel="CustomerDirectionFormModel"
+             TEditViewModel="CustomerDirectionFormModel"
+             Service="CrudService"
+             Title="Directions"
+             CreateFormType="typeof(CustomerDirectionForm)"
+             EditFormType="typeof(CustomerDirectionForm)"
+             CreateDialogTitle="New Direction"
+             EditDialogTitle="Edit Direction"
+             CreateButtonText="Add"
+             EmptyMessage="No directions found"
+             AllowCreate="true"
+             AllowEdit="true"
+             AllowDelete="true"/>

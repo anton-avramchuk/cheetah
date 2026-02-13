@@ -1,0 +1,126 @@
+@namespace Cheetah.Admin.Modules.Clients.Frontend.Components
+
+@using Cheetah.Admin.Modules.Clients.Frontend.Models
+@using Cheetah.Admin.Modules.Clients.Api.Client
+@using Cheetah.Blazor.Components
+@using Cheetah.Blazor.Components.Dialogs
+@using Cheetah.Blazor.Components.Feedback
+@using Cheetah.Blazor.Components.Forms
+@using Microsoft.AspNetCore.Components.Forms
+
+@implements IDialogForm<TariffFormModel>
+
+@if (_isLoading)
+{
+    <div class="text-center py-4">
+        <CrmLoadingSpinner Message="Loading..."/>
+    </div>
+}
+else
+{
+    <EditForm Model="_model" @ref="_editFormRef">
+        <DataAnnotationsValidator/>
+
+        <CrmTextInput TValue="string"
+                      @bind-Value="_model.Name"
+                      Label="Name"
+                      Placeholder="Enter name"
+                      Required="true"
+                      ValidationFor="() => _model.Name"/>
+
+        <CrmTextArea @bind-Value="_model.Description"
+                     Label="Description"
+                     Placeholder="Enter description"
+                     Rows="3"
+                     ValidationFor="() => _model.Description"/>
+
+        <div class="mb-3">
+            <label class="form-label">Price <span class="text-danger">*</span></label>
+            <InputNumber class="form-control" @bind-Value="_model.Price"/>
+            <ValidationMessage For="() => _model.Price"/>
+        </div>
+
+        <CrmTextInput TValue="string"
+                      @bind-Value="_model.Currency"
+                      Label="Currency"
+                      Placeholder="e.g. USD"
+                      Required="true"
+                      ValidationFor="() => _model.Currency"/>
+
+        <div class="mb-3 form-check">
+            <InputCheckbox class="form-check-input" @bind-Value="_model.IsActive"/>
+            <label class="form-check-label">Active</label>
+        </div>
+
+        @if (!string.IsNullOrEmpty(_errorMessage))
+        {
+            <CrmAlert Variant="ColorVariant.Danger" Message="@_errorMessage"/>
+        }
+    </EditForm>
+}
+
+@code {
+    [CascadingParameter] public IDialogFormContext? DialogContext { get; set; }
+
+    [Parameter]
+    public Guid? Id { get; set; }
+
+    [Inject] private IAdminClientsService Service { get; set; } = null!;
+
+    private TariffFormModel _model = new();
+    private EditForm? _editFormRef;
+    private EditContext? _editContext;
+    private bool _isLoading;
+    private string? _errorMessage;
+
+    public EditContext? EditContext => _editContext;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Id.HasValue)
+        {
+            _isLoading = true;
+            try
+            {
+                var entity = await Service.GetTariffByIdAsync(Id.Value);
+                if (entity != null)
+                {
+                    _model = new TariffFormModel
+                    {
+                        Id = entity.Id,
+                        Name = entity.Name,
+                        Description = entity.Description,
+                        Price = entity.Price,
+                        Currency = entity.Currency,
+                        IsActive = entity.IsActive
+                    };
+                }
+                else
+                {
+                    _errorMessage = "Tariff not found";
+                }
+            }
+            catch (Exception ex)
+            {
+                _errorMessage = $"Load error: {ex.Message}";
+            }
+            finally
+            {
+                _isLoading = false;
+            }
+        }
+
+        _editContext = new EditContext(_model);
+        DialogContext?.RegisterEditContext(_editContext);
+    }
+
+    public Task<DialogFormResult<TariffFormModel>> SubmitAsync()
+    {
+        if (_editContext == null || !_editContext.Validate())
+        {
+            return Task.FromResult(DialogFormResult<TariffFormModel>.Fail("Please fix validation errors"));
+        }
+
+        return Task.FromResult(DialogFormResult<TariffFormModel>.Ok(_model));
+    }
+}
