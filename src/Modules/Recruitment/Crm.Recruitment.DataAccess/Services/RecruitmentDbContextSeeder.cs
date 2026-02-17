@@ -14,6 +14,7 @@ public class RecruitmentDbContextSeeder(RecruitmentDbContext context) : IDatabas
     {
         await SeedVacancyStatesAsync(cancellationToken);
         await SeedVacancyRolesAsync(cancellationToken);
+        await SeedCustomersAsync(cancellationToken);
     }
 
     private async Task SeedVacancyStatesAsync(CancellationToken cancellationToken)
@@ -22,11 +23,25 @@ public class RecruitmentDbContextSeeder(RecruitmentDbContext context) : IDatabas
             return;
 
         await _context.AddRangeAsync(
-            VacancyState.Create("To do", 0),
-            VacancyState.Create("In Progress", 1),
-            VacancyState.Create("Pause", 2),
-            VacancyState.Create("Completed", 3),
-            VacancyState.Create("Cancelled", 4)
+            VacancyState.Create("To do", 0, "#6c757d", isDefault: true),
+            VacancyState.Create("In Progress", 1, "#0d6efd"),
+            VacancyState.Create("Pause", 2, "#ffc107"),
+            VacancyState.Create("Completed", 3, "#198754"),
+            VacancyState.Create("Cancelled", 4, "#dc3545")
+        );
+
+        await _context.SaveChangesAsync(cancellationToken);
+    }
+
+    private async Task SeedCustomersAsync(CancellationToken cancellationToken)
+    {
+        if (await _context.Customers.AnyAsync(cancellationToken))
+            return;
+
+        await _context.AddRangeAsync(
+            Customer.Create("Sberbank", code: "SBER"),
+            Customer.Create("VTB Bank", code: "VTB"),
+            Customer.Create("Yandex", code: "YND")
         );
 
         await _context.SaveChangesAsync(cancellationToken);

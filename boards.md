@@ -75,9 +75,9 @@ dotnet ef migrations add AddVacancyTaskNumber -p src/.../Crm.VacancyTasks.DataAc
 
 ---
 
-## Phase 2: Seed Data
+## Phase 2: Seed Data ✅ DONE
 
-### 2.1 Update RecruitmentDbContextSeeder
+### 2.1 Update RecruitmentDbContextSeeder ✅
 
 **File:** `src/Modules/Recruitment/Crm.Recruitment.DataAccess/Services/RecruitmentDbContextSeeder.cs`
 
@@ -93,7 +93,7 @@ VacancyStates with colors:
 Add `SeedCustomersAsync` with demo data:
 - "Sberbank" code=SBER, "VTB Bank" code=VTB, "Yandex" code=YND
 
-### 2.2 Create VacancyTasksDbContextSeeder
+### 2.2 Create VacancyTasksDbContextSeeder ✅
 
 **New file:** `src/Modules/VacancyTasks/VacancyTasks/Crm.VacancyTasks.DataAccess/Services/VacancyTasksDbContextSeeder.cs`
 
