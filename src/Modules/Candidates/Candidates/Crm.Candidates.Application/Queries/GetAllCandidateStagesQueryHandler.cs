@@ -25,7 +25,7 @@ public class GetAllCandidateStagesQueryHandler : IQueryHandler<GetAllCandidateSt
             .ToListAsync(ct);
 
         return entities
-            .Select(e => new CandidateStageModel(e.Id, e.Name, e.Order, e.Color, e.IsDefault))
+            .Select(e => new CandidateStageModel(e.Id, e.Name, e.Order, e.Color?.Value, e.IsDefault))
             .ToList();
     }
 }

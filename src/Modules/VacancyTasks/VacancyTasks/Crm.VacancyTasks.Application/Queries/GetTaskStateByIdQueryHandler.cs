@@ -24,6 +24,6 @@ public class GetTaskStateByIdQueryHandler : IQueryHandler<GetTaskStateByIdQuery,
         if (entity is null)
             return null;
 
-        return new TaskStateModel(entity.Id, entity.Name, entity.Order, entity.Color, entity.IsDefault);
+        return new TaskStateModel(entity.Id, entity.Name, entity.Order, entity.Color?.Value, entity.IsDefault);
     }
 }

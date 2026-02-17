@@ -1,3 +1,4 @@
+using Cheetah.Core.Domain.ValueObjects;
 using Cheetah.Core.EntityFramework.Configuration;
 using Crm.VacancyTasks.Domain;
 using Microsoft.EntityFrameworkCore;
@@ -28,7 +29,8 @@ public class TaskStateConfiguration : EntityConfiguration<TaskState, Guid, TaskS
             .IsRequired();
 
         builder.Property(x => x.Color)
-            .HasMaxLength(7);
+            .HasMaxLength(9)
+            .HasConversion(c => c != null ? c.Value : null, s => s != null ? Color.Create(s) : null);
 
         builder.Property(x => x.IsDefault)
             .IsRequired();

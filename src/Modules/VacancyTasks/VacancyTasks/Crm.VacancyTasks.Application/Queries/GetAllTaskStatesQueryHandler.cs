@@ -25,7 +25,7 @@ public class GetAllTaskStatesQueryHandler : IQueryHandler<GetAllTaskStatesQuery,
             .ToListAsync(ct);
 
         return entities
-            .Select(e => new TaskStateModel(e.Id, e.Name, e.Order, e.Color, e.IsDefault))
+            .Select(e => new TaskStateModel(e.Id, e.Name, e.Order, e.Color?.Value, e.IsDefault))
             .ToList();
     }
 }

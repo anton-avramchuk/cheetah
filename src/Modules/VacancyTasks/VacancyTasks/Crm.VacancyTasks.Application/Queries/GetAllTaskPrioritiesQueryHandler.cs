@@ -25,7 +25,7 @@ public class GetAllTaskPrioritiesQueryHandler : IQueryHandler<GetAllTaskPrioriti
             .ToListAsync(ct);
 
         return entities
-            .Select(e => new TaskPriorityModel(e.Id, e.Name, e.Order, e.Color))
+            .Select(e => new TaskPriorityModel(e.Id, e.Name, e.Order, e.Color?.Value))
             .ToList();
     }
 }

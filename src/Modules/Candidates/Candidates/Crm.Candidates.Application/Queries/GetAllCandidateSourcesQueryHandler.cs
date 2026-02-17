@@ -25,7 +25,7 @@ public class GetAllCandidateSourcesQueryHandler : IQueryHandler<GetAllCandidateS
             .ToListAsync(ct);
 
         return entities
-            .Select(e => new CandidateSourceModel(e.Id, e.Name, e.Order, e.Color))
+            .Select(e => new CandidateSourceModel(e.Id, e.Name, e.Order, e.Color?.Value))
             .ToList();
     }
 }

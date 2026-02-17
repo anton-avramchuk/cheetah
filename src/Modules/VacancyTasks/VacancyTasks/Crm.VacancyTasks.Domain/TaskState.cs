@@ -1,4 +1,5 @@
 using Cheetah.Core.Domain;
+using Cheetah.Core.Domain.ValueObjects;
 
 namespace Crm.VacancyTasks.Domain;
 
@@ -14,7 +15,7 @@ public class TaskState : Entity<Guid>
 
     public int Order { get; private set; }
 
-    public string? Color { get; private set; }
+    public Color? Color { get; private set; }
 
     public bool IsDefault { get; private set; }
 
@@ -29,7 +30,7 @@ public class TaskState : Entity<Guid>
             Id = Guid.NewGuid(),
             Name = name,
             Order = order,
-            Color = color,
+            Color = color is not null ? Color.Create(color) : null,
             IsDefault = isDefault
         };
     }
@@ -40,7 +41,7 @@ public class TaskState : Entity<Guid>
 
         Name = name;
         Order = order;
-        Color = color;
+        Color = color is not null ? Color.Create(color) : null;
         IsDefault = isDefault;
     }
 }

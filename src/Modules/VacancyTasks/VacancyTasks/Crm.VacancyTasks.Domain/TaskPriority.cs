@@ -1,4 +1,5 @@
 using Cheetah.Core.Domain;
+using Cheetah.Core.Domain.ValueObjects;
 
 namespace Crm.VacancyTasks.Domain;
 
@@ -14,7 +15,7 @@ public class TaskPriority : Entity<Guid>
 
     public int Order { get; private set; }
 
-    public string? Color { get; private set; }
+    public Color? Color { get; private set; }
 
     public IReadOnlyCollection<VacancyTask> VacancyTasks => _vacancyTasks.AsReadOnly();
 
@@ -27,7 +28,7 @@ public class TaskPriority : Entity<Guid>
             Id = Guid.NewGuid(),
             Name = name,
             Order = order,
-            Color = color
+            Color = color is not null ? Color.Create(color) : null
         };
     }
 
@@ -37,6 +38,6 @@ public class TaskPriority : Entity<Guid>
 
         Name = name;
         Order = order;
-        Color = color;
+        Color = color is not null ? Color.Create(color) : null;
     }
 }

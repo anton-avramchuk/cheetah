@@ -14,7 +14,7 @@ public class CandidateStageTests
         entity.Id.ShouldNotBe(Guid.Empty);
         entity.Name.ShouldBe("Screening");
         entity.Order.ShouldBe(1);
-        entity.Color.ShouldBe("#ff0000");
+        entity.Color?.Value.ShouldBe("#ff0000");
         entity.IsDefault.ShouldBeTrue();
     }
 
@@ -48,7 +48,7 @@ public class CandidateStageTests
 
         entity.Name.ShouldBe("Interview");
         entity.Order.ShouldBe(2);
-        entity.Color.ShouldBe("#00ff00");
+        entity.Color?.Value.ShouldBe("#00ff00");
         entity.IsDefault.ShouldBeFalse();
     }
 

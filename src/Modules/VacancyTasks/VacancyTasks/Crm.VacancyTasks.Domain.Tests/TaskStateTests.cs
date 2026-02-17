@@ -14,7 +14,7 @@ public class TaskStateTests
         entity.Id.ShouldNotBe(Guid.Empty);
         entity.Name.ShouldBe("To Do");
         entity.Order.ShouldBe(1);
-        entity.Color.ShouldBe("#ff0000");
+        entity.Color?.Value.ShouldBe("#ff0000");
         entity.IsDefault.ShouldBeTrue();
     }
 
@@ -48,7 +48,7 @@ public class TaskStateTests
 
         entity.Name.ShouldBe("In Progress");
         entity.Order.ShouldBe(2);
-        entity.Color.ShouldBe("#00ff00");
+        entity.Color?.Value.ShouldBe("#00ff00");
         entity.IsDefault.ShouldBeFalse();
     }
 

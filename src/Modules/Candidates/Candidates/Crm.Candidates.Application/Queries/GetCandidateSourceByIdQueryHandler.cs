@@ -24,6 +24,6 @@ public class GetCandidateSourceByIdQueryHandler : IQueryHandler<GetCandidateSour
         if (entity is null)
             return null;
 
-        return new CandidateSourceModel(entity.Id, entity.Name, entity.Order, entity.Color);
+        return new CandidateSourceModel(entity.Id, entity.Name, entity.Order, entity.Color?.Value);
     }
 }

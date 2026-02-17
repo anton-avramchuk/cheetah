@@ -24,6 +24,6 @@ public class GetTaskPriorityByIdQueryHandler : IQueryHandler<GetTaskPriorityById
         if (entity is null)
             return null;
 
-        return new TaskPriorityModel(entity.Id, entity.Name, entity.Order, entity.Color);
+        return new TaskPriorityModel(entity.Id, entity.Name, entity.Order, entity.Color?.Value);
     }
 }

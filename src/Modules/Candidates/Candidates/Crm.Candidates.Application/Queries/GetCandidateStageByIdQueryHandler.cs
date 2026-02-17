@@ -24,6 +24,6 @@ public class GetCandidateStageByIdQueryHandler : IQueryHandler<GetCandidateStage
         if (entity is null)
             return null;
 
-        return new CandidateStageModel(entity.Id, entity.Name, entity.Order, entity.Color, entity.IsDefault);
+        return new CandidateStageModel(entity.Id, entity.Name, entity.Order, entity.Color?.Value, entity.IsDefault);
     }
 }

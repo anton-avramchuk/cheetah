@@ -14,7 +14,7 @@ public class TaskPriorityTests
         entity.Id.ShouldNotBe(Guid.Empty);
         entity.Name.ShouldBe("High");
         entity.Order.ShouldBe(1);
-        entity.Color.ShouldBe("#ff0000");
+        entity.Color?.Value.ShouldBe("#ff0000");
     }
 
     [Fact]
@@ -46,7 +46,7 @@ public class TaskPriorityTests
 
         entity.Name.ShouldBe("Critical");
         entity.Order.ShouldBe(0);
-        entity.Color.ShouldBe("#990000");
+        entity.Color?.Value.ShouldBe("#990000");
     }
 
     [Theory]

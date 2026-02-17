@@ -14,7 +14,7 @@ public class CandidateSourceTests
         entity.Id.ShouldNotBe(Guid.Empty);
         entity.Name.ShouldBe("LinkedIn");
         entity.Order.ShouldBe(1);
-        entity.Color.ShouldBe("#0077b5");
+        entity.Color?.Value.ShouldBe("#0077b5");
     }
 
     [Fact]
@@ -46,7 +46,7 @@ public class CandidateSourceTests
 
         entity.Name.ShouldBe("HeadHunter");
         entity.Order.ShouldBe(2);
-        entity.Color.ShouldBe("#d6001c");
+        entity.Color?.Value.ShouldBe("#d6001c");
     }
 
     [Theory]
