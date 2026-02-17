@@ -22,6 +22,13 @@ public class CustomerConfiguration : EntityConfiguration<Customer, Guid, Custome
             .IsRequired()
             .HasMaxLength(256);
 
+        builder.Property(x => x.Code)
+            .HasMaxLength(20);
+
+        builder.HasIndex(x => x.Code)
+            .IsUnique()
+            .HasFilter("\"Code\" IS NOT NULL");
+
         builder.Property(x => x.Description)
             .HasMaxLength(1024);
 

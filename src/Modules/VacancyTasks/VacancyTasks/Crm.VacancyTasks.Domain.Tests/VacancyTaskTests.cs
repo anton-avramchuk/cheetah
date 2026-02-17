@@ -15,7 +15,7 @@ public class VacancyTaskTests
         var title = "Test Task";
 
         // Act
-        var entity = VacancyTask.Create(title, TestVacancyId, TestStateId);
+        var entity = VacancyTask.Create(title, TestVacancyId, TestStateId, 1);
 
         // Assert
         entity.ShouldNotBeNull();
@@ -23,6 +23,7 @@ public class VacancyTaskTests
         entity.Title.ShouldBe(title);
         entity.VacancyId.ShouldBe(TestVacancyId);
         entity.StateId.ShouldBe(TestStateId);
+        entity.Number.ShouldBe(1);
         entity.Description.ShouldBeNull();
     }
 
@@ -34,7 +35,7 @@ public class VacancyTaskTests
         var description = "Test Description";
 
         // Act
-        var entity = VacancyTask.Create(title, TestVacancyId, TestStateId, description);
+        var entity = VacancyTask.Create(title, TestVacancyId, TestStateId, 1, description);
 
         // Assert
         entity.Title.ShouldBe(title);
@@ -45,8 +46,8 @@ public class VacancyTaskTests
     public void Create_ShouldGenerateUniqueIds()
     {
         // Act
-        var entity1 = VacancyTask.Create("Task 1", TestVacancyId, TestStateId);
-        var entity2 = VacancyTask.Create("Task 2", TestVacancyId, TestStateId);
+        var entity1 = VacancyTask.Create("Task 1", TestVacancyId, TestStateId, 1);
+        var entity2 = VacancyTask.Create("Task 2", TestVacancyId, TestStateId, 2);
 
         // Assert
         entity1.Id.ShouldNotBe(entity2.Id);
@@ -59,7 +60,7 @@ public class VacancyTaskTests
     public void Create_WithInvalidTitle_ShouldThrowArgumentException(string? title)
     {
         // Act
-        var act = () => VacancyTask.Create(title!, TestVacancyId, TestStateId);
+        var act = () => VacancyTask.Create(title!, TestVacancyId, TestStateId, 1);
 
         // Assert
         Should.Throw<ArgumentException>(act);
@@ -69,7 +70,7 @@ public class VacancyTaskTests
     public void Update_WithValidTitle_ShouldUpdateEntity()
     {
         // Arrange
-        var entity = VacancyTask.Create("Original Title", TestVacancyId, TestStateId, "Original Description");
+        var entity = VacancyTask.Create("Original Title", TestVacancyId, TestStateId, 1, "Original Description");
 
         // Act
         entity.Update("Updated Title", "Updated Description");
@@ -83,7 +84,7 @@ public class VacancyTaskTests
     public void Update_ShouldNotChangeId()
     {
         // Arrange
-        var entity = VacancyTask.Create("Original Title", TestVacancyId, TestStateId);
+        var entity = VacancyTask.Create("Original Title", TestVacancyId, TestStateId, 1);
         var originalId = entity.Id;
 
         // Act
@@ -100,7 +101,7 @@ public class VacancyTaskTests
     public void Update_WithInvalidTitle_ShouldThrowArgumentException(string? title)
     {
         // Arrange
-        var entity = VacancyTask.Create("Original Title", TestVacancyId, TestStateId);
+        var entity = VacancyTask.Create("Original Title", TestVacancyId, TestStateId, 1);
 
         // Act
         var act = () => entity.Update(title!);
@@ -113,7 +114,7 @@ public class VacancyTaskTests
     public void SetState_ShouldUpdateStateId()
     {
         // Arrange
-        var entity = VacancyTask.Create("Task", TestVacancyId, TestStateId);
+        var entity = VacancyTask.Create("Task", TestVacancyId, TestStateId, 1);
         var newStateId = Guid.NewGuid();
 
         // Act
@@ -127,7 +128,7 @@ public class VacancyTaskTests
     public void SetPriority_ShouldUpdatePriorityId()
     {
         // Arrange
-        var entity = VacancyTask.Create("Task", TestVacancyId, TestStateId);
+        var entity = VacancyTask.Create("Task", TestVacancyId, TestStateId, 1);
         var priorityId = Guid.NewGuid();
 
         // Act
@@ -141,7 +142,7 @@ public class VacancyTaskTests
     public void SetPriority_WithNull_ShouldClearPriority()
     {
         // Arrange
-        var entity = VacancyTask.Create("Task", TestVacancyId, TestStateId, priorityId: Guid.NewGuid());
+        var entity = VacancyTask.Create("Task", TestVacancyId, TestStateId, 1, priorityId: Guid.NewGuid());
 
         // Act
         entity.SetPriority(null);
@@ -154,7 +155,7 @@ public class VacancyTaskTests
     public void Move_ShouldUpdateStateAndOrder()
     {
         // Arrange
-        var entity = VacancyTask.Create("Task", TestVacancyId, TestStateId);
+        var entity = VacancyTask.Create("Task", TestVacancyId, TestStateId, 1);
         var newStateId = Guid.NewGuid();
 
         // Act

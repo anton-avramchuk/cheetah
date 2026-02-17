@@ -24,6 +24,8 @@ public class VacancyTask : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEntit
 
     public int Order { get; private set; }
 
+    public int Number { get; private set; }
+
     public DateTimeOffset? CreatedAt { get; set; }
 
     public DateTimeOffset? UpdatedAt { get; set; }
@@ -36,6 +38,7 @@ public class VacancyTask : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEntit
         string title,
         Guid vacancyId,
         Guid stateId,
+        int number,
         string? description = null,
         Guid? priorityId = null,
         Guid? assigneeId = null,
@@ -50,6 +53,7 @@ public class VacancyTask : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEntit
             Title = title,
             VacancyId = vacancyId,
             StateId = stateId,
+            Number = number,
             Description = description,
             PriorityId = priorityId,
             AssigneeId = assigneeId,

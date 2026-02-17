@@ -32,6 +32,8 @@ public class Vacancy : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEntity
 
     public WorkFormat? WorkFormat { get; private set; }
 
+    public int Order { get; private set; }
+
     private Vacancy()
     {
     } // For EF Core
@@ -85,5 +87,13 @@ public class Vacancy : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEntity
     public void SetWorkFormat(Guid? workFormatId)
     {
         WorkFormatId = workFormatId;
+    }
+
+    public void Move(Guid stateId, int order)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegative(order);
+
+        StateId = stateId;
+        Order = order;
     }
 }

@@ -12,6 +12,8 @@ public class Customer : Entity<Guid>
 
     public string Name { get; private set; } = null!;
 
+    public string? Code { get; private set; }
+
     public string? Description { get; private set; }
 
     public Guid? DirectionId { get; private set; }
@@ -20,7 +22,7 @@ public class Customer : Entity<Guid>
 
     public IReadOnlyCollection<Vacancy> Vacancies => _vacancies.AsReadOnly();
 
-    public static Customer Create(string name, string? description = null, Guid? directionId = null)
+    public static Customer Create(string name, string? description = null, Guid? directionId = null, string? code = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(name);
 
@@ -28,6 +30,7 @@ public class Customer : Entity<Guid>
         {
             Id = Guid.NewGuid(),
             Name = name,
+            Code = code?.ToUpperInvariant(),
             Description = description,
             DirectionId = directionId
         };
@@ -39,6 +42,11 @@ public class Customer : Entity<Guid>
 
         Name = name;
         Description = description;
+    }
+
+    public void SetCode(string? code)
+    {
+        Code = code?.ToUpperInvariant();
     }
 
     public void SetDirection(Guid? directionId)

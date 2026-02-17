@@ -1,5 +1,6 @@
 using Cheetah.Core.EntityFramework.Configuration;
 using Crm.Recruitment.Domain;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Crm.Recruitment.DataAccess.Configurations;
@@ -25,6 +26,10 @@ public class VacancyConfiguration : AggregateRootConfiguration<Vacancy, Guid, Va
             .HasMaxLength(1024);
 
         builder.HasIndex(x => x.Name).IsUnique();
+
+        builder.Property(x => x.Order)
+            .IsRequired()
+            .HasDefaultValue(0);
 
         builder.HasOne(x => x.State)
             .WithMany(x => x.Vacancies)

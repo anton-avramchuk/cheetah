@@ -1,3 +1,4 @@
+using Cheetah.Core.Domain.ValueObjects;
 using Cheetah.Core.EntityFramework.Configuration;
 using Crm.Recruitment.Domain;
 using Microsoft.EntityFrameworkCore;
@@ -26,6 +27,13 @@ public class VacancyStateConfiguration : EntityConfiguration<VacancyState, Guid,
         builder.HasIndex(x => x.Name).IsUnique();
 
         builder.Property(x => x.Order)
+            .IsRequired();
+
+        builder.Property(x => x.Color)
+            .HasMaxLength(9)
+            .HasConversion(c => c != null ? c.Value : null, s => s != null ? Color.Create(s) : null);
+
+        builder.Property(x => x.IsDefault)
             .IsRequired();
 
         builder.Navigation(x => x.Vacancies)

@@ -25,9 +25,9 @@ Two kanban boards: vacancies (by VacancyState) and tasks (by TaskState). Cards o
 
 ---
 
-## Phase 1: Domain + Migrations
+## Phase 1: Domain + Migrations ✅ DONE
 
-### 1.1 VacancyState — add Color + IsDefault
+### 1.1 VacancyState — add Color + IsDefault ✅
 
 **File:** `src/Modules/Recruitment/Crm.Recruitment.Domain/VacancyState.cs`
 - Add `Color? Color` and `bool IsDefault` (same pattern as `TaskState.cs`)
@@ -37,7 +37,7 @@ Two kanban boards: vacancies (by VacancyState) and tasks (by TaskState). Cards o
 - `builder.Property(x => x.Color).HasMaxLength(9)` with Color<->string converter
 - `builder.Property(x => x.IsDefault).IsRequired()`
 
-### 1.2 Customer — add Code
+### 1.2 Customer — add Code ✅
 
 **File:** `src/Modules/Recruitment/Crm.Recruitment.Domain/Customer.cs`
 - Add `string? Code` (uppercase, max 20)
@@ -47,7 +47,7 @@ Two kanban boards: vacancies (by VacancyState) and tasks (by TaskState). Cards o
 - `builder.Property(x => x.Code).HasMaxLength(20)`
 - `builder.HasIndex(x => x.Code).IsUnique().HasFilter(...)` — filtered unique index
 
-### 1.3 Vacancy — add Order + Move()
+### 1.3 Vacancy — add Order + Move() ✅
 
 **File:** `src/Modules/Recruitment/Crm.Recruitment.Domain/Vacancy.cs`
 - Add `int Order`
@@ -56,7 +56,7 @@ Two kanban boards: vacancies (by VacancyState) and tasks (by TaskState). Cards o
 **File:** Vacancy configuration
 - `builder.Property(x => x.Order).IsRequired().HasDefaultValue(0)`
 
-### 1.4 VacancyTask — add Number
+### 1.4 VacancyTask — add Number ✅
 
 **File:** `src/Modules/VacancyTasks/VacancyTasks/Crm.VacancyTasks.Domain/VacancyTask.cs`
 - Add `int Number`
@@ -66,7 +66,7 @@ Two kanban boards: vacancies (by VacancyState) and tasks (by TaskState). Cards o
 - `builder.Property(x => x.Number).IsRequired()`
 - `builder.HasIndex(x => new { x.VacancyId, x.Number }).IsUnique()`
 
-### 1.5 Migrations
+### 1.5 Migrations (pending — apply after review)
 
 ```
 dotnet ef migrations add AddColorIsDefaultToVacancyState -p src/.../Crm.Recruitment.DataAccess

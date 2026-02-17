@@ -33,6 +33,12 @@ public class VacancyTaskConfiguration : AggregateRootConfiguration<VacancyTask, 
         builder.Property(x => x.Order)
             .IsRequired();
 
+        builder.Property(x => x.Number)
+            .IsRequired();
+
+        builder.HasIndex(x => new { x.VacancyId, x.Number })
+            .IsUnique();
+
         builder.HasOne(x => x.State)
             .WithMany(x => x.VacancyTasks)
             .HasForeignKey(x => x.StateId)
