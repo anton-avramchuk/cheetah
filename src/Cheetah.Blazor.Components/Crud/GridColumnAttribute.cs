@@ -37,6 +37,11 @@ public class GridColumnAttribute : Attribute
     /// Text alignment.
     /// </summary>
     public GridColumnAlignment Alignment { get; set; } = GridColumnAlignment.Left;
+
+    /// <summary>
+    /// Display template for the column value.
+    /// </summary>
+    public GridColumnTemplate Template { get; set; } = GridColumnTemplate.Default;
 }
 
 /// <summary>
@@ -55,4 +60,13 @@ public enum GridColumnAlignment
     Left,
     Center,
     Right
+}
+
+/// <summary>
+/// Display template for grid column value.
+/// </summary>
+public enum GridColumnTemplate
+{
+    Default,
+    Color
 }

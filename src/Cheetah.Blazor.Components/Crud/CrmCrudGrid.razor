@@ -6,6 +6,7 @@
 
 @using Cheetah.Blazor.Components.Buttons
 @using Cheetah.Blazor.Components.Dialogs
+@using Cheetah.Blazor.Components.Display
 @using Cheetah.Blazor.Components.Feedback
 @using Cheetah.Blazor.Components.Layout
 
@@ -88,7 +89,14 @@
                                 {
                                     var value = column.GetValue(item);
                                     <td class="@(column.CssClass) @column.GetAlignmentClass()">
-                                        @column.FormatValue(value)
+                                        @if (column.Template == GridColumnTemplate.Color)
+                                        {
+                                            <CrmColorDisplay Color="@(value?.ToString())" />
+                                        }
+                                        else
+                                        {
+                                            @column.FormatValue(value)
+                                        }
                                     </td>
                                 }
                                 @if (HasActions)

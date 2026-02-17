@@ -45,6 +45,11 @@ public sealed class GridColumnInfo
     public GridColumnAlignment Alignment { get; }
 
     /// <summary>
+    /// Display template.
+    /// </summary>
+    public GridColumnTemplate Template { get; }
+
+    /// <summary>
     /// Property type.
     /// </summary>
     public Type PropertyType { get; }
@@ -70,6 +75,7 @@ public sealed class GridColumnInfo
         CssClass = attr?.CssClass;
         Width = attr?.Width;
         Alignment = attr?.Alignment ?? GridColumnAlignment.Left;
+        Template = attr?.Template ?? GridColumnTemplate.Default;
 
         // Create getter delegate
         GetValue = obj => property.GetValue(obj);

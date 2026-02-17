@@ -13,7 +13,7 @@ public sealed class TaskStateGridViewModel : IGridViewModel
     [GridColumn(DisplayName = "Order", Order = 2)]
     public int Order { get; init; }
 
-    [GridColumn(DisplayName = "Color", Order = 3)]
+    [GridColumn(DisplayName = "Color", Order = 3, Template = GridColumnTemplate.Color)]
     public string? Color { get; init; }
 
     [GridColumn(DisplayName = "Is Default", Order = 4)]

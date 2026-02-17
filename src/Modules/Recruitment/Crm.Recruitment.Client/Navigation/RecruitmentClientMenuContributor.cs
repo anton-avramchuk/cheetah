@@ -1,4 +1,3 @@
-using Cheetah.Blazor.Components.Icons;
 using Cheetah.Core.DependencyInjection;
 using Cheetah.Frontend.Navigation.Constants;
 using Cheetah.Frontend.Navigation.Extensions;
