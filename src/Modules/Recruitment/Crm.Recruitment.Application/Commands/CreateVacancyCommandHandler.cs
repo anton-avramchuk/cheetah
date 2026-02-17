@@ -20,7 +20,11 @@ public class CreateVacancyCommandHandler : ICommandHandler<CreateVacancyCommand,
 
     public async ValueTask<Guid> HandleAsync(CreateVacancyCommand command, CancellationToken ct = default)
     {
-        var entity = Vacancy.Create(command.Name, command.Description);
+        var entity = Vacancy.Create(command.Name, command.Description, command.StateId);
+        entity.SetCustomer(command.CustomerId);
+        entity.SetPosition(command.PositionId);
+        entity.SetStackItem(command.StackItemId);
+        entity.SetWorkFormat(command.WorkFormatId);
         _repository.Add(entity);
         await _repository.SaveChangesAsync(ct);
 

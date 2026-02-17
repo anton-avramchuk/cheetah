@@ -9,4 +9,9 @@ public record UpdateVacancyRequest(
     [FromRoute] Guid Id,
     [property: Required(AllowEmptyStrings = false)]
     string Name,
-    string? Description) : ICrmRequest;
+    string? Description,
+    Guid? StateId = null,
+    Guid? CustomerId = null,
+    Guid? PositionId = null,
+    Guid? StackItemId = null,
+    Guid? WorkFormatId = null) : ICrmRequest;

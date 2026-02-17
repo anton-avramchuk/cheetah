@@ -13,5 +13,15 @@ public class VacancyFormModel
     [StringLength(4000, ErrorMessage = "Description must not exceed 4000 characters")]
     public string? Description { get; set; }
 
+    public Guid? StateId { get; set; }
+
+    public Guid? CustomerId { get; set; }
+
+    public Guid? PositionId { get; set; }
+
+    public Guid? StackItemId { get; set; }
+
+    public Guid? WorkFormatId { get; set; }
+
     public bool IsEdit => Id.HasValue;
 }

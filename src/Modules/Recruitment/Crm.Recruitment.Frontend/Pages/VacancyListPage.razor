@@ -1,21 +1,17 @@
 @page "/vacancies"
 @namespace Crm.Recruitment.Frontend.Pages
 
-@inject ICrudService<VacancyGridViewModel, VacancyFormModel, VacancyFormModel> CrudService
+@inject IGridService<VacancyGridViewModel> GridService
 
 <PageTitle>Vacancy List</PageTitle>
 
-<CrmCrudGrid TGridViewModel="VacancyGridViewModel"
-             TCreateViewModel="VacancyFormModel"
-             TEditViewModel="VacancyFormModel"
-             Service="CrudService"
-             Title="Vacancy List"
-             CreateFormType="typeof(VacancyForm)"
-             EditFormType="typeof(VacancyForm)"
-             CreateDialogTitle="New Vacancy"
-             EditDialogTitle="Edit Vacancy"
-             CreateButtonText="Add"
-             EmptyMessage="No vacancies found"
-             AllowCreate="true"
-             AllowEdit="true"
-             AllowDelete="true"/>
+<CrmNavCrudGrid TGridViewModel="VacancyGridViewModel"
+               Service="GridService"
+               Title="Vacancy List"
+               CreateUrl="/vacancies/create"
+               EditUrl="/vacancies/{0}/edit"
+               CreateButtonText="Add"
+               EmptyMessage="No vacancies found"
+               AllowCreate="true"
+               AllowEdit="true"
+               AllowDelete="true"/>

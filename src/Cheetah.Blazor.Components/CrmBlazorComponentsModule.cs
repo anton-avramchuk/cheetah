@@ -1,5 +1,6 @@
 using Cheetah.Contracts;
 using Cheetah.Core;
+using Cheetah.Core.Cache;
 using Cheetah.Core.Modularity;
 
 namespace Cheetah.Blazor.Components;
@@ -10,6 +11,7 @@ namespace Cheetah.Blazor.Components;
 /// </summary>
 [DependsOn(typeof(CoreModule))]
 [DependsOn(typeof(CrmContractsModule))]
+[DependsOn(typeof(CrmCacheCoreModule))]
 public partial class CrmBlazorComponentsModule : CrmModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)

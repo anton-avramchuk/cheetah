@@ -8,8 +8,8 @@ using Crm.Recruitment.Frontend.Models;
 
 namespace Crm.Recruitment.Frontend.Services;
 
-[Export(LifetimeType.Scoped, typeof(ICrudService<VacancyGridViewModel, VacancyFormModel, VacancyFormModel>))]
-public sealed class VacancyCrudService : ICrudService<VacancyGridViewModel, VacancyFormModel, VacancyFormModel>
+[Export(LifetimeType.Scoped, typeof(ICrudService<VacancyGridViewModel, VacancyFormModel, VacancyFormModel>), typeof(IGridService<VacancyGridViewModel>))]
+public sealed class VacancyCrudService : ICrudService<VacancyGridViewModel, VacancyFormModel, VacancyFormModel>, IGridService<VacancyGridViewModel>
 {
     private readonly IVacanciesService _service;
 
@@ -35,7 +35,12 @@ public sealed class VacancyCrudService : ICrudService<VacancyGridViewModel, Vaca
         {
             Id = entity.Id,
             Name = entity.Name,
-            Description = entity.Description
+            Description = entity.Description,
+            StateId = entity.StateId,
+            CustomerId = entity.CustomerId,
+            PositionId = entity.PositionId,
+            StackItemId = entity.StackItemId,
+            WorkFormatId = entity.WorkFormatId
         };
     }
 
@@ -43,7 +48,12 @@ public sealed class VacancyCrudService : ICrudService<VacancyGridViewModel, Vaca
     {
         var request = new CreateVacancyRequest(
             model.Name,
-            model.Description);
+            model.Description,
+            model.StateId,
+            model.CustomerId,
+            model.PositionId,
+            model.StackItemId,
+            model.WorkFormatId);
         return await _service.CreateAsync(request, ct);
     }
 
@@ -52,7 +62,12 @@ public sealed class VacancyCrudService : ICrudService<VacancyGridViewModel, Vaca
         var request = new UpdateVacancyRequest(
             id,
             model.Name,
-            model.Description);
+            model.Description,
+            model.StateId,
+            model.CustomerId,
+            model.PositionId,
+            model.StackItemId,
+            model.WorkFormatId);
         await _service.UpdateAsync(id, request, ct);
     }
 

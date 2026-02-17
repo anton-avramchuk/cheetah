@@ -8,4 +8,9 @@ namespace Crm.Recruitment.Contracts.Requests;
 public record CreateVacancyRequest(
     [property: Required(AllowEmptyStrings = false)]
     string Name,
-    string? Description) : ICrmRequest;
+    string? Description,
+    Guid? StateId = null,
+    Guid? CustomerId = null,
+    Guid? PositionId = null,
+    Guid? StackItemId = null,
+    Guid? WorkFormatId = null) : ICrmRequest;

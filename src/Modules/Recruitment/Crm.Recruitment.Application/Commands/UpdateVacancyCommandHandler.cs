@@ -25,6 +25,11 @@ public class UpdateVacancyCommandHandler : ICommandHandler<UpdateVacancyCommand>
                      ?? throw EntityNotFoundException.For<Vacancy>(command.Id);
 
         entity.Update(command.Name, command.Description);
+        entity.SetState(command.StateId);
+        entity.SetCustomer(command.CustomerId);
+        entity.SetPosition(command.PositionId);
+        entity.SetStackItem(command.StackItemId);
+        entity.SetWorkFormat(command.WorkFormatId);
         await _repository.SaveChangesAsync(ct);
 
         foreach (var domainEvent in entity.DomainEvents)
