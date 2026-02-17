@@ -33,11 +33,10 @@ else
             <InputNumber class="form-control" @bind-Value="_model.Order"/>
         </div>
 
-        <CrmTextInput TValue="string?"
-                      @bind-Value="_model.Color"
-                      Label="Color"
-                      Placeholder="Enter color (e.g. #FF0000)"
-                      ValidationFor="() => _model.Color"/>
+        <CrmColorPicker @bind-Value="_model.Color"
+                        Label="Color"
+                        Placeholder="#FF0000"
+                        ValidationFor="() => _model.Color"/>
 
         @if (!string.IsNullOrEmpty(_errorMessage))
         {
