@@ -92,6 +92,9 @@
                                         @if (column.Template == GridColumnTemplate.Color)
                                         {
                                             <CrmColorDisplay Color="@(value?.ToString())" />
+                                        }else if (column.Template == GridColumnTemplate.CheckBox)
+                                        {
+                                            <CrmBooleanDisplay Value="Convert.ToBoolean(value)"/>
                                         }
                                         else
                                         {

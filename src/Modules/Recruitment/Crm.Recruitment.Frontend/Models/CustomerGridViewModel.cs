@@ -10,13 +10,13 @@ public sealed class CustomerGridViewModel : IGridViewModel
     [GridColumn(DisplayName = "Name", Order = 1)]
     public string Name { get; init; } = "";
 
-    [GridColumn(DisplayName = "Description", Order = 2)]
-    public string? Description { get; init; }
+    [GridColumn(DisplayName = "Code", Order = 2)]
+    public string? Code { get; init; }
 
     public static CustomerGridViewModel FromResponse(CustomerViewModel response) => new()
     {
         Id = response.Id,
         Name = response.Name,
-        Description = response.Description
+        Code = response.Code
     };
 }

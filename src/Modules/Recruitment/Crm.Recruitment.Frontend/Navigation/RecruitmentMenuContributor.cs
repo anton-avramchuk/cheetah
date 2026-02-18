@@ -53,7 +53,12 @@ public class RecruitmentMenuContributor : IMenuContributor
                 id: "Customers",
                 name: "Customers",
                 url: "dictionary/customers",
-                order: 5);
+                order: 5)
+            .AddChild(
+                id: "VacancyStates",
+                name: "Vacancy States",
+                url: "dictionary/vacancy-states",
+                order: 6);
 
         return Task.CompletedTask;
     }

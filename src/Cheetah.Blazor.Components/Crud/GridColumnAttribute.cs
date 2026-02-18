@@ -68,5 +68,6 @@ public enum GridColumnAlignment
 public enum GridColumnTemplate
 {
     Default,
-    Color
+    Color,
+    CheckBox
 }
