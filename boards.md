@@ -66,12 +66,10 @@ Two kanban boards: vacancies (by VacancyState) and tasks (by TaskState). Cards o
 - `builder.Property(x => x.Number).IsRequired()`
 - `builder.HasIndex(x => new { x.VacancyId, x.Number }).IsUnique()`
 
-### 1.5 Migrations (pending — apply after review)
+### 1.5 Migrations ✅
 
-```
-dotnet ef migrations add AddColorIsDefaultToVacancyState -p src/.../Crm.Recruitment.DataAccess
-dotnet ef migrations add AddVacancyTaskNumber -p src/.../Crm.VacancyTasks.DataAccess
-```
+- `AddKanbanBoardFields` — Recruitment: Color/IsDefault on VacancyState, Order on Vacancy, Code on Customer
+- `AddVacancyTaskNumber` — VacancyTasks: Number on VacancyTask with unique index (VacancyId, Number)
 
 ---
 
