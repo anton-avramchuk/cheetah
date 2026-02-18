@@ -21,4 +21,8 @@
         <ProjectReference Include="..\Cheetah.Admin.Modules.Clients.Frontend\Cheetah.Admin.Modules.Clients.Frontend.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+        <None Include="Dockerfile" />
+    </ItemGroup>
+
 </Project>

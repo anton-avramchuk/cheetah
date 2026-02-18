@@ -1,0 +1,135 @@
+services:
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  admin-api:
+    build:
+      context: .
+      dockerfile: src/Modules/Admin/Cheetah.Admin.Api/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__AdminDb: Host=postgres;Database=cheetah_admin;Username=postgres;Password=postgres
+      Redis__Instances__default__ConnectionString: redis:6379
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  features-api:
+    build:
+      context: .
+      dockerfile: src/Modules/Features/Crm.Features.Api/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__FeaturesDb: Host=postgres;Database=cheetah_features;Username=postgres;Password=postgres
+      Redis__Instances__default__ConnectionString: redis:6379
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  crm-recruitment-api:
+    build:
+      context: .
+      dockerfile: src/Modules/Recruitment/Crm.Recruitment.Api/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__Recruitment: Host=postgres;Database=cheetah_recruitment;Username=postgres;Password=postgres
+      Redis__Instances__default__ConnectionString: redis:6379
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  candidates-api:
+    build:
+      context: .
+      dockerfile: src/Modules/Candidates/Candidates/Crm.Candidates.Api/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__Candidates: Host=postgres;Database=cheetah_candidates;Username=postgres;Password=postgres
+      Redis__Instances__default__ConnectionString: redis:6379
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  vacancytasks-api:
+    build:
+      context: .
+      dockerfile: src/Modules/VacancyTasks/VacancyTasks/Crm.VacancyTasks.Api/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__VacancyTasks: Host=postgres;Database=cheetah_vacancy_tasks;Username=postgres;Password=postgres
+      Redis__Instances__default__ConnectionString: redis:6379
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  crm-proxy:
+    build:
+      context: .
+      dockerfile: src/Modules/Crm.Proxy/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:8080
+      Yarp__Clusters__recruitmentCluster__Destinations__recruitmentDestination__Address: http://crm-recruitment-api:8080/api
+      Yarp__Clusters__candidatesCluster__Destinations__candidatesDestination__Address: http://candidates-api:8080/api
+      Yarp__Clusters__vacancyTasksCluster__Destinations__vacancyTasksDestination__Address: http://vacancytasks-api:8080/api
+    ports:
+      - "5000:8080"
+    depends_on:
+      - crm-recruitment-api
+      - candidates-api
+      - vacancytasks-api
+
+  recruitment-client:
+    build:
+      context: .
+      dockerfile: src/Modules/Recruitment/Crm.Recruitment.Client/Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - crm-proxy
+
+  admin-client:
+    build:
+      context: .
+      dockerfile: src/Modules/Admin/Cheetah.Admin.Client/Dockerfile
+    ports:
+      - "8080:80"
+    depends_on:
+      - admin-api
+
+volumes:
+  postgres_data:

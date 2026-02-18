@@ -23,4 +23,8 @@
         <ProjectReference Include="..\..\VacancyTasks\VacancyTasks\Crm.VacancyTasks.Frontend\Crm.VacancyTasks.Frontend.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+        <None Include="Dockerfile" />
+    </ItemGroup>
+
 </Project>

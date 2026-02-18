@@ -28,4 +28,8 @@
       </PackageReference>
     </ItemGroup>
 
+    <ItemGroup>
+      <None Include="Dockerfile" />
+    </ItemGroup>
+
 </Project>
