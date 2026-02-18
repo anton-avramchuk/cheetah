@@ -167,9 +167,9 @@ Update `CreateCustomerCommand`/`UpdateCustomerCommand` and their handlers.
 
 ---
 
-## Phase 4: CrmSlideOver Component
+## Phase 4: CrmSlideOver Component ✅ DONE
 
-**New file:** `src/Cheetah.Blazor.Components/SlideOver/CrmSlideOver.razor`
+**New file:** `src/Cheetah.Blazor.Components/SlideOver/CrmSlideOver.razor` ✅
 
 Bootstrap offcanvas panel on the right. No JS — pure CSS transition.
 
@@ -184,11 +184,11 @@ Parameters:
 
 Public methods: `ShowAsync()`, `CloseAsync()`
 
-**New file:** `src/Cheetah.Blazor.Components/wwwroot/css/slideover.css`
-- `.offcanvas.offcanvas-end` with `transform: translateX(100%)` -> `.show` = `translateX(0)`
+**New file:** `src/Cheetah.Blazor.Components/wwwroot/css/slideover.css` ✅
+- `.crm-slideover` with `transform: translateX(100%)` -> `.show` = `translateX(0)`
 - transition 0.3s, backdrop fade
 
-Add `@using Cheetah.Blazor.Components.SlideOver` to `_Imports.razor`.
+Add `@using Cheetah.Blazor.Components.SlideOver` to `_Imports.razor` ✅
 
 ---
 

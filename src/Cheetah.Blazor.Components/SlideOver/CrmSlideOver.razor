@@ -1,0 +1,106 @@
+@namespace Cheetah.Blazor.Components.SlideOver
+
+@if (IsVisible)
+{
+    <div class="crm-slideover-backdrop @(IsVisible ? "show" : "")" @onclick="HandleBackdropClick"></div>
+}
+
+<div class="crm-slideover @(IsVisible ? "show" : "")" style="width: @Width;">
+    <div class="crm-slideover-header">
+        @if (Header != null)
+        {
+            @Header
+        }
+        else
+        {
+            <div class="crm-slideover-header-content">
+                <div>
+                    @if (!string.IsNullOrEmpty(Title))
+                    {
+                        <h5 class="crm-slideover-title">@Title</h5>
+                    }
+                    @if (!string.IsNullOrEmpty(Subtitle))
+                    {
+                        <small class="text-muted">@Subtitle</small>
+                    }
+                </div>
+                <div class="crm-slideover-actions">
+                    @if (!string.IsNullOrEmpty(ExternalUrl))
+                    {
+                        <a href="@ExternalUrl" class="btn btn-sm btn-outline-secondary me-2" title="Open full page">
+                            <i class="bi bi-box-arrow-up-right"></i>
+                        </a>
+                    }
+                    <button type="button" class="btn-close" @onclick="CloseAsync" aria-label="Close"></button>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="crm-slideover-body">
+        @ChildContent
+    </div>
+
+    @if (Footer != null)
+    {
+        <div class="crm-slideover-footer">
+            @Footer
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public bool IsVisible { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> IsVisibleChanged { get; set; }
+
+    [Parameter]
+    public string? Title { get; set; }
+
+    [Parameter]
+    public string? Subtitle { get; set; }
+
+    [Parameter]
+    public RenderFragment? Header { get; set; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    [Parameter]
+    public RenderFragment? Footer { get; set; }
+
+    [Parameter]
+    public string Width { get; set; } = "560px";
+
+    [Parameter]
+    public string? ExternalUrl { get; set; }
+
+    [Parameter]
+    public EventCallback OnClose { get; set; }
+
+    [Parameter]
+    public bool CloseOnBackdropClick { get; set; } = true;
+
+    public async Task ShowAsync()
+    {
+        IsVisible = true;
+        await IsVisibleChanged.InvokeAsync(true);
+    }
+
+    public async Task CloseAsync()
+    {
+        IsVisible = false;
+        await IsVisibleChanged.InvokeAsync(false);
+        await OnClose.InvokeAsync();
+    }
+
+    private async Task HandleBackdropClick()
+    {
+        if (CloseOnBackdropClick)
+        {
+            await CloseAsync();
+        }
+    }
+}
