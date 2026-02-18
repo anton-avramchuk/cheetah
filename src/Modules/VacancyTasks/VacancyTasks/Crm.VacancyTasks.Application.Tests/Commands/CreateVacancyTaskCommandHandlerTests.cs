@@ -17,6 +17,11 @@ public class CreateVacancyTaskCommandHandlerTests
     {
         _repositoryMock = new Mock<IRepository<VacancyTask, Guid>>();
         _eventBusMock = new Mock<IEventBus>();
+
+        _repositoryMock
+            .Setup(r => r.AsNoTrackingQueryable())
+            .Returns(new TestAsyncEnumerable<VacancyTask>(Enumerable.Empty<VacancyTask>()));
+
         _handler = new CreateVacancyTaskCommandHandler(_repositoryMock.Object, _eventBusMock.Object);
     }
 
@@ -47,6 +52,7 @@ public class CreateVacancyTaskCommandHandlerTests
         capturedEntity.Description.ShouldBe("Test Description");
         capturedEntity.VacancyId.ShouldBe(vacancyId);
         capturedEntity.StateId.ShouldBe(stateId);
+        capturedEntity.Number.ShouldBe(1);
 
         _repositoryMock.Verify(r => r.Add(It.IsAny<VacancyTask>()), Times.Once);
         _repositoryMock.Verify(r => r.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
