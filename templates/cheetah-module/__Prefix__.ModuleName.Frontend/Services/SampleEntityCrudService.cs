@@ -1,4 +1,6 @@
 using Cheetah.Blazor.Components.Crud;
+using Cheetah.Contracts.Requests;
+using Cheetah.Contracts.Responses;
 using Cheetah.Core.DependencyInjection;
 using __Prefix__.ModuleName.ApiClient;
 using __Prefix__.ModuleName.Contracts.Requests;
@@ -6,23 +8,21 @@ using __Prefix__.ModuleName.Frontend.Models;
 
 namespace __Prefix__.ModuleName.Frontend.Services;
 
-/// <summary>
-/// CRUD service adapter for SampleEntity.
-/// </summary>
 [Export(LifetimeType.Scoped, typeof(ICrudService<SampleEntityGridViewModel, SampleEntityFormModel, SampleEntityFormModel>))]
 public sealed class SampleEntityCrudService : ICrudService<SampleEntityGridViewModel, SampleEntityFormModel, SampleEntityFormModel>
 {
-    private readonly IModuleNameService _service;
+    private readonly ISampleEntitiesService _service;
 
-    public SampleEntityCrudService(IModuleNameService service)
+    public SampleEntityCrudService(ISampleEntitiesService service)
     {
         _service = service;
     }
 
-    public async Task<IReadOnlyList<SampleEntityGridViewModel>> GetAllAsync(CancellationToken ct = default)
+    public async Task<GridResult<SampleEntityGridViewModel>> GetAllAsync(GridRequest request, CancellationToken ct = default)
     {
-        var entities = await _service.GetAllAsync(ct);
-        return entities.Select(SampleEntityGridViewModel.FromResponse).ToList();
+        var result = await _service.GetAllAsync(ct);
+        var mapped = result.Select(SampleEntityGridViewModel.FromResponse).ToList();
+        return new GridResult<SampleEntityGridViewModel>(mapped, mapped.Count);
     }
 
     public async Task<SampleEntityFormModel?> GetByIdAsync(Guid id, CancellationToken ct = default)

@@ -96,7 +96,6 @@
     <Folder Name="/Hosting/">
         <Project Path="src/Cheetah.Crm.Hosting/Cheetah.Crm.Hosting.csproj" />
     </Folder>
-    <Folder Name="/Modules/Identity/" />
     <Folder Name="/Modules/Recruitment/">
         <Project Path="src/Modules/Recruitment/Crm.Recruitment.Client/Crm.Recruitment.Client.csproj" />
     </Folder>
@@ -114,6 +113,7 @@
         <Project Path="src/Modules/Candidates/Candidates/Crm.Candidates.DomainEvents/Crm.Candidates.DomainEvents.csproj" />
         <Project Path="src/Modules/Candidates/Candidates/Crm.Candidates.Frontend/Crm.Candidates.Frontend.csproj" />
     </Folder>
+    <Folder Name="/Modules/Recruitment/Identity/" />
     <Folder Name="/Modules/Recruitment/Task/">
         <Project Path="src/Modules/VacancyTasks/VacancyTasks/Crm.VacancyTasks.Api.Tests/Crm.VacancyTasks.Api.Tests.csproj" />
         <Project Path="src/Modules/VacancyTasks/VacancyTasks/Crm.VacancyTasks.Api/Crm.VacancyTasks.Api.csproj" />

@@ -9,6 +9,7 @@
 
     <ItemGroup>
         <PackageReference Include="coverlet.collector" />
+        <PackageReference Include="Moq" />
         <PackageReference Include="Shouldly" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" />
         <PackageReference Include="xunit" />
@@ -17,6 +18,8 @@
 
     <ItemGroup>
         <ProjectReference Include="..\__Prefix__.ModuleName.ApiClient\__Prefix__.ModuleName.ApiClient.csproj" />
+        <ProjectReference Include="..\__Prefix__.ModuleName.Frontend\__Prefix__.ModuleName.Frontend.csproj"
+                          Condition="Exists('..\__Prefix__.ModuleName.Frontend\__Prefix__.ModuleName.Frontend.csproj')" />
     </ItemGroup>
 
     <ItemGroup>

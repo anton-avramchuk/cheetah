@@ -72,7 +72,10 @@
           "exclude": [
             "**/obj/**",
             "**/bin/**",
-            "**/*.user"
+            "**/*.user",
+            "**/IModuleNameService.cs",
+            "**/ModuleNameService.cs",
+            "**/ModuleNameServiceTests.cs"
           ]
         },
         {
@@ -101,7 +104,8 @@
         {
           "condition": "(!includeBlazorClient)",
           "exclude": [
-            "**/*.Frontend/**"
+            "**/*.Frontend/**",
+            "**/SampleEntityCrudServiceTests.cs"
           ]
         }
       ]

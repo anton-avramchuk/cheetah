@@ -52,7 +52,7 @@ else
     public Guid? Id { get; set; }
 
     [Inject]
-    private IModuleNameService Service { get; set; } = null!;
+    private ISampleEntitiesService Service { get; set; } = null!;
 
     private SampleEntityFormModel _model = new();
     private EditForm? _editFormRef;
