@@ -24,6 +24,6 @@ public class GetCustomerByIdQueryHandler : IQueryHandler<GetCustomerByIdQuery, C
         if (entity is null)
             return null;
 
-        return new CustomerModel(entity.Id, entity.Name, entity.Description, entity.DirectionId);
+        return new CustomerModel(entity.Id, entity.Name, entity.Code, entity.Description, entity.DirectionId);
     }
 }

@@ -35,14 +35,17 @@ public class GetVacancyByIdQueryHandler : IQueryHandler<GetVacancyByIdQuery, Vac
             entity.Description,
             entity.StateId,
             entity.State?.Name,
+            entity.State?.Color?.Value,
             entity.CustomerId,
             entity.Customer?.Name,
+            entity.Customer?.Code,
             entity.PositionId,
             entity.Position?.Name,
             entity.StackItemId,
             entity.StackItem?.Name,
             entity.WorkFormatId,
             entity.WorkFormat?.Name,
+            entity.Order,
             entity.CreatedAt,
             entity.UpdatedAt);
     }

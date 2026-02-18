@@ -22,6 +22,7 @@ public class UpdateCustomerCommandHandler : ICommandHandler<UpdateCustomerComman
                      ?? throw EntityNotFoundException.For<Customer>(command.Id);
 
         entity.Update(command.Name, command.Description);
+        entity.SetCode(command.Code);
         entity.SetDirection(command.DirectionId);
         await _repository.SaveChangesAsync(ct);
     }

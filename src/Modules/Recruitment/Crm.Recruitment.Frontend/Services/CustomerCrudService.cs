@@ -35,6 +35,7 @@ public sealed class CustomerCrudService : ICrudService<CustomerGridViewModel, Cu
         {
             Id = entity.Id,
             Name = entity.Name,
+            Code = entity.Code,
             Description = entity.Description,
             DirectionId = entity.DirectionId
         };
@@ -42,13 +43,13 @@ public sealed class CustomerCrudService : ICrudService<CustomerGridViewModel, Cu
 
     public async Task<Guid> CreateAsync(CustomerFormModel model, CancellationToken ct = default)
     {
-        var request = new CreateCustomerRequest(model.Name, model.Description, model.DirectionId);
+        var request = new CreateCustomerRequest(model.Name, model.Code, model.Description, model.DirectionId);
         return await _service.CreateAsync(request, ct);
     }
 
     public async Task UpdateAsync(Guid id, CustomerFormModel model, CancellationToken ct = default)
     {
-        var request = new UpdateCustomerRequest(id, model.Name, model.Description, model.DirectionId);
+        var request = new UpdateCustomerRequest(id, model.Name, model.Code, model.Description, model.DirectionId);
         await _service.UpdateAsync(id, request, ct);
     }
 

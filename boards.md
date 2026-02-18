@@ -118,25 +118,25 @@ Pattern: `[Export(LifetimeType.Scoped, typeof(IDatabaseSeeder))]`, idempotent vi
 
 ---
 
-## Phase 3: API — Move Vacancy + VacancyState CRUD + Board Queries
+## Phase 3: API — Move Vacancy + VacancyState CRUD + Board Queries ✅ DONE
 
-### 3.1 VacancyState API (full CRUD — currently no endpoints)
+### 3.1 VacancyState API (full CRUD — currently no endpoints) ✅
 
 Create full stack:
 - **Application:** `VacancyStateModel`, `GetAllVacancyStatesQuery` + handler, `GetVacancyStateByIdQuery` + handler, `CreateVacancyStateCommand` + handler, `UpdateVacancyStateCommand` + handler, `DeleteVacancyStateCommand` + handler
 - **Contracts:** `VacancyStateViewModel(Id, Name, Order, Color?, IsDefault)`, requests with `[ApiRoute]`
 - **Api:** 5 endpoints (Create/Update/Delete/GetById/GetAll) following existing patterns (TaskState in VacancyTasks as reference)
 
-### 3.2 MoveVacancy endpoint
+### 3.2 MoveVacancy endpoint ✅
 
-- **Command:** `MoveVacancyCommand(Guid Id, Guid? StateId, int Order) : ICommand`
+- **Command:** `MoveVacancyCommand(Guid Id, Guid StateId, int Order) : ICommand`
 - **Handler:** load Vacancy -> `entity.Move(stateId, order)` -> SaveChanges
 - **Contract:** `MoveVacancyRequest` with `[ApiRoute("api/vacancies/{id:guid}/move", ApiMethod.Patch)]`
 - **Endpoint:** `MoveVacancyEndpoint : PatchCommandEndpoint<MoveVacancyRequest, MoveVacancyCommand>`
 
 Reference: `MoveVacancyTaskEndpoint.cs`
 
-### 3.3 Extend VacancyViewModel/VacancyModel
+### 3.3 Extend VacancyViewModel/VacancyModel ✅
 
 Add to `VacancyModel` and `VacancyViewModel`:
 - `string? CustomerCode` — for card prefix display
@@ -145,7 +145,7 @@ Add to `VacancyModel` and `VacancyViewModel`:
 
 Update `GetVacancyByIdQueryHandler` and list query — pull `Customer.Code`, `State.Color`.
 
-### 3.4 Extend VacancyTaskViewModel
+### 3.4 Extend VacancyTaskViewModel ✅
 
 Add:
 - `int Number` — sequential task number
@@ -160,7 +160,7 @@ var maxNumber = await _repository.AsNoTrackingQueryable()
 var task = VacancyTask.Create(..., number: maxNumber + 1);
 ```
 
-### 3.5 Update Customer contracts
+### 3.5 Update Customer contracts ✅
 
 Add `Code` to `CustomerViewModel`, `CreateCustomerRequest`, `UpdateCustomerRequest`.
 Update `CreateCustomerCommand`/`UpdateCustomerCommand` and their handlers.

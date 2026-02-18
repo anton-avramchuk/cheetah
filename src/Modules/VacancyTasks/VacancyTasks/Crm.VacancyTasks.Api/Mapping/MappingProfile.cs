@@ -5,6 +5,7 @@ using Crm.VacancyTasks.Application.Commands;
 using Crm.VacancyTasks.Application.Queries;
 using Crm.VacancyTasks.Contracts.Requests;
 using Crm.VacancyTasks.Contracts.Response;
+using Crm.VacancyTasks.Domain;
 using Mapster;
 
 namespace Crm.VacancyTasks.Api.Mapping;
@@ -14,7 +15,12 @@ public class MappingProfile : IMapsterMappingProfile
 {
     public void Configure(TypeAdapterConfig config)
     {
-        // VacancyTask
+        // VacancyTask (Entity → Model for Grid projection)
+        config.NewConfig<VacancyTask, VacancyTaskModel>()
+            .Map(dest => dest.StateName, src => src.State.Name)
+            .Map(dest => dest.PriorityName, src => src.Priority != null ? src.Priority.Name : null)
+            .Map(dest => dest.PriorityColor, src => src.Priority != null && src.Priority.Color != null ? src.Priority.Color.Value : null);
+
         config.NewConfig<VacancyTaskModel, VacancyTaskViewModel>();
         config.NewConfig<GetAllVacancyTasksRequest, GetAllVacancyTasksQuery>();
         config.NewConfig<GetVacancyTaskByIdRequest, GetVacancyTaskByIdQuery>();

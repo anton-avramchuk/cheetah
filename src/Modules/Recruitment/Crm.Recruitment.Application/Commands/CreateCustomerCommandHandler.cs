@@ -17,7 +17,7 @@ public class CreateCustomerCommandHandler : ICommandHandler<CreateCustomerComman
 
     public async ValueTask<Guid> HandleAsync(CreateCustomerCommand command, CancellationToken ct = default)
     {
-        var entity = Customer.Create(command.Name, command.Description, command.DirectionId);
+        var entity = Customer.Create(command.Name, command.Description, command.DirectionId, command.Code);
         _repository.Add(entity);
         await _repository.SaveChangesAsync(ct);
         return entity.Id;

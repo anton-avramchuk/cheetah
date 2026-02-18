@@ -5,6 +5,7 @@ using Crm.Recruitment.Application.Commands;
 using Crm.Recruitment.Application.Queries;
 using Crm.Recruitment.Contracts.Requests;
 using Crm.Recruitment.Contracts.Response;
+using Crm.Recruitment.Domain;
 using Mapster;
 
 namespace Crm.Recruitment.Api.Mapping;
@@ -14,12 +15,26 @@ public class MappingProfile : IMapsterMappingProfile
 {
     public void Configure(TypeAdapterConfig config)
     {
+        // Vacancy (Entity → Model for Grid projection)
+        config.NewConfig<Vacancy, VacancyModel>()
+            .Map(dest => dest.StateColor, src => src.State != null && src.State.Color != null ? src.State.Color.Value : null)
+            .Map(dest => dest.CustomerCode, src => src.Customer != null ? src.Customer.Code : null);
+
         config.NewConfig<VacancyModel, VacancyViewModel>();
         config.NewConfig<GetAllVacanciesGridRequest, GetVacanciesGridQuery>();
         config.NewConfig<GetVacancyByIdRequest, GetVacancyByIdQuery>();
         config.NewConfig<CreateVacancyRequest, CreateVacancyCommand>();
         config.NewConfig<UpdateVacancyRequest, UpdateVacancyCommand>();
         config.NewConfig<DeleteVacancyRequest, DeleteVacancyCommand>();
+        config.NewConfig<MoveVacancyRequest, MoveVacancyCommand>();
+
+        // VacancyState
+        config.NewConfig<VacancyStateModel, VacancyStateViewModel>();
+        config.NewConfig<GetVacancyStateByIdRequest, GetVacancyStateByIdQuery>();
+        config.NewConfig<GetAllVacancyStatesRequest, GetAllVacancyStatesQuery>();
+        config.NewConfig<CreateVacancyStateRequest, CreateVacancyStateCommand>();
+        config.NewConfig<UpdateVacancyStateRequest, UpdateVacancyStateCommand>();
+        config.NewConfig<DeleteVacancyStateRequest, DeleteVacancyStateCommand>();
 
         config.NewConfig<VacancyRoleModel, VacancyRoleViewModel>();
         config.NewConfig<GetAllVacancyRolesRequest, GetAllVacancyRolesQuery>();

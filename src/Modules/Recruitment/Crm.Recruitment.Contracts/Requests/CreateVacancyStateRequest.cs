@@ -4,10 +4,10 @@ using Cheetah.Contracts.Requests;
 
 namespace Crm.Recruitment.Contracts.Requests;
 
-[ApiRoute("api/customers", ApiMethod.Create, ServiceName = "Customers")]
-public record CreateCustomerRequest(
+[ApiRoute("api/vacancy-states", ApiMethod.Create, ServiceName = "VacancyStates")]
+public record CreateVacancyStateRequest(
     [property: Required(AllowEmptyStrings = false)]
     string Name,
-    string? Code,
-    string? Description,
-    Guid? DirectionId) : ICrmRequest;
+    int Order,
+    string? Color,
+    bool IsDefault) : ICrmRequest;

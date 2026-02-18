@@ -8,4 +8,5 @@ internal static class Constants
     public const string PositionRoute = "api/positions";
     public const string StackItemRoute = "api/stack-items";
     public const string WorkFormatRoute = "api/work-formats";
+    public const string VacancyStateRoute = "api/vacancy-states";
 }

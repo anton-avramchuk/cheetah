@@ -25,7 +25,7 @@ public class GetAllCustomersQueryHandler : IQueryHandler<GetAllCustomersQuery, I
             .ToListAsync(ct);
 
         return entities
-            .Select(e => new CustomerModel(e.Id, e.Name, e.Description, e.DirectionId))
+            .Select(e => new CustomerModel(e.Id, e.Name, e.Code, e.Description, e.DirectionId))
             .ToList();
     }
 }

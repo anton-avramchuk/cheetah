@@ -25,8 +25,8 @@ public class VacancyTasksServiceTests
         var stateId = Guid.NewGuid();
         var expectedEntities = new List<VacancyTaskViewModel>
         {
-            new(Guid.NewGuid(), "Entity 1", "Description 1", vacancyId, stateId, null, null, null, 0),
-            new(Guid.NewGuid(), "Entity 2", "Description 2", vacancyId, stateId, null, null, null, 1)
+            new(Guid.NewGuid(), "Entity 1", "Description 1", vacancyId, stateId, null, null, null, null, null, null, 0, 1),
+            new(Guid.NewGuid(), "Entity 2", "Description 2", vacancyId, stateId, null, null, null, null, null, null, 1, 2)
         };
 
         var gridResult = new GridResult<VacancyTaskViewModel>(expectedEntities, expectedEntities.Count);
@@ -49,7 +49,7 @@ public class VacancyTasksServiceTests
         var entityId = Guid.NewGuid();
         var vacancyId = Guid.NewGuid();
         var stateId = Guid.NewGuid();
-        var expectedEntity = new VacancyTaskViewModel(entityId, "Test Entity", "Description", vacancyId, stateId, null, null, null, 0);
+        var expectedEntity = new VacancyTaskViewModel(entityId, "Test Entity", "Description", vacancyId, stateId, null, null, null, null, null, null, 0, 1);
 
         var handler = new MockHttpMessageHandler(HttpStatusCode.OK, JsonSerializer.Serialize(expectedEntity));
         var service = CreateService(handler);
