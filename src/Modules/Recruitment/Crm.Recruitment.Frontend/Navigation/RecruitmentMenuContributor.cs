@@ -18,7 +18,7 @@ public class RecruitmentMenuContributor : IMenuContributor
             id: "Vacancies",
             name: "Vacancies",
             iconName: MenuIcons.Briefcase,
-            url: "vacancies",
+            url: "vacancies/board",
             order: 1);
 
         var dictionary = mainMenu.GetOrAdd("Dictionary", item =>

@@ -59,7 +59,7 @@ public sealed class
     public async Task UpdateAsync(Guid id, VacancyTaskFormModel model, CancellationToken ct = default)
     {
         var description = string.IsNullOrWhiteSpace(model.Description) ? null : model.Description;
-        var request = new UpdateVacancyTaskRequest(id, model.Title, description);
+        var request = new UpdateVacancyTaskRequest(id, model.Title, description, model.StateId, model.PriorityId, model.DueDate);
         await _service.UpdateAsync(id, request, ct);
     }
 

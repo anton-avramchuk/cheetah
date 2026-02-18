@@ -98,7 +98,7 @@ public class VacancyTaskEndpointsTests
         var location = createResponse.Headers.Location;
         var entityId = Guid.Parse(location!.Segments.Last());
 
-        var updateRequest = new UpdateVacancyTaskRequest(entityId, "Updated Entity", "Updated Description");
+        var updateRequest = new UpdateVacancyTaskRequest(entityId, "Updated Entity", "Updated Description", _defaultStateId, null, null);
 
         // Act
         var response = await _client.PutAsJsonAsync(location.ToString(), updateRequest);

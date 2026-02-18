@@ -1,0 +1,193 @@
+@page "/vacancy-tasks/board"
+@namespace Crm.VacancyTasks.Frontend.Pages
+
+@using Cheetah.Blazor.Components
+@using Cheetah.Blazor.Components.Feedback
+@using Cheetah.Blazor.Components.Kanban
+@using Cheetah.Blazor.Components.SlideOver
+@using Crm.VacancyTasks.ApiClient
+@using Crm.VacancyTasks.Contracts.Requests
+@using Crm.VacancyTasks.Contracts.Response
+
+@inject IVacancyTasksService VacancyTasksService
+@inject ITaskStatesService TaskStatesService
+@inject NavigationManager Navigation
+
+<PageTitle>Task Board</PageTitle>
+
+@if (_isLoading)
+{
+    <div class="text-center py-5">
+        <CrmLoadingSpinner Message="Loading board..." />
+    </div>
+}
+else if (!string.IsNullOrEmpty(_errorMessage))
+{
+    <CrmAlert Variant="ColorVariant.Danger" Message="@_errorMessage" />
+}
+else
+{
+    <CrmKanbanBoard TItem="VacancyTaskViewModel"
+                    OnItemMoved="OnItemMovedAsync"
+                    OnCardClick="OnCardClick">
+        <CardTemplate>
+            <div class="crm-kanban-card-content">
+                <div class="d-flex justify-content-between align-items-start mb-1">
+                    <span class="text-muted small">#@context.Number</span>
+                    @if (!string.IsNullOrEmpty(context.PriorityName))
+                    {
+                        <span class="badge" style="background-color: @(context.PriorityColor ?? "#6c757d");">
+                            @context.PriorityName
+                        </span>
+                    }
+                </div>
+                <div class="fw-semibold mb-1">@context.Title</div>
+                @if (context.DueDate.HasValue)
+                {
+                    var isOverdue = context.DueDate.Value < DateTimeOffset.Now;
+                    <div>
+                        <small class="@(isOverdue ? "text-danger" : "text-muted")">
+                            <i class="bi bi-calendar me-1"></i>@context.DueDate.Value.ToString("dd MMM yyyy")
+                        </small>
+                    </div>
+                }
+            </div>
+        </CardTemplate>
+        <ChildContent>
+            @foreach (var state in _states)
+            {
+                var stateId = state.Id.ToString();
+                var items = _tasksByState.TryGetValue(state.Id, out var list) ? list : [];
+
+                <CrmKanbanColumn TItem="VacancyTaskViewModel"
+                                 Id="@stateId"
+                                 Title="@state.Name"
+                                 Items="items">
+                    <HeaderTemplate>
+                        <div class="d-flex justify-content-between align-items-center"
+                             style="border-top: 3px solid @(state.Color ?? "#6c757d"); padding-top: 0.5rem;">
+                            <span class="crm-kanban-column-title">@state.Name</span>
+                            <span class="badge bg-secondary">@items.Count</span>
+                        </div>
+                    </HeaderTemplate>
+                </CrmKanbanColumn>
+            }
+        </ChildContent>
+    </CrmKanbanBoard>
+}
+
+<CrmSlideOver @ref="_slideOver"
+              @bind-IsVisible="_slideOverVisible"
+              Title="@_selectedTask?.Title"
+              Subtitle="@(_selectedTask != null ? $"#{_selectedTask.Number}" : null)"
+              ExternalUrl="@(_selectedTask != null ? $"/vacancy-tasks/{_selectedTask.Id}/edit" : null)">
+    @if (_selectedTask != null)
+    {
+        <Crm.VacancyTasks.Frontend.Components.VacancyTaskSlideOverForm
+            Id="_selectedTask.Id"
+            OnSaved="OnTaskSavedAsync" />
+    }
+</CrmSlideOver>
+
+@code {
+    private List<TaskStateViewModel> _states = [];
+    private Dictionary<Guid, List<VacancyTaskViewModel>> _tasksByState = new();
+    private bool _isLoading = true;
+    private string? _errorMessage;
+
+    private CrmSlideOver? _slideOver;
+    private bool _slideOverVisible;
+    private VacancyTaskViewModel? _selectedTask;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDataAsync();
+    }
+
+    private async Task LoadDataAsync()
+    {
+        _isLoading = true;
+        _errorMessage = null;
+
+        try
+        {
+            var statesTask = TaskStatesService.GetAllAsync().AsTask();
+            var tasksTask = VacancyTasksService.GetAllAsync(null).AsTask();
+
+            await Task.WhenAll(statesTask, tasksTask);
+
+            _states = statesTask.Result.OrderBy(s => s.Order).ToList();
+            var stateIds = _states.Select(s => s.Id).ToHashSet();
+
+            var tasks = tasksTask.Result.Data;
+            _tasksByState = _states.ToDictionary(
+                s => s.Id,
+                s => tasks
+                    .Where(t => t.StateId == s.Id)
+                    .OrderBy(t => t.Order)
+                    .ToList());
+
+            // Tasks without matching state go to the first column
+            var unassigned = tasks.Where(t => !stateIds.Contains(t.StateId)).ToList();
+            if (unassigned.Count > 0 && _states.Count > 0)
+            {
+                _tasksByState[_states[0].Id].AddRange(unassigned);
+            }
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = $"Failed to load board: {ex.Message}";
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+
+    private async Task OnItemMovedAsync(KanbanItemMovedEventArgs<VacancyTaskViewModel> args)
+    {
+        if (!Guid.TryParse(args.TargetColumnId, out var targetStateId))
+            return;
+
+        // Optimistic update
+        if (Guid.TryParse(args.SourceColumnId, out var sourceStateId)
+            && _tasksByState.TryGetValue(sourceStateId, out var sourceList))
+        {
+            sourceList.Remove(args.Item);
+        }
+
+        var movedItem = args.Item with { StateId = targetStateId, Order = args.TargetIndex };
+
+        if (_tasksByState.TryGetValue(targetStateId, out var targetList))
+        {
+            var index = Math.Min(args.TargetIndex, targetList.Count);
+            targetList.Insert(index, movedItem);
+        }
+
+        try
+        {
+            var request = new MoveVacancyTaskRequest(args.Item.Id, targetStateId, args.TargetIndex);
+            await VacancyTasksService.PatchAsync(args.Item.Id, request);
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = $"Failed to move task: {ex.Message}";
+            await LoadDataAsync();
+        }
+    }
+
+    private void OnCardClick(VacancyTaskViewModel task)
+    {
+        _selectedTask = task;
+        _slideOverVisible = true;
+    }
+
+    private async Task OnTaskSavedAsync()
+    {
+        _slideOverVisible = false;
+        _selectedTask = null;
+        StateHasChanged();
+        await LoadDataAsync();
+        StateHasChanged();
+    }
+}

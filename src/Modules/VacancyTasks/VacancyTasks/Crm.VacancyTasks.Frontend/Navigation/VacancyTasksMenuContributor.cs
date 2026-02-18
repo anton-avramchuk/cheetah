@@ -18,7 +18,7 @@ public class VacancyTasksMenuContributor : IMenuContributor
             id: "VacancyTasks",
             name: "Tasks",
             iconName: MenuIcons.ListTask,
-            url: "vacancy-tasks",
+            url: "vacancy-tasks/board",
             order: 3);
 
         var dictionary = mainMenu.GetOrAdd("Dictionary", item =>

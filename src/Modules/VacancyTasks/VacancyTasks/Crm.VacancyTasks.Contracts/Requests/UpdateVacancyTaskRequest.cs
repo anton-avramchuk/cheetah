@@ -9,4 +9,7 @@ public record UpdateVacancyTaskRequest(
     [FromRoute] Guid Id,
     [property: Required(AllowEmptyStrings = false)]
     string Title,
-    string? Description) : ICrmRequest;
+    string? Description,
+    Guid StateId,
+    Guid? PriorityId,
+    DateTimeOffset? DueDate) : ICrmRequest;

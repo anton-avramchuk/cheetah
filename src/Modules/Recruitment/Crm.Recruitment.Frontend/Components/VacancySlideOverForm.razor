@@ -1,0 +1,223 @@
+@namespace Crm.Recruitment.Frontend.Components
+
+@using Cheetah.Blazor.Components
+@using Cheetah.Blazor.Components.Buttons
+@using Cheetah.Blazor.Components.Feedback
+@using Cheetah.Blazor.Components.Forms
+@using Cheetah.Core.Cache
+@using Crm.Recruitment.ApiClient
+@using Crm.Recruitment.Contracts.Requests
+@using Crm.Recruitment.Contracts.Response
+@using Crm.Recruitment.Frontend.Models
+@using Microsoft.AspNetCore.Components.Forms
+
+@inject IVacanciesService VacanciesService
+@inject IVacancyStatesService VacancyStatesService
+@inject ICustomersService CustomersService
+@inject IPositionsService PositionsService
+@inject IStackItemsService StackItemsService
+@inject IWorkFormatsService WorkFormatsService
+@inject ICacheService Cache
+
+@if (_isLoading)
+{
+    <div class="text-center py-4">
+        <CrmLoadingSpinner Message="Loading..." />
+    </div>
+}
+else if (!string.IsNullOrEmpty(_errorMessage) && _model == null)
+{
+    <CrmAlert Variant="ColorVariant.Danger" Message="@_errorMessage" />
+}
+else if (_model != null)
+{
+    <EditForm Model="_model" OnValidSubmit="SaveAsync">
+        <DataAnnotationsValidator />
+
+        <CrmTextInput TValue="string"
+                      @bind-Value="_model.Name"
+                      Label="Name"
+                      Placeholder="Enter name"
+                      Required="true"
+                      ValidationFor="() => _model.Name" />
+
+        <CrmTextArea @bind-Value="_model.Description"
+                     Label="Description"
+                     Placeholder="Enter description"
+                     Rows="3"
+                     ValidationFor="() => _model.Description" />
+
+        <div class="mb-3">
+            <label class="form-label">State</label>
+            <InputSelect class="form-select" @bind-Value="_model.StateId">
+                <option value="">-- Not selected --</option>
+                @foreach (var item in _states)
+                {
+                    <option value="@item.Id">@item.Name</option>
+                }
+            </InputSelect>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Customer</label>
+            <InputSelect class="form-select" @bind-Value="_model.CustomerId">
+                <option value="">-- Not selected --</option>
+                @foreach (var item in _customers)
+                {
+                    <option value="@item.Id">@item.Name</option>
+                }
+            </InputSelect>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Position</label>
+            <InputSelect class="form-select" @bind-Value="_model.PositionId">
+                <option value="">-- Not selected --</option>
+                @foreach (var item in _positions)
+                {
+                    <option value="@item.Id">@item.Name</option>
+                }
+            </InputSelect>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Stack</label>
+            <InputSelect class="form-select" @bind-Value="_model.StackItemId">
+                <option value="">-- Not selected --</option>
+                @foreach (var item in _stackItems)
+                {
+                    <option value="@item.Id">@item.Name</option>
+                }
+            </InputSelect>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Work Format</label>
+            <InputSelect class="form-select" @bind-Value="_model.WorkFormatId">
+                <option value="">-- Not selected --</option>
+                @foreach (var item in _workFormats)
+                {
+                    <option value="@item.Id">@item.Name</option>
+                }
+            </InputSelect>
+        </div>
+
+        @if (!string.IsNullOrEmpty(_errorMessage))
+        {
+            <CrmAlert Variant="ColorVariant.Danger" Message="@_errorMessage" Dismissible="true" />
+        }
+
+        <div class="d-flex gap-2 mt-3">
+            <CrmButton Text="Save"
+                       Icon="check-lg"
+                       Type="submit"
+                       Disabled="_isSaving" />
+        </div>
+    </EditForm>
+}
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+
+    [Parameter]
+    public EventCallback OnSaved { get; set; }
+
+    private VacancyFormModel? _model;
+    private string? _errorMessage;
+    private bool _isLoading = true;
+    private bool _isSaving;
+
+    private IReadOnlyList<VacancyStateViewModel> _states = [];
+    private IReadOnlyList<CustomerViewModel> _customers = [];
+    private IReadOnlyList<PositionViewModel> _positions = [];
+    private IReadOnlyList<StackItemViewModel> _stackItems = [];
+    private IReadOnlyList<WorkFormatViewModel> _workFormats = [];
+
+    private static readonly TimeSpan CacheTtl = TimeSpan.FromMinutes(5);
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var vacancyTask = VacanciesService.GetByIdAsync(Id).AsTask();
+            var statesTask = Cache.GetOrSetAsync(RecruitmentCacheKeys.VacancyStates,
+                () => VacancyStatesService.GetAllAsync(), CacheTtl).AsTask();
+            var customersTask = Cache.GetOrSetAsync(RecruitmentCacheKeys.Customers,
+                () => CustomersService.GetAllAsync(), CacheTtl).AsTask();
+            var positionsTask = Cache.GetOrSetAsync(RecruitmentCacheKeys.Positions,
+                () => PositionsService.GetAllAsync(), CacheTtl).AsTask();
+            var stackItemsTask = Cache.GetOrSetAsync(RecruitmentCacheKeys.StackItems,
+                () => StackItemsService.GetAllAsync(), CacheTtl).AsTask();
+            var workFormatsTask = Cache.GetOrSetAsync(RecruitmentCacheKeys.WorkFormats,
+                () => WorkFormatsService.GetAllAsync(), CacheTtl).AsTask();
+
+            await Task.WhenAll(vacancyTask, statesTask, customersTask, positionsTask, stackItemsTask, workFormatsTask);
+
+            _states = statesTask.Result;
+            _customers = customersTask.Result;
+            _positions = positionsTask.Result;
+            _stackItems = stackItemsTask.Result;
+            _workFormats = workFormatsTask.Result;
+
+            var entity = vacancyTask.Result;
+            if (entity != null)
+            {
+                _model = new VacancyFormModel
+                {
+                    Id = entity.Id,
+                    Name = entity.Name,
+                    Description = entity.Description,
+                    StateId = entity.StateId,
+                    CustomerId = entity.CustomerId,
+                    PositionId = entity.PositionId,
+                    StackItemId = entity.StackItemId,
+                    WorkFormatId = entity.WorkFormatId
+                };
+            }
+            else
+            {
+                _errorMessage = "Vacancy not found";
+            }
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = $"Load error: {ex.Message}";
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+
+    private async Task SaveAsync()
+    {
+        if (_model == null) return;
+
+        _isSaving = true;
+        _errorMessage = null;
+
+        try
+        {
+            var request = new UpdateVacancyRequest(
+                Id,
+                _model.Name,
+                _model.Description,
+                _model.StateId,
+                _model.CustomerId,
+                _model.PositionId,
+                _model.StackItemId,
+                _model.WorkFormatId);
+            await VacanciesService.UpdateAsync(Id, request);
+            await OnSaved.InvokeAsync();
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = $"Error saving: {ex.Message}";
+        }
+        finally
+        {
+            _isSaving = false;
+        }
+    }
+}

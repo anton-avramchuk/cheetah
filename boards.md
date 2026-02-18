@@ -192,20 +192,20 @@ Add `@using Cheetah.Blazor.Components.SlideOver` to `_Imports.razor` ✅
 
 ---
 
-## Phase 5: Kanban Pages
+## Phase 5: Kanban Pages ✅ DONE
 
-### 5.1 Vacancy Board
+### 5.1 Vacancy Board ✅
 
 **New file:** `src/Modules/Recruitment/Crm.Recruitment.Frontend/Pages/VacancyBoardPage.razor`
 
 Route: `@page "/vacancies/board"`
 
 1. OnInitializedAsync: load all VacancyState (columns) ordered by Order, load all Vacancy grouped by StateId sorted by Order
-2. `CrmKanbanBoard<VacancyBoardItem>`: for each state -> CrmKanbanColumn with Id=state.Id, Title=state.Name; HeaderTemplate with `style="border-top: 3px solid {state.Color}"`; CardTemplate: Name, Customer badge (code + name), Position badge
+2. `CrmKanbanBoard<VacancyViewModel>`: for each state -> CrmKanbanColumn with Id=state.Id, Title=state.Name; HeaderTemplate with `style="border-top: 3px solid {state.Color}"`; CardTemplate: Name, Customer badge (code + name), Position badge
 3. OnItemMoved -> `VacanciesService.PatchAsync(id, MoveVacancyRequest)` + optimistic local Dictionary update
 4. OnCardClick -> open CrmSlideOver with VacancySlideOverForm
 
-### 5.2 VacancySlideOverForm
+### 5.2 VacancySlideOverForm ✅
 
 **New file:** `src/Modules/Recruitment/Crm.Recruitment.Frontend/Components/VacancySlideOverForm.razor`
 
@@ -216,7 +216,7 @@ Inline form for slide-over:
 - Save -> `VacanciesService.UpdateAsync` -> `EventCallback OnSaved`
 - "Open full page" button via ExternalUrl -> `/vacancies/{id}/edit`
 
-### 5.3 VacancyTask Board
+### 5.3 VacancyTask Board ✅
 
 **New file:** `src/Modules/VacancyTasks/VacancyTasks/Crm.VacancyTasks.Frontend/Pages/VacancyTaskBoardPage.razor`
 
@@ -228,20 +228,20 @@ Route: `@page "/vacancy-tasks/board"`
 4. OnItemMoved -> `VacancyTasksService.PatchAsync(id, MoveVacancyTaskRequest)` (endpoint already exists!)
 5. OnCardClick -> CrmSlideOver with VacancyTaskSlideOverForm
 
-### 5.4 VacancyTaskSlideOverForm
+### 5.4 VacancyTaskSlideOverForm ✅
 
 **New file:** `src/Modules/VacancyTasks/VacancyTasks/Crm.VacancyTasks.Frontend/Components/VacancyTaskSlideOverForm.razor`
 
 Fields: Title, Description, State (select), Priority (select with colors), DueDate.
 ExternalUrl -> `/vacancy-tasks/{id}/edit`
 
-### 5.5 Menu
+### 5.5 Menu ✅
 
 **File:** `src/Modules/Recruitment/Crm.Recruitment.Frontend/Navigation/RecruitmentMenuContributor.cs`
-- Change "Vacancies" url to `"vacancies/board"` (board as main page)
+- Changed "Vacancies" url to `"vacancies/board"` (board as main page)
 
 **File:** `src/Modules/VacancyTasks/VacancyTasks/Crm.VacancyTasks.Frontend/Navigation/VacancyTasksMenuContributor.cs`
-- Change "Tasks" url to `"vacancy-tasks/board"`
+- Changed "Tasks" url to `"vacancy-tasks/board"`
 
 ---
 
