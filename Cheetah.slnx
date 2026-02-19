@@ -113,7 +113,20 @@
         <Project Path="src/Modules/Candidates/Candidates/Crm.Candidates.DomainEvents/Crm.Candidates.DomainEvents.csproj" />
         <Project Path="src/Modules/Candidates/Candidates/Crm.Candidates.Frontend/Crm.Candidates.Frontend.csproj" />
     </Folder>
-    <Folder Name="/Modules/Recruitment/Identity/" />
+    <Folder Name="/Modules/Recruitment/Identity/">
+        <Project Path="src/Modules/Identity/Crm.Identity.Api.Tests/Crm.Identity.Api.Tests.csproj" />
+        <Project Path="src/Modules/Identity/Crm.Identity.Api/Crm.Identity.Api.csproj" />
+        <Project Path="src/Modules/Identity/Crm.Identity.ApiClient.Tests/Crm.Identity.ApiClient.Tests.csproj" />
+        <Project Path="src/Modules/Identity/Crm.Identity.ApiClient/Crm.Identity.ApiClient.csproj" />
+        <Project Path="src/Modules/Identity/Crm.Identity.Application.Tests/Crm.Identity.Application.Tests.csproj" />
+        <Project Path="src/Modules/Identity/Crm.Identity.Application/Crm.Identity.Application.csproj" />
+        <Project Path="src/Modules/Identity/Crm.Identity.Contracts/Crm.Identity.Contracts.csproj" />
+        <Project Path="src/Modules/Identity/Crm.Identity.DataAccess/Crm.Identity.DataAccess.csproj" />
+        <Project Path="src/Modules/Identity/Crm.Identity.Domain.Tests/Crm.Identity.Domain.Tests.csproj" />
+        <Project Path="src/Modules/Identity/Crm.Identity.Domain/Crm.Identity.Domain.csproj" />
+        <Project Path="src/Modules/Identity/Crm.Identity.DomainEvents/Crm.Identity.DomainEvents.csproj" />
+        <Project Path="src/Modules/Identity/Crm.Identity.Frontend/Crm.Identity.Frontend.csproj" />
+    </Folder>
     <Folder Name="/Modules/Recruitment/Task/">
         <Project Path="src/Modules/VacancyTasks/VacancyTasks/Crm.VacancyTasks.Api.Tests/Crm.VacancyTasks.Api.Tests.csproj" />
         <Project Path="src/Modules/VacancyTasks/VacancyTasks/Crm.VacancyTasks.Api/Crm.VacancyTasks.Api.csproj" />
