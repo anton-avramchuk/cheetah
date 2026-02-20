@@ -13,8 +13,6 @@ namespace Crm.Identity.DataAccess;
 public class IdentityDbContext(DbContextOptions<IdentityDbContext> options)
     : BaseIdentityDbContext(options)
 {
-    public DbSet<UserIdentity> UserIdentities => Set<UserIdentity>();
-
     protected override IEntityTypeConfiguration<CrmUser> GetUserConfiguration()
         => new UserConfiguration();
 
@@ -29,10 +27,4 @@ public class IdentityDbContext(DbContextOptions<IdentityDbContext> options)
 
     protected override IEntityTypeConfiguration<IdentityRoleClaim> GetRoleClaimConfiguration()
         => new RoleClaimConfiguration();
-
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        base.OnModelCreating(modelBuilder);
-        modelBuilder.ApplyConfiguration(new UserIdentityConfiguration());
-    }
 }
