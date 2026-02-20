@@ -26,9 +26,9 @@ public class IdentityUser<TIdentityRole> : AggregateRoot<Guid>, ICreateAtEntity,
     private readonly List<IdentityUserClaim> _claims = new();
     public IReadOnlyCollection<IdentityUserClaim> Claims => _claims;
 
-    private IdentityUser() { } // For EF Core
+    protected IdentityUser() { } // For EF Core
 
-    private IdentityUser(Guid id, string userName, string email) : base(id)
+    protected IdentityUser(Guid id, string userName, string email) : base(id)
     {
         SetUserName(userName);
         SetEmail(email);

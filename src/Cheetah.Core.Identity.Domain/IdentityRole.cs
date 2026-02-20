@@ -14,9 +14,9 @@ public class IdentityRole : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEnti
     private readonly List<IdentityRoleClaim> _claims = new();
     public IReadOnlyCollection<IdentityRoleClaim> Claims => _claims;
 
-    private IdentityRole() { } // For EF Core
+    protected IdentityRole() { } // For EF Core
 
-    private IdentityRole(Guid id, string name) : base(id)
+    protected IdentityRole(Guid id, string name) : base(id)
     {
         SetName(name);
     }

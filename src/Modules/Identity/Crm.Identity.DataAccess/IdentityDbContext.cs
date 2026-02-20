@@ -1,14 +1,34 @@
-using Cheetah.Core.EntityFramework;
+using Cheetah.Core.Identity.Domain;
 using Crm.Identity.DataAccess.Configurations;
 using Crm.Identity.Domain;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using BaseIdentityDbContext = Cheetah.Core.Identity.DataAccess.Context.IdentityDbContext<
+    Crm.Identity.DataAccess.IdentityDbContext,
+    Crm.Identity.Domain.CrmUser,
+    Crm.Identity.Domain.CrmRole>;
 
 namespace Crm.Identity.DataAccess;
 
 public class IdentityDbContext(DbContextOptions<IdentityDbContext> options)
-    : CrmDbContext<IdentityDbContext>(options)
+    : BaseIdentityDbContext(options)
 {
-    public DbSet<UserIdentity> SampleEntities => Set<UserIdentity>();
+    public DbSet<UserIdentity> UserIdentities => Set<UserIdentity>();
+
+    protected override IEntityTypeConfiguration<CrmUser> GetUserConfiguration()
+        => new UserConfiguration();
+
+    protected override IEntityTypeConfiguration<CrmRole> GetRoleConfiguration()
+        => new RoleConfiguration();
+
+    protected override IEntityTypeConfiguration<IdentityUserRole<CrmRole>> GetUserRoleConfiguration()
+        => new UserRoleConfiguration();
+
+    protected override IEntityTypeConfiguration<IdentityUserClaim> GetUserClaimConfiguration()
+        => new UserClaimConfiguration();
+
+    protected override IEntityTypeConfiguration<IdentityRoleClaim> GetRoleClaimConfiguration()
+        => new RoleClaimConfiguration();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
