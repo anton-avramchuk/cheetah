@@ -1,12 +1,17 @@
-using Cheetah.Blazor.Components.Crud;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Cheetah.Contracts.Requests;
 using Cheetah.Contracts.Responses;
-using Crm.Identity.ApiClient;
 using Crm.Identity.Contracts.Requests;
 using Crm.Identity.Contracts.Response;
 using Crm.Identity.Frontend.Models;
 using Crm.Identity.Frontend.Services;
 using Moq;
 using Shouldly;
+using Xunit;
 
 namespace Crm.Identity.ApiClient.Tests;
 
@@ -36,7 +41,7 @@ public class UserIdentityCrudServiceTests
             .ReturnsAsync(gridResult);
 
         // Act
-        var result = await _crudService.GetAllAsync(new Cheetah.Contracts.Requests.GridRequest());
+        var result = await _crudService.GetAllAsync(new GridRequest());
 
         // Assert
         result.Total.ShouldBe(2);

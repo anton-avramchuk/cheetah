@@ -1,3 +1,4 @@
+using System;
 using Cheetah.Contracts.Responses;
 
 namespace Crm.Identity.Contracts.Response;

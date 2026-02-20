@@ -1,3 +1,4 @@
+using System;
 using Cheetah.Core.Domain;
 
 namespace Crm.Identity.Domain;
