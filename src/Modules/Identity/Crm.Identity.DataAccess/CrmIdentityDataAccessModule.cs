@@ -27,7 +27,7 @@ public partial class CrmIdentityDataAccessModule : CrmModule
         RegisterServices(context.Services);
 
         context.Services.AddIdentityContext<IdentityDbContext, CrmUser, CrmRole>(_ => { });
-        context.Services.AddScoped<IdentityDbContext>();
+        
         context.Services.AddDatabaseMigrator<IdentityDbContext>();
 
         context.Services.Configure<CrmDbContextOptions>(options => { options.UseNpgsql<IdentityDbContext>(); });

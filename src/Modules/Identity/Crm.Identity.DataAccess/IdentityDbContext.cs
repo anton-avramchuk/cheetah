@@ -1,3 +1,4 @@
+using Cheetah.Core.DataAccess.Attributes;
 using Cheetah.Core.Identity.Domain;
 using Crm.Identity.DataAccess.Configurations;
 using Crm.Identity.Domain;
@@ -10,6 +11,7 @@ using BaseIdentityDbContext = Cheetah.Core.Identity.DataAccess.Context.IdentityD
 
 namespace Crm.Identity.DataAccess;
 
+[ConnectionStringName("Identity")]
 public class IdentityDbContext(DbContextOptions<IdentityDbContext> options)
     : BaseIdentityDbContext(options)
 {

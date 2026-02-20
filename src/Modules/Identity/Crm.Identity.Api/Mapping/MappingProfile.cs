@@ -1,0 +1,33 @@
+using Cheetah.Core.DependencyInjection;
+using Cheetah.Mapping.Mapster;
+using Crm.Identity.Application;
+using Crm.Identity.Application.Commands;
+using Crm.Identity.Application.Queries;
+using Crm.Identity.Contracts.Requests;
+using Crm.Identity.Contracts.Response;
+using Mapster;
+
+namespace Crm.Identity.Api.Mapping;
+
+[Export(LifetimeType.Singleton, typeof(IMapsterMappingProfile))]
+public class MappingProfile : IMapsterMappingProfile
+{
+    public void Configure(TypeAdapterConfig config)
+    {
+        // Roles
+        config.NewConfig<RoleModel, RoleViewModel>();
+        config.NewConfig<GetAllRolesRequest, GetAllRolesQuery>();
+        config.NewConfig<GetRoleByIdRequest, GetRoleByIdQuery>();
+        config.NewConfig<CreateRoleRequest, CreateRoleCommand>();
+        config.NewConfig<UpdateRoleRequest, UpdateRoleCommand>();
+        config.NewConfig<DeleteRoleRequest, DeleteRoleCommand>();
+
+        // Users
+        config.NewConfig<UserModel, UserViewModel>();
+        config.NewConfig<GetAllUsersRequest, GetAllUsersQuery>();
+        config.NewConfig<GetUserByIdRequest, GetUserByIdQuery>();
+        config.NewConfig<CreateUserRequest, CreateUserCommand>();
+        config.NewConfig<UpdateUserRequest, UpdateUserCommand>();
+        config.NewConfig<DeleteUserRequest, DeleteUserCommand>();
+    }
+}
