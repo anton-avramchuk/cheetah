@@ -37,6 +37,7 @@
         <Project Path="src/Cheetah.Backend.Events.Redis/Cheetah.Backend.Events.Redis.csproj" />
         <Project Path="src/Cheetah.Backend.Redis/Cheetah.Backend.Redis.csproj" />
         <Project Path="src/Cheetah.Backend.ReverseProxy/Cheetah.Backend.ReverseProxy.csproj" />
+        <Project Path="src/Cheetah.Core.Identity.DataAccess/Cheetah.Core.Identity.DataAccess.csproj" />
         <Project Path="src/Cheetah.Core.Identity.Domain/Cheetah.Core.Identity.Domain.csproj" />
         <Project Path="src/Cheetah.OpenApi/Cheetah.OpenApi.csproj" />
         <Project Path="src/Cheetah.Scalar/Cheetah.Scalar.csproj" />

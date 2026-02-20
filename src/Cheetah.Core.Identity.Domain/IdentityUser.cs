@@ -76,11 +76,19 @@ public class IdentityUser<TIdentityRole> : AggregateRoot<Guid>, ICreateAtEntity,
 
     public void ConfirmEmail() => EmailConfirmed = true;
 
+    public void SetEmailConfirmed(bool confirmed) => EmailConfirmed = confirmed;
+
     // Password & security
 
     public void SetPasswordHash(string? passwordHash) => PasswordHash = passwordHash;
 
     public void RefreshSecurityStamp() => SecurityStamp = Guid.NewGuid().ToString();
+
+    public void SetSecurityStamp(string stamp)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(stamp);
+        SecurityStamp = stamp;
+    }
 
     // Lockout
 
