@@ -3,6 +3,7 @@ using Cheetah.AspNetCore.Contracts;
 using Cheetah.Backend.CQRS;
 using Cheetah.Backend.Endpoints;
 using Cheetah.Backend.Events.Redis;
+using Cheetah.Backend.Jwt;
 using Cheetah.Core;
 using Cheetah.Core.Modularity;
 using Cheetah.Mapping.Mapster;
@@ -21,6 +22,7 @@ namespace Crm.Candidates.Api;
     typeof(CrmBackendCQRSModule),
     typeof(CrmBackendEventsRedisModule),
     typeof(CrmBackendEndpointsModule),
+    typeof(CrmBackendJwtModule),
     typeof(CrmCandidatesApplicationModule),
     typeof(CrmCandidatesDataAccessModule)
 )]

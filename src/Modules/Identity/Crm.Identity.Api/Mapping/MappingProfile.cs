@@ -14,6 +14,13 @@ public class MappingProfile : IMapsterMappingProfile
 {
     public void Configure(TypeAdapterConfig config)
     {
+        // Auth
+        config.NewConfig<LoginRequest, LoginCommand>();
+        config.NewConfig<TokenResult, TokenViewModel>()
+            .Map(dest => dest.AccessToken, src => src.Token)
+            .Map(dest => dest.TokenType, _ => "Bearer")
+            .Map(dest => dest.ExpiresIn, src => src.ExpiresInSeconds);
+
         // Roles
         config.NewConfig<RoleModel, RoleViewModel>();
         config.NewConfig<GetAllRolesRequest, GetAllRolesQuery>();

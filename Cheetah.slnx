@@ -35,6 +35,8 @@
         <Project Path="src/Cheetah.Backend.CQRS/Cheetah.Backend.CQRS.csproj" />
         <Project Path="src/Cheetah.Backend.Endpoints/Cheetah.Backend.Endpoints.csproj" />
         <Project Path="src/Cheetah.Backend.Events.Redis/Cheetah.Backend.Events.Redis.csproj" />
+        <Project Path="src/Cheetah.Backend.Jwt/Cheetah.Backend.Jwt.csproj" />
+        <Project Path="src/Cheetah.Backend.Jwt.Abstractions/Cheetah.Backend.Jwt.Abstractions.csproj" />
         <Project Path="src/Cheetah.Backend.Redis/Cheetah.Backend.Redis.csproj" />
         <Project Path="src/Cheetah.Backend.ReverseProxy/Cheetah.Backend.ReverseProxy.csproj" />
         <Project Path="src/Cheetah.Core.Identity.DataAccess/Cheetah.Core.Identity.DataAccess.csproj" />
@@ -163,6 +165,7 @@
         <File Path="global.json" />
         <File Path="nuget.config" />
     </Folder>
+
     <Folder Name="/Tests/">
         <Project Path="src/Cheetah.Backend.Events.Redis.Tests/Cheetah.Backend.Events.Redis.Tests.csproj" />
         <Project Path="src/Cheetah.Backend.Redis.Tests/Cheetah.Backend.Redis.Tests.csproj" />
