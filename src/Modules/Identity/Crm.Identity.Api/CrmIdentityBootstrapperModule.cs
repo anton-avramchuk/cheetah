@@ -12,7 +12,6 @@ using Crm.Identity.Api.Middleware;
 using Crm.Identity.Application;
 using Crm.Identity.DataAccess;
 
-
 namespace Crm.Identity.Api;
 
 [DependsOn(

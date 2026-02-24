@@ -50,6 +50,7 @@
         <Project Path="src/Cheetah.Blazor/Cheetah.Blazor.csproj" />
         <Project Path="src/Cheetah.Frontend.CQRS/Cheetah.Frontend.CQRS.csproj" />
         <Project Path="src/Cheetah.Frontend.Events/Cheetah.Frontend.Events.csproj" />
+        <Project Path="src/Cheetah.Frontend.Auth/Cheetah.Frontend.Auth.csproj" />
         <Project Path="src/Cheetah.Frontend.Navigation/Cheetah.Frontend.Navigation.csproj" />
     </Folder>
     <Folder Name="/Modules/">

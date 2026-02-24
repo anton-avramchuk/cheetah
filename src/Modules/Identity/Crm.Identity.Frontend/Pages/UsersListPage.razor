@@ -1,0 +1,22 @@
+@page "/admin/users"
+@namespace Crm.Identity.Frontend.Pages
+@attribute [Authorize]
+
+@inject ICrudService<UserGridViewModel, UserFormModel, UserFormModel> CrudService
+
+<PageTitle>Users</PageTitle>
+
+<CrmCrudGrid TGridViewModel="UserGridViewModel"
+             TCreateViewModel="UserFormModel"
+             TEditViewModel="UserFormModel"
+             Service="CrudService"
+             Title="Users"
+             CreateFormType="typeof(UserForm)"
+             EditFormType="typeof(UserForm)"
+             CreateDialogTitle="New User"
+             EditDialogTitle="Edit User"
+             CreateButtonText="Add"
+             EmptyMessage="No users found"
+             AllowCreate="true"
+             AllowEdit="true"
+             AllowDelete="true"/>
