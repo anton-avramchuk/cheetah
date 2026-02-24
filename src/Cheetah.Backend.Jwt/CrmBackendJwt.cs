@@ -3,7 +3,6 @@ using Cheetah.AspNetCore;
 using Cheetah.AspNetCore.Extensions;
 using Cheetah.Backend.Jwt.Options;
 using Cheetah.Core;
-using Cheetah.Core.Extensions.DependencyInjection;
 using Cheetah.Core.Modularity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -22,9 +21,11 @@ public partial class CrmBackendJwtModule : CrmModule
     {
         RegisterServices(context.Services);
 
-        var configuration = context.Services.GetConfiguration();
-
-        context.Services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName));
+        context.Services
+            .AddOptions<JwtOptions>()
+            .BindConfiguration(JwtOptions.SectionName)
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
 
         context.Services
             .AddAuthentication(options =>

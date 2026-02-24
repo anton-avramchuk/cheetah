@@ -1,6 +1,5 @@
 using Cheetah.Backend.Endpoints.Configuration;
 using Cheetah.Backend.Endpoints.Http;
-using Crm.Identity.Application;
 using Crm.Identity.Application.Commands;
 using Crm.Identity.Contracts.Requests;
 using Crm.Identity.Contracts.Response;

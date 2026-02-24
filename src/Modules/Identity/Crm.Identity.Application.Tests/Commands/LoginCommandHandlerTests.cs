@@ -1,6 +1,6 @@
-using Cheetah.Backend.Jwt.Abstractions;
 using Crm.Identity.Application.Commands;
 using Crm.Identity.Application.Exceptions;
+using Crm.Identity.Application.Services;
 using Crm.Identity.Domain;
 using Microsoft.AspNetCore.Identity;
 using Moq;
@@ -11,16 +11,13 @@ namespace Crm.Identity.Application.Tests.Commands;
 public class LoginCommandHandlerTests
 {
     private readonly Mock<UserManager<CrmUser>> _userManagerMock;
-    private readonly Mock<IJwtTokenGenerator> _tokenGeneratorMock;
+    private readonly Mock<ITokenGenerator> _tokenGeneratorMock;
     private readonly LoginCommandHandler _handler;
 
     public LoginCommandHandlerTests()
     {
-        var userStoreMock = new Mock<IUserStore<CrmUser>>();
-        _userManagerMock = new Mock<UserManager<CrmUser>>(
-            userStoreMock.Object, null, null, null, null, null, null, null, null);
-
-        _tokenGeneratorMock = new Mock<IJwtTokenGenerator>();
+        _userManagerMock = CreateUserManagerMock();
+        _tokenGeneratorMock = new Mock<ITokenGenerator>();
 
         _handler = new LoginCommandHandler(
             _userManagerMock.Object,
@@ -48,8 +45,8 @@ public class LoginCommandHandlerTests
             .ReturnsAsync(["admin"]);
 
         _tokenGeneratorMock
-            .Setup(g => g.GenerateToken(user.Id, user.UserName!, user.Email!, It.IsAny<IEnumerable<string>>(), null))
-            .Returns(new TokenGenerationResult(expectedToken, 3600));
+            .Setup(g => g.GenerateToken(user.Id, user.UserName!, user.Email!, It.IsAny<IEnumerable<string>>()))
+            .Returns(new TokenResult(expectedToken, 3600));
 
         // Act
         var result = await _handler.HandleAsync(command);
@@ -119,14 +116,21 @@ public class LoginCommandHandlerTests
             .ReturnsAsync(roles);
 
         _tokenGeneratorMock
-            .Setup(g => g.GenerateToken(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<IEnumerable<string>>(), null))
-            .Returns(new TokenGenerationResult("token", 3600));
+            .Setup(g => g.GenerateToken(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<IEnumerable<string>>()))
+            .Returns(new TokenResult("token", 3600));
 
         // Act
         await _handler.HandleAsync(command);
 
         // Assert
         _tokenGeneratorMock.Verify(g =>
-            g.GenerateToken(user.Id, user.UserName!, user.Email!, roles, null), Times.Once);
+            g.GenerateToken(user.Id, user.UserName!, user.Email!, roles), Times.Once);
+    }
+
+    private static Mock<UserManager<CrmUser>> CreateUserManagerMock()
+    {
+        var userStoreMock = new Mock<IUserStore<CrmUser>>();
+        return new Mock<UserManager<CrmUser>>(
+            userStoreMock.Object, null, null, null, null, null, null, null, null);
     }
 }

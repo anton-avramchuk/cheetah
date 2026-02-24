@@ -12,6 +12,7 @@ namespace Cheetah.Backend.Jwt.Services;
 [Export(LifetimeType.Singleton, typeof(IJwtTokenGenerator))]
 public class JwtTokenGenerator(IOptions<JwtOptions> options) : IJwtTokenGenerator
 {
+    private static readonly JwtSecurityTokenHandler _tokenHandler = new();
     private readonly JwtOptions _options = options.Value;
 
     public TokenGenerationResult GenerateToken(
@@ -46,6 +47,6 @@ public class JwtTokenGenerator(IOptions<JwtOptions> options) : IJwtTokenGenerato
             expires: DateTime.UtcNow.AddSeconds(expiresInSeconds),
             signingCredentials: credentials);
 
-        return new TokenGenerationResult(new JwtSecurityTokenHandler().WriteToken(token), expiresInSeconds);
+        return new TokenGenerationResult(_tokenHandler.WriteToken(token), expiresInSeconds);
     }
 }

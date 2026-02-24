@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <ItemGroup>
-        <ProjectReference Include="..\..\..\Cheetah.Backend.Jwt.Abstractions\Cheetah.Backend.Jwt.Abstractions.csproj" />
         <ProjectReference Include="..\..\..\Cheetah.Core.CQRS\Cheetah.Core.CQRS.csproj" />
         <ProjectReference Include="..\..\..\Cheetah.Core.Grid\Cheetah.Core.Grid.csproj" />
         <ProjectReference Include="..\..\..\Cheetah.Core\Cheetah.Core.csproj" />
