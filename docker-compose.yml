@@ -60,6 +60,9 @@ services:
       ASPNETCORE_URLS: http://+:8080
       ConnectionStrings__Recruitment: Host=postgres;Database=cheetah_recruitment;Username=postgres;Password=postgres
       Redis__Instances__default__ConnectionString: redis:6379
+      Jwt__SecretKey: ${JWT_SECRET_KEY:?JWT_SECRET_KEY is required}
+      Jwt__Issuer: ${JWT_ISSUER:-cheetah-crm}
+      Jwt__Audience: ${JWT_AUDIENCE:-cheetah-crm-api}
     depends_on:
       postgres:
         condition: service_healthy
@@ -75,6 +78,9 @@ services:
       ASPNETCORE_URLS: http://+:8080
       ConnectionStrings__Candidates: Host=postgres;Database=cheetah_candidates;Username=postgres;Password=postgres
       Redis__Instances__default__ConnectionString: redis:6379
+      Jwt__SecretKey: ${JWT_SECRET_KEY:?JWT_SECRET_KEY is required}
+      Jwt__Issuer: ${JWT_ISSUER:-cheetah-crm}
+      Jwt__Audience: ${JWT_AUDIENCE:-cheetah-crm-api}
     depends_on:
       postgres:
         condition: service_healthy
@@ -90,6 +96,9 @@ services:
       ASPNETCORE_URLS: http://+:8080
       ConnectionStrings__VacancyTasks: Host=postgres;Database=cheetah_vacancy_tasks;Username=postgres;Password=postgres
       Redis__Instances__default__ConnectionString: redis:6379
+      Jwt__SecretKey: ${JWT_SECRET_KEY:?JWT_SECRET_KEY is required}
+      Jwt__Issuer: ${JWT_ISSUER:-cheetah-crm}
+      Jwt__Audience: ${JWT_AUDIENCE:-cheetah-crm-api}
     depends_on:
       postgres:
         condition: service_healthy
@@ -105,6 +114,9 @@ services:
       ASPNETCORE_URLS: http://+:8080
       ConnectionStrings__Identity: Host=postgres;Database=cheetah_identity;Username=postgres;Password=postgres
       Redis__Instances__default__ConnectionString: redis:6379
+      Jwt__SecretKey: ${JWT_SECRET_KEY:?JWT_SECRET_KEY is required}
+      Jwt__Issuer: ${JWT_ISSUER:-cheetah-crm}
+      Jwt__Audience: ${JWT_AUDIENCE:-cheetah-crm-api}
     depends_on:
       postgres:
         condition: service_healthy
