@@ -1,6 +1,5 @@
+using System.Text.Json.Nodes;
 using Microsoft.Extensions.Logging;
-using Microsoft.OpenApi;
-using Microsoft.OpenApi.Reader;
 
 namespace Cheetah.OpenApi.Services;
 
@@ -10,103 +9,82 @@ public class OpenApiAggregator(
     ILogger<OpenApiAggregator> logger)
     : IOpenApiAggregator
 {
-    public async Task<OpenApiDocument> GetCombinedOpenApiDocumentAsync()
+    public async Task<JsonObject> GetCombinedDocumentAsync()
     {
-        logger.LogInformation("Starting OpenAPI aggregation...");
-
-        var clusterAddresses = addressProvider.GetClusterAddresses().ToList();
-        logger.LogInformation("Found {Count} cluster addresses", clusterAddresses.Count);
-
-        foreach (var (addr, prefix) in clusterAddresses)
+        var combined = new JsonObject
         {
-            logger.LogInformation("  - Address: {Address}, Prefix: {Prefix}", addr, prefix);
-        }
-
-        var combined = new OpenApiDocument
-        {
-            Info = new OpenApiInfo { Title = "Combined API", Version = "v1" },
-            Paths = new OpenApiPaths(),
-            Components = new OpenApiComponents()
+            ["openapi"] = "3.1.1",
+            ["info"] = new JsonObject { ["title"] = "Combined API", ["version"] = "v1" },
+            ["paths"] = new JsonObject(),
+            ["components"] = new JsonObject { ["schemas"] = new JsonObject() },
         };
 
-        foreach (var (address, routePrefix) in clusterAddresses)
+        var combinedPaths   = combined["paths"]!.AsObject();
+        var combinedSchemas = combined["components"]!["schemas"]!.AsObject();
+        var securitySchemes = new JsonObject();
+
+        foreach (var (address, routePrefix) in addressProvider.GetClusterAddresses())
         {
+            JsonObject? doc;
             try
             {
-                var fullUri = new Uri(new Uri(address), "openapi/v1.json");
-                logger.LogInformation("Fetching OpenAPI from {Uri}", fullUri);
-
-                var json = await clientFactory.CreateClient().GetStringAsync(fullUri);
-                logger.LogInformation("Received {Length} bytes, loading OpenAPI document...", json.Length);
-
-                using var stream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(json));
-                var result = await OpenApiDocument.LoadAsync(stream);
-                var doc = result.Document;
-
-                if (result.Diagnostic?.Errors?.Count > 0)
-                {
-                    foreach (var error in result.Diagnostic.Errors)
-                    {
-                        logger.LogWarning("OpenAPI parse error: {Error}", error.Message);
-                    }
-                }
-
-                logger.LogInformation("Document loaded. Paths count: {PathCount}", doc?.Paths?.Count ?? 0);
-
-                if (doc?.Paths != null)
-                {
-                    // Determine the address base path to strip from downstream paths
-                    var addressBasePath = "";
-                    try
-                    {
-                        var addressUri = new Uri(address.TrimEnd('/') + "/");
-                        addressBasePath = addressUri.AbsolutePath.TrimEnd('/');
-                        if (addressBasePath == "/") addressBasePath = "";
-                    }
-                    catch
-                    {
-                        // ignored
-                    }
-
-                    foreach (var path in doc.Paths)
-                    {
-                        var pathKey = path.Key;
-
-                        // Strip the address base path from downstream path
-                        // e.g. address "http://svc/api" → strip "/api" from "/api/candidates" → "/candidates"
-                        if (!string.IsNullOrEmpty(addressBasePath)
-                            && pathKey.StartsWith(addressBasePath, StringComparison.OrdinalIgnoreCase))
-                        {
-                            pathKey = pathKey[addressBasePath.Length..];
-                        }
-
-                        var newPathKey = $"{routePrefix.TrimEnd('/')}{pathKey}";
-                        combined.Paths[newPathKey] = path.Value;
-                        logger.LogDebug("Added path: {Path}", newPathKey);
-                    }
-                }
-
-                // Merge components (schemas, etc.)
-                if (doc?.Components?.Schemas != null && combined.Components?.Schemas != null)
-                {
-                    logger.LogInformation("Merging {Count} schemas", doc.Components.Schemas.Count);
-                    foreach (var schema in doc.Components.Schemas)
-                    {
-                        combined.Components.Schemas.TryAdd(schema.Key, schema.Value);
-                    }
-                }
-            }
-            catch (HttpRequestException ex)
-            {
-                logger.LogError(ex, "HTTP error fetching OpenAPI from {Address}: {Message}", address, ex.Message);
+                var uri  = new Uri(new Uri(address), "openapi/v1.json");
+                var json = await clientFactory.CreateClient().GetStringAsync(uri);
+                doc = JsonNode.Parse(json)?.AsObject();
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error processing {Address}: {Message}", address, ex.Message);
+                logger.LogError(ex, "Failed to fetch OpenAPI from {Address}", address);
+                continue;
+            }
+
+            if (doc is null) continue;
+
+            // Determine the base path to strip from downstream paths
+            // e.g. address "http://svc:8080/api" → strip "/api"
+            var addressBasePath = "";
+            if (Uri.TryCreate(address.TrimEnd('/'), UriKind.Absolute, out var addressUri))
+            {
+                addressBasePath = addressUri.AbsolutePath.TrimEnd('/');
+                if (addressBasePath == "/") addressBasePath = "";
+            }
+
+            // Merge paths
+            if (doc["paths"]?.AsObject() is { } paths)
+            {
+                foreach (var (rawKey, pathValue) in paths)
+                {
+                    var key = rawKey;
+                    if (!string.IsNullOrEmpty(addressBasePath)
+                        && key.StartsWith(addressBasePath, StringComparison.OrdinalIgnoreCase))
+                        key = key[addressBasePath.Length..];
+
+                    var newKey = $"{routePrefix.TrimEnd('/')}{key}";
+                    combinedPaths[newKey] = pathValue?.DeepClone();
+                }
+            }
+
+            // Merge component schemas (preserves example, description, etc.)
+            if (doc["components"]?["schemas"]?.AsObject() is { } schemas)
+            {
+                foreach (var (schemaKey, schemaValue) in schemas)
+                    combinedSchemas.TryAdd(schemaKey, schemaValue?.DeepClone());
+            }
+
+            // Merge security schemes
+            if (doc["components"]?["securitySchemes"]?.AsObject() is { } schemes)
+            {
+                foreach (var (schemeKey, schemeValue) in schemes)
+                    securitySchemes.TryAdd(schemeKey, schemeValue?.DeepClone());
             }
         }
 
-        logger.LogInformation("Aggregation complete. Total paths: {Count}", combined.Paths.Count);
+        if (securitySchemes.Count > 0)
+            combined["components"]!.AsObject()["securitySchemes"] = securitySchemes;
+
+        logger.LogInformation("Aggregation complete: {Paths} paths, {Schemas} schemas",
+            combinedPaths.Count, combinedSchemas.Count);
+
         return combined;
     }
 }

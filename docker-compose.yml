@@ -159,6 +159,7 @@ services:
       - "8080:80"
     depends_on:
       - admin-api
+      - crm-identity-api
 
 volumes:
   postgres_data:

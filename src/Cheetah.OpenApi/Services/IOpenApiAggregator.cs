@@ -1,8 +1,8 @@
-using Microsoft.OpenApi;
+using System.Text.Json.Nodes;
 
 namespace Cheetah.OpenApi.Services;
 
 public interface IOpenApiAggregator
 {
-    Task<OpenApiDocument> GetCombinedOpenApiDocumentAsync();
+    Task<JsonObject> GetCombinedDocumentAsync();
 }
