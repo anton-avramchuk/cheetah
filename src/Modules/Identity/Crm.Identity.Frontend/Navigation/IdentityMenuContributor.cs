@@ -10,6 +10,7 @@ namespace Crm.Identity.Frontend.Navigation;
 [Export(LifetimeType.Singleton, typeof(IMenuContributor))]
 public class IdentityMenuContributor : IMenuContributor
 {
+    private const string AdminRole = "Admin";
     public Task ConfigureMenuAsync(MenuConfigurationContext context)
     {
         var mainMenu = context.GetOrCreateMenu(StandardMenus.Main);
@@ -26,11 +27,13 @@ public class IdentityMenuContributor : IMenuContributor
                 id: "Users",
                 name: "Users",
                 url: "admin/users",
+                requiredRoles: [AdminRole],
                 order: 1)
             .AddChild(
                 id: "Roles",
                 name: "Roles",
                 url: "admin/roles",
+                requiredRoles: [AdminRole],
                 order: 2);
 
         return Task.CompletedTask;

@@ -3,10 +3,12 @@ using Cheetah.Blazor.Layout;
 using Cheetah.Blazor.Layout.Extensions;
 using Cheetah.Core;
 using Cheetah.Core.Modularity;
+using Cheetah.Frontend.Auth;
 using Cheetah.Frontend.Navigation;
 using Cheetah.Mapping.Mapster;
 using Crm.Candidates.ApiClient;
 using Crm.Candidates.Frontend;
+using Crm.Identity.Frontend;
 using Crm.Recruitment.ApiClient;
 using Crm.Recruitment.Frontend;
 using Crm.VacancyTasks.ApiClient;
@@ -20,6 +22,8 @@ namespace Crm.Recruitment.Client;
 [DependsOn(typeof(CoreModule))]
 [DependsOn(typeof(CrmBlazorModule))]
 [DependsOn(typeof(CrmBlazorLayoutModule))]
+[DependsOn(typeof(CrmFrontendAuthModule))]
+[DependsOn(typeof(CrmIdentityFrontendModule))]
 [DependsOn(typeof(CrmFrontendNavigationModule))]
 [DependsOn(typeof(CrmMapsterModule))]
 [DependsOn(typeof(CrmRecruitmentFrontendModule))]
@@ -33,6 +37,10 @@ public partial class RecruitmentClientBootstrapperModule : CrmModule
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
         RegisterServices(context.Services);
+
+        context.Services.ConfigureHttpClientDefaults(b =>
+            b.AddHttpMessageHandler<JwtAuthorizationMessageHandler>()
+             .AddHttpMessageHandler<UnauthorizedRedirectHandler>());
 
         context.Services.AddOptions<CrmRecruitmentFrontendOptions>().BindConfiguration(ApiSection);
 

@@ -42,7 +42,18 @@ public class MenuItem
     /// <summary>
     /// Required permission to see this menu item.
     /// </summary>
+    /// <remarks>
+    /// Deprecated — treated as a single role name for backwards compatibility.
+    /// Use <see cref="RequiredRoles"/> for new code.
+    /// </remarks>
+    [Obsolete("Use RequiredRoles instead")]
     public string? Permission { get; set; }
+
+    /// <summary>
+    /// Roles that can see this menu item. Empty list means visible to everyone.
+    /// The user must have at least one of the listed roles.
+    /// </summary>
+    public List<string> RequiredRoles { get; set; } = [];
 
     /// <summary>
     /// Sort order within the parent.

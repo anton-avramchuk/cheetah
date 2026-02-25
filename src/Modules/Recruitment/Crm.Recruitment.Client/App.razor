@@ -1,11 +1,22 @@
 @using Cheetah.Blazor.Routing
+@using Cheetah.Frontend.Auth.Components
+@using Microsoft.AspNetCore.Components.Authorization
 @inject IRoutableAssemblyProvider RoutableAssemblyProvider
 
-<Router AppAssembly="@typeof(App).Assembly"
-        AdditionalAssemblies="@RoutableAssemblyProvider.GetRoutableAssemblies()"
-        NotFoundPage="typeof(Pages.NotFound)">
-    <Found Context="routeData">
-        <RouteView RouteData="@routeData" DefaultLayout="@typeof(Cheetah.Blazor.Layout.Components.CrmMainLayout)"/>
-        <FocusOnNavigate RouteData="@routeData" Selector="h1"/>
-    </Found>
-</Router>
+<CascadingAuthenticationState>
+    <Router AppAssembly="@typeof(App).Assembly"
+            AdditionalAssemblies="@RoutableAssemblyProvider.GetRoutableAssemblies()"
+            NotFoundPage="typeof(Pages.NotFound)">
+        <Found Context="routeData">
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(Cheetah.Blazor.Layout.Components.CrmMainLayout)">
+                <NotAuthorized>
+                    <RedirectToLogin/>
+                </NotAuthorized>
+                <Authorizing>
+                    <p>Checking authorization...</p>
+                </Authorizing>
+            </AuthorizeRouteView>
+            <FocusOnNavigate RouteData="@routeData" Selector="h1"/>
+        </Found>
+    </Router>
+</CascadingAuthenticationState>

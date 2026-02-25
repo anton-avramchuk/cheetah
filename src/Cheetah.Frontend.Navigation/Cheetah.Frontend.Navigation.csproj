@@ -1,5 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" />
+    </ItemGroup>
+
+    <ItemGroup>
         <ProjectReference Include="..\Cheetah.Core\Cheetah.Core.csproj"/>
         <ProjectReference Include="..\Cheetah.Blazor.Components\Cheetah.Blazor.Components.csproj"/>
     </ItemGroup>

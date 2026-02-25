@@ -34,9 +34,12 @@ public partial class AdminClientBootstrapperModule : CrmModule
             config.SidebarCollapsedByDefault = false;
         });
 
-        // Явно подключаем JWT-хендлер ко всем HTTP-клиентам этого приложения.
-        // Допустимо, так как Admin Client обращается исключительно к CRM-бэкенду.
+        // Attach auth handlers to every HttpClient in this app.
+        // JwtAuthorizationMessageHandler — adds Bearer token to requests.
+        // UnauthorizedRedirectHandler — on 401 response clears the token and
+        // triggers AuthenticationStateChanged so AuthorizeRouteView redirects to /login.
         context.Services.ConfigureHttpClientDefaults(b =>
-            b.AddHttpMessageHandler<JwtAuthorizationMessageHandler>());
+            b.AddHttpMessageHandler<JwtAuthorizationMessageHandler>()
+             .AddHttpMessageHandler<UnauthorizedRedirectHandler>());
     }
 }

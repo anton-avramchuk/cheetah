@@ -1,83 +1,112 @@
 using Cheetah.Core.DependencyInjection;
+using Cheetah.Frontend.Navigation.Extensions;
 using Cheetah.Frontend.Navigation.Models;
 using Cheetah.Frontend.Navigation.Services.Abstractions;
+using Microsoft.AspNetCore.Components.Authorization;
 
 namespace Cheetah.Frontend.Navigation.Services;
 
 /// <summary>
-/// Default implementation of <see cref="IMenuProvider"/> that aggregates menu items
-/// from all registered <see cref="IMenuContributor"/> implementations.
+/// Aggregates menu items from all registered <see cref="IMenuContributor"/> implementations
+/// and filters them by the current user's roles.
+/// Registered as Scoped so each user session gets its own filtered view.
+/// The full menu structure (from contributors) is built once and cached;
+/// the role-filtered result is invalidated automatically on every auth state change.
 /// </summary>
-[Export(LifetimeType.Singleton, typeof(IMenuProvider))]
-public class MenuProvider : IMenuProvider
+[Export(LifetimeType.Scoped, typeof(IMenuProvider))]
+public class MenuProvider : IMenuProvider, IDisposable
 {
     private readonly IServiceProvider _serviceProvider;
     private readonly IEnumerable<IMenuContributor> _contributors;
+    private readonly AuthenticationStateProvider _authStateProvider;
     private readonly SemaphoreSlim _initLock = new(1, 1);
 
-    private volatile Dictionary<string, Menu>? _menus;
+    // Full unfiltered structure — built once from contributors
+    private Dictionary<string, Menu>? _rawMenus;
+    // Role-filtered result — invalidated on every auth state change
+    private volatile Dictionary<string, Menu>? _filteredMenus;
 
     public MenuProvider(
         IServiceProvider serviceProvider,
-        IEnumerable<IMenuContributor> contributors)
+        IEnumerable<IMenuContributor> contributors,
+        AuthenticationStateProvider authStateProvider)
     {
         _serviceProvider = serviceProvider;
         _contributors = contributors;
+        _authStateProvider = authStateProvider;
+
+        // Re-filter whenever the user logs in or out
+        _authStateProvider.AuthenticationStateChanged += OnAuthStateChanged;
     }
 
-    /// <inheritdoc />
-    public async ValueTask<Menu?> GetMenuAsync(string name, CancellationToken cancellationToken = default)
+    public async ValueTask<Menu?> GetMenuAsync(string name, CancellationToken ct = default)
     {
-        await EnsureInitializedAsync(cancellationToken);
-        return _menus!.GetValueOrDefault(name);
+        var menus = await GetFilteredMenusAsync(ct);
+        return menus.GetValueOrDefault(name);
     }
 
-    /// <inheritdoc />
-    public async ValueTask<IReadOnlyList<Menu>> GetAllMenusAsync(CancellationToken cancellationToken = default)
+    public async ValueTask<IReadOnlyList<Menu>> GetAllMenusAsync(CancellationToken ct = default)
     {
-        await EnsureInitializedAsync(cancellationToken);
-        return _menus!.Values.ToList();
+        var menus = await GetFilteredMenusAsync(ct);
+        return menus.Values.ToList();
     }
 
-    /// <inheritdoc />
-    public void Invalidate()
-    {
-        _menus = null;
-    }
+    public void Invalidate() => _filteredMenus = null;
 
-    private async Task EnsureInitializedAsync(CancellationToken cancellationToken)
-    {
-        if (_menus != null)
-            return;
+    // --- internals ---
 
-        await _initLock.WaitAsync(cancellationToken);
+    private void OnAuthStateChanged(Task<AuthenticationState> _) => Invalidate();
+
+    private async ValueTask<Dictionary<string, Menu>> GetFilteredMenusAsync(CancellationToken ct)
+    {
+        if (_filteredMenus != null)
+            return _filteredMenus;
+
+        await _initLock.WaitAsync(ct);
         try
         {
-            if (_menus != null)
-                return;
+            if (_filteredMenus != null)
+                return _filteredMenus;
 
-            var context = new MenuConfigurationContext(_serviceProvider);
+            var raw = await GetRawMenusAsync(ct);
 
-            // Execute contributors in order
-            var orderedContributors = _contributors.OrderBy(c => c.Order);
+            var authState = await _authStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
 
-            foreach (var contributor in orderedContributors)
-            {
-                await contributor.ConfigureMenuAsync(context);
-            }
+            var filtered = new Dictionary<string, Menu>(StringComparer.OrdinalIgnoreCase);
+            foreach (var (name, menu) in raw)
+                filtered[name] = menu.FilterByUser(user);
 
-            // Sort items in all menus
-            var menus = context.GetAllMenus();
-            foreach (var menu in menus.Values)
-            {
-                menu.SortItems();
-            }
-
-            _menus = new Dictionary<string, Menu>(menus, StringComparer.OrdinalIgnoreCase);
+            _filteredMenus = filtered;
+            return _filteredMenus;
         }
         finally
         {
             _initLock.Release();
         }
+    }
+
+    private async Task<Dictionary<string, Menu>> GetRawMenusAsync(CancellationToken ct)
+    {
+        // Called only from within _initLock, but double-check for clarity
+        if (_rawMenus != null)
+            return _rawMenus;
+
+        var context = new MenuConfigurationContext(_serviceProvider);
+
+        foreach (var contributor in _contributors.OrderBy(c => c.Order))
+            await contributor.ConfigureMenuAsync(context);
+
+        var all = context.GetAllMenus();
+        foreach (var menu in all.Values)
+            menu.SortItems();
+
+        _rawMenus = new Dictionary<string, Menu>(all, StringComparer.OrdinalIgnoreCase);
+        return _rawMenus;
+    }
+
+    public void Dispose()
+    {
+        _authStateProvider.AuthenticationStateChanged -= OnAuthStateChanged;
     }
 }
