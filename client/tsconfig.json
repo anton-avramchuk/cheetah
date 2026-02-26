@@ -1,0 +1,50 @@
+{
+  "compilerOptions": {
+    "moduleResolution": "bundler",
+    "emitDecoratorMetadata": false,
+    "target": "es2022",
+    "module": "preserve",
+    "lib": ["es2020", "dom"],
+    "baseUrl": ".",
+    "paths": {
+      "@cheetah/shared/core":              ["src/libs/shared/core/index.ts"],
+      "@cheetah/shared/util-auth":         ["src/libs/shared/util-auth/index.ts"],
+      "@cheetah/auth/data-access":         ["src/libs/auth/data-access/index.ts"],
+      "@cheetah/auth/interceptors":        ["src/libs/auth/interceptors/index.ts"],
+      "@cheetah/auth/feature-login":       ["src/libs/auth/feature-login/index.ts"],
+      "@cheetah/navigation/util":          ["src/libs/navigation/util/index.ts"],
+      "@cheetah/navigation/data-access":   ["src/libs/navigation/data-access/index.ts"],
+      "@cheetah/layout/data-access":       ["src/libs/layout/data-access/index.ts"],
+      "@cheetah/layout/feature-header":    ["src/libs/layout/feature-header/index.ts"],
+      "@cheetah/layout/feature-sidebar":   ["src/libs/layout/feature-sidebar/index.ts"],
+      "@cheetah/layout/feature-shell":     ["src/libs/layout/feature-shell/index.ts"],
+      "@cheetah/recruitment/feature":      ["src/libs/recruitment/feature/index.ts"],
+      "@cheetah/recruitment/data-access":  ["src/libs/recruitment/data-access/index.ts"],
+      "@cheetah/identity/feature":         ["src/libs/identity/feature/index.ts"],
+      "@cheetah/identity/data-access":     ["src/libs/identity/data-access/index.ts"],
+      "@cheetah/candidates/feature":       ["src/libs/candidates/feature/index.ts"],
+      "@cheetah/candidates/data-access":   ["src/libs/candidates/data-access/index.ts"],
+      "@cheetah/vacancy-tasks/feature":    ["src/libs/vacancy-tasks/feature/index.ts"],
+      "@cheetah/vacancy-tasks/data-access":["src/libs/vacancy-tasks/data-access/index.ts"]
+    },
+    "isolatedModules": true
+  },
+  "angularCompilerOptions": {
+    "enableI18nLegacyMessageIdFormat": false,
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
+    "strictTemplates": true
+  },
+  "files": [],
+  "include": [],
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    }
+  ],
+  "compileOnSave": false,
+  "exclude": ["node_modules", "tmp"]
+}
