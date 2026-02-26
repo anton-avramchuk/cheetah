@@ -8,6 +8,7 @@ using Cheetah.Frontend.Navigation;
 using Cheetah.Mapping.Mapster;
 using Crm.Candidates.ApiClient;
 using Crm.Candidates.Frontend;
+using Crm.Identity.ApiClient;
 using Crm.Identity.Frontend;
 using Crm.Recruitment.ApiClient;
 using Crm.Recruitment.Frontend;
@@ -33,6 +34,7 @@ public partial class RecruitmentClientBootstrapperModule : CrmModule
 {
     private const string ApiSection = "Api";
     private const string RecruitmentPath = "/api/recruitment/";
+    private const string IdentityPath = "/api/identity/";
 
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
@@ -77,6 +79,13 @@ public partial class RecruitmentClientBootstrapperModule : CrmModule
             {
                 if (!string.IsNullOrEmpty(frontendOpts.Value.ApiUrl))
                     apiOpts.BaseUrl = frontendOpts.Value.ApiUrl.TrimEnd('/') + RecruitmentPath;
+            });
+
+        services.AddOptions<CrmIdentityApiClientOptions>()
+            .Configure<IOptions<CrmRecruitmentFrontendOptions>>((apiOpts, frontendOpts) =>
+            {
+                if (!string.IsNullOrEmpty(frontendOpts.Value.ApiUrl))
+                    apiOpts.BaseUrl = frontendOpts.Value.ApiUrl.TrimEnd('/') + IdentityPath;
             });
     }
 }

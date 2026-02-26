@@ -31,16 +31,14 @@ public sealed class JwtAuthenticationStateProvider : AuthenticationStateProvider
             return Anonymous;
         }
 
-        var identity = new ClaimsIdentity(ParseClaimsFromJwt(token), "jwt");
-        return new AuthenticationState(new ClaimsPrincipal(identity));
+        return new AuthenticationState(new ClaimsPrincipal(BuildIdentity(token)));
     }
 
     public async Task NotifyLoginAsync(string token)
     {
         await _tokenStorage.SetTokenAsync(token);
-        var identity = new ClaimsIdentity(ParseClaimsFromJwt(token), "jwt");
         NotifyAuthenticationStateChanged(
-            Task.FromResult(new AuthenticationState(new ClaimsPrincipal(identity))));
+            Task.FromResult(new AuthenticationState(new ClaimsPrincipal(BuildIdentity(token)))));
     }
 
     public async Task NotifyLogoutAsync()
@@ -61,6 +59,9 @@ public sealed class JwtAuthenticationStateProvider : AuthenticationStateProvider
         return DateTimeOffset.FromUnixTimeSeconds(expSeconds) < DateTimeOffset.UtcNow;
     }
 
+    private static ClaimsIdentity BuildIdentity(string token) =>
+        new(ParseClaimsFromJwt(token), "jwt", nameType: "sub", roleType: "role");
+
     private static IEnumerable<Claim> ParseClaimsFromJwt(string jwt)
     {
         var parts = jwt.Split('.');
@@ -77,7 +78,9 @@ public sealed class JwtAuthenticationStateProvider : AuthenticationStateProvider
             var dict = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(jsonBytes);
             if (dict is null) return [];
 
-            return dict.Select(kvp => new Claim(kvp.Key, kvp.Value.ToString() ?? ""));
+            return dict.SelectMany(kvp => kvp.Value.ValueKind == JsonValueKind.Array
+                ? kvp.Value.EnumerateArray().Select(el => new Claim(kvp.Key, el.GetString() ?? ""))
+                : [new Claim(kvp.Key, kvp.Value.ToString())]);
         }
         catch
         {

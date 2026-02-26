@@ -33,7 +33,7 @@ public class JwtTokenGenerator(IOptions<JwtOptions> options) : IJwtTokenGenerato
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
         };
 
-        claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
+        claims.AddRange(roles.Select(role => new Claim("role", role)));
 
         if (additionalClaims is not null)
             claims.AddRange(additionalClaims);

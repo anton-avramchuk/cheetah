@@ -10,7 +10,7 @@ namespace Crm.Identity.Frontend.Navigation;
 [Export(LifetimeType.Singleton, typeof(IMenuContributor))]
 public class IdentityMenuContributor : IMenuContributor
 {
-    private const string AdminRole = "Admin";
+    private const string AdminRole = "admin";
     public Task ConfigureMenuAsync(MenuConfigurationContext context)
     {
         var mainMenu = context.GetOrCreateMenu(StandardMenus.Main);

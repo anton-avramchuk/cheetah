@@ -1,4 +1,5 @@
 @page "/login"
+@attribute [AllowAnonymous]
 @using System.Net.Http
 @layout CrmCenterLayout
 @namespace Crm.Identity.Frontend.Pages
@@ -39,7 +40,7 @@
                                   @bind-Value="_model.Password"
                                   Label="Password"
                                   Placeholder="Enter password"
-                                  Type="password"
+                                  InputType="password"
                                   Required="true"
                                   ValidationFor="() => _model.Password"/>
 
@@ -77,23 +78,22 @@
             var request = new LoginRequest(_model.UserName, _model.Password);
             var token = await AuthService.LoginAsync(request);
             await AuthStateNotifier.NotifyLoginAsync(token.AccessToken);
-            Navigation.NavigateTo(ReturnUrl is not null ? Uri.UnescapeDataString(ReturnUrl) : "/");
+            Navigation.NavigateTo(ReturnUrl is not null ? Uri.UnescapeDataString(ReturnUrl) : "/", forceLoad: true);
         }
         catch (HttpRequestException ex) when (
             ex.StatusCode is System.Net.HttpStatusCode.Unauthorized or System.Net.HttpStatusCode.BadRequest)
         {
             _errorMessage = "Invalid username or password.";
+            _isLoading = false;
         }
         catch (HttpRequestException)
         {
             _errorMessage = "Connection error. Please check your network and try again.";
+            _isLoading = false;
         }
         catch (Exception)
         {
             _errorMessage = "An unexpected error occurred. Please try again.";
-        }
-        finally
-        {
             _isLoading = false;
         }
     }

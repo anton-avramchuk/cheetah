@@ -135,7 +135,7 @@ services:
       Yarp__Clusters__vacancyTasksCluster__Destinations__vacancyTasksDestination__Address: http://vacancytasks-api:8080/api
       Yarp__Clusters__identityCluster__Destinations__identityDestination__Address: http://crm-identity-api:8080/api
     ports:
-      - "5000:8080"
+      - "5555:8080"
     depends_on:
       - crm-recruitment-api
       - candidates-api
