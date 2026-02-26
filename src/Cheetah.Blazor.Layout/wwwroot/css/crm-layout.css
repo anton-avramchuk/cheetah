@@ -16,6 +16,14 @@
     --crm-transition: 0.2s ease;
 }
 
+/* Remove browser's native focus outline on mouse click for all buttons/links.
+   :focus-visible preserves the outline for keyboard navigation (accessibility). */
+button:focus:not(:focus-visible),
+a:focus:not(:focus-visible) {
+    outline: none;
+    box-shadow: none;
+}
+
 /* Layout Structure */
 .crm-layout {
     display: flex;
@@ -264,6 +272,92 @@
 
 .crm-sidebar::-webkit-scrollbar-thumb:hover {
     background: rgba(255, 255, 255, 0.2);
+}
+
+/* User Info Component */
+.crm-user-info {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.375rem 0.625rem;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    user-select: none;
+    font-size: 0.875rem;
+    transition: background-color 0.15s ease;
+    outline: none;
+    z-index: 1051;
+}
+
+.crm-user-info:hover {
+    background-color: rgba(0, 0, 0, 0.06);
+}
+
+.crm-user-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background-color: var(--crm-primary);
+    color: #fff;
+    font-size: 0.875rem;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.crm-user-name {
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.crm-user-chevron {
+    font-size: 0.75rem;
+    opacity: 0.7;
+}
+
+.crm-user-dropdown {
+    position: absolute;
+    top: calc(100% + 0.25rem);
+    right: 0;
+    min-width: 10rem;
+    background-color: #fff;
+    border: 1px solid var(--crm-header-border);
+    border-radius: 0.375rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.12);
+    z-index: 1050;
+    overflow: hidden;
+}
+
+.crm-user-dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.875rem;
+    font-size: 0.875rem;
+    color: #212529;
+    text-decoration: none;
+    transition: background-color 0.1s ease;
+    white-space: nowrap;
+}
+
+.crm-user-dropdown-item:hover {
+    background-color: #f8f9fa;
+    color: #212529;
+    text-decoration: none;
+}
+
+.crm-user-dropdown-item.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.crm-user-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1049;
 }
 
 /* Center Layout */

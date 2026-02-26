@@ -28,8 +28,9 @@
     <div class="crm-header-right">
         @foreach (var component in HeaderComponents.GetComponents())
         {
-            <div class="crm-header-component">
-                <DynamicComponent Type="@component.ComponentType" Parameters="@component.Parameters" />
+            var comp = component;
+            <div class="crm-header-component" @key="comp.ComponentType">
+                @RenderComponent(comp.ComponentType, comp.Parameters)
             </div>
         }
     </div>
@@ -38,4 +39,15 @@
 @code {
     [Parameter]
     public EventCallback OnToggleSidebar { get; set; }
+
+    private static RenderFragment RenderComponent(Type type, IDictionary<string, object>? parameters) => builder =>
+    {
+        builder.OpenComponent(0, type);
+        if (parameters != null)
+        {
+            foreach (var (key, value) in parameters)
+                builder.AddAttribute(1, key, value);
+        }
+        builder.CloseComponent();
+    };
 }
