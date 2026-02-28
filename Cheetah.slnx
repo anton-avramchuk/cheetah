@@ -44,21 +44,11 @@
         <Project Path="src/Cheetah.OpenApi/Cheetah.OpenApi.csproj" />
         <Project Path="src/Cheetah.Scalar/Cheetah.Scalar.csproj" />
     </Folder>
-    <Folder Name="/Core/Frontend/">
-        <Project Path="src/Cheetah.Blazor.Components/Cheetah.Blazor.Components.csproj" />
-        <Project Path="src/Cheetah.Blazor.Layout/Cheetah.Blazor.Layout.csproj" />
-        <Project Path="src/Cheetah.Blazor/Cheetah.Blazor.csproj" />
-        <Project Path="src/Cheetah.Frontend.CQRS/Cheetah.Frontend.CQRS.csproj" />
-        <Project Path="src/Cheetah.Frontend.Events/Cheetah.Frontend.Events.csproj" />
-        <Project Path="src/Cheetah.Frontend.Auth/Cheetah.Frontend.Auth.csproj" />
-        <Project Path="src/Cheetah.Frontend.Navigation/Cheetah.Frontend.Navigation.csproj" />
-    </Folder>
     <Folder Name="/Modules/">
         <Project Path="src/Modules/Crm.Proxy/Crm.Proxy.csproj" />
     </Folder>
     <Folder Name="/Modules/Admin/">
         <Project Path="src/Modules/Admin/Cheetah.Admin.Api/Cheetah.Admin.Api.csproj" />
-        <Project Path="src/Modules/Admin/Cheetah.Admin.Client/Cheetah.Admin.Client.csproj" />
     </Folder>
     <Folder Name="/Modules/Admin/modules/" />
     <Folder Name="/Modules/Admin/modules/clients/" />
@@ -73,9 +63,6 @@
         <Project Path="src/Modules/Admin/Cheetah.Admin.Modules.Clients.Api.Tests/Cheetah.Admin.Modules.Clients.Api.Tests.csproj" />
         <Project Path="src/Modules/Admin/Cheetah.Admin.Modules.Clients.Application.Tests/Cheetah.Admin.Modules.Clients.Application.Tests.csproj" />
         <Project Path="src/Modules/Admin/Cheetah.Admin.Modules.Clients.Domain.Tests/Cheetah.Admin.Modules.Clients.Domain.Tests.csproj" />
-    </Folder>
-    <Folder Name="/Modules/Admin/modules/clients/frontend/">
-        <Project Path="src/Modules/Admin/Cheetah.Admin.Modules.Clients.Frontend/Cheetah.Admin.Modules.Clients.Frontend.csproj" />
     </Folder>
     <Folder Name="/Modules/Admin/modules/clients/shared/">
         <Project Path="src/Modules/Admin/Cheetah.Admin.Modules.Clients.Api.Client/Cheetah.Admin.Modules.Clients.Api.Client.csproj" />
@@ -101,9 +88,6 @@
     <Folder Name="/Hosting/">
         <Project Path="src/Cheetah.Crm.Hosting/Cheetah.Crm.Hosting.csproj" />
     </Folder>
-    <Folder Name="/Modules/Recruitment/">
-        <Project Path="src/Modules/Recruitment/Crm.Recruitment.Client/Crm.Recruitment.Client.csproj" />
-    </Folder>
     <Folder Name="/Modules/Recruitment/Candidate/">
         <Project Path="src/Modules/Candidates/Candidates/Crm.Candidates.Api.Tests/Crm.Candidates.Api.Tests.csproj" />
         <Project Path="src/Modules/Candidates/Candidates/Crm.Candidates.Api/Crm.Candidates.Api.csproj" />
@@ -116,7 +100,6 @@
         <Project Path="src/Modules/Candidates/Candidates/Crm.Candidates.Domain.Tests/Crm.Candidates.Domain.Tests.csproj" />
         <Project Path="src/Modules/Candidates/Candidates/Crm.Candidates.Domain/Crm.Candidates.Domain.csproj" />
         <Project Path="src/Modules/Candidates/Candidates/Crm.Candidates.DomainEvents/Crm.Candidates.DomainEvents.csproj" />
-        <Project Path="src/Modules/Candidates/Candidates/Crm.Candidates.Frontend/Crm.Candidates.Frontend.csproj" />
     </Folder>
     <Folder Name="/Modules/Recruitment/Identity/">
         <Project Path="src/Modules/Identity/Crm.Identity.Api.Tests/Crm.Identity.Api.Tests.csproj" />
@@ -130,7 +113,6 @@
         <Project Path="src/Modules/Identity/Crm.Identity.Domain.Tests/Crm.Identity.Domain.Tests.csproj" />
         <Project Path="src/Modules/Identity/Crm.Identity.Domain/Crm.Identity.Domain.csproj" />
         <Project Path="src/Modules/Identity/Crm.Identity.DomainEvents/Crm.Identity.DomainEvents.csproj" />
-        <Project Path="src/Modules/Identity/Crm.Identity.Frontend/Crm.Identity.Frontend.csproj" />
     </Folder>
     <Folder Name="/Modules/Recruitment/Task/">
         <Project Path="src/Modules/VacancyTasks/VacancyTasks/Crm.VacancyTasks.Api.Tests/Crm.VacancyTasks.Api.Tests.csproj" />
@@ -144,7 +126,6 @@
         <Project Path="src/Modules/VacancyTasks/VacancyTasks/Crm.VacancyTasks.Domain.Tests/Crm.VacancyTasks.Domain.Tests.csproj" />
         <Project Path="src/Modules/VacancyTasks/VacancyTasks/Crm.VacancyTasks.Domain/Crm.VacancyTasks.Domain.csproj" />
         <Project Path="src/Modules/VacancyTasks/VacancyTasks/Crm.VacancyTasks.DomainEvents/Crm.VacancyTasks.DomainEvents.csproj" />
-        <Project Path="src/Modules/VacancyTasks/VacancyTasks/Crm.VacancyTasks.Frontend/Crm.VacancyTasks.Frontend.csproj" />
     </Folder>
     <Folder Name="/Modules/Recruitment/Vacancy/">
         <Project Path="src/Modules/Recruitment/Crm.Recruitment.Api.Tests/Crm.Recruitment.Api.Tests.csproj" />
@@ -158,7 +139,6 @@
         <Project Path="src/Modules/Recruitment/Crm.Recruitment.Domain.Tests/Crm.Recruitment.Domain.Tests.csproj" />
         <Project Path="src/Modules/Recruitment/Crm.Recruitment.Domain/Crm.Recruitment.Domain.csproj" />
         <Project Path="src/Modules/Recruitment/Crm.Recruitment.DomainEvents/Crm.Recruitment.DomainEvents.csproj" />
-        <Project Path="src/Modules/Recruitment/Crm.Recruitment.Frontend/Crm.Recruitment.Frontend.csproj" />
     </Folder>
     <Folder Name="/Modules/Tenants/" />
     <Folder Name="/Solution Items/">
@@ -170,10 +150,8 @@
     <Folder Name="/Tests/">
         <Project Path="src/Cheetah.Backend.Events.Redis.Tests/Cheetah.Backend.Events.Redis.Tests.csproj" />
         <Project Path="src/Cheetah.Backend.Redis.Tests/Cheetah.Backend.Redis.Tests.csproj" />
-        <Project Path="src/Cheetah.Blazor.Components.Tests/Cheetah.Blazor.Components.Tests.csproj" />
         <Project Path="src/Cheetah.Core.Identity.Domain.Tests/Cheetah.Core.Identity.Domain.Tests.csproj" />
         <Project Path="src/Cheetah.Core.Tests/Cheetah.Core.Tests.csproj" />
-        <Project Path="src/Cheetah.Frontend.Events.Tests/Cheetah.Frontend.Events.Tests.csproj" />
         <Project Path="tests/Cheetah.Core.Specification.Tests/Cheetah.Core.Specification.Tests.csproj" />
         <Project Path="tests/Cheetah.Core.Tenants.Tests/Cheetah.Core.Tenants.Tests.csproj" />
         <Project Path="tests/Cheetah.Tests.Core/Cheetah.Tests.Core.csproj" />

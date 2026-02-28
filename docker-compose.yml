@@ -142,24 +142,6 @@ services:
       - vacancytasks-api
       - crm-identity-api
 
-  recruitment-client:
-    build:
-      context: .
-      dockerfile: src/Modules/Recruitment/Crm.Recruitment.Client/Dockerfile
-    ports:
-      - "80:80"
-    depends_on:
-      - crm-proxy
-
-  admin-client:
-    build:
-      context: .
-      dockerfile: src/Modules/Admin/Cheetah.Admin.Client/Dockerfile
-    ports:
-      - "8080:80"
-    depends_on:
-      - admin-api
-      - crm-identity-api
 
 volumes:
   postgres_data:
