@@ -4,7 +4,9 @@ using Cheetah.AspNetCore.Extensions;
 using Cheetah.Core;
 using Cheetah.Core.Extensions.DependencyInjection;
 using Cheetah.Core.Modularity;
+using Microsoft.AspNetCore.Http.Metadata;
 using Microsoft.OpenApi;
+using Microsoft.OpenApi.Models;
 
 namespace Cheetah.OpenApi;
 
@@ -32,6 +34,32 @@ public partial class OpenApiModule : CrmModule
                 return Task.CompletedTask;
             });
 
+            options.AddOperationTransformer((operation, ctx, ct) =>
+            {
+                if (!ctx.Description.HttpMethods.Contains("GET"))
+                    return Task.CompletedTask;
+
+                var isGrid = ctx.Description.ActionDescriptor.EndpointMetadata
+                    .OfType<IProducesResponseTypeMetadata>()
+                    .Any(m => m.Type is { IsGenericType: true } t
+                              && t.GetGenericTypeDefinition().Name == "GridResult`1");
+
+                if (!isGrid)
+                    return Task.CompletedTask;
+
+                operation.Parameters ??= [];
+                operation.Parameters.Add(GridParam("page",       JsonSchemaType.Integer, "Номер страницы (начиная с 1, по умолчанию: 1)"));
+                operation.Parameters.Add(GridParam("pageSize",   JsonSchemaType.Integer, "Размер страницы (0 = все записи, по умолчанию: 10)"));
+                operation.Parameters.Add(GridParam("sort[0][field]", JsonSchemaType.String, "Поле сортировки"));
+                operation.Parameters.Add(GridParam("sort[0][dir]",   JsonSchemaType.String, "Направление: asc | desc"));
+                operation.Parameters.Add(GridParam("filter[logic]",               JsonSchemaType.String, "Логика фильтра: and | or"));
+                operation.Parameters.Add(GridParam("filter[filters][0][field]",   JsonSchemaType.String, "Поле фильтра"));
+                operation.Parameters.Add(GridParam("filter[filters][0][operator]",JsonSchemaType.String, "Оператор: eq, neq, contains, startswith, endswith, gt, gte, lt, lte"));
+                operation.Parameters.Add(GridParam("filter[filters][0][value]",   JsonSchemaType.String, "Значение фильтра"));
+
+                return Task.CompletedTask;
+            });
+
             options.AddSchemaTransformer((schema, ctx, ct) =>
             {
                 if (schema.Example is not null
@@ -54,6 +82,15 @@ public partial class OpenApiModule : CrmModule
         var routeBuilder = context.GetRouteBuilder();
         routeBuilder.MapOpenApi().AllowAnonymous();
     }
+
+    private static OpenApiParameter GridParam(string name, JsonSchemaType type, string description) => new()
+    {
+        Name = name,
+        In = ParameterLocation.Query,
+        Required = false,
+        Description = description,
+        Schema = new OpenApiSchema { Type = type }
+    };
 
     private static JsonNode GetExampleValue(IOpenApiSchema schema)
     {
