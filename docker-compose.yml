@@ -21,21 +21,6 @@ services:
       timeout: 5s
       retries: 5
 
-  admin-api:
-    build:
-      context: .
-      dockerfile: src/Modules/Admin/Cheetah.Admin.Api/Dockerfile
-    environment:
-      ASPNETCORE_ENVIRONMENT: Production
-      ASPNETCORE_URLS: http://+:8080
-      ConnectionStrings__AdminDb: Host=postgres;Database=cheetah_admin;Username=postgres;Password=postgres
-      Redis__Instances__default__ConnectionString: redis:6379
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-
   features-api:
     build:
       context: .
