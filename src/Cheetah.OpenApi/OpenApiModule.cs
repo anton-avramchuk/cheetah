@@ -6,7 +6,6 @@ using Cheetah.Core.Extensions.DependencyInjection;
 using Cheetah.Core.Modularity;
 using Microsoft.AspNetCore.Http.Metadata;
 using Microsoft.OpenApi;
-using Microsoft.OpenApi.Models;
 
 namespace Cheetah.OpenApi;
 
@@ -36,7 +35,7 @@ public partial class OpenApiModule : CrmModule
 
             options.AddOperationTransformer((operation, ctx, ct) =>
             {
-                if (!ctx.Description.HttpMethods.Contains("GET"))
+                if (ctx.Description.HttpMethod != "GET")
                     return Task.CompletedTask;
 
                 var isGrid = ctx.Description.ActionDescriptor.EndpointMetadata
