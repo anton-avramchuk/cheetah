@@ -7,7 +7,7 @@ using Crm.Recruitment.Contracts.Response;
 
 namespace Crm.Recruitment.Api.Endpoints;
 
-public class GetAllStackItemsEndpoint : QueryCollectionEndpoint<GetAllStackItemsRequest,
+public class GetAllStackItemsEndpoint : QueryGridEndpoint<GetAllStackItemsRequest,
     GetAllStackItemsQuery, StackItemModel, StackItemViewModel>
 {
     public override string Route => Constants.StackItemRoute;

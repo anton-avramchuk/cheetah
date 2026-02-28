@@ -4,5 +4,5 @@ using Crm.Recruitment.Contracts.Response;
 
 namespace Crm.Recruitment.Contracts.Requests;
 
-[ApiRoute("api/stack-items", ApiMethod.GetCollection, ResponseType = typeof(StackItemViewModel), ServiceName = "StackItems")]
-public record GetAllStackItemsRequest : ICrmRequest;
+[ApiRoute("api/stack-items", ApiMethod.GetGrid, ResponseType = typeof(StackItemViewModel), ServiceName = "StackItems")]
+public class GetAllStackItemsRequest : GridRequest;

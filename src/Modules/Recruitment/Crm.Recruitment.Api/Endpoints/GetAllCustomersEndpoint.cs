@@ -7,7 +7,7 @@ using Crm.Recruitment.Contracts.Response;
 
 namespace Crm.Recruitment.Api.Endpoints;
 
-public class GetAllCustomersEndpoint : QueryCollectionEndpoint<GetAllCustomersRequest,
+public class GetAllCustomersEndpoint : QueryGridEndpoint<GetAllCustomersRequest,
     GetAllCustomersQuery, CustomerModel, CustomerViewModel>
 {
     public override string Route => Constants.CustomerRoute;

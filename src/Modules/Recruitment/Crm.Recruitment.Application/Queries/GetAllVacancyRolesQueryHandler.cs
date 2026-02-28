@@ -1,31 +1,25 @@
+using Cheetah.Contracts.Requests;
+using Cheetah.Contracts.Responses;
 using Cheetah.Core.CQRS;
-using Cheetah.Core.DataAccess.Abstractions;
 using Cheetah.Core.DependencyInjection;
+using Cheetah.Core.Grid;
 using Crm.Recruitment.Domain;
-using Microsoft.EntityFrameworkCore;
 
 namespace Crm.Recruitment.Application.Queries;
 
-[Export(LifetimeType.Scoped, typeof(IQueryHandler<GetAllVacancyRolesQuery, IReadOnlyList<VacancyRoleModel>>))]
-public class GetAllVacancyRolesQueryHandler : IQueryHandler<GetAllVacancyRolesQuery, IReadOnlyList<VacancyRoleModel>>
+[Export(LifetimeType.Scoped, typeof(IQueryHandler<GetAllVacancyRolesQuery, GridResult<VacancyRoleModel>>))]
+public class GetAllVacancyRolesQueryHandler(IGridRepository<VacancyRole> repository)
+    : IQueryHandler<GetAllVacancyRolesQuery, GridResult<VacancyRoleModel>>
 {
-    private readonly IReadOnlyRepository<VacancyRole, Guid> _repository;
-
-    public GetAllVacancyRolesQueryHandler(IRepository<VacancyRole, Guid> repository)
+    public async ValueTask<GridResult<VacancyRoleModel>> HandleAsync(GetAllVacancyRolesQuery query, CancellationToken ct = default)
     {
-        _repository = repository;
-    }
-
-    public async ValueTask<IReadOnlyList<VacancyRoleModel>> HandleAsync(
-        GetAllVacancyRolesQuery query,
-        CancellationToken ct = default)
-    {
-        var entities = await _repository.AsNoTrackingQueryable()
-            .OrderBy(r => r.Order)
-            .ToListAsync(ct);
-
-        return entities
-            .Select(e => new VacancyRoleModel(e.Id, e.Name, e.Code, e.IsSingle, e.Order))
-            .ToList();
+        var gridRequest = new GridRequest
+        {
+            Page = query.Page,
+            PageSize = query.PageSize,
+            Sort = query.Sort,
+            Filter = query.Filter
+        };
+        return await repository.GetGridAsync<VacancyRoleModel>(gridRequest, ct);
     }
 }

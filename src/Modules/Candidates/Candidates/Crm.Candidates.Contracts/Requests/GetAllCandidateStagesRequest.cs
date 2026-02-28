@@ -4,5 +4,5 @@ using Crm.Candidates.Contracts.Response;
 
 namespace Crm.Candidates.Contracts.Requests;
 
-[ApiRoute("api/candidate-stages", ApiMethod.GetCollection, ResponseType = typeof(CandidateStageViewModel), ServiceName = "CandidateStages")]
-public record GetAllCandidateStagesRequest : ICrmRequest;
+[ApiRoute("api/candidate-stages", ApiMethod.GetGrid, ResponseType = typeof(CandidateStageViewModel), ServiceName = "CandidateStages")]
+public class GetAllCandidateStagesRequest : GridRequest;

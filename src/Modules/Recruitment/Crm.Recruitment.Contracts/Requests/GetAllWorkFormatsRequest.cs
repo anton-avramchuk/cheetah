@@ -4,5 +4,5 @@ using Crm.Recruitment.Contracts.Response;
 
 namespace Crm.Recruitment.Contracts.Requests;
 
-[ApiRoute("api/work-formats", ApiMethod.GetCollection, ResponseType = typeof(WorkFormatViewModel), ServiceName = "WorkFormats")]
-public record GetAllWorkFormatsRequest : ICrmRequest;
+[ApiRoute("api/work-formats", ApiMethod.GetGrid, ResponseType = typeof(WorkFormatViewModel), ServiceName = "WorkFormats")]
+public class GetAllWorkFormatsRequest : GridRequest;

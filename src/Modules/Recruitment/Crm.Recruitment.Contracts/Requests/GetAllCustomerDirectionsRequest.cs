@@ -4,5 +4,5 @@ using Crm.Recruitment.Contracts.Response;
 
 namespace Crm.Recruitment.Contracts.Requests;
 
-[ApiRoute("api/customer-directions", ApiMethod.GetCollection, ResponseType = typeof(CustomerDirectionViewModel), ServiceName = "CustomerDirections")]
-public record GetAllCustomerDirectionsRequest : ICrmRequest;
+[ApiRoute("api/customer-directions", ApiMethod.GetGrid, ResponseType = typeof(CustomerDirectionViewModel), ServiceName = "CustomerDirections")]
+public class GetAllCustomerDirectionsRequest : GridRequest;

@@ -1,5 +1,12 @@
+using Cheetah.Contracts.Requests;
+using Cheetah.Contracts.Responses;
 using Cheetah.Core.CQRS;
 
 namespace Crm.Candidates.Application.Queries;
 
-public record GetAllCandidateStagesQuery : IQuery<IReadOnlyList<CandidateStageModel>>;
+public record GetAllCandidateStagesQuery(
+    int Page,
+    int PageSize,
+    List<SortDescriptor> Sort,
+    FilterDescriptor? Filter
+) : IQuery<GridResult<CandidateStageModel>>;

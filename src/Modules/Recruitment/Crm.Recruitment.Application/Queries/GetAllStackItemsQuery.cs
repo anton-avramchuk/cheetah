@@ -1,5 +1,12 @@
+using Cheetah.Contracts.Requests;
+using Cheetah.Contracts.Responses;
 using Cheetah.Core.CQRS;
 
 namespace Crm.Recruitment.Application.Queries;
 
-public record GetAllStackItemsQuery : IQuery<IReadOnlyList<StackItemModel>>;
+public record GetAllStackItemsQuery(
+    int Page,
+    int PageSize,
+    List<SortDescriptor> Sort,
+    FilterDescriptor? Filter
+) : IQuery<GridResult<StackItemModel>>;

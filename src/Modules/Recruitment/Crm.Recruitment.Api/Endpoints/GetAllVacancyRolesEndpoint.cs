@@ -7,7 +7,7 @@ using Crm.Recruitment.Contracts.Response;
 
 namespace Crm.Recruitment.Api.Endpoints;
 
-public class GetAllVacancyRolesEndpoint : QueryCollectionEndpoint<GetAllVacancyRolesRequest,
+public class GetAllVacancyRolesEndpoint : QueryGridEndpoint<GetAllVacancyRolesRequest,
     GetAllVacancyRolesQuery, VacancyRoleModel, VacancyRoleViewModel>
 {
     public override string Route => "api/vacancy-roles";

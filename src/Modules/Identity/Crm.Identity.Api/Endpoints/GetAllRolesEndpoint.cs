@@ -7,7 +7,7 @@ using Crm.Identity.Contracts.Response;
 
 namespace Crm.Identity.Api.Endpoints;
 
-public class GetAllRolesEndpoint : QueryCollectionEndpoint<GetAllRolesRequest, GetAllRolesQuery, RoleModel, RoleViewModel>
+public class GetAllRolesEndpoint : QueryGridEndpoint<GetAllRolesRequest, GetAllRolesQuery, RoleModel, RoleViewModel>
 {
     public override string Route => Constants.RolesRoute;
 

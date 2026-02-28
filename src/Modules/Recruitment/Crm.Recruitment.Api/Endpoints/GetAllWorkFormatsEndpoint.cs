@@ -7,7 +7,7 @@ using Crm.Recruitment.Contracts.Response;
 
 namespace Crm.Recruitment.Api.Endpoints;
 
-public class GetAllWorkFormatsEndpoint : QueryCollectionEndpoint<GetAllWorkFormatsRequest,
+public class GetAllWorkFormatsEndpoint : QueryGridEndpoint<GetAllWorkFormatsRequest,
     GetAllWorkFormatsQuery, WorkFormatModel, WorkFormatViewModel>
 {
     public override string Route => Constants.WorkFormatRoute;

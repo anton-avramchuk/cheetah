@@ -1,31 +1,25 @@
+using Cheetah.Contracts.Requests;
+using Cheetah.Contracts.Responses;
 using Cheetah.Core.CQRS;
-using Cheetah.Core.DataAccess.Abstractions;
 using Cheetah.Core.DependencyInjection;
+using Cheetah.Core.Grid;
 using Crm.Candidates.Domain;
-using Microsoft.EntityFrameworkCore;
 
 namespace Crm.Candidates.Application.Queries;
 
-[Export(LifetimeType.Scoped, typeof(IQueryHandler<GetAllCandidateSourcesQuery, IReadOnlyList<CandidateSourceModel>>))]
-public class GetAllCandidateSourcesQueryHandler : IQueryHandler<GetAllCandidateSourcesQuery, IReadOnlyList<CandidateSourceModel>>
+[Export(LifetimeType.Scoped, typeof(IQueryHandler<GetAllCandidateSourcesQuery, GridResult<CandidateSourceModel>>))]
+public class GetAllCandidateSourcesQueryHandler(IGridRepository<CandidateSource> repository)
+    : IQueryHandler<GetAllCandidateSourcesQuery, GridResult<CandidateSourceModel>>
 {
-    private readonly IReadOnlyRepository<CandidateSource, Guid> _repository;
-
-    public GetAllCandidateSourcesQueryHandler(IRepository<CandidateSource, Guid> repository)
+    public async ValueTask<GridResult<CandidateSourceModel>> HandleAsync(GetAllCandidateSourcesQuery query, CancellationToken ct = default)
     {
-        _repository = repository;
-    }
-
-    public async ValueTask<IReadOnlyList<CandidateSourceModel>> HandleAsync(
-        GetAllCandidateSourcesQuery query,
-        CancellationToken ct = default)
-    {
-        var entities = await _repository.AsNoTrackingQueryable()
-            .OrderBy(e => e.Order)
-            .ToListAsync(ct);
-
-        return entities
-            .Select(e => new CandidateSourceModel(e.Id, e.Name, e.Order, e.Color?.Value))
-            .ToList();
+        var gridRequest = new GridRequest
+        {
+            Page = query.Page,
+            PageSize = query.PageSize,
+            Sort = query.Sort,
+            Filter = query.Filter
+        };
+        return await repository.GetGridAsync<CandidateSourceModel>(gridRequest, ct);
     }
 }

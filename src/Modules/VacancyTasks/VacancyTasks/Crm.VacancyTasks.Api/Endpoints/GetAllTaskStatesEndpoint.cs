@@ -7,7 +7,7 @@ using Crm.VacancyTasks.Contracts.Response;
 
 namespace Crm.VacancyTasks.Api.Endpoints;
 
-public class GetAllTaskStatesEndpoint : QueryCollectionEndpoint<GetAllTaskStatesRequest,
+public class GetAllTaskStatesEndpoint : QueryGridEndpoint<GetAllTaskStatesRequest,
     GetAllTaskStatesQuery, TaskStateModel, TaskStateViewModel>
 {
     public override string Route => Constants.TaskStateRoute;

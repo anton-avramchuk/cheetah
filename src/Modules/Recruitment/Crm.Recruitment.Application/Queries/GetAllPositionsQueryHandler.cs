@@ -1,31 +1,25 @@
+using Cheetah.Contracts.Requests;
+using Cheetah.Contracts.Responses;
 using Cheetah.Core.CQRS;
-using Cheetah.Core.DataAccess.Abstractions;
 using Cheetah.Core.DependencyInjection;
+using Cheetah.Core.Grid;
 using Crm.Recruitment.Domain;
-using Microsoft.EntityFrameworkCore;
 
 namespace Crm.Recruitment.Application.Queries;
 
-[Export(LifetimeType.Scoped, typeof(IQueryHandler<GetAllPositionsQuery, IReadOnlyList<PositionModel>>))]
-public class GetAllPositionsQueryHandler : IQueryHandler<GetAllPositionsQuery, IReadOnlyList<PositionModel>>
+[Export(LifetimeType.Scoped, typeof(IQueryHandler<GetAllPositionsQuery, GridResult<PositionModel>>))]
+public class GetAllPositionsQueryHandler(IGridRepository<Position> repository)
+    : IQueryHandler<GetAllPositionsQuery, GridResult<PositionModel>>
 {
-    private readonly IReadOnlyRepository<Position, Guid> _repository;
-
-    public GetAllPositionsQueryHandler(IRepository<Position, Guid> repository)
+    public async ValueTask<GridResult<PositionModel>> HandleAsync(GetAllPositionsQuery query, CancellationToken ct = default)
     {
-        _repository = repository;
-    }
-
-    public async ValueTask<IReadOnlyList<PositionModel>> HandleAsync(
-        GetAllPositionsQuery query,
-        CancellationToken ct = default)
-    {
-        var entities = await _repository.AsNoTrackingQueryable()
-            .OrderBy(e => e.Name)
-            .ToListAsync(ct);
-
-        return entities
-            .Select(e => new PositionModel(e.Id, e.Name))
-            .ToList();
+        var gridRequest = new GridRequest
+        {
+            Page = query.Page,
+            PageSize = query.PageSize,
+            Sort = query.Sort,
+            Filter = query.Filter
+        };
+        return await repository.GetGridAsync<PositionModel>(gridRequest, ct);
     }
 }

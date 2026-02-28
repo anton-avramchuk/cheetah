@@ -4,5 +4,5 @@ using Crm.Recruitment.Contracts.Response;
 
 namespace Crm.Recruitment.Contracts.Requests;
 
-[ApiRoute("api/vacancy-states", ApiMethod.GetCollection, ResponseType = typeof(VacancyStateViewModel), ServiceName = "VacancyStates")]
-public record GetAllVacancyStatesRequest : ICrmRequest;
+[ApiRoute("api/vacancy-states", ApiMethod.GetGrid, ResponseType = typeof(VacancyStateViewModel), ServiceName = "VacancyStates")]
+public class GetAllVacancyStatesRequest : GridRequest;
