@@ -1,5 +1,6 @@
 using System.Net;
 using System.Text.Json;
+using Cheetah.Contracts.Responses;
 using Crm.Identity.Contracts.Requests;
 using Crm.Identity.Contracts.Response;
 using Shouldly;
@@ -28,14 +29,14 @@ public class UsersServiceTests
             new(Guid.NewGuid(), "janedoe", "jane@example.com", true)
         };
 
-        var handler = new MockHttpMessageHandler(HttpStatusCode.OK, JsonSerializer.Serialize(users));
+        var handler = new MockHttpMessageHandler(HttpStatusCode.OK, JsonSerializer.Serialize(new GridResult<UserViewModel>(users, users.Count)));
         var service = CreateService(handler);
 
         // Act
         var result = await service.GetAllAsync();
 
         // Assert
-        result.Count.ShouldBe(2);
+        result.Total.ShouldBe(2);
         handler.RequestUri!.PathAndQuery.ShouldStartWith($"/{BasePath}");
         handler.Method.ShouldBe(HttpMethod.Get);
     }
@@ -44,14 +45,14 @@ public class UsersServiceTests
     public async Task GetAllAsync_WhenEmpty_ShouldReturnEmptyList()
     {
         // Arrange
-        var handler = new MockHttpMessageHandler(HttpStatusCode.OK, JsonSerializer.Serialize(new List<UserViewModel>()));
+        var handler = new MockHttpMessageHandler(HttpStatusCode.OK, JsonSerializer.Serialize(new GridResult<UserViewModel>()));
         var service = CreateService(handler);
 
         // Act
         var result = await service.GetAllAsync();
 
         // Assert
-        result.ShouldBeEmpty();
+        result.Data.ShouldBeEmpty();
     }
 
     #endregion

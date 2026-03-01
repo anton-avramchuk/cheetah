@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using Cheetah.Contracts.Responses;
 using Crm.Identity.Api.Tests.Fixtures;
 using Crm.Identity.Contracts.Requests;
 using Crm.Identity.Contracts.Response;
@@ -26,7 +27,7 @@ public class RoleEndpointsTests
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
-        var result = await response.Content.ReadFromJsonAsync<List<RoleViewModel>>();
+        var result = await response.Content.ReadFromJsonAsync<GridResult<RoleViewModel>>();
         result.ShouldNotBeNull();
     }
 
