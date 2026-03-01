@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Crm.Recruitment.DataAccess.Repositories;
 
-[Export(LifetimeType.Scoped, typeof(IGridRepository<Vacancy>), typeof(IRepository<Vacancy, Guid>))]
+[Export(LifetimeType.Scoped, typeof(IGridRepository<Vacancy>), typeof(IRepository<Vacancy, Guid>), typeof(IReadOnlyRepository<Vacancy, Guid>))]
 public class VacancyRepository : EfGridRepository<RecruitmentDbContext, Vacancy>
 {
     public VacancyRepository(RecruitmentDbContext context, IObjectMapper mapper, ILogger<VacancyRepository> logger)

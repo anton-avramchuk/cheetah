@@ -29,6 +29,8 @@ public class MappingProfile : IMapsterMappingProfile
         config.NewConfig<MoveVacancyRequest, MoveVacancyCommand>();
 
         // VacancyState
+        config.NewConfig<VacancyState, VacancyStateModel>()
+            .Map(dest => dest.Color, src => src.Color != null ? src.Color.Value : null);
         config.NewConfig<VacancyStateModel, VacancyStateViewModel>();
         config.NewConfig<GetVacancyStateByIdRequest, GetVacancyStateByIdQuery>();
         config.NewConfig<GetAllVacancyStatesRequest, GetAllVacancyStatesQuery>();
