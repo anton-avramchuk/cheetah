@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Net;
 using System.Net.Http.Json;
 using Cheetah.Contracts.Responses;
@@ -29,6 +30,127 @@ public class RoleEndpointsTests
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
         var result = await response.Content.ReadFromJsonAsync<GridResult<RoleViewModel>>();
         result.ShouldNotBeNull();
+    }
+
+    [Fact]
+    public async Task GetAll_WithPagination_ShouldReturnPagedResult()
+    {
+        // Arrange
+        await _client.PostAsJsonAsync(BasePath, new CreateRoleRequest("paging-role-1"));
+        await _client.PostAsJsonAsync(BasePath, new CreateRoleRequest("paging-role-2"));
+        await _client.PostAsJsonAsync(BasePath, new CreateRoleRequest("paging-role-3"));
+
+        // Act
+        var response = await _client.GetAsync($"{BasePath}?page=1&pageSize=2&filter.field=name&filter.operator=startswith&filter.value=paging-role");
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        var result = await response.Content.ReadFromJsonAsync<GridResult<RoleViewModel>>();
+        result.ShouldNotBeNull();
+        result!.Data.Count().ShouldBe(2);
+        result.Total.ShouldBe(3);
+    }
+
+    [Fact]
+    public async Task GetAll_WithFilterContains_ShouldReturnMatchingRoles()
+    {
+        // Arrange
+        var uniquePart = Guid.NewGuid().ToString("N")[..8];
+        await _client.PostAsJsonAsync(BasePath, new CreateRoleRequest($"filter-match-{uniquePart}"));
+        await _client.PostAsJsonAsync(BasePath, new CreateRoleRequest($"filter-other-{uniquePart}"));
+
+        // Act
+        var response = await _client.GetAsync(
+            $"{BasePath}?page=1&pageSize=20&filter.field=name&filter.operator=contains&filter.value=filter-match-{uniquePart}");
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        var result = await response.Content.ReadFromJsonAsync<GridResult<RoleViewModel>>();
+        result.ShouldNotBeNull();
+        result!.Data.ShouldAllBe(r => r.Name.Contains($"filter-match-{uniquePart}"));
+        result.Data.Count().ShouldBe(1);
+    }
+
+    [Fact]
+    public async Task GetAll_WithFilterStartsWith_ShouldReturnMatchingRoles()
+    {
+        // Arrange
+        var uniquePart = Guid.NewGuid().ToString("N")[..8];
+        await _client.PostAsJsonAsync(BasePath, new CreateRoleRequest($"starts-{uniquePart}-a"));
+        await _client.PostAsJsonAsync(BasePath, new CreateRoleRequest($"starts-{uniquePart}-b"));
+        await _client.PostAsJsonAsync(BasePath, new CreateRoleRequest($"other-{uniquePart}"));
+
+        // Act
+        var response = await _client.GetAsync(
+            $"{BasePath}?page=1&pageSize=20&filter.field=name&filter.operator=startswith&filter.value=starts-{uniquePart}");
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        var result = await response.Content.ReadFromJsonAsync<GridResult<RoleViewModel>>();
+        result.ShouldNotBeNull();
+        result!.Data.Count().ShouldBe(2);
+        result.Data.ShouldAllBe(r => r.Name.StartsWith($"starts-{uniquePart}"));
+    }
+
+    [Fact]
+    public async Task GetAll_WithSortAsc_ShouldReturnSortedRoles()
+    {
+        // Arrange
+        var uniquePart = Guid.NewGuid().ToString("N")[..8];
+        await _client.PostAsJsonAsync(BasePath, new CreateRoleRequest($"sort-{uniquePart}-charlie"));
+        await _client.PostAsJsonAsync(BasePath, new CreateRoleRequest($"sort-{uniquePart}-alpha"));
+        await _client.PostAsJsonAsync(BasePath, new CreateRoleRequest($"sort-{uniquePart}-bravo"));
+
+        // Act
+        var response = await _client.GetAsync(
+            $"{BasePath}?page=1&pageSize=20&filter.field=name&filter.operator=startswith&filter.value=sort-{uniquePart}&sort[0][field]=name&sort[0][dir]=asc");
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        var result = await response.Content.ReadFromJsonAsync<GridResult<RoleViewModel>>();
+        result.ShouldNotBeNull();
+        var sortedData = result!.Data.ToList();
+        sortedData.Count.ShouldBe(3);
+        sortedData[0].Name.ShouldBe($"sort-{uniquePart}-alpha");
+        sortedData[1].Name.ShouldBe($"sort-{uniquePart}-bravo");
+        sortedData[2].Name.ShouldBe($"sort-{uniquePart}-charlie");
+    }
+
+    [Fact]
+    public async Task GetAll_WithSortDesc_ShouldReturnSortedRoles()
+    {
+        // Arrange
+        var uniquePart = Guid.NewGuid().ToString("N")[..8];
+        await _client.PostAsJsonAsync(BasePath, new CreateRoleRequest($"sortd-{uniquePart}-alpha"));
+        await _client.PostAsJsonAsync(BasePath, new CreateRoleRequest($"sortd-{uniquePart}-bravo"));
+
+        // Act
+        var response = await _client.GetAsync(
+            $"{BasePath}?page=1&pageSize=20&filter.field=name&filter.operator=startswith&filter.value=sortd-{uniquePart}&sort[0][field]=name&sort[0][dir]=desc");
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        var result = await response.Content.ReadFromJsonAsync<GridResult<RoleViewModel>>();
+        result.ShouldNotBeNull();
+        var sortedDescData = result!.Data.ToList();
+        sortedDescData.Count.ShouldBe(2);
+        sortedDescData[0].Name.ShouldBe($"sortd-{uniquePart}-bravo");
+        sortedDescData[1].Name.ShouldBe($"sortd-{uniquePart}-alpha");
+    }
+
+    [Fact]
+    public async Task GetAll_WithFilterNoMatch_ShouldReturnEmpty()
+    {
+        // Act
+        var response = await _client.GetAsync(
+            $"{BasePath}?page=1&pageSize=20&filter.field=name&filter.operator=eq&filter.value={Guid.NewGuid()}");
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        var result = await response.Content.ReadFromJsonAsync<GridResult<RoleViewModel>>();
+        result.ShouldNotBeNull();
+        result!.Data.ShouldBeEmpty();
+        result.Total.ShouldBe(0);
     }
 
     [Fact]
@@ -104,6 +226,18 @@ public class RoleEndpointsTests
         var getResponse = await _client.GetAsync(location);
         var updatedRole = await getResponse.Content.ReadFromJsonAsync<RoleViewModel>();
         updatedRole!.Name.ShouldBe("test-role-update-new");
+    }
+
+    [Fact]
+    public async Task Update_WithNonExistingRole_ShouldReturnNotFound()
+    {
+        // Act
+        var response = await _client.PutAsJsonAsync(
+            $"{BasePath}/{Guid.NewGuid()}",
+            new { Name = "does-not-matter" });
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
     [Fact]

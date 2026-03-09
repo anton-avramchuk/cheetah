@@ -243,18 +243,26 @@ public class EfGridRepository<TDbContext, TEntity, TKey> : EfRepository<TDbConte
         if (property.Type != typeof(string))
             return null;
 
-        var stringComparisonType = typeof(StringComparison);
-        var comparisonValue = ignoreCase
-            ? StringComparison.OrdinalIgnoreCase
-            : StringComparison.Ordinal;
-
-        var method = typeof(string).GetMethod(methodName, [typeof(string), stringComparisonType]);
+        // Use the single-argument overload (EF Core can translate it to SQL).
+        // StringComparison overloads are not translatable by EF Core providers.
+        var method = typeof(string).GetMethod(methodName, [typeof(string)]);
         if (method is null)
             return null;
 
         var nullCheck = Expression.NotEqual(property, Expression.Constant(null, typeof(string)));
-        var methodCall = Expression.Call(property, method, constant, Expression.Constant(comparisonValue));
 
+        Expression effectiveProperty = property;
+        Expression effectiveConstant = constant;
+
+        if (ignoreCase)
+        {
+            var toLower = typeof(string).GetMethod(nameof(string.ToLower), Type.EmptyTypes)!;
+            effectiveProperty = Expression.Call(property, toLower);
+            if (constant is ConstantExpression { Value: string s })
+                effectiveConstant = Expression.Constant(s.ToLowerInvariant());
+        }
+
+        var methodCall = Expression.Call(effectiveProperty, method, effectiveConstant);
         return Expression.AndAlso(nullCheck, methodCall);
     }
 

@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Net;
 using System.Net.Http.Json;
 using Cheetah.Contracts.Responses;
@@ -29,6 +30,86 @@ public class UserEndpointsTests
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
         var result = await response.Content.ReadFromJsonAsync<GridResult<UserViewModel>>();
         result.ShouldNotBeNull();
+    }
+
+    [Fact]
+    public async Task GetAll_WithPagination_ShouldReturnPagedResult()
+    {
+        // Arrange
+        var uniquePart = Guid.NewGuid().ToString("N")[..8];
+        await _client.PostAsJsonAsync(BasePath, new CreateUserRequest($"paging-user1-{uniquePart}", $"p1-{uniquePart}@test.com", "Test@1234!"));
+        await _client.PostAsJsonAsync(BasePath, new CreateUserRequest($"paging-user2-{uniquePart}", $"p2-{uniquePart}@test.com", "Test@1234!"));
+        await _client.PostAsJsonAsync(BasePath, new CreateUserRequest($"paging-user3-{uniquePart}", $"p3-{uniquePart}@test.com", "Test@1234!"));
+
+        // Act
+        var response = await _client.GetAsync(
+            $"{BasePath}?page=1&pageSize=2&filter.field=userName&filter.operator=startswith&filter.value=paging-user");
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        var result = await response.Content.ReadFromJsonAsync<GridResult<UserViewModel>>();
+        result.ShouldNotBeNull();
+        result!.Data.Count().ShouldBe(2);
+        result.Total.ShouldBe(3);
+    }
+
+    [Fact]
+    public async Task GetAll_WithFilterContains_ShouldReturnMatchingUsers()
+    {
+        // Arrange
+        var uniquePart = Guid.NewGuid().ToString("N")[..8];
+        await _client.PostAsJsonAsync(BasePath, new CreateUserRequest($"filter-match-{uniquePart}", $"match-{uniquePart}@test.com", "Test@1234!"));
+        await _client.PostAsJsonAsync(BasePath, new CreateUserRequest($"filter-other-{uniquePart}", $"other-{uniquePart}@test.com", "Test@1234!"));
+
+        // Act
+        var response = await _client.GetAsync(
+            $"{BasePath}?page=1&pageSize=20&filter.field=userName&filter.operator=contains&filter.value=filter-match-{uniquePart}");
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        var result = await response.Content.ReadFromJsonAsync<GridResult<UserViewModel>>();
+        result.ShouldNotBeNull();
+        result!.Data.Count().ShouldBe(1);
+        result.Data.First().UserName.ShouldBe($"filter-match-{uniquePart}");
+    }
+
+    [Fact]
+    public async Task GetAll_WithSortAsc_ShouldReturnSortedUsers()
+    {
+        // Arrange
+        var uniquePart = Guid.NewGuid().ToString("N")[..8];
+        await _client.PostAsJsonAsync(BasePath, new CreateUserRequest($"sort-{uniquePart}-charlie", $"sc-{uniquePart}@test.com", "Test@1234!"));
+        await _client.PostAsJsonAsync(BasePath, new CreateUserRequest($"sort-{uniquePart}-alpha", $"sa-{uniquePart}@test.com", "Test@1234!"));
+        await _client.PostAsJsonAsync(BasePath, new CreateUserRequest($"sort-{uniquePart}-bravo", $"sb-{uniquePart}@test.com", "Test@1234!"));
+
+        // Act
+        var response = await _client.GetAsync(
+            $"{BasePath}?page=1&pageSize=20&filter.field=userName&filter.operator=startswith&filter.value=sort-{uniquePart}&sort[0][field]=userName&sort[0][dir]=asc");
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        var result = await response.Content.ReadFromJsonAsync<GridResult<UserViewModel>>();
+        result.ShouldNotBeNull();
+        var sortedData = result!.Data.ToList();
+        sortedData.Count.ShouldBe(3);
+        sortedData[0].UserName.ShouldBe($"sort-{uniquePart}-alpha");
+        sortedData[1].UserName.ShouldBe($"sort-{uniquePart}-bravo");
+        sortedData[2].UserName.ShouldBe($"sort-{uniquePart}-charlie");
+    }
+
+    [Fact]
+    public async Task GetAll_WithFilterNoMatch_ShouldReturnEmpty()
+    {
+        // Act
+        var response = await _client.GetAsync(
+            $"{BasePath}?page=1&pageSize=20&filter.field=userName&filter.operator=eq&filter.value={Guid.NewGuid()}");
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        var result = await response.Content.ReadFromJsonAsync<GridResult<UserViewModel>>();
+        result.ShouldNotBeNull();
+        result!.Data.ShouldBeEmpty();
+        result.Total.ShouldBe(0);
     }
 
     [Fact]
@@ -106,6 +187,18 @@ public class UserEndpointsTests
         var getResponse = await _client.GetAsync(location);
         var updatedUser = await getResponse.Content.ReadFromJsonAsync<UserViewModel>();
         updatedUser!.UserName.ShouldBe("testuser-update-new");
+    }
+
+    [Fact]
+    public async Task Update_WithNonExistingUser_ShouldReturnNotFound()
+    {
+        // Act
+        var response = await _client.PutAsJsonAsync(
+            $"{BasePath}/{Guid.NewGuid()}",
+            new { UserName = "does-not-matter", Email = "does@not.matter" });
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
     [Fact]
