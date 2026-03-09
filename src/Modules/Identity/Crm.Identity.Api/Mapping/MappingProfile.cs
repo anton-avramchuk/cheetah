@@ -5,6 +5,7 @@ using Crm.Identity.Application.Commands;
 using Crm.Identity.Application.Queries;
 using Crm.Identity.Contracts.Requests;
 using Crm.Identity.Contracts.Response;
+using Crm.Identity.Domain;
 using Mapster;
 
 namespace Crm.Identity.Api.Mapping;
@@ -22,6 +23,7 @@ public class MappingProfile : IMapsterMappingProfile
             .Map(dest => dest.ExpiresIn, src => src.ExpiresInSeconds);
 
         // Roles
+        config.NewConfig<CrmRole, RoleModel>();
         config.NewConfig<RoleModel, RoleViewModel>();
         config.NewConfig<GetAllRolesRequest, GetAllRolesQuery>();
         config.NewConfig<GetRoleByIdRequest, GetRoleByIdQuery>();
@@ -30,6 +32,7 @@ public class MappingProfile : IMapsterMappingProfile
         config.NewConfig<DeleteRoleRequest, DeleteRoleCommand>();
 
         // Users
+        config.NewConfig<CrmUser, UserModel>();
         config.NewConfig<UserModel, UserViewModel>();
         config.NewConfig<GetAllUsersRequest, GetAllUsersQuery>();
         config.NewConfig<GetUserByIdRequest, GetUserByIdQuery>();

@@ -93,12 +93,12 @@ public class UserEndpointsTests
         var createResponse = await _client.PostAsJsonAsync(BasePath,
             new CreateUserRequest("testuser-update-old", "testupdateold@example.com", "Test@1234!"));
         var location = createResponse.Headers.Location!;
-        var entityId = Guid.Parse(location.Segments.Last());
 
-        var updateRequest = new UpdateUserRequest(entityId, "testuser-update-new", "testupdatenew@example.com");
+        // Send only body fields (no Id) to verify route binding works correctly
+        var body = new { UserName = "testuser-update-new", Email = "testupdatenew@example.com" };
 
         // Act
-        var response = await _client.PutAsJsonAsync(location.ToString(), updateRequest);
+        var response = await _client.PutAsJsonAsync(location.ToString(), body);
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.NoContent);

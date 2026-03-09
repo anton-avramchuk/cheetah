@@ -91,12 +91,12 @@ public class RoleEndpointsTests
         // Arrange
         var createResponse = await _client.PostAsJsonAsync(BasePath, new CreateRoleRequest("test-role-update-old"));
         var location = createResponse.Headers.Location!;
-        var entityId = Guid.Parse(location.Segments.Last());
 
-        var updateRequest = new UpdateRoleRequest(entityId, "test-role-update-new");
+        // Send only body fields (no Id) to verify route binding works correctly
+        var body = new { Name = "test-role-update-new" };
 
         // Act
-        var response = await _client.PutAsJsonAsync(location.ToString(), updateRequest);
+        var response = await _client.PutAsJsonAsync(location.ToString(), body);
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.NoContent);

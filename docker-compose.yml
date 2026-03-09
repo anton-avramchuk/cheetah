@@ -48,6 +48,7 @@ services:
       Jwt__SecretKey: ${JWT_SECRET_KEY:?JWT_SECRET_KEY is required}
       Jwt__Issuer: ${JWT_ISSUER:-cheetah-crm}
       Jwt__Audience: ${JWT_AUDIENCE:-cheetah-crm-api}
+      Jwt__ExpirationMinutes: "720"
     depends_on:
       postgres:
         condition: service_healthy
@@ -66,6 +67,7 @@ services:
       Jwt__SecretKey: ${JWT_SECRET_KEY:?JWT_SECRET_KEY is required}
       Jwt__Issuer: ${JWT_ISSUER:-cheetah-crm}
       Jwt__Audience: ${JWT_AUDIENCE:-cheetah-crm-api}
+      Jwt__ExpirationMinutes: "720"
     depends_on:
       postgres:
         condition: service_healthy
@@ -84,6 +86,7 @@ services:
       Jwt__SecretKey: ${JWT_SECRET_KEY:?JWT_SECRET_KEY is required}
       Jwt__Issuer: ${JWT_ISSUER:-cheetah-crm}
       Jwt__Audience: ${JWT_AUDIENCE:-cheetah-crm-api}
+      Jwt__ExpirationMinutes: "720"
     depends_on:
       postgres:
         condition: service_healthy
@@ -102,6 +105,7 @@ services:
       Jwt__SecretKey: ${JWT_SECRET_KEY:?JWT_SECRET_KEY is required}
       Jwt__Issuer: ${JWT_ISSUER:-cheetah-crm}
       Jwt__Audience: ${JWT_AUDIENCE:-cheetah-crm-api}
+      Jwt__ExpirationMinutes: "720"
     depends_on:
       postgres:
         condition: service_healthy
