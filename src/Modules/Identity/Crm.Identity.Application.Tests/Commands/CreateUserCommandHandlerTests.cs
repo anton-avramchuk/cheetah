@@ -10,6 +10,7 @@ namespace Crm.Identity.Application.Tests.Commands;
 public class CreateUserCommandHandlerTests
 {
     private readonly Mock<UserManager<CrmUser>> _userManagerMock;
+    private readonly Mock<RoleManager<CrmRole>> _roleManagerMock;
     private readonly CreateUserCommandHandler _handler;
 
     public CreateUserCommandHandlerTests()
@@ -17,7 +18,12 @@ public class CreateUserCommandHandlerTests
         var userStoreMock = new Mock<IUserStore<CrmUser>>();
         _userManagerMock = new Mock<UserManager<CrmUser>>(
             userStoreMock.Object, null, null, null, null, null, null, null, null);
-        _handler = new CreateUserCommandHandler(_userManagerMock.Object);
+
+        var roleStoreMock = new Mock<IRoleStore<CrmRole>>();
+        _roleManagerMock = new Mock<RoleManager<CrmRole>>(
+            roleStoreMock.Object, null, null, null, null);
+
+        _handler = new CreateUserCommandHandler(_userManagerMock.Object, _roleManagerMock.Object);
     }
 
     [Fact]

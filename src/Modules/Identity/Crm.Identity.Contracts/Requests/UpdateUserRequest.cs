@@ -11,4 +11,5 @@ public record UpdateUserRequest(
     string UserName,
     [property: Required(AllowEmptyStrings = false)]
     [property: EmailAddress]
-    string Email) : ICrmRequest;
+    string Email,
+    IReadOnlyList<Guid>? RoleIds = null) : ICrmRequest;

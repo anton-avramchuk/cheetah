@@ -1,6 +1,7 @@
 using Cheetah.Core.CQRS;
 using Cheetah.Core.Grid;
 using Cheetah.Core.Modularity;
+using Cheetah.Mapping.Core;
 using Crm.Identity.Contracts;
 using Crm.Identity.DataAccess;
 using Crm.Identity.Domain;
@@ -11,6 +12,7 @@ namespace Crm.Identity.Application;
 [DependsOn(typeof(Cheetah.Core.CoreModule),
     typeof(CrmCQRSCoreModule),
     typeof(CrmGridModule),
+    typeof(CrmMappingCoreModule),
     typeof(CrmIdentityDomainModule),
     typeof(CrmIdentityDataAccessModule),
     typeof(CrmIdentityContractsModule),

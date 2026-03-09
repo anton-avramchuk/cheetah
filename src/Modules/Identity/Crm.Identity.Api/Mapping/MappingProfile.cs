@@ -33,7 +33,10 @@ public class MappingProfile : IMapsterMappingProfile
 
         // Users
         config.NewConfig<CrmUser, UserModel>();
-        config.NewConfig<UserModel, UserViewModel>();
+        config.NewConfig<CrmUser, UserDetailModel>()
+            .Map(dest => dest.RoleIds, src => src.Roles.Select(r => r.RoleId).ToList());
+        config.NewConfig<UserModel, UserGridViewModel>();
+        config.NewConfig<UserDetailModel, UserDetailViewModel>();
         config.NewConfig<GetAllUsersRequest, GetAllUsersQuery>();
         config.NewConfig<GetUserByIdRequest, GetUserByIdQuery>();
         config.NewConfig<CreateUserRequest, CreateUserCommand>();

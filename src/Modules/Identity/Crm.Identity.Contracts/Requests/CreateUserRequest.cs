@@ -12,4 +12,5 @@ public record CreateUserRequest(
     [property: EmailAddress]
     string Email,
     [property: Required(AllowEmptyStrings = false)]
-    string Password) : ICrmRequest;
+    string Password,
+    IReadOnlyList<Guid>? RoleIds = null) : ICrmRequest;

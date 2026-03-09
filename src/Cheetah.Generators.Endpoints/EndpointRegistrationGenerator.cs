@@ -485,10 +485,10 @@ public class EndpointRegistrationGenerator : IIncrementalGenerator
         var tRequest = typeArgs[0].ToDisplayString();
         var tCommand = typeArgs[1].ToDisplayString();
 
-        var parameters = $"HttpContext httpContext, [FromServices] IDispatcher dispatcher, [FromServices] IObjectMapper mapper, CancellationToken cancellationToken";
+        var parameters = $"[FromBody] {tRequest} bodyRequest, HttpContext httpContext, [FromServices] IDispatcher dispatcher, [FromServices] IObjectMapper mapper, CancellationToken cancellationToken";
         var body = new List<string>
         {
-            $"var request = await httpContext.BindBodyWithRouteAsync<{tRequest}>(cancellationToken);",
+            $"var request = httpContext.MergeRouteValuesInto(bodyRequest);",
             $"var command = mapper.Map<{tCommand}>(request);",
             "await dispatcher.SendAsync(command, cancellationToken);",
             "return Results.NoContent();"
@@ -511,10 +511,10 @@ public class EndpointRegistrationGenerator : IIncrementalGenerator
         var tCommandResult = typeArgs[2].ToDisplayString();
         var tResponse = typeArgs[3].ToDisplayString();
 
-        var parameters = $"HttpContext httpContext, [FromServices] IDispatcher dispatcher, [FromServices] IObjectMapper mapper, CancellationToken cancellationToken";
+        var parameters = $"[FromBody] {tRequest} bodyRequest, HttpContext httpContext, [FromServices] IDispatcher dispatcher, [FromServices] IObjectMapper mapper, CancellationToken cancellationToken";
         var body = new List<string>
         {
-            $"var request = await httpContext.BindBodyWithRouteAsync<{tRequest}>(cancellationToken);",
+            $"var request = httpContext.MergeRouteValuesInto(bodyRequest);",
             $"var command = mapper.Map<{tCommand}>(request);",
             $"var result = await dispatcher.SendAsync<{tCommand}, {tCommandResult}>(command, cancellationToken);",
             $"var response = mapper.Map<{tResponse}>(result);",
@@ -536,10 +536,10 @@ public class EndpointRegistrationGenerator : IIncrementalGenerator
         var tRequest = typeArgs[0].ToDisplayString();
         var tCommand = typeArgs[1].ToDisplayString();
 
-        var parameters = $"HttpContext httpContext, [FromServices] IDispatcher dispatcher, [FromServices] IObjectMapper mapper, CancellationToken cancellationToken";
+        var parameters = $"[FromBody] {tRequest} bodyRequest, HttpContext httpContext, [FromServices] IDispatcher dispatcher, [FromServices] IObjectMapper mapper, CancellationToken cancellationToken";
         var body = new List<string>
         {
-            $"var request = await httpContext.BindBodyWithRouteAsync<{tRequest}>(cancellationToken);",
+            $"var request = httpContext.MergeRouteValuesInto(bodyRequest);",
             $"var command = mapper.Map<{tCommand}>(request);",
             "await dispatcher.SendAsync(command, cancellationToken);",
             "return Results.NoContent();"

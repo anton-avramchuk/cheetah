@@ -7,7 +7,7 @@ using Crm.Identity.Contracts.Response;
 
 namespace Crm.Identity.Api.Endpoints;
 
-public class GetAllUsersEndpoint : QueryGridEndpoint<GetAllUsersRequest, GetAllUsersQuery, UserModel, UserViewModel>
+public class GetAllUsersEndpoint : QueryGridEndpoint<GetAllUsersRequest, GetAllUsersQuery, UserModel, UserGridViewModel>
 {
     public override string Route => Constants.UsersRoute;
 

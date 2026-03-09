@@ -30,6 +30,8 @@ public class MappingProfile : IMapsterMappingProfile
         config.NewConfig<MoveVacancyTaskRequest, MoveVacancyTaskCommand>();
 
         // TaskState
+        config.NewConfig<TaskState, TaskStateModel>()
+            .Map(dest => dest.Color, src => src.Color != null ? src.Color.Value : null);
         config.NewConfig<TaskStateModel, TaskStateViewModel>();
         config.NewConfig<GetTaskStateByIdRequest, GetTaskStateByIdQuery>();
         config.NewConfig<GetAllTaskStatesRequest, GetAllTaskStatesQuery>();
@@ -38,6 +40,8 @@ public class MappingProfile : IMapsterMappingProfile
         config.NewConfig<DeleteTaskStateRequest, DeleteTaskStateCommand>();
 
         // TaskPriority
+        config.NewConfig<TaskPriority, TaskPriorityModel>()
+            .Map(dest => dest.Color, src => src.Color != null ? src.Color.Value : null);
         config.NewConfig<TaskPriorityModel, TaskPriorityViewModel>();
         config.NewConfig<GetTaskPriorityByIdRequest, GetTaskPriorityByIdQuery>();
         config.NewConfig<GetAllTaskPrioritiesRequest, GetAllTaskPrioritiesQuery>();

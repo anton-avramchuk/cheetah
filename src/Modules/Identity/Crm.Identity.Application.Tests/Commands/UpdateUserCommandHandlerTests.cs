@@ -11,6 +11,7 @@ namespace Crm.Identity.Application.Tests.Commands;
 public class UpdateUserCommandHandlerTests
 {
     private readonly Mock<UserManager<CrmUser>> _userManagerMock;
+    private readonly Mock<RoleManager<CrmRole>> _roleManagerMock;
     private readonly UpdateUserCommandHandler _handler;
 
     public UpdateUserCommandHandlerTests()
@@ -18,7 +19,12 @@ public class UpdateUserCommandHandlerTests
         var userStoreMock = new Mock<IUserStore<CrmUser>>();
         _userManagerMock = new Mock<UserManager<CrmUser>>(
             userStoreMock.Object, null, null, null, null, null, null, null, null);
-        _handler = new UpdateUserCommandHandler(_userManagerMock.Object);
+
+        var roleStoreMock = new Mock<IRoleStore<CrmRole>>();
+        _roleManagerMock = new Mock<RoleManager<CrmRole>>(
+            roleStoreMock.Object, null, null, null, null);
+
+        _handler = new UpdateUserCommandHandler(_userManagerMock.Object, _roleManagerMock.Object);
     }
 
     [Fact]
@@ -36,6 +42,10 @@ public class UpdateUserCommandHandlerTests
         _userManagerMock
             .Setup(m => m.UpdateAsync(existingUser))
             .ReturnsAsync(IdentityResult.Success);
+
+        _userManagerMock
+            .Setup(m => m.GetRolesAsync(existingUser))
+            .ReturnsAsync([]);
 
         // Act
         await _handler.HandleAsync(command);
@@ -62,6 +72,10 @@ public class UpdateUserCommandHandlerTests
         _userManagerMock
             .Setup(m => m.UpdateAsync(existingUser))
             .ReturnsAsync(IdentityResult.Success);
+
+        _userManagerMock
+            .Setup(m => m.GetRolesAsync(existingUser))
+            .ReturnsAsync([]);
 
         // Act
         await _handler.HandleAsync(command);

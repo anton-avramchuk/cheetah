@@ -23,13 +23,13 @@ public class UsersServiceTests
     public async Task GetAllAsync_ShouldReturnUsers()
     {
         // Arrange
-        var users = new List<UserViewModel>
+        var users = new List<UserGridViewModel>
         {
-            new(Guid.NewGuid(), "johndoe", "john@example.com", false),
-            new(Guid.NewGuid(), "janedoe", "jane@example.com", true)
+            new(Guid.NewGuid(), "johndoe", "john@example.com"),
+            new(Guid.NewGuid(), "janedoe", "jane@example.com")
         };
 
-        var handler = new MockHttpMessageHandler(HttpStatusCode.OK, JsonSerializer.Serialize(new GridResult<UserViewModel>(users, users.Count)));
+        var handler = new MockHttpMessageHandler(HttpStatusCode.OK, JsonSerializer.Serialize(new GridResult<UserGridViewModel>(users, users.Count)));
         var service = CreateService(handler);
 
         // Act
@@ -45,7 +45,7 @@ public class UsersServiceTests
     public async Task GetAllAsync_WhenEmpty_ShouldReturnEmptyList()
     {
         // Arrange
-        var handler = new MockHttpMessageHandler(HttpStatusCode.OK, JsonSerializer.Serialize(new GridResult<UserViewModel>()));
+        var handler = new MockHttpMessageHandler(HttpStatusCode.OK, JsonSerializer.Serialize(new GridResult<UserGridViewModel>()));
         var service = CreateService(handler);
 
         // Act
@@ -64,7 +64,7 @@ public class UsersServiceTests
     {
         // Arrange
         var userId = Guid.NewGuid();
-        var expectedUser = new UserViewModel(userId, "johndoe", "john@example.com", false);
+        var expectedUser = new UserDetailViewModel(userId, "johndoe", "john@example.com", []);
 
         var handler = new MockHttpMessageHandler(HttpStatusCode.OK, JsonSerializer.Serialize(expectedUser));
         var service = CreateService(handler);

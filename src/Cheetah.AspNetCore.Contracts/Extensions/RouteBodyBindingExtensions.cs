@@ -60,4 +60,36 @@ public static class RouteBodyBindingExtensions
 
         return jsonObject.Deserialize<TRequest>(_options);
     }
+
+    /// <summary>
+    /// Injects route values into an already body-bound request for any
+    /// constructor parameters decorated with <see cref="FromRouteAttribute"/>.
+    /// Use this when the endpoint uses <c>[FromBody]</c> (so OpenAPI/Scalar can
+    /// generate an example body) but also needs route values merged in.
+    /// </summary>
+    public static TRequest MergeRouteValuesInto<TRequest>(this HttpContext context, TRequest bodyRequest)
+    {
+        var jsonObject = JsonSerializer.SerializeToNode(bodyRequest, _options)?.AsObject() ?? new JsonObject();
+
+        var ctor = typeof(TRequest).GetConstructors()
+            .MaxBy(c => c.GetParameters().Length);
+
+        if (ctor != null)
+        {
+            foreach (var param in ctor.GetParameters())
+            {
+                var fromRoute = param.GetCustomAttribute(typeof(FromRouteAttribute));
+                if (fromRoute == null || param.Name == null)
+                    continue;
+
+                var routeName = (fromRoute as FromRouteAttribute)?.Name ?? param.Name;
+                var routeValue = context.Request.RouteValues[routeName];
+
+                if (routeValue != null)
+                    jsonObject[param.Name] = JsonValue.Create(routeValue.ToString());
+            }
+        }
+
+        return jsonObject.Deserialize<TRequest>(_options)!;
+    }
 }

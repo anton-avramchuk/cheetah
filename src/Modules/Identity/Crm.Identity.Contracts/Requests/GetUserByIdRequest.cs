@@ -4,5 +4,5 @@ using Crm.Identity.Contracts.Response;
 
 namespace Crm.Identity.Contracts.Requests;
 
-[ApiRoute("api/users/{id:guid}", ApiMethod.GetOrNotFound, ResponseType = typeof(UserViewModel), ServiceName = "Users")]
+[ApiRoute("api/users/{id:guid}", ApiMethod.GetOrNotFound, ResponseType = typeof(UserDetailViewModel), ServiceName = "Users")]
 public record GetUserByIdRequest([FromRoute] Guid Id) : ICrmRequest;

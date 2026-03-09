@@ -28,7 +28,7 @@ public class UserEndpointsTests
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
-        var result = await response.Content.ReadFromJsonAsync<GridResult<UserViewModel>>();
+        var result = await response.Content.ReadFromJsonAsync<GridResult<UserGridViewModel>>();
         result.ShouldNotBeNull();
     }
 
@@ -47,7 +47,7 @@ public class UserEndpointsTests
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
-        var result = await response.Content.ReadFromJsonAsync<GridResult<UserViewModel>>();
+        var result = await response.Content.ReadFromJsonAsync<GridResult<UserGridViewModel>>();
         result.ShouldNotBeNull();
         result!.Data.Count().ShouldBe(2);
         result.Total.ShouldBe(3);
@@ -67,7 +67,7 @@ public class UserEndpointsTests
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
-        var result = await response.Content.ReadFromJsonAsync<GridResult<UserViewModel>>();
+        var result = await response.Content.ReadFromJsonAsync<GridResult<UserGridViewModel>>();
         result.ShouldNotBeNull();
         result!.Data.Count().ShouldBe(1);
         result.Data.First().UserName.ShouldBe($"filter-match-{uniquePart}");
@@ -88,7 +88,7 @@ public class UserEndpointsTests
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
-        var result = await response.Content.ReadFromJsonAsync<GridResult<UserViewModel>>();
+        var result = await response.Content.ReadFromJsonAsync<GridResult<UserGridViewModel>>();
         result.ShouldNotBeNull();
         var sortedData = result!.Data.ToList();
         sortedData.Count.ShouldBe(3);
@@ -106,7 +106,7 @@ public class UserEndpointsTests
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
-        var result = await response.Content.ReadFromJsonAsync<GridResult<UserViewModel>>();
+        var result = await response.Content.ReadFromJsonAsync<GridResult<UserGridViewModel>>();
         result.ShouldNotBeNull();
         result!.Data.ShouldBeEmpty();
         result.Total.ShouldBe(0);
@@ -152,7 +152,7 @@ public class UserEndpointsTests
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
-        var user = await response.Content.ReadFromJsonAsync<UserViewModel>();
+        var user = await response.Content.ReadFromJsonAsync<UserDetailViewModel>();
         user.ShouldNotBeNull();
         user!.UserName.ShouldBe("testuser-getbyid");
     }
@@ -185,7 +185,7 @@ public class UserEndpointsTests
         response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 
         var getResponse = await _client.GetAsync(location);
-        var updatedUser = await getResponse.Content.ReadFromJsonAsync<UserViewModel>();
+        var updatedUser = await getResponse.Content.ReadFromJsonAsync<UserDetailViewModel>();
         updatedUser!.UserName.ShouldBe("testuser-update-new");
     }
 

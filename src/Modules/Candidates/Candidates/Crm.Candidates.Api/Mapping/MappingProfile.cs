@@ -5,6 +5,7 @@ using Crm.Candidates.Application.Commands;
 using Crm.Candidates.Application.Queries;
 using Crm.Candidates.Contracts.Requests;
 using Crm.Candidates.Contracts.Response;
+using Crm.Candidates.Domain;
 using Mapster;
 
 namespace Crm.Candidates.Api.Mapping;
@@ -23,6 +24,8 @@ public class MappingProfile : IMapsterMappingProfile
         config.NewConfig<DeleteCandidateRequest, DeleteCandidateCommand>();
 
         // CandidateStage
+        config.NewConfig<CandidateStage, CandidateStageModel>()
+            .Map(dest => dest.Color, src => src.Color != null ? src.Color.Value : null);
         config.NewConfig<CandidateStageModel, CandidateStageViewModel>();
         config.NewConfig<GetCandidateStageByIdRequest, GetCandidateStageByIdQuery>();
         config.NewConfig<GetAllCandidateStagesRequest, GetAllCandidateStagesQuery>();
@@ -31,6 +34,8 @@ public class MappingProfile : IMapsterMappingProfile
         config.NewConfig<DeleteCandidateStageRequest, DeleteCandidateStageCommand>();
 
         // CandidateSource
+        config.NewConfig<CandidateSource, CandidateSourceModel>()
+            .Map(dest => dest.Color, src => src.Color != null ? src.Color.Value : null);
         config.NewConfig<CandidateSourceModel, CandidateSourceViewModel>();
         config.NewConfig<GetCandidateSourceByIdRequest, GetCandidateSourceByIdQuery>();
         config.NewConfig<GetAllCandidateSourcesRequest, GetAllCandidateSourcesQuery>();

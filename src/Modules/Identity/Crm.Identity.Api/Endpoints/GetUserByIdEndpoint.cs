@@ -7,7 +7,7 @@ using Crm.Identity.Contracts.Response;
 
 namespace Crm.Identity.Api.Endpoints;
 
-public class GetUserByIdEndpoint : QueryOrNotFoundEndpoint<GetUserByIdRequest, GetUserByIdQuery, UserModel, UserViewModel>
+public class GetUserByIdEndpoint : QueryOrNotFoundEndpoint<GetUserByIdRequest, GetUserByIdQuery, UserDetailModel, UserDetailViewModel>
 {
     public override string Route => $"{Constants.UsersRoute}/{{id:guid}}";
 
