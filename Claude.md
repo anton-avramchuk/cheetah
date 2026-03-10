@@ -103,7 +103,7 @@ public class CreateMyEntityCommandHandler : ICommandHandler<CreateMyEntityComman
 
 ### Repository Pattern & Specifications
 
-**Application layer uses repositories, NOT DbContext directly.**
+**Application layer uses repositories, NOT DbContext directly. All filtering MUST go through Specifications — raw LINQ in handlers is forbidden.**
 
 **Repository Interface (Domain layer):**
 ```csharp
@@ -378,7 +378,7 @@ Cheetah.MyModule.Application/
 14. **Angular frontend talks directly to REST API** - no .NET frontend client libraries
 15. **Project references MUST match module dependencies**
 16. **Repository Pattern MANDATORY** - Application layer MUST NOT use DbContext directly
-17. **Specifications for queries** - Use Specification pattern for filtering logic
+17. **Specifications are MANDATORY for all filtering** - NEVER use raw LINQ predicates (`.Where(x => ...)`) in Application layer handlers; always create a `Specification<T>` class in Domain and pass it to the repository
 18. **Application MUST NOT depend on DataAccess module** - only on Domain (repository interfaces live in Domain)
 
 ## 📚 Key Files
