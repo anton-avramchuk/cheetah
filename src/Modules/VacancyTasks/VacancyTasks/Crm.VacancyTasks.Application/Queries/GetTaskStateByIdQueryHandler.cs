@@ -3,7 +3,7 @@ using Cheetah.Core.DataAccess.Abstractions;
 using Cheetah.Core.DependencyInjection;
 using Cheetah.Mapping.Core;
 using Crm.VacancyTasks.Domain;
-using Crm.VacancyTasks.Domain.Specifications;
+using Cheetah.Core.Domain;
 using Microsoft.EntityFrameworkCore;
 
 namespace Crm.VacancyTasks.Application.Queries;

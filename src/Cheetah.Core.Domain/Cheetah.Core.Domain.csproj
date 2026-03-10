@@ -2,6 +2,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Cheetah.Core.Events\Cheetah.Core.Events.csproj" />
+      <ProjectReference Include="..\Cheetah.Core.Specification\Cheetah.Core.Specification.csproj" />
       <ProjectReference Include="..\Cheetah.Core\Cheetah.Core.csproj" />
     </ItemGroup>
 

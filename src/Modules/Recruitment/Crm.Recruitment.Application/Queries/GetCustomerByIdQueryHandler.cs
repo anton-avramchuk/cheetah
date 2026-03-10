@@ -3,7 +3,7 @@ using Cheetah.Core.DataAccess.Abstractions;
 using Cheetah.Core.DependencyInjection;
 using Cheetah.Mapping.Core;
 using Crm.Recruitment.Domain;
-using Crm.Recruitment.Domain.Specifications;
+using Cheetah.Core.Domain;
 using Microsoft.EntityFrameworkCore;
 
 namespace Crm.Recruitment.Application.Queries;
