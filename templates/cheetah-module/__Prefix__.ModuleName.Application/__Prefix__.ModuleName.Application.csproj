@@ -2,7 +2,6 @@
 
     <ItemGroup>
         <ProjectReference Include="..\__Prefix__.ModuleName.Contracts\__Prefix__.ModuleName.Contracts.csproj" />
-        <ProjectReference Include="..\__Prefix__.ModuleName.DataAccess\__Prefix__.ModuleName.DataAccess.csproj" />
         <ProjectReference Include="..\__Prefix__.ModuleName.DomainEvents\__Prefix__.ModuleName.DomainEvents.csproj" />
         <ProjectReference Include="..\__Prefix__.ModuleName.Domain\__Prefix__.ModuleName.Domain.csproj" />
     </ItemGroup>

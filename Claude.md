@@ -3,18 +3,18 @@
 ## 🎯 Concept
 
 Modular .NET 10.0 CRM framework with event-driven architecture. Monolith with microservices preparation.
-**Frontend:** Blazor WebAssembly. **Target:** 10,000+ RPS.
+**Frontend:** Angular (standalone SPA, communicates via REST API). **Target:** 10,000+ RPS.
 
 ## 🏗️ Architecture
 
 ### Module System
 
-- Independent modules communicate via events (Redis backend, In-Memory frontend)
+- Independent modules communicate via events (Redis backend)
 - Each module has own database (PostgreSQL)
 - Auto-registration via Source Generators
 - Topological dependency sorting
 
-**Module Structure (11 assemblies per large module):**
+**Module Structure (8 assemblies per large module):**
 ```
 Cheetah.{ModuleName}/
 ├── Events/              # Domain Events (contracts, NO dependencies except Core.Events)
@@ -24,14 +24,11 @@ Cheetah.{ModuleName}/
 ├── Application/         # CQRS, Business Logic (depends on Domain)
 ├── DataAccess/          # EF Core, Migrations (depends on Domain)
 ├── Api/                 # Minimal API (depends on Application + Contracts)
-├── Frontend/            # Blazor components (depends on Contracts)
-├── Client/              # Backend HTTP client (depends on Contracts)
-├── Frontend.Client/     # Blazor CQRS handlers (depends on Client)
+├── Client/              # HTTP client for server-to-server integration (depends on Contracts)
 └── Tests/
     ├── Domain.Tests/          # Unit tests for Domain layer
     ├── Application.Tests/     # Unit tests for Application layer
-    ├── Client.Tests/          # Unit tests for Client library
-    └── Frontend.Client.Tests/ # Unit tests for Frontend.Client library
+    └── Client.Tests/          # Unit tests for Client library
 ```
 
 **Solution Organization:** All projects in `/Modules/{ModuleName}/` folder.
@@ -240,9 +237,9 @@ public class CrmOtherModuleApplicationModule : CrmModule
 }
 ```
 
-### Client Libraries
+### Client Library
 
-**Backend Client** (`Client/`): HTTP client for server-to-server integration.
+**Client** (`Client/`): HTTP client for server-to-server integration between .NET modules/services.
 
 ```csharp
 public interface IMyModuleClient
@@ -261,15 +258,9 @@ public class MyModuleClient : IMyModuleClient
 }
 ```
 
-**Frontend Client** (`Frontend.Client/`): CQRS handlers using Backend Client for Blazor.
+**MUST have comprehensive tests (Client.Tests).**
 
-```csharp
-[DependsOn(typeof(CrmMyModuleClientModule))]
-[DependsOn(typeof(CrmFrontendCQRSModule))]
-public partial class CrmMyModuleFrontendClientModule : CrmModule { }
-```
-
-**Both MUST have comprehensive tests.**
+> Angular frontend communicates directly with the REST API — no .NET client library is needed for the frontend.
 
 ### Shared and Contracts Libraries
 
@@ -290,10 +281,10 @@ Shared (Core only)
 Contracts (Core + Shared)
   ↓
 Domain (Events) → Application (Domain) → Api (Application + Contracts)
-  ↓                 ↓
-DataAccess (Domain)  ↓
-                     ↓
-Client (Contracts) → Frontend.Client (Client) → Frontend (Contracts)
+  ↓
+DataAccess (Domain)
+
+Client (Contracts)   ← used for server-to-server integration only
 ```
 
 ### Dependency Injection
@@ -359,16 +350,15 @@ Cheetah.MyModule.Application/
 ## 🚀 Creating New Module
 
 1. **Events** project FIRST (NO dependencies, pure contracts)
-2. Domain (depends on Events)
-3. DataAccess (depends on `CrmEntityFrameworkModule` + `CrmEntityFrameworkPostgreSqlModule`)
-4. Application (CQRS handlers)
-5. Api (Minimal API, depends on `CrmMapsterModule`)
-6. Shared (constants)
-7. Client (HTTP client)
-8. Frontend.Client (CQRS handlers using Client, depends on `CrmFrontendCQRSModule`)
-9. Frontend (Blazor components)
-10. Tests (Client.Tests + Frontend.Client.Tests)
-11. Add ALL projects to solution in `/Modules/{ModuleName}/` folder
+2. Shared (constants, enums)
+3. Contracts (DTOs, depends on Core + Shared)
+4. Domain (depends on Events)
+5. DataAccess (depends on Domain + `CrmEntityFrameworkModule` + `CrmEntityFrameworkPostgreSqlModule`)
+6. Application (CQRS handlers, depends on Domain only — NOT DataAccess)
+7. Api (Minimal API, depends on Application + Contracts + `CrmMapsterModule`)
+8. Client (HTTP client, depends on Contracts) — only if other .NET modules need to call this one
+9. Tests: Domain.Tests, Application.Tests, Client.Tests (if Client exists)
+10. Add ALL projects to solution in `/Modules/{ModuleName}/` folder
 
 ## ⚠️ Critical Constraints
 
@@ -379,16 +369,17 @@ Cheetah.MyModule.Application/
 5. **PostgreSQL default** - use `UseNpgsql()`
 6. **Events project has NO dependencies** (except EventBase from Core)
 7. **Other modules depend ONLY on Events** - not Domain/Application
-8. **2 client libraries required** - Client + Frontend.Client with tests
+8. **Client library is optional** - only needed for server-to-server integration between .NET modules
 9. **All projects in solution** - organized in `/Modules/{ModuleName}/`
 10. **Don't expose Domain entities** - only ViewModels
 11. **Always `builder.Ignore(e => e.DomainEvents)`** in EF config
 12. **Module classes are `partial`** - for Source Generators
 13. **Always use `[FromServices]`, `[FromRoute]`, `[FromBody]`, `[FromQuery]`**
-14. **Blazor WASM via API only** - through Client libraries
+14. **Angular frontend talks directly to REST API** - no .NET frontend client libraries
 15. **Project references MUST match module dependencies**
 16. **Repository Pattern MANDATORY** - Application layer MUST NOT use DbContext directly
 17. **Specifications for queries** - Use Specification pattern for filtering logic
+18. **Application MUST NOT depend on DataAccess module** - only on Domain (repository interfaces live in Domain)
 
 ## 📚 Key Files
 
