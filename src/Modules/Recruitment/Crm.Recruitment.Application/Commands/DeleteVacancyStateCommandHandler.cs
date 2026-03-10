@@ -3,6 +3,7 @@ using Cheetah.Core.DataAccess.Abstractions;
 using Cheetah.Core.DependencyInjection;
 using Cheetah.Core.Domain.Exceptions;
 using Crm.Recruitment.Domain;
+using Crm.Recruitment.Domain.Specifications;
 using Microsoft.EntityFrameworkCore;
 
 namespace Crm.Recruitment.Application.Commands;
@@ -27,7 +28,7 @@ public class DeleteVacancyStateCommandHandler : ICommandHandler<DeleteVacancySta
                      ?? throw EntityNotFoundException.For<VacancyState>(command.Id);
 
         var isInUse = await _vacancyRepository.AsNoTrackingQueryable()
-            .AnyAsync(v => v.StateId == command.Id, ct);
+            .Where(new VacancyByStateIdSpecification(command.Id)).AnyAsync(ct);
 
         if (isInUse)
             throw new InvalidOperationException($"Cannot delete VacancyState '{entity.Name}' because it is in use by one or more vacancies.");

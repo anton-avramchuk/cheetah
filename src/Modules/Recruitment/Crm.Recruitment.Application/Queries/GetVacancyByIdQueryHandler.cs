@@ -3,6 +3,7 @@ using Cheetah.Core.DataAccess.Abstractions;
 using Cheetah.Core.DependencyInjection;
 using Cheetah.Mapping.Core;
 using Crm.Recruitment.Domain;
+using Crm.Recruitment.Domain.Specifications;
 using Microsoft.EntityFrameworkCore;
 
 namespace Crm.Recruitment.Application.Queries;
@@ -14,7 +15,7 @@ public class GetVacancyByIdQueryHandler(IRepository<Vacancy, Guid> repository, I
     public async ValueTask<VacancyModel?> HandleAsync(GetVacancyByIdQuery query, CancellationToken ct = default)
     {
         return await mapper
-            .ProjectTo<VacancyModel>(repository.AsNoTrackingQueryable().Where(e => e.Id == query.Id))
+            .ProjectTo<VacancyModel>(repository.AsNoTrackingQueryable().Where(new EntityByIdSpecification<Vacancy>(query.Id)))
             .FirstOrDefaultAsync(ct);
     }
 }

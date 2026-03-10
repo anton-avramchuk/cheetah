@@ -3,6 +3,7 @@ using Cheetah.Core.DataAccess.Abstractions;
 using Cheetah.Core.DependencyInjection;
 using Cheetah.Mapping.Core;
 using Crm.Recruitment.Domain;
+using Crm.Recruitment.Domain.Specifications;
 using Microsoft.EntityFrameworkCore;
 
 namespace Crm.Recruitment.Application.Queries;
@@ -14,7 +15,7 @@ public class GetWorkFormatByIdQueryHandler(IRepository<WorkFormat, Guid> reposit
     public async ValueTask<WorkFormatModel?> HandleAsync(GetWorkFormatByIdQuery query, CancellationToken ct = default)
     {
         return await mapper
-            .ProjectTo<WorkFormatModel>(repository.AsNoTrackingQueryable().Where(e => e.Id == query.Id))
+            .ProjectTo<WorkFormatModel>(repository.AsNoTrackingQueryable().Where(new EntityByIdSpecification<WorkFormat>(query.Id)))
             .FirstOrDefaultAsync(ct);
     }
 }

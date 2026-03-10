@@ -3,6 +3,7 @@ using Cheetah.Core.DataAccess.Abstractions;
 using Cheetah.Core.DependencyInjection;
 using Cheetah.Mapping.Core;
 using Crm.Candidates.Domain;
+using Crm.Candidates.Domain.Specifications;
 using Microsoft.EntityFrameworkCore;
 
 namespace Crm.Candidates.Application.Queries;
@@ -14,7 +15,7 @@ public class GetCandidateApplicationByIdQueryHandler(IRepository<CandidateApplic
     public async ValueTask<CandidateApplicationModel?> HandleAsync(GetCandidateApplicationByIdQuery query, CancellationToken ct = default)
     {
         return await mapper
-            .ProjectTo<CandidateApplicationModel>(repository.AsNoTrackingQueryable().Where(e => e.Id == query.Id))
+            .ProjectTo<CandidateApplicationModel>(repository.AsNoTrackingQueryable().Where(new EntityByIdSpecification<CandidateApplication>(query.Id)))
             .FirstOrDefaultAsync(ct);
     }
 }

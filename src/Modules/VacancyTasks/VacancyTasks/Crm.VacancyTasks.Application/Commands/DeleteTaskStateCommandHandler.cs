@@ -3,6 +3,7 @@ using Cheetah.Core.DataAccess.Abstractions;
 using Cheetah.Core.DependencyInjection;
 using Cheetah.Core.Domain.Exceptions;
 using Crm.VacancyTasks.Domain;
+using Crm.VacancyTasks.Domain.Specifications;
 using Microsoft.EntityFrameworkCore;
 
 namespace Crm.VacancyTasks.Application.Commands;
@@ -27,7 +28,7 @@ public class DeleteTaskStateCommandHandler : ICommandHandler<DeleteTaskStateComm
                      ?? throw EntityNotFoundException.For<TaskState>(command.Id);
 
         var isInUse = await _vacancyTaskRepository.AsNoTrackingQueryable()
-            .AnyAsync(t => t.StateId == command.Id, ct);
+            .Where(new VacancyTaskByStateIdSpecification(command.Id)).AnyAsync(ct);
 
         if (isInUse)
             throw new InvalidOperationException($"Cannot delete TaskState '{entity.Name}' because it is in use by one or more vacancy tasks.");

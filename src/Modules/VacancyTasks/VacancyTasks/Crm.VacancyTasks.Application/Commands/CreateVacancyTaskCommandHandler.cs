@@ -3,6 +3,7 @@ using Cheetah.Core.DataAccess.Abstractions;
 using Cheetah.Core.DependencyInjection;
 using Cheetah.Core.Events;
 using Crm.VacancyTasks.Domain;
+using Crm.VacancyTasks.Domain.Specifications;
 using Microsoft.EntityFrameworkCore;
 
 namespace Crm.VacancyTasks.Application.Commands;
@@ -26,7 +27,7 @@ public class CreateVacancyTaskCommandHandler : ICommandHandler<CreateVacancyTask
         for (var attempt = 0; attempt < maxRetries; attempt++)
         {
             var maxNumber = await _repository.AsNoTrackingQueryable()
-                .Where(t => t.VacancyId == command.VacancyId)
+                .Where(new VacancyTaskByVacancyIdSpecification(command.VacancyId))
                 .MaxAsync(t => (int?)t.Number, ct) ?? 0;
 
             var entity = VacancyTask.Create(

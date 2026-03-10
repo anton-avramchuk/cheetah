@@ -3,6 +3,7 @@ using Cheetah.Core.DataAccess.Abstractions;
 using Cheetah.Core.DependencyInjection;
 using Cheetah.Core.Domain.Exceptions;
 using Crm.Candidates.Domain;
+using Crm.Candidates.Domain.Specifications;
 using Microsoft.EntityFrameworkCore;
 
 namespace Crm.Candidates.Application.Commands;
@@ -27,7 +28,7 @@ public class DeleteCandidateStageCommandHandler : ICommandHandler<DeleteCandidat
                      ?? throw EntityNotFoundException.For<CandidateStage>(command.Id);
 
         var isInUse = await _applicationRepository.AsNoTrackingQueryable()
-            .AnyAsync(a => a.StageId == command.Id, ct);
+            .Where(new CandidateApplicationByStageIdSpecification(command.Id)).AnyAsync(ct);
 
         if (isInUse)
             throw new InvalidOperationException($"Cannot delete CandidateStage '{entity.Name}' because it is in use by one or more candidate applications.");

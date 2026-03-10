@@ -3,6 +3,7 @@ using Cheetah.Core.DataAccess.Abstractions;
 using Cheetah.Core.DependencyInjection;
 using Cheetah.Mapping.Core;
 using Crm.Recruitment.Domain;
+using Crm.Recruitment.Domain.Specifications;
 using Microsoft.EntityFrameworkCore;
 
 namespace Crm.Recruitment.Application.Queries;
@@ -14,7 +15,7 @@ public class GetCustomerByIdQueryHandler(IRepository<Customer, Guid> repository,
     public async ValueTask<CustomerModel?> HandleAsync(GetCustomerByIdQuery query, CancellationToken ct = default)
     {
         return await mapper
-            .ProjectTo<CustomerModel>(repository.AsNoTrackingQueryable().Where(e => e.Id == query.Id))
+            .ProjectTo<CustomerModel>(repository.AsNoTrackingQueryable().Where(new EntityByIdSpecification<Customer>(query.Id)))
             .FirstOrDefaultAsync(ct);
     }
 }
