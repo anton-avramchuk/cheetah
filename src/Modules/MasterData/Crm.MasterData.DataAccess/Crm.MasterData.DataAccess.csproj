@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+        <ProjectReference Include="..\Crm.MasterData.Domain\Crm.MasterData.Domain.csproj"/>
+    </ItemGroup>
+
+</Project>

@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <ItemGroup>
+        <ProjectReference Include="..\Crm.MasterData.Application\Crm.MasterData.Application.csproj"/>
+    </ItemGroup>
+
+</Project>
