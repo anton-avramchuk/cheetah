@@ -24,6 +24,7 @@
 - `Skill` (Name, CategoryId) — навыки/технологии с категоризацией
 - `SkillCategory` (Name) — категория навыков ("Backend", "Базы данных", "Soft skills")
 - `Location` (Country, City, Timezone) — локации для вакансий и кандидатов
+- `Industry` (Name) — сфера деятельности компании (FinTech, E-Commerce)
 
 **Изменения в `Position`:**
 - Добавить поле `Grade` (enum: Junior, Middle, Senior, Lead, Principal)
@@ -42,7 +43,7 @@
 ## Шаг 2 — Создать модуль `Customers`
 
 **Что переносим из `Recruitment`:**
-- `Customer` (Name, Code, Description, DirectionId) — переименовать `DirectionId` → `CategoryId`
+- `Customer` (Name, Code, Description, DirectionId) — переименовать `DirectionId` → `CategoryId`. Добавить `IndustryId` (ссылка на MasterData.Industry без FK).
 - `CustomerDirection` — переименовать в `CustomerCategory` (Name, Description)
 
 **Что добавляем нового:**
@@ -90,6 +91,9 @@
 - Публикует: `ApplicationStageChangedEvent(ApplicationId, CandidateId, VacancyId, OldStageId, NewStageId)`
 - Публикует: `ApplicationCreatedEvent(ApplicationId, CandidateId, VacancyId)`
 
+**Локальные данные (Read-Only ACL):**
+- Создать локальную сущность `User` (Id, Name, Email) для хранения интервьюеров. Обновляется через события из `Identity`.
+
 **Модуль:** `Crm.ApplicantTracking.*` в `/Modules/ApplicantTracking/`
 **Схема БД:** `applicant_tracking`
 
@@ -114,6 +118,9 @@
 - Добавить `LocationId` (ссылка на MasterData.Location)
 - `ExpectedSalaryMin`, `ExpectedSalaryMax`, `Currency` — зарплатные ожидания
 
+**Локальные данные (Read-Only ACL):**
+- Создать `LocalSkill` и `LocalLocation` для быстрых SQL-джойнов при поиске. Обновлять через шину из `MasterData`.
+
 **Упростить `Candidate`:**
 - `CandidateExternalProfile` уже есть ✅
 
@@ -136,6 +143,13 @@
 - `SalaryMin`, `SalaryMax`, `Currency` — зарплатная вилка
 - `LocationId` (ссылка на MasterData.Location)
 - Убрать `StackItemId` (одна технология) → заменить на `VacancyRequirement` (список навыков)
+- `VacancyState` перевести из отдельной таблицы в фиксированный `enum` (Draft, Active, Paused, Closed).
+
+**Новая сущность `VacancyAssignment`:**
+- `VacancyId`, `RecruiterId` (пользователь Identity из ACL), `Role` (enum: Lead, Sourcer).
+
+**Локальные данные (Read-Only ACL):**
+- Создать `LocalSkill` и `LocalLocation` для быстрого поиска вакансий. Обновлять по шине. (Сущность `User` здесь уже есть ✅)
 
 **После шага 1 и 2:**
 - Удалить Position, StackItem, WorkFormat, Customer, CustomerDirection из Recruitment
@@ -155,19 +169,26 @@
 - Category (enum: UserNote, CallSummary, SystemLog)
 - **Полиморфный ключ:** TargetEntityType, TargetEntityId
 
+**Локальные данные (Read-Only ACL):**
+- Создать локальную сущность `User` (Id, Name, Email) для хранения авторов `AuthorId`. Обновляется через события из `Identity`.
+
 **Модуль:** `Crm.Activities.*` в `/Modules/Activities/`
 **Схема БД:** `activities`
 
 ---
 
-## Шаг 7 — Решить вопрос с `TaskPriority` в VacancyTasks
+## Шаг 7 — Замена динамических статусов на Enums и добавление ACL
 
-**Проблема:** `TaskPriority` реализована как кастомизируемая entity (можно добавить через UI), но в domain-плане это фиксированный enum.
+**Проблема:** `TaskPriority`, `TaskState` (в VacancyTasks) и `VacancyState` (в Recruitment) реализованы как кастомизируемые entities, но они сильно завязаны на код/события.
 
-**Решение:** Заменить `TaskPriority` entity на enum `TaskPriority` (Low, Normal, High, Critical).
-- Удалить `TaskPriority` entity + таблицу + все CRUD эндпоинты
-- Заменить `VacancyTask.PriorityId` (Guid?) на `VacancyTask.Priority` (enum TaskPriority, default: Normal)
-- Написать миграцию: заполнить из связанной таблицы перед удалением
+**Решение:** 
+1. Перевести `TaskPriority` в `enum` (Low, Normal, High, Critical).
+2. Перевести `TaskState` в `enum` (ToDo, InProgress, Review, Done).
+3. Перевести `VacancyState` в `enum` (Draft, Active, Closed).
+- Удалить их таблицы и CRUD эндпоинты, заменить поля в сущностях на тип `enum`. (Перед удалением написать миграцию).
+
+**Локальные данные (Read-Only ACL) в Tasks:**
+- Добавить локальную реплику `User` (из Identity), чтобы хранить имена для `AssignerId` и `AssigneeId`.
 
 ---
 

@@ -4,12 +4,12 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Crm.MasterData.DataAccess.Configurations;
 
-public class StackItemConfigurationOptions : AggregateRootConfigurationOptions<StackItem, Guid>
+public class StackItemConfigurationOptions : EntityConfigurationOptions<StackItem, Guid>
 {
-    public override string Schema => "masterdata";
+    public override string Schema => Constants.SchemaName;
 }
 
-public class StackItemConfiguration : AggregateRootConfiguration<StackItem, Guid, StackItemConfigurationOptions>
+public class StackItemConfiguration : EntityConfiguration<StackItem, Guid, StackItemConfigurationOptions>
 {
     protected override StackItemConfigurationOptions Options { get; } = new();
 

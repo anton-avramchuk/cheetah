@@ -2,7 +2,7 @@ using Cheetah.Core.Domain;
 
 namespace Crm.MasterData.Domain;
 
-public class StackItem : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEntity
+public class StackItem : Entity<Guid>, ICreateAtEntity, IUpdatedAtEntity
 {
     public string Name { get; private set; } = null!;
 
@@ -26,10 +26,6 @@ public class StackItem : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEntity
             Name = name,
             Description = description
         };
-
-        // Uncomment when DomainEvents are needed:
-        // entity.AddDomainEvent(new StackItemCreatedEvent(entity.Id, entity.Name));
-
         return entity;
     }
 

@@ -5,15 +5,15 @@ using Crm.MasterData.Application.Queries;
 using Crm.MasterData.Contracts.Requests;
 using Crm.MasterData.Contracts.Response;
 
-namespace Crm.MasterData.Api.Endpoints;
+namespace Crm.MasterData.Api.Endpoints.Skill;
 
-public class GetAllSampleEntitiesEndpoint : QueryGridEndpoint<GetAllSampleEntitiesRequest,
-    GetAllSampleEntitiesQuery, StackItemModel, StackItemViewModel>
+public class GetAllSkillsEndpoint : QueryGridEndpoint<GetAllSkillsRequest,
+    GetAllSkillsQuery, SkillModel, SkillViewModel>
 {
-    public override string Route => Constants.DefaultRoute;
+    public override string Route => Constants.SkillsRoute;
 
     protected override void Configure(EndpointConfiguration config)
     {
-        config.WithTags("SampleEntities");
+        config.WithTags("Skills");
     }
 }

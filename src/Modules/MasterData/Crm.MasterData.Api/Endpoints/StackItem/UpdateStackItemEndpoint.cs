@@ -3,7 +3,7 @@ using Cheetah.Backend.Endpoints.Http;
 using Crm.MasterData.Application.Commands;
 using Crm.MasterData.Contracts.Requests;
 
-namespace Crm.MasterData.Api.Endpoints;
+namespace Crm.MasterData.Api.Endpoints.StackItem;
 
 public class UpdateStackItemEndpoint : UpdateCommandEndpoint<UpdateStackItemRequest, UpdateStackItemCommand>
 {

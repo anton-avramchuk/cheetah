@@ -43,11 +43,13 @@
   - Свойства: `Country`, `City`, `Timezone`.
 - **`WorkFormat`**: Формат работы (Office, Remote, Hybrid).
 - **`CandidateSource`**: Источник появления профиля (HeadHunter, Habr.Careers, Реферал).
+- **`Industry`**: Отрасль/Сфера деятельности компании (FinTech, E-Commerce, MedTech).
+  - Свойства: `Name`.
 
 ### 2. `Customers` (Клиенты и Контракты)
 Организации-заказчики, для которых агентство/департамент ведет подбор.
 - **`Customer`**: Компания-Заказчик (Aggregate Root).
-  - Свойства: `Name`, `Website`, `Industry`, `Status` (Lead, Active, Churned), `Description`.
+  - Свойства: `Name`, `Website`, `IndustryId` (ссылка на MasterData.Industry), `Status` (Lead, Active, Churned), `Description`.
 - **`ContactPerson`**: Представитель заказчика (HRD, CEO, Tech Lead на стороне клиента).
   - Свойства: `CustomerId`, `FirstName`, `LastName`, `Email`, `Phone`, `Role`, `IsDecisionMaker`.
 
@@ -171,12 +173,20 @@ Angular **не ходит** во все сервисы. Он обращаетс�
 - Модуль `Candidates` обновляет имя кандидата. Выбрасывает `CandidateUpdatedEvent(CandidateId, NewFirstName, NewLastName)`.
 - Если `ApplicantTracking` хранит денормализованные имена кандидатов ради скорости запросов к БД, он слушает это событие и обновляет имя у себя в таблице `Application`.
 
-### 2. Синхронные запросы внутри Backend (через gRPC или Http Client)
+### 2. Репликация данных (Read-Only ACL)
+Используется для кэширования справочников (из `MasterData`) или пользователей (из `Identity`), чтобы делать быстрые JOIN-ы и поисковые индексы локально.
+*Пример:*
+- Модулам `Candidates` и `Recruitment` нужны справочники `Skill` и `Location` для крутых SQL-фильтров.
+- Они создают у себя **Read-Only** сущности `LocalSkill` и `LocalLocation`. Этим модулям запрещено их редактировать.
+- Когда в `MasterData` добавляется навык, летит `SkillCreatedIntegrationEvent`. Модули-подписчики ловят его и делают `INSERT` в свои локальные таблицы.
+- Теперь `Recruitment` может делать мгновенные JOIN-ы без походов по сети.
+
+### 3. Синхронные запросы внутри Backend (через gRPC или Http Client)
 Используется при агрегации в BFF или строгой валидации.
 *Пример:*
 - При создании `Application` в модуле `ApplicantTracking`, нужно проверить, существует ли такой `CandidateId`. Модуль делает быстрый синхронный запрос в модуль `Candidates`.
 
-### 3. Shared Database (Допустимо только при Модульном Монолите)
+### 4. Shared Database (Допустимо только при Модульном Монолите)
 Если пока сервисы живут в одном процессе (как у тебя в решениях Crm.*.Api), вы можете использовать единую БД, но с **РАЗНЫМИ СХЕМАМИ** (Schemas).
 Например:
 - `[identity].[Users]`

@@ -17,7 +17,7 @@ public class CreateStackItemCommandHandlerTests
     {
         _repositoryMock = new Mock<IRepository<StackItem, Guid>>();
         _eventBusMock = new Mock<IEventBus>();
-        _handler = new CreateStackItemCommandHandler(_repositoryMock.Object, _eventBusMock.Object);
+        _handler = new CreateStackItemCommandHandler(_repositoryMock.Object);
     }
 
     [Fact]
