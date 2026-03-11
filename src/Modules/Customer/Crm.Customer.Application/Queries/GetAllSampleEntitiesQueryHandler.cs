@@ -3,12 +3,12 @@ using Cheetah.Contracts.Responses;
 using Cheetah.Core.CQRS;
 using Cheetah.Core.DependencyInjection;
 using Cheetah.Core.Grid;
-using Crm.Customer.Domain;
+using CustomerEntity = global::Crm.Customer.Domain.Customer;
 
 namespace Crm.Customer.Application.Queries;
 
 [Export(LifetimeType.Scoped, typeof(IQueryHandler<GetAllSampleEntitiesQuery, GridResult<CustomerModel>>))]
-public class GetAllSampleEntitiesQueryHandler(IGridRepository<Customer> repository)
+public class GetAllSampleEntitiesQueryHandler(IGridRepository<CustomerEntity> repository)
     : IQueryHandler<GetAllSampleEntitiesQuery, GridResult<CustomerModel>>
 {
     public async ValueTask<GridResult<CustomerModel>> HandleAsync(GetAllSampleEntitiesQuery gridQuery,

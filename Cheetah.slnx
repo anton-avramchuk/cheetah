@@ -47,33 +47,7 @@
     <Folder Name="/Modules/">
         <Project Path="src/Modules/Crm.Proxy/Crm.Proxy.csproj" />
     </Folder>
-    <Folder Name="/Modules/Features/">
-        <Project Path="src/Modules/Features/Crm.Features.Api.Tests/Crm.Features.Api.Tests.csproj" />
-        <Project Path="src/Modules/Features/Crm.Features.Api/Crm.Features.Api.csproj" />
-        <Project Path="src/Modules/Features/Crm.Features.ApiClient.Tests/Crm.Features.ApiClient.Tests.csproj" />
-        <Project Path="src/Modules/Features/Crm.Features.ApiClient/Crm.Features.ApiClient.csproj" />
-        <Project Path="src/Modules/Features/Crm.Features.Application.Tests/Crm.Features.Application.Tests.csproj" />
-        <Project Path="src/Modules/Features/Crm.Features.Application/Crm.Features.Application.csproj" />
-        <Project Path="src/Modules/Features/Crm.Features.Contracts/Crm.Features.Contracts.csproj" />
-        <Project Path="src/Modules/Features/Crm.Features.DataAccess/Crm.Features.DataAccess.csproj" />
-        <Project Path="src/Modules/Features/Crm.Features.Domain.Tests/Crm.Features.Domain.Tests.csproj" />
-        <Project Path="src/Modules/Features/Crm.Features.Domain/Crm.Features.Domain.csproj" />
-        <Project Path="src/Modules/Features/Crm.Features.DomainEvents/Crm.Features.DomainEvents.csproj" />
-    </Folder>
     <Folder Name="/Modules/Recruitment/" />
-    <Folder Name="/Modules/Recruitment/Candidate/">
-        <Project Path="src/Modules/Candidates/Candidates/Crm.Candidates.Api.Tests/Crm.Candidates.Api.Tests.csproj" />
-        <Project Path="src/Modules/Candidates/Candidates/Crm.Candidates.Api/Crm.Candidates.Api.csproj" />
-        <Project Path="src/Modules/Candidates/Candidates/Crm.Candidates.ApiClient.Tests/Crm.Candidates.ApiClient.Tests.csproj" />
-        <Project Path="src/Modules/Candidates/Candidates/Crm.Candidates.ApiClient/Crm.Candidates.ApiClient.csproj" />
-        <Project Path="src/Modules/Candidates/Candidates/Crm.Candidates.Application.Tests/Crm.Candidates.Application.Tests.csproj" />
-        <Project Path="src/Modules/Candidates/Candidates/Crm.Candidates.Application/Crm.Candidates.Application.csproj" />
-        <Project Path="src/Modules/Candidates/Candidates/Crm.Candidates.Contracts/Crm.Candidates.Contracts.csproj" />
-        <Project Path="src/Modules/Candidates/Candidates/Crm.Candidates.DataAccess/Crm.Candidates.DataAccess.csproj" />
-        <Project Path="src/Modules/Candidates/Candidates/Crm.Candidates.Domain.Tests/Crm.Candidates.Domain.Tests.csproj" />
-        <Project Path="src/Modules/Candidates/Candidates/Crm.Candidates.Domain/Crm.Candidates.Domain.csproj" />
-        <Project Path="src/Modules/Candidates/Candidates/Crm.Candidates.DomainEvents/Crm.Candidates.DomainEvents.csproj" />
-    </Folder>
     <Folder Name="/Modules/Recruitment/Customer/">
         <Project Path="src/Modules/Customer/Crm.Customer.Api.Tests/Crm.Customer.Api.Tests.csproj" />
         <Project Path="src/Modules/Customer/Crm.Customer.Api/Crm.Customer.Api.csproj" />
@@ -113,33 +87,6 @@
         <Project Path="src/Modules/MasterData/Crm.MasterData.Domain/Crm.MasterData.Domain.csproj" />
         <Project Path="src/Modules/MasterData/Crm.MasterData.DomainEvents/Crm.MasterData.DomainEvents.csproj" />
     </Folder>
-    <Folder Name="/Modules/Recruitment/Task/">
-        <Project Path="src/Modules/VacancyTasks/VacancyTasks/Crm.VacancyTasks.Api.Tests/Crm.VacancyTasks.Api.Tests.csproj" />
-        <Project Path="src/Modules/VacancyTasks/VacancyTasks/Crm.VacancyTasks.Api/Crm.VacancyTasks.Api.csproj" />
-        <Project Path="src/Modules/VacancyTasks/VacancyTasks/Crm.VacancyTasks.ApiClient.Tests/Crm.VacancyTasks.ApiClient.Tests.csproj" />
-        <Project Path="src/Modules/VacancyTasks/VacancyTasks/Crm.VacancyTasks.ApiClient/Crm.VacancyTasks.ApiClient.csproj" />
-        <Project Path="src/Modules/VacancyTasks/VacancyTasks/Crm.VacancyTasks.Application.Tests/Crm.VacancyTasks.Application.Tests.csproj" />
-        <Project Path="src/Modules/VacancyTasks/VacancyTasks/Crm.VacancyTasks.Application/Crm.VacancyTasks.Application.csproj" />
-        <Project Path="src/Modules/VacancyTasks/VacancyTasks/Crm.VacancyTasks.Contracts/Crm.VacancyTasks.Contracts.csproj" />
-        <Project Path="src/Modules/VacancyTasks/VacancyTasks/Crm.VacancyTasks.DataAccess/Crm.VacancyTasks.DataAccess.csproj" />
-        <Project Path="src/Modules/VacancyTasks/VacancyTasks/Crm.VacancyTasks.Domain.Tests/Crm.VacancyTasks.Domain.Tests.csproj" />
-        <Project Path="src/Modules/VacancyTasks/VacancyTasks/Crm.VacancyTasks.Domain/Crm.VacancyTasks.Domain.csproj" />
-        <Project Path="src/Modules/VacancyTasks/VacancyTasks/Crm.VacancyTasks.DomainEvents/Crm.VacancyTasks.DomainEvents.csproj" />
-    </Folder>
-    <Folder Name="/Modules/Recruitment/Vacancy/">
-        <Project Path="src/Modules/Recruitment/Crm.Recruitment.Api.Tests/Crm.Recruitment.Api.Tests.csproj" />
-        <Project Path="src/Modules/Recruitment/Crm.Recruitment.Api/Crm.Recruitment.Api.csproj" />
-        <Project Path="src/Modules/Recruitment/Crm.Recruitment.ApiClient.Tests/Crm.Recruitment.ApiClient.Tests.csproj" />
-        <Project Path="src/Modules/Recruitment/Crm.Recruitment.ApiClient/Crm.Recruitment.ApiClient.csproj" />
-        <Project Path="src/Modules/Recruitment/Crm.Recruitment.Application.Tests/Crm.Recruitment.Application.Tests.csproj" />
-        <Project Path="src/Modules/Recruitment/Crm.Recruitment.Application/Crm.Recruitment.Application.csproj" />
-        <Project Path="src/Modules/Recruitment/Crm.Recruitment.Contracts/Crm.Recruitment.Contracts.csproj" />
-        <Project Path="src/Modules/Recruitment/Crm.Recruitment.DataAccess/Crm.Recruitment.DataAccess.csproj" />
-        <Project Path="src/Modules/Recruitment/Crm.Recruitment.Domain.Tests/Crm.Recruitment.Domain.Tests.csproj" />
-        <Project Path="src/Modules/Recruitment/Crm.Recruitment.Domain/Crm.Recruitment.Domain.csproj" />
-        <Project Path="src/Modules/Recruitment/Crm.Recruitment.DomainEvents/Crm.Recruitment.DomainEvents.csproj" />
-    </Folder>
-    <Folder Name="/Modules/Tenants/" />
     <Folder Name="/Solution Items/">
         <File Path="docker-compose.yml" />
         <File Path="global.json" />

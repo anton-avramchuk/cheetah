@@ -3,17 +3,17 @@ using Cheetah.Core.DataAccess.Abstractions;
 using Cheetah.Core.DependencyInjection;
 using Cheetah.Core.Domain.Exceptions;
 using Cheetah.Core.Events;
-using Crm.Customer.Domain;
+using CustomerEntity = global::Crm.Customer.Domain.Customer;
 
 namespace Crm.Customer.Application.Commands;
 
 [Export(LifetimeType.Scoped, typeof(ICommandHandler<UpdateCustomerCommand>))]
 public class UpdateCustomerCommandHandler : ICommandHandler<UpdateCustomerCommand>
 {
-    private readonly IRepository<Customer, Guid> _repository;
+    private readonly IRepository<CustomerEntity, Guid> _repository;
     private readonly IEventBus _eventBus;
 
-    public UpdateCustomerCommandHandler(IRepository<Customer, Guid> repository, IEventBus eventBus)
+    public UpdateCustomerCommandHandler(IRepository<CustomerEntity, Guid> repository, IEventBus eventBus)
     {
         _repository = repository;
         _eventBus = eventBus;
@@ -22,7 +22,7 @@ public class UpdateCustomerCommandHandler : ICommandHandler<UpdateCustomerComman
     public async ValueTask HandleAsync(UpdateCustomerCommand command, CancellationToken ct = default)
     {
         var entity = await _repository.GetByIdAsync(command.Id, ct)
-                     ?? throw EntityNotFoundException.For<Customer>(command.Id);
+                     ?? throw EntityNotFoundException.For<CustomerEntity>(command.Id);
 
         entity.Update(command.Name, command.Description);
         await _repository.SaveChangesAsync(ct);

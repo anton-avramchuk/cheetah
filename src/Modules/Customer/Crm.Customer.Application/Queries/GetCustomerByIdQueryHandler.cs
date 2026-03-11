@@ -1,7 +1,7 @@
 using Cheetah.Core.CQRS;
 using Cheetah.Core.DataAccess.Abstractions;
 using Cheetah.Core.DependencyInjection;
-using Crm.Customer.Domain;
+using CustomerEntity = global::Crm.Customer.Domain.Customer;
 using Microsoft.EntityFrameworkCore;
 
 namespace Crm.Customer.Application.Queries;
@@ -9,9 +9,9 @@ namespace Crm.Customer.Application.Queries;
 [Export(LifetimeType.Scoped, typeof(IQueryHandler<GetCustomerByIdQuery, CustomerModel?>))]
 public class GetCustomerByIdQueryHandler : IQueryHandler<GetCustomerByIdQuery, CustomerModel?>
 {
-    private readonly IReadOnlyRepository<Customer, Guid> _repository;
+    private readonly IReadOnlyRepository<CustomerEntity, Guid> _repository;
 
-    public GetCustomerByIdQueryHandler(IRepository<Customer, Guid> repository)
+    public GetCustomerByIdQueryHandler(IRepository<CustomerEntity, Guid> repository)
     {
         _repository = repository;
     }

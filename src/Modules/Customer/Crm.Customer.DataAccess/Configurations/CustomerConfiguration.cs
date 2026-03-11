@@ -1,19 +1,19 @@
 using Cheetah.Core.EntityFramework.Configuration;
-using Crm.Customer.Domain;
+using CustomerEntity = global::Crm.Customer.Domain.Customer;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Crm.Customer.DataAccess.Configurations;
 
-public class CustomerConfigurationOptions : AggregateRootConfigurationOptions<Customer, Guid>
+public class CustomerConfigurationOptions : AggregateRootConfigurationOptions<CustomerEntity, Guid>
 {
     public override string Schema => "customer";
 }
 
-public class CustomerConfiguration : AggregateRootConfiguration<Customer, Guid, CustomerConfigurationOptions>
+public class CustomerConfiguration : AggregateRootConfiguration<CustomerEntity, Guid, CustomerConfigurationOptions>
 {
     protected override CustomerConfigurationOptions Options { get; } = new();
 
-    public override void Configure(EntityTypeBuilder<Customer> builder)
+    public override void Configure(EntityTypeBuilder<CustomerEntity> builder)
     {
         base.Configure(builder);
 
