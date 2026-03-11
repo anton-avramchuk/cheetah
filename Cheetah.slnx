@@ -74,6 +74,19 @@
         <Project Path="src/Modules/Candidates/Candidates/Crm.Candidates.Domain/Crm.Candidates.Domain.csproj" />
         <Project Path="src/Modules/Candidates/Candidates/Crm.Candidates.DomainEvents/Crm.Candidates.DomainEvents.csproj" />
     </Folder>
+    <Folder Name="/Modules/Recruitment/Customer/">
+        <Project Path="src/Modules/Customer/Crm.Customer.Api.Tests/Crm.Customer.Api.Tests.csproj" />
+        <Project Path="src/Modules/Customer/Crm.Customer.Api/Crm.Customer.Api.csproj" />
+        <Project Path="src/Modules/Customer/Crm.Customer.ApiClient.Tests/Crm.Customer.ApiClient.Tests.csproj" />
+        <Project Path="src/Modules/Customer/Crm.Customer.ApiClient/Crm.Customer.ApiClient.csproj" />
+        <Project Path="src/Modules/Customer/Crm.Customer.Application.Tests/Crm.Customer.Application.Tests.csproj" />
+        <Project Path="src/Modules/Customer/Crm.Customer.Application/Crm.Customer.Application.csproj" />
+        <Project Path="src/Modules/Customer/Crm.Customer.Contracts/Crm.Customer.Contracts.csproj" />
+        <Project Path="src/Modules/Customer/Crm.Customer.DataAccess/Crm.Customer.DataAccess.csproj" />
+        <Project Path="src/Modules/Customer/Crm.Customer.Domain.Tests/Crm.Customer.Domain.Tests.csproj" />
+        <Project Path="src/Modules/Customer/Crm.Customer.Domain/Crm.Customer.Domain.csproj" />
+        <Project Path="src/Modules/Customer/Crm.Customer.DomainEvents/Crm.Customer.DomainEvents.csproj" />
+    </Folder>
     <Folder Name="/Modules/Recruitment/Identity/">
         <Project Path="src/Modules/Identity/Crm.Identity.Api.Tests/Crm.Identity.Api.Tests.csproj" />
         <Project Path="src/Modules/Identity/Crm.Identity.Api/Crm.Identity.Api.csproj" />

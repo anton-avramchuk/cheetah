@@ -1,0 +1,15 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
+
+namespace Crm.Customer.DataAccess;
+
+public class CustomerDbContextFactory : IDesignTimeDbContextFactory<CustomerDbContext>
+{
+    public CustomerDbContext CreateDbContext(string[] args)
+    {
+        var optionsBuilder = new DbContextOptionsBuilder<CustomerDbContext>();
+        optionsBuilder.UseNpgsql("Host=localhost;Database=customer;Username=postgres;Password=postgres");
+
+        return new CustomerDbContext(optionsBuilder.Options);
+    }
+}
