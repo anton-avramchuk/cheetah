@@ -18,8 +18,8 @@ public partial class CrmAspNetCoreModule : CrmModule
         RegisterServices(context.Services);
         context.Services.AddAuthorization();
         context.Services.AddHttpContextAccessor();
-        context.Services.AddObjectAccessor<IApplicationBuilder>();
-        context.Services.AddObjectAccessor<IEndpointRouteBuilder>();
+        context.Services.TryAddObjectAccessor<IApplicationBuilder>();
+        context.Services.TryAddObjectAccessor<IEndpointRouteBuilder>();
         context.Services.AddExceptionHandler<ValidationExceptionHandler>();
         context.Services.AddProblemDetails();
     }

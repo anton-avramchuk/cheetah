@@ -22,7 +22,7 @@ public class StackItemEndpointsTests
     public async Task GetAll_WhenNoEntities_ShouldReturnEmptyList()
     {
         // Act
-        var response = await _client.GetAsync("/api/masterdata");
+        var response = await _client.GetAsync("/api/stack-items");
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -38,7 +38,7 @@ public class StackItemEndpointsTests
         var request = new CreateStackItemRequest("New Entity", "Description");
 
         // Act
-        var response = await _client.PostAsJsonAsync("/api/masterdata", request);
+        var response = await _client.PostAsJsonAsync("/api/stack-items", request);
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.Created);
@@ -52,7 +52,7 @@ public class StackItemEndpointsTests
         var request = new CreateStackItemRequest("", "Description");
 
         // Act
-        var response = await _client.PostAsJsonAsync("/api/masterdata", request);
+        var response = await _client.PostAsJsonAsync("/api/stack-items", request);
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
@@ -63,7 +63,7 @@ public class StackItemEndpointsTests
     {
         // Arrange
         var createRequest = new CreateStackItemRequest("Entity To Get", "Description");
-        var createResponse = await _client.PostAsJsonAsync("/api/masterdata", createRequest);
+        var createResponse = await _client.PostAsJsonAsync("/api/stack-items", createRequest);
         var location = createResponse.Headers.Location;
 
         // Act
@@ -80,7 +80,7 @@ public class StackItemEndpointsTests
     public async Task GetById_WithNonExistingEntity_ShouldReturnNotFound()
     {
         // Act
-        var response = await _client.GetAsync($"/api/masterdata/{Guid.NewGuid()}");
+        var response = await _client.GetAsync($"/api/stack-items/{Guid.NewGuid()}");
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
@@ -91,7 +91,7 @@ public class StackItemEndpointsTests
     {
         // Arrange
         var createRequest = new CreateStackItemRequest("Entity To Update", "Original");
-        var createResponse = await _client.PostAsJsonAsync("/api/masterdata", createRequest);
+        var createResponse = await _client.PostAsJsonAsync("/api/stack-items", createRequest);
         var location = createResponse.Headers.Location;
         var entityId = Guid.Parse(location!.Segments.Last());
 
@@ -113,7 +113,7 @@ public class StackItemEndpointsTests
     {
         // Arrange
         var createRequest = new CreateStackItemRequest("Entity To Delete", "Description");
-        var createResponse = await _client.PostAsJsonAsync("/api/masterdata", createRequest);
+        var createResponse = await _client.PostAsJsonAsync("/api/stack-items", createRequest);
         var location = createResponse.Headers.Location;
 
         // Act
