@@ -18,8 +18,8 @@ public class ConfiguredClusterAddressProvider : IClusterAddressProvider
         var routesSection = _configuration.GetSection($"{_configKey}:Routes");
         var clustersSection = _configuration.GetSection($"{_configKey}:Clusters");
 
-        // Group route prefixes by cluster
-        var routesByCluster = new Dictionary<string, List<string>>();
+        // Group route prefixes by cluster, also track upstream base path from PathPattern transform
+        var routesByCluster = new Dictionary<string, (List<string> Prefixes, string UpstreamBasePath)>();
 
         foreach (var route in routesSection.GetChildren())
         {
@@ -34,17 +34,32 @@ public class ConfiguredClusterAddressProvider : IClusterAddressProvider
                 ? path.Substring(0, catchAllIndex)
                 : path;
 
-            if (!routesByCluster.TryGetValue(clusterId, out var prefixes))
+            // Read PathPattern transform to determine what upstream base path YARP prepends,
+            // so the OpenAPI aggregator can strip it when building combined paths.
+            // e.g. PathPattern "/api/{**catch-all}" → upstreamBasePath "/api"
+            var upstreamBasePath = "";
+            foreach (var transform in route.GetSection("Transforms").GetChildren())
             {
-                prefixes = [];
-                routesByCluster[clusterId] = prefixes;
+                var pathPattern = transform.GetValue<string>("PathPattern");
+                if (string.IsNullOrEmpty(pathPattern)) continue;
+
+                var patternCatchAllIdx = pathPattern.IndexOf("{**catch-all}", StringComparison.Ordinal);
+                if (patternCatchAllIdx >= 0)
+                    upstreamBasePath = pathPattern[..patternCatchAllIdx].TrimEnd('/');
+                break;
             }
 
-            prefixes.Add(routePrefix);
+            if (!routesByCluster.TryGetValue(clusterId, out var entry))
+            {
+                entry = ([], upstreamBasePath);
+                routesByCluster[clusterId] = entry;
+            }
+
+            entry.Prefixes.Add(routePrefix);
         }
 
         // Yield one entry per cluster with the common prefix
-        foreach (var (clusterId, prefixes) in routesByCluster)
+        foreach (var (clusterId, (prefixes, upstreamBasePath)) in routesByCluster)
         {
             var cluster = clustersSection.GetSection(clusterId);
             var destinations = cluster.GetSection("Destinations").GetChildren();
@@ -58,7 +73,18 @@ public class ConfiguredClusterAddressProvider : IClusterAddressProvider
                 continue;
 
             var commonPrefix = GetCommonPathPrefix(prefixes);
-            yield return (address, commonPrefix);
+
+            // Include the upstream base path in the address so the OpenAPI aggregator
+            // strips it from upstream paths before prepending the route prefix.
+            // e.g. "http://crm-masterdata-api" + "/api" → aggregator strips "/api"
+            // from "/api/industries" → combined becomes "/api/dictionary/industries".
+            // Note: relative URI resolution in the aggregator (address + "openapi/v1.json")
+            // still resolves to the correct OpenAPI endpoint on the upstream host.
+            var effectiveAddress = string.IsNullOrEmpty(upstreamBasePath)
+                ? address
+                : address.TrimEnd('/') + upstreamBasePath;
+
+            yield return (effectiveAddress, commonPrefix);
         }
     }
 

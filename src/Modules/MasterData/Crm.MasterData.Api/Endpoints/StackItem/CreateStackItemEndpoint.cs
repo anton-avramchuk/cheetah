@@ -7,7 +7,7 @@ namespace Crm.MasterData.Api.Endpoints.StackItem;
 
 public class CreateStackItemEndpoint : CreateCommandEndpoint<CreateStackItemRequest, CreateStackItemCommand>
 {
-    public override string Route => Constants.DefaultRoute;
+    public override string Route => Constants.StackItemRoute;
 
     public override string GetByIdRouteName => "GetStackItemById";
 

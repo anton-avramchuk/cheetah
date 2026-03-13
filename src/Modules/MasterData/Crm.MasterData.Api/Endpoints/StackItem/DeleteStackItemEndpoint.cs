@@ -7,7 +7,7 @@ namespace Crm.MasterData.Api.Endpoints.StackItem;
 
 public class DeleteStackItemEndpoint : DeleteCommandEndpoint<DeleteStackItemRequest, DeleteStackItemCommand>
 {
-    public override string Route => $"{Constants.DefaultRoute}/{{id:guid}}";
+    public override string Route => $"{Constants.StackItemRoute}/{{id:guid}}";
 
     protected override void Configure(EndpointConfiguration config)
     {

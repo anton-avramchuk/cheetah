@@ -10,7 +10,7 @@ namespace Crm.MasterData.Api.Endpoints.StackItem;
 public class GetStackItemByIdEndpoint : QueryOrNotFoundEndpoint<GetStackItemByIdRequest, GetStackItemByIdQuery,
     StackItemModel, StackItemViewModel>
 {
-    public override string Route => $"{Constants.DefaultRoute}/{{id:guid}}";
+    public override string Route => $"{Constants.StackItemRoute}/{{id:guid}}";
 
     protected override void Configure(EndpointConfiguration config)
     {

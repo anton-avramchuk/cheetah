@@ -10,7 +10,7 @@ namespace Crm.MasterData.Api.Endpoints.StackItem;
 public class GetAllSampleEntitiesEndpoint : QueryGridEndpoint<GetAllSampleEntitiesRequest,
     GetAllSampleEntitiesQuery, StackItemModel, StackItemViewModel>
 {
-    public override string Route => Constants.DefaultRoute;
+    public override string Route => Constants.StackItemRoute;
 
     protected override void Configure(EndpointConfiguration config)
     {

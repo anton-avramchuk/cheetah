@@ -2,12 +2,12 @@ namespace Crm.MasterData.Api;
 
 internal static class Constants
 {
-    public const string DefaultRoute = "api/masterdata";
-    public const string IndustriesRoute = "api/masterdata/industries";
-    public const string PositionsRoute = "api/masterdata/positions";
-    public const string WorkFormatsRoute = "api/masterdata/work-formats";
-    public const string CandidateSourcesRoute = "api/masterdata/candidate-sources";
-    public const string SkillCategoriesRoute = "api/masterdata/skill-categories";
-    public const string SkillsRoute = "api/masterdata/skills";
-    public const string LocationsRoute = "api/masterdata/locations";
+    public const string StackItemRoute = "api/stack-items";
+    public const string IndustriesRoute = "api/industries";
+    public const string PositionsRoute = "api/positions";
+    public const string WorkFormatsRoute = "api/work-formats";
+    public const string CandidateSourcesRoute = "api/candidate-sources";
+    public const string SkillCategoriesRoute = "api/skill-categories";
+    public const string SkillsRoute = "api/skills";
+    public const string LocationsRoute = "api/locations";
 }
