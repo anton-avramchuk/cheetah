@@ -8,6 +8,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Cheetah.Core\Cheetah.Core.csproj" />
+        <ProjectReference Include="..\Cheetah.Core.DataAccess\Cheetah.Core.DataAccess.csproj" />
     </ItemGroup>
 
     <ItemGroup>

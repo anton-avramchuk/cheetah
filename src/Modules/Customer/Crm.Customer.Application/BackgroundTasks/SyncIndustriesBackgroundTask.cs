@@ -1,5 +1,4 @@
 using Cheetah.BackgroundTasks;
-using Cheetah.Core.DataAccess.Abstractions;
 using Cheetah.Core.DependencyInjection;
 using Crm.Customer.Domain;
 using Crm.MasterData.ApiClient;
@@ -14,69 +13,23 @@ namespace Crm.Customer.Application.BackgroundTasks;
 public class SyncIndustriesBackgroundTask(
     IServiceScopeFactory scopeFactory,
     ILogger<SyncIndustriesBackgroundTask> logger)
-    : PeriodicBackgroundTask
+    : SyncBackgroundTask<IIndustryService, IndustryViewModel, CustomerIndustry, Guid>(scopeFactory, logger)
 {
     public override TimeSpan Period => TimeSpan.FromMinutes(1);
 
-    private volatile string? _lastBatchHash;
+    protected override async ValueTask<IReadOnlyList<IndustryViewModel>> FetchAsync(
+        IIndustryService service, CancellationToken ct)
+        => (await service.GetAllAsync(new GetAllIndustriesRequest { PageSize = 0 }, ct)).Data.ToList();
 
-    public override async Task ExecuteAsync(CancellationToken cancellationToken)
-    {
-        using var scope = scopeFactory.CreateScope();
-        var industryService = scope.ServiceProvider.GetRequiredService<IIndustryService>();
+    protected override Guid GetId(IndustryViewModel vm) => vm.Id;
 
-        var result = await industryService.GetAllAsync(
-            new GetAllIndustriesRequest { PageSize = 0 }, cancellationToken);
+    protected override string ComputeItemHash(IndustryViewModel vm) => vm.ComputeHash();
 
-        var industries = result.Data.ToList();
+    protected override string GetEntityContentHash(CustomerIndustry entity) => entity.ContentHash;
 
-        if (industries.Count == 0)
-        {
-            logger.LogDebug("SyncIndustries: no industries returned from MasterData, skipping sync");
-            return;
-        }
+    protected override CustomerIndustry Create(IndustryViewModel vm) =>
+        CustomerIndustry.Create(vm.Id, vm.Name);
 
-        var batchHash = industries.ComputeBatchHash();
-        if (batchHash == _lastBatchHash)
-        {
-            logger.LogDebug("SyncIndustries: no changes detected, skipping sync");
-            return;
-        }
-
-        var repository = scope.ServiceProvider.GetRequiredService<IRepository<CustomerIndustry, Guid>>();
-
-        var existingById = (await repository.GetAllAsync(cancellationToken: cancellationToken))
-            .ToDictionary(x => x.Id);
-
-        var added = 0;
-        var updated = 0;
-
-        foreach (var industry in industries)
-        {
-            if (existingById.TryGetValue(industry.Id, out var local))
-            {
-                if (local.ContentHash == industry.ComputeHash())
-                    continue;
-
-                local.Update(industry.Name);
-                repository.Update(local);
-                updated++;
-            }
-            else
-            {
-                repository.Add(CustomerIndustry.Create(industry.Id, industry.Name));
-                added++;
-            }
-        }
-
-        if (added > 0 || updated > 0)
-            await repository.SaveChangesAsync(cancellationToken);
-
-        _lastBatchHash = batchHash;
-
-        if (added > 0 || updated > 0)
-            logger.LogInformation(
-                "SyncIndustries: synced industries from MasterData — added: {Added}, updated: {Updated}",
-                added, updated);
-    }
+    protected override void Update(CustomerIndustry entity, IndustryViewModel vm) =>
+        entity.Update(vm.Name);
 }

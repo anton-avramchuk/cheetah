@@ -1,14 +1,11 @@
 using Cheetah.Core;
+using Cheetah.Core.DataAccess;
 using Cheetah.Core.Modularity;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Cheetah.BackgroundTasks;
 
-/// <summary>
-/// Registers the background task infrastructure.
-/// Depends only on <see cref="CoreModule"/>.
-/// </summary>
-[DependsOn(typeof(CoreModule))]
+[DependsOn(typeof(CoreModule), typeof(CrmDataAccessModule))]
 public partial class CrmBackgroundTasksModule : CrmModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)
