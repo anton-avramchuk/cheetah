@@ -49,15 +49,15 @@ public class SyncHashGenerator : IIncrementalGenerator
 
     private static ImmutableArray<string> CollectHashProperties(INamedTypeSymbol type)
     {
-        var props = new List<string>();
+        var props = new List<(string Name, int Order)>();
 
         // Explicit [SyncHash] on properties
         foreach (var member in type.GetMembers())
         {
             if (member is IPropertySymbol property &&
-                HasSyncHash(property.GetAttributes()))
+                TryGetSyncHashOrder(property.GetAttributes(), out var order))
             {
-                props.Add(property.Name);
+                props.Add((property.Name, order));
             }
         }
 
@@ -66,7 +66,7 @@ public class SyncHashGenerator : IIncrementalGenerator
         {
             foreach (var param in ctor.Parameters)
             {
-                if (!HasSyncHash(param.GetAttributes()))
+                if (!TryGetSyncHashOrder(param.GetAttributes(), out var order))
                     continue;
 
                 // PascalCase: first letter upper
@@ -74,23 +74,34 @@ public class SyncHashGenerator : IIncrementalGenerator
                     ? char.ToUpperInvariant(param.Name[0]) + param.Name.Substring(1)
                     : param.Name;
 
-                if (!props.Contains(propName))
-                    props.Add(propName);
+                if (!props.Exists(p => p.Name == propName))
+                    props.Add((propName, order));
             }
         }
 
-        return props.Count > 0
-            ? props.ToImmutableArray()
-            : ImmutableArray<string>.Empty;
+        if (props.Count == 0)
+            return ImmutableArray<string>.Empty;
+
+        return props
+            .OrderBy(p => p.Order)
+            .ThenBy(p => p.Name)  // stable secondary sort
+            .Select(p => p.Name)
+            .ToImmutableArray();
     }
 
-    private static bool HasSyncHash(ImmutableArray<AttributeData> attributes)
+    private static bool TryGetSyncHashOrder(ImmutableArray<AttributeData> attributes, out int order)
     {
         foreach (var attr in attributes)
         {
-            if (attr.AttributeClass?.ToDisplayString() == SyncHashAttributeName)
-                return true;
+            if (attr.AttributeClass?.ToDisplayString() != SyncHashAttributeName)
+                continue;
+
+            order = attr.ConstructorArguments.Length > 0 &&
+                    attr.ConstructorArguments[0].Value is int o ? o : 0;
+            return true;
         }
+
+        order = 0;
         return false;
     }
 
