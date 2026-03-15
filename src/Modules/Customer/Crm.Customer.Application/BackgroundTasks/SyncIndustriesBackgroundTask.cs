@@ -19,7 +19,6 @@ public class SyncIndustriesBackgroundTask(
     public override TimeSpan Period => TimeSpan.FromMinutes(1);
 
     private volatile string? _lastBatchHash;
-    private readonly Dictionary<Guid, string> _entityHashes = new();
 
     public override async Task ExecuteAsync(CancellationToken cancellationToken)
     {
@@ -44,50 +43,42 @@ public class SyncIndustriesBackgroundTask(
             return;
         }
 
-        var changed = industries
-            .Where(x => !_entityHashes.TryGetValue(x.Id, out var h) || h != x.ComputeHash())
-            .ToList();
-
-        if (changed.Count == 0)
-        {
-            _lastBatchHash = batchHash;
-            return;
-        }
-
         var repository = scope.ServiceProvider.GetRequiredService<IRepository<CustomerIndustry, Guid>>();
 
-        var changedIds = changed.Select(x => x.Id).ToHashSet();
         var existingById = (await repository.GetAllAsync(cancellationToken: cancellationToken))
-            .Where(x => changedIds.Contains(x.Id))
             .ToDictionary(x => x.Id);
 
         var added = 0;
         var updated = 0;
 
-        foreach (var industry in changed)
+        foreach (var industry in industries)
         {
+            var hash = industry.ComputeHash();
+
             if (existingById.TryGetValue(industry.Id, out var local))
             {
-                local.Update(industry.Name);
+                if (local.ContentHash == hash)
+                    continue;
+
+                local.Update(industry.Name, hash);
                 repository.Update(local);
                 updated++;
             }
             else
             {
-                repository.Add(CustomerIndustry.Create(industry.Id, industry.Name));
+                repository.Add(CustomerIndustry.Create(industry.Id, industry.Name, hash));
                 added++;
             }
         }
 
-        await repository.SaveChangesAsync(cancellationToken);
-
-        foreach (var industry in changed)
-            _entityHashes[industry.Id] = industry.ComputeHash();
+        if (added > 0 || updated > 0)
+            await repository.SaveChangesAsync(cancellationToken);
 
         _lastBatchHash = batchHash;
 
-        logger.LogInformation(
-            "SyncIndustries: synced industries from MasterData — added: {Added}, updated: {Updated}",
-            added, updated);
+        if (added > 0 || updated > 0)
+            logger.LogInformation(
+                "SyncIndustries: synced industries from MasterData — added: {Added}, updated: {Updated}",
+                added, updated);
     }
 }

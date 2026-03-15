@@ -1,5 +1,6 @@
 using Cheetah.Core.EntityFramework.Configuration;
 using Crm.Customer.Domain;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Crm.Customer.DataAccess.Configurations;
@@ -21,6 +22,11 @@ public class CustomerIndustryConfiguration
         builder.Property(x => x.Name)
             .IsRequired()
             .HasMaxLength(256);
+
+        builder.Property(x => x.ContentHash)
+            .IsRequired()
+            .HasMaxLength(64)
+            .HasDefaultValue(string.Empty);
 
         builder.HasIndex(x => x.Name).IsUnique();
     }
