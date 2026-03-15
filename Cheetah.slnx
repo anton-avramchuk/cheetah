@@ -4,6 +4,7 @@
         <Project Path="src/Cheetah.Analyzers/Cheetah.Analyzers.csproj" />
         <Project Path="src/Cheetah.Generators.ApiClient/Cheetah.Generators.ApiClient.csproj" />
         <Project Path="src/Cheetah.Generators.Application/Cheetah.Generators.Application.csproj" />
+        <Project Path="src/Cheetah.Generators.Common/Cheetah.Generators.Common.csproj" />
         <Project Path="src/Cheetah.Generators.Core/Cheetah.Generators.Core.csproj" />
         <Project Path="src/Cheetah.Generators.Endpoints/Cheetah.Generators.Endpoints.csproj" />
         <Project Path="src/Cheetah.Generators.Module/Cheetah.Generators.Module.csproj" />

@@ -1,5 +1,6 @@
+using Cheetah.Contracts.Attributes;
 using Cheetah.Contracts.Responses;
 
 namespace Crm.MasterData.Contracts.Response;
 
-public record IndustryViewModel(Guid Id, string Name) : ICrmResponse;
+public record IndustryViewModel(Guid Id, [SyncHash] string Name) : ICrmResponse;

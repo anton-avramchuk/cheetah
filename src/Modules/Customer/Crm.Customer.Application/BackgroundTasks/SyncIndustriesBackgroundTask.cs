@@ -1,5 +1,3 @@
-using System.Security.Cryptography;
-using System.Text;
 using Cheetah.BackgroundTasks;
 using Cheetah.Core.DataAccess.Abstractions;
 using Cheetah.Core.DependencyInjection;
@@ -39,7 +37,7 @@ public class SyncIndustriesBackgroundTask(
             return;
         }
 
-        var batchHash = ComputeBatchHash(industries);
+        var batchHash = industries.ComputeBatchHash();
         if (batchHash == _lastBatchHash)
         {
             logger.LogDebug("SyncIndustries: no changes detected, skipping sync");
@@ -47,7 +45,7 @@ public class SyncIndustriesBackgroundTask(
         }
 
         var changed = industries
-            .Where(x => !_entityHashes.TryGetValue(x.Id, out var h) || h != ComputeEntityHash(x))
+            .Where(x => !_entityHashes.TryGetValue(x.Id, out var h) || h != x.ComputeHash())
             .ToList();
 
         if (changed.Count == 0)
@@ -84,28 +82,12 @@ public class SyncIndustriesBackgroundTask(
         await repository.SaveChangesAsync(cancellationToken);
 
         foreach (var industry in changed)
-            _entityHashes[industry.Id] = ComputeEntityHash(industry);
+            _entityHashes[industry.Id] = industry.ComputeHash();
 
         _lastBatchHash = batchHash;
 
         logger.LogInformation(
             "SyncIndustries: synced industries from MasterData — added: {Added}, updated: {Updated}",
             added, updated);
-    }
-
-    private static string ComputeBatchHash(List<IndustryViewModel> industries)
-    {
-        var content = string.Join(";",
-            industries.OrderBy(x => x.Id).Select(x => $"{x.Id}:{x.Name}"));
-        return Hash(content);
-    }
-
-    private static string ComputeEntityHash(IndustryViewModel industry) =>
-        Hash(industry.Name);
-
-    private static string Hash(string input)
-    {
-        var bytes = SHA256.HashData(Encoding.UTF8.GetBytes(input));
-        return Convert.ToHexString(bytes);
     }
 }
