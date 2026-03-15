@@ -4,6 +4,7 @@ using Cheetah.Contracts.Requests;
 
 namespace Crm.MasterData.Contracts.Requests;
 
+[ApiRoute("api/work-formats/{id:guid}", ApiMethod.Update, ServiceName = "WorkFormat")]
 public record UpdateWorkFormatRequest(
     [FromRoute] Guid Id,
     [property: Required(AllowEmptyStrings = false)]

@@ -18,6 +18,7 @@
       <ProjectReference Include="..\..\..\Cheetah.Mapping.Mapster\Cheetah.Mapping.Mapster.csproj" />
       <ProjectReference Include="..\..\..\Cheetah.Scalar\Cheetah.Scalar.csproj" />
       <ProjectReference Include="..\..\..\Cheetah.Backend.Jwt\Cheetah.Backend.Jwt.csproj" />
+      <ProjectReference Include="..\..\..\Cheetah.BackgroundTasks\Cheetah.BackgroundTasks.csproj" />
       <ProjectReference Include="..\Crm.Customer.Application\Crm.Customer.Application.csproj" />
       <ProjectReference Include="..\Crm.Customer.DataAccess\Crm.Customer.DataAccess.csproj" />
     </ItemGroup>

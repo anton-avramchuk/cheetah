@@ -22,8 +22,8 @@ public class CustomerServiceTests
         // Arrange
         var expectedEntities = new List<CustomerViewModel>
         {
-            new(Guid.NewGuid(), "Entity 1", "Description 1"),
-            new(Guid.NewGuid(), "Entity 2", "Description 2")
+            new(Guid.NewGuid(), "Entity 1", "Description 1", null),
+            new(Guid.NewGuid(), "Entity 2", "Description 2", null)
         };
 
         var handler = new MockHttpMessageHandler(HttpStatusCode.OK, JsonSerializer.Serialize(expectedEntities));
@@ -43,7 +43,7 @@ public class CustomerServiceTests
     {
         // Arrange
         var entityId = Guid.NewGuid();
-        var expectedEntity = new CustomerViewModel(entityId, "Test Entity", "Description");
+        var expectedEntity = new CustomerViewModel(entityId, "Test Entity", "Description", null);
 
         var handler = new MockHttpMessageHandler(HttpStatusCode.OK, JsonSerializer.Serialize(expectedEntity));
         var service = CreateService(handler);

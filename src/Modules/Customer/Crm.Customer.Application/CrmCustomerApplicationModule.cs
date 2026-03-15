@@ -1,3 +1,4 @@
+using Cheetah.BackgroundTasks;
 using Cheetah.Core.CQRS;
 using Cheetah.Core.Grid;
 using Cheetah.Core.Modularity;
@@ -6,6 +7,7 @@ using Crm.Customer.Contracts;
 using Crm.Customer.DataAccess;
 using Crm.Customer.Domain;
 using Crm.Customer.DomainEvents;
+using Crm.MasterData.ApiClient;
 
 namespace Crm.Customer.Application;
 
@@ -16,7 +18,9 @@ namespace Crm.Customer.Application;
     typeof(CrmCustomerDataAccessModule),
     typeof(CrmCustomerDomainModule),
     typeof(CrmCustomerContractsModule),
-    typeof(CrmCustomerDomainEventsModule)
+    typeof(CrmCustomerDomainEventsModule),
+    typeof(CrmBackgroundTasksModule),
+    typeof(CrmMasterDataApiClientModule)
 )]
 public partial class CrmCustomerApplicationModule : CrmModule
 {

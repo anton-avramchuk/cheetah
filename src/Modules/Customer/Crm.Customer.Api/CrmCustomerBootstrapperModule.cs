@@ -4,6 +4,7 @@ using Cheetah.Backend.CQRS;
 using Cheetah.Backend.Endpoints;
 using Cheetah.Backend.Events.Redis;
 using Cheetah.Backend.Jwt;
+using Cheetah.BackgroundTasks;
 using Cheetah.Core;
 using Cheetah.Core.Modularity;
 using Cheetah.Mapping.Mapster;
@@ -23,6 +24,7 @@ namespace Crm.Customer.Api;
     typeof(CrmBackendEventsRedisModule),
     typeof(CrmBackendEndpointsModule),
     typeof(CrmBackendJwtModule),
+    typeof(CrmBackgroundTasksModule),
     typeof(CrmCustomerDataAccessModule),
     typeof(CrmCustomerApplicationModule)
 )]

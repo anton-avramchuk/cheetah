@@ -8,6 +8,9 @@ public class Customer : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEntity
 
     public string? Description { get; private set; }
 
+    /// <summary>FK to <see cref="CustomerIndustry"/> (ACL replica of MasterData.Industry).</summary>
+    public Guid? IndustryId { get; private set; }
+
     public DateTimeOffset? CreatedAt { get; set; }
 
     public DateTimeOffset? UpdatedAt { get; set; }
@@ -16,7 +19,7 @@ public class Customer : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEntity
     {
     } // For EF Core
 
-    public static Customer Create(string name, string? description = null)
+    public static Customer Create(string name, string? description = null, Guid? industryId = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(name);
 
@@ -24,7 +27,8 @@ public class Customer : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEntity
         {
             Id = Guid.NewGuid(),
             Name = name,
-            Description = description
+            Description = description,
+            IndustryId = industryId
         };
 
         // Uncomment when DomainEvents are needed:
@@ -33,11 +37,12 @@ public class Customer : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEntity
         return entity;
     }
 
-    public void Update(string name, string? description = null)
+    public void Update(string name, string? description = null, Guid? industryId = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(name);
 
         Name = name;
         Description = description;
+        IndustryId = industryId;
     }
 }

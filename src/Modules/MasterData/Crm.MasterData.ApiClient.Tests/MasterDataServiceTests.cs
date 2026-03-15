@@ -1,49 +1,30 @@
 using System.Net;
 using System.Text.Json;
+using Cheetah.Contracts.Responses;
 using Crm.MasterData.Contracts.Requests;
 using Crm.MasterData.Contracts.Response;
 using Shouldly;
 
 namespace Crm.MasterData.ApiClient.Tests;
 
-public class MasterDataServiceTests
+public class IndustryServiceTests
 {
-    private const string BasePath = "api/masterdata";
+    private const string BasePath = "industries";
 
-    private static MasterDataService CreateService(MockHttpMessageHandler handler)
+    private static IndustryService CreateService(MockHttpMessageHandler handler)
     {
         var httpClient = new HttpClient(handler) { BaseAddress = new Uri("http://localhost/") };
-        return new MasterDataService(httpClient);
+        return new IndustryService(httpClient);
     }
 
-    [Fact]
-    public async Task GetAllAsync_ShouldReturnEntities()
-    {
-        // Arrange
-        var expectedEntities = new List<StackItemViewModel>
-        {
-            new(Guid.NewGuid(), "Entity 1", "Description 1"),
-            new(Guid.NewGuid(), "Entity 2", "Description 2")
-        };
-
-        var handler = new MockHttpMessageHandler(HttpStatusCode.OK, JsonSerializer.Serialize(expectedEntities));
-        var service = CreateService(handler);
-
-        // Act
-        var result = await service.GetAllAsync();
-
-        // Assert
-        result.Count.ShouldBe(2);
-        handler.RequestUri!.PathAndQuery.ShouldBe($"/{BasePath}");
-        handler.Method.ShouldBe(HttpMethod.Get);
-    }
+    #region GetByIdAsync
 
     [Fact]
     public async Task GetByIdAsync_WithExistingEntity_ShouldReturnEntity()
     {
         // Arrange
         var entityId = Guid.NewGuid();
-        var expectedEntity = new StackItemViewModel(entityId, "Test Entity", "Description");
+        var expectedEntity = new IndustryViewModel(entityId, "Technology");
 
         var handler = new MockHttpMessageHandler(HttpStatusCode.OK, JsonSerializer.Serialize(expectedEntity));
         var service = CreateService(handler);
@@ -55,6 +36,7 @@ public class MasterDataServiceTests
         result.ShouldNotBeNull();
         result!.Id.ShouldBe(entityId);
         handler.RequestUri!.PathAndQuery.ShouldBe($"/{BasePath}/{entityId}");
+        handler.Method.ShouldBe(HttpMethod.Get);
     }
 
     [Fact]
@@ -72,12 +54,16 @@ public class MasterDataServiceTests
         result.ShouldBeNull();
     }
 
+    #endregion
+
+    #region CreateAsync
+
     [Fact]
     public async Task CreateAsync_WithValidRequest_ShouldReturnNewId()
     {
         // Arrange
         var expectedId = Guid.NewGuid();
-        var request = new CreateStackItemRequest("New Entity", "Description");
+        var request = new CreateIndustryRequest("Technology");
         var response = new { Id = expectedId };
 
         var handler = new MockHttpMessageHandler(HttpStatusCode.Created, JsonSerializer.Serialize(response));
@@ -91,6 +77,25 @@ public class MasterDataServiceTests
         handler.RequestUri!.PathAndQuery.ShouldBe($"/{BasePath}");
         handler.Method.ShouldBe(HttpMethod.Post);
     }
+
+    [Fact]
+    public async Task CreateAsync_WithServerError_ShouldThrow()
+    {
+        // Arrange
+        var request = new CreateIndustryRequest("Technology");
+        var handler = new MockHttpMessageHandler(HttpStatusCode.InternalServerError, "");
+        var service = CreateService(handler);
+
+        // Act
+        var act = () => service.CreateAsync(request).AsTask();
+
+        // Assert
+        await Should.ThrowAsync<HttpRequestException>(act);
+    }
+
+    #endregion
+
+    #region DeleteAsync
 
     [Fact]
     public async Task DeleteAsync_WithExistingEntity_ShouldSucceed()
@@ -107,6 +112,23 @@ public class MasterDataServiceTests
         handler.RequestUri!.PathAndQuery.ShouldBe($"/{BasePath}/{entityId}");
         handler.Method.ShouldBe(HttpMethod.Delete);
     }
+
+    [Fact]
+    public async Task DeleteAsync_WithNonExistingEntity_ShouldThrow()
+    {
+        // Arrange
+        var entityId = Guid.NewGuid();
+        var handler = new MockHttpMessageHandler(HttpStatusCode.NotFound, "");
+        var service = CreateService(handler);
+
+        // Act
+        var act = () => service.DeleteAsync(entityId).AsTask();
+
+        // Assert
+        await Should.ThrowAsync<HttpRequestException>(act);
+    }
+
+    #endregion
 
     private class MockHttpMessageHandler : HttpMessageHandler
     {

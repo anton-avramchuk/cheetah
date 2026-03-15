@@ -4,6 +4,7 @@ using Cheetah.Contracts.Requests;
 
 namespace Crm.MasterData.Contracts.Requests;
 
+[ApiRoute("api/industries/{id:guid}", ApiMethod.Update, ServiceName = "Industry")]
 public record UpdateIndustryRequest(
     [FromRoute] Guid Id,
     [property: Required(AllowEmptyStrings = false)]

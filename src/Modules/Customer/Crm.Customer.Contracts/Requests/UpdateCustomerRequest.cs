@@ -8,4 +8,5 @@ public record UpdateCustomerRequest(
     [FromRoute] Guid Id,
     [property: Required(AllowEmptyStrings = false)]
     string Name,
-    string? Description) : ICrmRequest;
+    string? Description,
+    Guid? IndustryId = null) : ICrmRequest;

@@ -1,3 +1,3 @@
 namespace Crm.Customer.Application;
 
-public record CustomerModel(Guid Id, string Name, string? Description);
+public record CustomerModel(Guid Id, string Name, string? Description, Guid? IndustryId);

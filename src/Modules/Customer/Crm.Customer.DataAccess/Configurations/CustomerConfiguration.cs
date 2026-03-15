@@ -1,5 +1,7 @@
 using Cheetah.Core.EntityFramework.Configuration;
+using Crm.Customer.Domain;
 using CustomerEntity = global::Crm.Customer.Domain.Customer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Crm.Customer.DataAccess.Configurations;
@@ -25,5 +27,11 @@ public class CustomerConfiguration : AggregateRootConfiguration<CustomerEntity, 
             .HasMaxLength(1024);
 
         builder.HasIndex(x => x.Name).IsUnique();
+
+        builder.HasOne<CustomerIndustry>()
+            .WithMany()
+            .HasForeignKey(x => x.IndustryId)
+            .IsRequired(false)
+            .OnDelete(DeleteBehavior.SetNull);
     }
 }

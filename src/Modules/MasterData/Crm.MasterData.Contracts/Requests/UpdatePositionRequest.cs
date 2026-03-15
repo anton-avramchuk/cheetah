@@ -5,6 +5,7 @@ using Crm.MasterData.Domain;
 
 namespace Crm.MasterData.Contracts.Requests;
 
+[ApiRoute("api/positions/{id:guid}", ApiMethod.Update, ServiceName = "Position")]
 public record UpdatePositionRequest(
     [FromRoute] Guid Id,
     [property: Required(AllowEmptyStrings = false)]

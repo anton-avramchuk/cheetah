@@ -5,11 +5,13 @@
         <ProjectReference Include="..\..\..\Cheetah.Mapping.Core\Cheetah.Mapping.Core.csproj" />
         <ProjectReference Include="..\..\..\Cheetah.Core.Grid\Cheetah.Core.Grid.csproj" />
         <ProjectReference Include="..\..\..\Cheetah.Core\Cheetah.Core.csproj" />
+        <ProjectReference Include="..\..\..\Cheetah.BackgroundTasks\Cheetah.BackgroundTasks.csproj" />
         <ProjectReference Include="..\..\..\Cheetah.Generators.Module\Cheetah.Generators.Module.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
         <ProjectReference Include="..\Crm.Customer.Contracts\Crm.Customer.Contracts.csproj" />
         <ProjectReference Include="..\Crm.Customer.DataAccess\Crm.Customer.DataAccess.csproj" />
         <ProjectReference Include="..\Crm.Customer.DomainEvents\Crm.Customer.DomainEvents.csproj" />
         <ProjectReference Include="..\Crm.Customer.Domain\Crm.Customer.Domain.csproj" />
+        <ProjectReference Include="..\..\..\Modules\MasterData\Crm.MasterData.ApiClient\Crm.MasterData.ApiClient.csproj" />
     </ItemGroup>
 
 </Project>

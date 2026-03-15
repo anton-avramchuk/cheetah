@@ -24,7 +24,7 @@ public class UpdateCustomerCommandHandler : ICommandHandler<UpdateCustomerComman
         var entity = await _repository.GetByIdAsync(command.Id, ct)
                      ?? throw EntityNotFoundException.For<CustomerEntity>(command.Id);
 
-        entity.Update(command.Name, command.Description);
+        entity.Update(command.Name, command.Description, command.IndustryId);
         await _repository.SaveChangesAsync(ct);
 
         foreach (var domainEvent in entity.DomainEvents)
