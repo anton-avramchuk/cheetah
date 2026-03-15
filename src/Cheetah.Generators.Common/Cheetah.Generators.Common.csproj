@@ -18,7 +18,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Include="..\Cheetah.Contracts\Attributes\SyncHashAttribute.cs">
+        <Compile Include="..\Cheetah.Core\Attributes\SyncHashAttribute.cs">
             <Link>Common\SyncHashAttribute.cs</Link>
         </Compile>
         <Compile Include="..\Cheetah.Generators.Core\IsExternalInit.cs">

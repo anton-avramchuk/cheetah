@@ -9,7 +9,7 @@ namespace Cheetah.Generators.Common;
 [Generator]
 public class SyncHashGenerator : IIncrementalGenerator
 {
-    private const string SyncHashAttributeName = "Cheetah.Contracts.Attributes.SyncHashAttribute";
+    private const string SyncHashAttributeName = "Cheetah.Core.Attributes.SyncHashAttribute";
 
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {

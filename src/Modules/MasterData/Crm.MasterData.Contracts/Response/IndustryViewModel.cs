@@ -1,4 +1,4 @@
-using Cheetah.Contracts.Attributes;
+using Cheetah.Core.Attributes;
 using Cheetah.Contracts.Responses;
 
 namespace Crm.MasterData.Contracts.Response;

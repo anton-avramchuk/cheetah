@@ -1,4 +1,4 @@
-namespace Cheetah.Contracts.Attributes;
+namespace Cheetah.Core.Attributes;
 
 /// <summary>
 /// Marks a property or record parameter as part of the sync hash computation.

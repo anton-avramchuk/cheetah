@@ -53,20 +53,18 @@ public class SyncIndustriesBackgroundTask(
 
         foreach (var industry in industries)
         {
-            var hash = industry.ComputeHash();
-
             if (existingById.TryGetValue(industry.Id, out var local))
             {
-                if (local.ContentHash == hash)
+                if (local.ContentHash == industry.ComputeHash())
                     continue;
 
-                local.Update(industry.Name, hash);
+                local.Update(industry.Name);
                 repository.Update(local);
                 updated++;
             }
             else
             {
-                repository.Add(CustomerIndustry.Create(industry.Id, industry.Name, hash));
+                repository.Add(CustomerIndustry.Create(industry.Id, industry.Name));
                 added++;
             }
         }
