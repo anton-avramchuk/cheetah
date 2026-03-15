@@ -2,6 +2,7 @@
     <Folder Name="/CodeGen/">
         <Project Path="src/Cheetah.Analyzers.Tests/Cheetah.Analyzers.Tests.csproj" />
         <Project Path="src/Cheetah.Analyzers/Cheetah.Analyzers.csproj" />
+        <Project Path="src/Cheetah.BackgroundTasks.Tests/Cheetah.BackgroundTasks.Tests.csproj" />
         <Project Path="src/Cheetah.Generators.ApiClient/Cheetah.Generators.ApiClient.csproj" />
         <Project Path="src/Cheetah.Generators.Application/Cheetah.Generators.Application.csproj" />
         <Project Path="src/Cheetah.Generators.Common/Cheetah.Generators.Common.csproj" />
