@@ -4,7 +4,7 @@ using System.Security.Claims;
 using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
-using Crm.Identity.DataAccess;
+using Cheetah.Modules.Identity.DataAccess;
 using Cheetah.Core.Events;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
@@ -33,7 +33,7 @@ public class IdentityApiFixture : WebApplicationFactory<Program>, IAsyncLifetime
         await _dbContainer.StartAsync();
 
         using var scope = Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<IdentityDbContext>();
+        var db = scope.ServiceProvider.GetRequiredService<IdentityModuleDbContext>();
         await db.Database.MigrateAsync();
     }
 
@@ -58,14 +58,14 @@ public class IdentityApiFixture : WebApplicationFactory<Program>, IAsyncLifetime
         builder.ConfigureServices(services =>
         {
             var descriptorsToRemove = services
-                .Where(d => d.ServiceType == typeof(DbContextOptions<IdentityDbContext>) ||
-                            d.ServiceType == typeof(IdentityDbContext))
+                .Where(d => d.ServiceType == typeof(DbContextOptions<IdentityModuleDbContext>) ||
+                            d.ServiceType == typeof(IdentityModuleDbContext))
                 .ToList();
 
             foreach (var descriptor in descriptorsToRemove)
                 services.Remove(descriptor);
 
-            services.AddDbContext<IdentityDbContext>(options =>
+            services.AddDbContext<IdentityModuleDbContext>(options =>
                 options.UseNpgsql(_dbContainer.GetConnectionString()));
 
             services.AddSingleton<IEventBus, NullEventBus>();

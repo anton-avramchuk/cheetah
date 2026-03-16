@@ -1,7 +1,7 @@
 using Cheetah.Core.Domain.Exceptions;
 using Cheetah.Core.Identity.DataAccess.Exceptions;
-using Crm.Identity.Application.Commands;
-using Crm.Identity.Domain;
+using Cheetah.Modules.Identity.Application.Commands;
+using Cheetah.Modules.Identity.Domain;
 using Microsoft.AspNetCore.Identity;
 using Moq;
 using Shouldly;
@@ -10,18 +10,18 @@ namespace Crm.Identity.Application.Tests.Commands;
 
 public class UpdateUserCommandHandlerTests
 {
-    private readonly Mock<UserManager<CrmUser>> _userManagerMock;
-    private readonly Mock<RoleManager<CrmRole>> _roleManagerMock;
+    private readonly Mock<UserManager<CrmIdentityUser>> _userManagerMock;
+    private readonly Mock<RoleManager<CrmIdentityRole>> _roleManagerMock;
     private readonly UpdateUserCommandHandler _handler;
 
     public UpdateUserCommandHandlerTests()
     {
-        var userStoreMock = new Mock<IUserStore<CrmUser>>();
-        _userManagerMock = new Mock<UserManager<CrmUser>>(
+        var userStoreMock = new Mock<IUserStore<CrmIdentityUser>>();
+        _userManagerMock = new Mock<UserManager<CrmIdentityUser>>(
             userStoreMock.Object, null, null, null, null, null, null, null, null);
 
-        var roleStoreMock = new Mock<IRoleStore<CrmRole>>();
-        _roleManagerMock = new Mock<RoleManager<CrmRole>>(
+        var roleStoreMock = new Mock<IRoleStore<CrmIdentityRole>>();
+        _roleManagerMock = new Mock<RoleManager<CrmIdentityRole>>(
             roleStoreMock.Object, null, null, null, null);
 
         _handler = new UpdateUserCommandHandler(_userManagerMock.Object, _roleManagerMock.Object);
@@ -32,7 +32,7 @@ public class UpdateUserCommandHandlerTests
     {
         // Arrange
         var userId = Guid.NewGuid();
-        var existingUser = CrmUser.Create("oldname", "old@example.com");
+        var existingUser = CrmIdentityUser.Create("oldname", "old@example.com");
         var command = new UpdateUserCommand(userId, "newname", "new@example.com");
 
         _userManagerMock
@@ -61,7 +61,7 @@ public class UpdateUserCommandHandlerTests
     {
         // Arrange
         var userId = Guid.NewGuid();
-        var existingUser = CrmUser.Create("oldname", "old@example.com");
+        var existingUser = CrmIdentityUser.Create("oldname", "old@example.com");
         var originalStamp = existingUser.SecurityStamp;
         var command = new UpdateUserCommand(userId, "newname", "new@example.com");
 
@@ -93,7 +93,7 @@ public class UpdateUserCommandHandlerTests
 
         _userManagerMock
             .Setup(m => m.FindByIdAsync(userId.ToString()))
-            .ReturnsAsync((CrmUser?)null);
+            .ReturnsAsync((CrmIdentityUser?)null);
 
         // Act
         var act = async () => await _handler.HandleAsync(command);
@@ -107,7 +107,7 @@ public class UpdateUserCommandHandlerTests
     {
         // Arrange
         var userId = Guid.NewGuid();
-        var existingUser = CrmUser.Create("oldname", "old@example.com");
+        var existingUser = CrmIdentityUser.Create("oldname", "old@example.com");
         var command = new UpdateUserCommand(userId, "newname", "new@example.com");
         var failedResult = IdentityResult.Failed(new IdentityError { Code = "Error", Description = "Update failed" });
 
@@ -116,7 +116,7 @@ public class UpdateUserCommandHandlerTests
             .ReturnsAsync(existingUser);
 
         _userManagerMock
-            .Setup(m => m.UpdateAsync(It.IsAny<CrmUser>()))
+            .Setup(m => m.UpdateAsync(It.IsAny<CrmIdentityUser>()))
             .ReturnsAsync(failedResult);
 
         // Act

@@ -1,6 +1,6 @@
 using Cheetah.Core.Identity.DataAccess.Exceptions;
-using Crm.Identity.Application.Commands;
-using Crm.Identity.Domain;
+using Cheetah.Modules.Identity.Application.Commands;
+using Cheetah.Modules.Identity.Domain;
 using Microsoft.AspNetCore.Identity;
 using Moq;
 using Shouldly;
@@ -9,13 +9,13 @@ namespace Crm.Identity.Application.Tests.Commands;
 
 public class CreateRoleCommandHandlerTests
 {
-    private readonly Mock<RoleManager<CrmRole>> _roleManagerMock;
+    private readonly Mock<RoleManager<CrmIdentityRole>> _roleManagerMock;
     private readonly CreateRoleCommandHandler _handler;
 
     public CreateRoleCommandHandlerTests()
     {
-        var roleStoreMock = new Mock<IRoleStore<CrmRole>>();
-        _roleManagerMock = new Mock<RoleManager<CrmRole>>(
+        var roleStoreMock = new Mock<IRoleStore<CrmIdentityRole>>();
+        _roleManagerMock = new Mock<RoleManager<CrmIdentityRole>>(
             roleStoreMock.Object, null, null, null, null);
         _handler = new CreateRoleCommandHandler(_roleManagerMock.Object);
     }
@@ -27,7 +27,7 @@ public class CreateRoleCommandHandlerTests
         var command = new CreateRoleCommand("admin");
 
         _roleManagerMock
-            .Setup(m => m.CreateAsync(It.IsAny<CrmRole>()))
+            .Setup(m => m.CreateAsync(It.IsAny<CrmIdentityRole>()))
             .ReturnsAsync(IdentityResult.Success);
 
         // Act
@@ -35,7 +35,7 @@ public class CreateRoleCommandHandlerTests
 
         // Assert
         result.ShouldNotBe(Guid.Empty);
-        _roleManagerMock.Verify(m => m.CreateAsync(It.IsAny<CrmRole>()), Times.Once);
+        _roleManagerMock.Verify(m => m.CreateAsync(It.IsAny<CrmIdentityRole>()), Times.Once);
     }
 
     [Theory]
@@ -62,7 +62,7 @@ public class CreateRoleCommandHandlerTests
         var failedResult = IdentityResult.Failed(new IdentityError { Code = "DuplicateRoleName", Description = "Role already exists" });
 
         _roleManagerMock
-            .Setup(m => m.CreateAsync(It.IsAny<CrmRole>()))
+            .Setup(m => m.CreateAsync(It.IsAny<CrmIdentityRole>()))
             .ReturnsAsync(failedResult);
 
         // Act

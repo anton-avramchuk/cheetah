@@ -1,7 +1,7 @@
 using Cheetah.Core.Domain.Exceptions;
 using Cheetah.Core.Identity.DataAccess.Exceptions;
-using Crm.Identity.Application.Commands;
-using Crm.Identity.Domain;
+using Cheetah.Modules.Identity.Application.Commands;
+using Cheetah.Modules.Identity.Domain;
 using Microsoft.AspNetCore.Identity;
 using Moq;
 using Shouldly;
@@ -10,13 +10,13 @@ namespace Crm.Identity.Application.Tests.Commands;
 
 public class DeleteUserCommandHandlerTests
 {
-    private readonly Mock<UserManager<CrmUser>> _userManagerMock;
+    private readonly Mock<UserManager<CrmIdentityUser>> _userManagerMock;
     private readonly DeleteUserCommandHandler _handler;
 
     public DeleteUserCommandHandlerTests()
     {
-        var userStoreMock = new Mock<IUserStore<CrmUser>>();
-        _userManagerMock = new Mock<UserManager<CrmUser>>(
+        var userStoreMock = new Mock<IUserStore<CrmIdentityUser>>();
+        _userManagerMock = new Mock<UserManager<CrmIdentityUser>>(
             userStoreMock.Object, null, null, null, null, null, null, null, null);
         _handler = new DeleteUserCommandHandler(_userManagerMock.Object);
     }
@@ -26,7 +26,7 @@ public class DeleteUserCommandHandlerTests
     {
         // Arrange
         var userId = Guid.NewGuid();
-        var existingUser = CrmUser.Create("johndoe", "john@example.com");
+        var existingUser = CrmIdentityUser.Create("johndoe", "john@example.com");
         var command = new DeleteUserCommand(userId);
 
         _userManagerMock
@@ -53,7 +53,7 @@ public class DeleteUserCommandHandlerTests
 
         _userManagerMock
             .Setup(m => m.FindByIdAsync(userId.ToString()))
-            .ReturnsAsync((CrmUser?)null);
+            .ReturnsAsync((CrmIdentityUser?)null);
 
         // Act
         var act = async () => await _handler.HandleAsync(command);
@@ -67,7 +67,7 @@ public class DeleteUserCommandHandlerTests
     {
         // Arrange
         var userId = Guid.NewGuid();
-        var existingUser = CrmUser.Create("johndoe", "john@example.com");
+        var existingUser = CrmIdentityUser.Create("johndoe", "john@example.com");
         var command = new DeleteUserCommand(userId);
         var failedResult = IdentityResult.Failed(new IdentityError { Code = "Error", Description = "Delete failed" });
 

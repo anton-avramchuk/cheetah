@@ -17,7 +17,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Crm.Identity.Application\Crm.Identity.Application.csproj"/>
+        <ProjectReference Include="..\Cheetah.Modules.Identity.Application\Cheetah.Modules.Identity.Application.csproj"/>
     </ItemGroup>
 
     <ItemGroup>

@@ -50,6 +50,14 @@
     <Folder Name="/Modules/">
         <Project Path="src/Modules/Crm.Proxy/Crm.Proxy.csproj" />
     </Folder>
+    <Folder Name="/Modules/Identity/">
+        <Project Path="src/Modules/Identity/Cheetah.Modules.Identity.Api/Cheetah.Modules.Identity.Api.csproj" />
+        <Project Path="src/Modules/Identity/Cheetah.Modules.Identity.Application/Cheetah.Modules.Identity.Application.csproj" />
+        <Project Path="src/Modules/Identity/Cheetah.Modules.Identity.Contracts/Cheetah.Modules.Identity.Contracts.csproj" />
+        <Project Path="src/Modules/Identity/Cheetah.Modules.Identity.DataAccess/Cheetah.Modules.Identity.DataAccess.csproj" />
+        <Project Path="src/Modules/Identity/Cheetah.Modules.Identity.Domain/Cheetah.Modules.Identity.Domain.csproj" />
+        <Project Path="src/Modules/Identity/Cheetah.Modules.Identity.DomainEvents/Cheetah.Modules.Identity.DomainEvents.csproj" />
+    </Folder>
     <Folder Name="/Modules/Recruitment/" />
     <Folder Name="/Modules/Recruitment/Customer/">
         <Project Path="src/Modules/Customer/Crm.Customer.Api.Tests/Crm.Customer.Api.Tests.csproj" />

@@ -1,4 +1,4 @@
-using Crm.Identity.Domain;
+using Cheetah.Modules.Identity.Domain;
 using Shouldly;
 
 namespace Crm.Identity.Domain.Tests;
@@ -8,7 +8,7 @@ public class CrmUserTests
     [Fact]
     public void Create_WithValidUserNameAndEmail_ShouldSetProperties()
     {
-        var user = CrmUser.Create("johndoe", "john@example.com");
+        var user = CrmIdentityUser.Create("johndoe", "john@example.com");
 
         user.ShouldNotBeNull();
         user.Id.ShouldNotBe(Guid.Empty);
@@ -21,8 +21,8 @@ public class CrmUserTests
     [Fact]
     public void Create_ShouldGenerateUniqueIds()
     {
-        var user1 = CrmUser.Create("user1", "user1@example.com");
-        var user2 = CrmUser.Create("user2", "user2@example.com");
+        var user1 = CrmIdentityUser.Create("user1", "user1@example.com");
+        var user2 = CrmIdentityUser.Create("user2", "user2@example.com");
 
         user1.Id.ShouldNotBe(user2.Id);
     }
@@ -33,7 +33,7 @@ public class CrmUserTests
     [InlineData("   ")]
     public void Create_WithInvalidUserName_ShouldThrowArgumentException(string? userName)
     {
-        Should.Throw<ArgumentException>(() => CrmUser.Create(userName!, "email@example.com"));
+        Should.Throw<ArgumentException>(() => CrmIdentityUser.Create(userName!, "email@example.com"));
     }
 
     [Theory]
@@ -42,13 +42,13 @@ public class CrmUserTests
     [InlineData("   ")]
     public void Create_WithInvalidEmail_ShouldThrowArgumentException(string? email)
     {
-        Should.Throw<ArgumentException>(() => CrmUser.Create("johndoe", email!));
+        Should.Throw<ArgumentException>(() => CrmIdentityUser.Create("johndoe", email!));
     }
 
     [Fact]
     public void ChangeUserName_WithValidName_ShouldUpdateUserNameAndNormalizedName()
     {
-        var user = CrmUser.Create("oldname", "john@example.com");
+        var user = CrmIdentityUser.Create("oldname", "john@example.com");
 
         user.ChangeUserName("newname");
 
@@ -62,7 +62,7 @@ public class CrmUserTests
     [InlineData("   ")]
     public void ChangeUserName_WithInvalidName_ShouldThrowArgumentException(string? userName)
     {
-        var user = CrmUser.Create("johndoe", "john@example.com");
+        var user = CrmIdentityUser.Create("johndoe", "john@example.com");
 
         Should.Throw<ArgumentException>(() => user.ChangeUserName(userName!));
     }
@@ -70,7 +70,7 @@ public class CrmUserTests
     [Fact]
     public void ChangeEmail_WithValidEmail_ShouldUpdateEmailAndNormalizedEmail()
     {
-        var user = CrmUser.Create("johndoe", "old@example.com");
+        var user = CrmIdentityUser.Create("johndoe", "old@example.com");
 
         user.ChangeEmail("new@example.com");
 
@@ -84,7 +84,7 @@ public class CrmUserTests
     [InlineData("   ")]
     public void ChangeEmail_WithInvalidEmail_ShouldThrowArgumentException(string? email)
     {
-        var user = CrmUser.Create("johndoe", "john@example.com");
+        var user = CrmIdentityUser.Create("johndoe", "john@example.com");
 
         Should.Throw<ArgumentException>(() => user.ChangeEmail(email!));
     }
@@ -92,7 +92,7 @@ public class CrmUserTests
     [Fact]
     public void RefreshSecurityStamp_ShouldChangeSecurityStamp()
     {
-        var user = CrmUser.Create("johndoe", "john@example.com");
+        var user = CrmIdentityUser.Create("johndoe", "john@example.com");
         var originalStamp = user.SecurityStamp;
 
         user.RefreshSecurityStamp();

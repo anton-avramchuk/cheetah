@@ -3,8 +3,8 @@ using System.Net;
 using System.Net.Http.Json;
 using Cheetah.Contracts.Responses;
 using Crm.Identity.Api.Tests.Fixtures;
-using Crm.Identity.Contracts.Requests;
-using Crm.Identity.Contracts.Response;
+using Cheetah.Modules.Identity.Contracts.Requests;
+using Cheetah.Modules.Identity.Contracts.Response;
 using Shouldly;
 
 namespace Crm.Identity.Api.Tests.Endpoints;

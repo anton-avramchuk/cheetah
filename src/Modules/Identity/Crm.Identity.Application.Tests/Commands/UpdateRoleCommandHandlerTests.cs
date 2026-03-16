@@ -1,7 +1,7 @@
 using Cheetah.Core.Domain.Exceptions;
 using Cheetah.Core.Identity.DataAccess.Exceptions;
-using Crm.Identity.Application.Commands;
-using Crm.Identity.Domain;
+using Cheetah.Modules.Identity.Application.Commands;
+using Cheetah.Modules.Identity.Domain;
 using Microsoft.AspNetCore.Identity;
 using Moq;
 using Shouldly;
@@ -10,13 +10,13 @@ namespace Crm.Identity.Application.Tests.Commands;
 
 public class UpdateRoleCommandHandlerTests
 {
-    private readonly Mock<RoleManager<CrmRole>> _roleManagerMock;
+    private readonly Mock<RoleManager<CrmIdentityRole>> _roleManagerMock;
     private readonly UpdateRoleCommandHandler _handler;
 
     public UpdateRoleCommandHandlerTests()
     {
-        var roleStoreMock = new Mock<IRoleStore<CrmRole>>();
-        _roleManagerMock = new Mock<RoleManager<CrmRole>>(
+        var roleStoreMock = new Mock<IRoleStore<CrmIdentityRole>>();
+        _roleManagerMock = new Mock<RoleManager<CrmIdentityRole>>(
             roleStoreMock.Object, null, null, null, null);
         _handler = new UpdateRoleCommandHandler(_roleManagerMock.Object);
     }
@@ -26,7 +26,7 @@ public class UpdateRoleCommandHandlerTests
     {
         // Arrange
         var roleId = Guid.NewGuid();
-        var existingRole = CrmRole.Create(roleId, "old-name");
+        var existingRole = CrmIdentityRole.Create(roleId, "old-name");
         var command = new UpdateRoleCommand(roleId, "new-name");
 
         _roleManagerMock
@@ -54,7 +54,7 @@ public class UpdateRoleCommandHandlerTests
 
         _roleManagerMock
             .Setup(m => m.FindByIdAsync(roleId.ToString()))
-            .ReturnsAsync((CrmRole?)null);
+            .ReturnsAsync((CrmIdentityRole?)null);
 
         // Act
         var act = async () => await _handler.HandleAsync(command);
@@ -68,7 +68,7 @@ public class UpdateRoleCommandHandlerTests
     {
         // Arrange
         var roleId = Guid.NewGuid();
-        var existingRole = CrmRole.Create(roleId, "old-name");
+        var existingRole = CrmIdentityRole.Create(roleId, "old-name");
         var command = new UpdateRoleCommand(roleId, "new-name");
         var failedResult = IdentityResult.Failed(new IdentityError { Code = "Error", Description = "Update failed" });
 
@@ -77,7 +77,7 @@ public class UpdateRoleCommandHandlerTests
             .ReturnsAsync(existingRole);
 
         _roleManagerMock
-            .Setup(m => m.UpdateAsync(It.IsAny<CrmRole>()))
+            .Setup(m => m.UpdateAsync(It.IsAny<CrmIdentityRole>()))
             .ReturnsAsync(failedResult);
 
         // Act

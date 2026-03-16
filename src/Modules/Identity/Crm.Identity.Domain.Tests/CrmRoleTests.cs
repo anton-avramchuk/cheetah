@@ -1,4 +1,4 @@
-using Crm.Identity.Domain;
+using Cheetah.Modules.Identity.Domain;
 using Shouldly;
 
 namespace Crm.Identity.Domain.Tests;
@@ -8,7 +8,7 @@ public class CrmRoleTests
     [Fact]
     public void Create_WithValidName_ShouldSetNameAndNormalizedName()
     {
-        var role = CrmRole.Create("admin");
+        var role = CrmIdentityRole.Create("admin");
 
         role.ShouldNotBeNull();
         role.Id.ShouldNotBe(Guid.Empty);
@@ -19,8 +19,8 @@ public class CrmRoleTests
     [Fact]
     public void Create_ShouldGenerateUniqueIds()
     {
-        var role1 = CrmRole.Create("role1");
-        var role2 = CrmRole.Create("role2");
+        var role1 = CrmIdentityRole.Create("role1");
+        var role2 = CrmIdentityRole.Create("role2");
 
         role1.Id.ShouldNotBe(role2.Id);
     }
@@ -29,7 +29,7 @@ public class CrmRoleTests
     public void Create_WithSpecificId_ShouldUseProvidedId()
     {
         var id = Guid.NewGuid();
-        var role = CrmRole.Create(id, "admin");
+        var role = CrmIdentityRole.Create(id, "admin");
 
         role.Id.ShouldBe(id);
     }
@@ -40,13 +40,13 @@ public class CrmRoleTests
     [InlineData("   ")]
     public void Create_WithInvalidName_ShouldThrowArgumentException(string? name)
     {
-        Should.Throw<ArgumentException>(() => CrmRole.Create(name!));
+        Should.Throw<ArgumentException>(() => CrmIdentityRole.Create(name!));
     }
 
     [Fact]
     public void ChangeName_WithValidName_ShouldUpdateNameAndNormalizedName()
     {
-        var role = CrmRole.Create("old-name");
+        var role = CrmIdentityRole.Create("old-name");
 
         role.ChangeName("new-name");
 
@@ -60,7 +60,7 @@ public class CrmRoleTests
     [InlineData("   ")]
     public void ChangeName_WithInvalidName_ShouldThrowArgumentException(string? name)
     {
-        var role = CrmRole.Create("admin");
+        var role = CrmIdentityRole.Create("admin");
 
         Should.Throw<ArgumentException>(() => role.ChangeName(name!));
     }

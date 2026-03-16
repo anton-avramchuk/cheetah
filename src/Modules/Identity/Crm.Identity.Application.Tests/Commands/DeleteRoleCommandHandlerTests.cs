@@ -1,7 +1,7 @@
 using Cheetah.Core.Domain.Exceptions;
 using Cheetah.Core.Identity.DataAccess.Exceptions;
-using Crm.Identity.Application.Commands;
-using Crm.Identity.Domain;
+using Cheetah.Modules.Identity.Application.Commands;
+using Cheetah.Modules.Identity.Domain;
 using Microsoft.AspNetCore.Identity;
 using Moq;
 using Shouldly;
@@ -10,13 +10,13 @@ namespace Crm.Identity.Application.Tests.Commands;
 
 public class DeleteRoleCommandHandlerTests
 {
-    private readonly Mock<RoleManager<CrmRole>> _roleManagerMock;
+    private readonly Mock<RoleManager<CrmIdentityRole>> _roleManagerMock;
     private readonly DeleteRoleCommandHandler _handler;
 
     public DeleteRoleCommandHandlerTests()
     {
-        var roleStoreMock = new Mock<IRoleStore<CrmRole>>();
-        _roleManagerMock = new Mock<RoleManager<CrmRole>>(
+        var roleStoreMock = new Mock<IRoleStore<CrmIdentityRole>>();
+        _roleManagerMock = new Mock<RoleManager<CrmIdentityRole>>(
             roleStoreMock.Object, null, null, null, null);
         _handler = new DeleteRoleCommandHandler(_roleManagerMock.Object);
     }
@@ -26,7 +26,7 @@ public class DeleteRoleCommandHandlerTests
     {
         // Arrange
         var roleId = Guid.NewGuid();
-        var existingRole = CrmRole.Create(roleId, "admin");
+        var existingRole = CrmIdentityRole.Create(roleId, "admin");
         var command = new DeleteRoleCommand(roleId);
 
         _roleManagerMock
@@ -53,7 +53,7 @@ public class DeleteRoleCommandHandlerTests
 
         _roleManagerMock
             .Setup(m => m.FindByIdAsync(roleId.ToString()))
-            .ReturnsAsync((CrmRole?)null);
+            .ReturnsAsync((CrmIdentityRole?)null);
 
         // Act
         var act = async () => await _handler.HandleAsync(command);
@@ -67,7 +67,7 @@ public class DeleteRoleCommandHandlerTests
     {
         // Arrange
         var roleId = Guid.NewGuid();
-        var existingRole = CrmRole.Create(roleId, "admin");
+        var existingRole = CrmIdentityRole.Create(roleId, "admin");
         var command = new DeleteRoleCommand(roleId);
         var failedResult = IdentityResult.Failed(new IdentityError { Code = "Error", Description = "Delete failed" });
 

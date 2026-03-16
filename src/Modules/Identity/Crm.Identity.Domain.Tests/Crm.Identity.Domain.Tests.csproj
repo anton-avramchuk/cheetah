@@ -16,7 +16,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Crm.Identity.Domain\Crm.Identity.Domain.csproj"/>
+        <ProjectReference Include="..\Cheetah.Modules.Identity.Domain\Cheetah.Modules.Identity.Domain.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
