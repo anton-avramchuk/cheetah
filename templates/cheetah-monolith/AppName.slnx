@@ -1,0 +1,22 @@
+<Solution>
+    <Folder Name="/src/">
+        <Project Path="src/AppName.Host/AppName.Host.csproj" />
+    </Folder>
+    <Folder Name="/src/Modules/">
+        <Project Path="src/Modules/AppName.Core/AppName.Core.csproj" />
+    </Folder>
+<!--#if (includeIdentity)-->
+    <Folder Name="/src/Modules/Identity/">
+        <Project Path="src/Modules/Identity/AppName.Identity.DomainEvents/AppName.Identity.DomainEvents.csproj" />
+        <Project Path="src/Modules/Identity/AppName.Identity.Domain/AppName.Identity.Domain.csproj" />
+        <Project Path="src/Modules/Identity/AppName.Identity.Contracts/AppName.Identity.Contracts.csproj" />
+        <Project Path="src/Modules/Identity/AppName.Identity.Application/AppName.Identity.Application.csproj" />
+        <Project Path="src/Modules/Identity/AppName.Identity.DataAccess/AppName.Identity.DataAccess.csproj" />
+        <Project Path="src/Modules/Identity/AppName.Identity.Api/AppName.Identity.Api.csproj" />
+    </Folder>
+    <Folder Name="/tests/Modules/Identity/">
+        <Project Path="src/Modules/Identity/AppName.Identity.Domain.Tests/AppName.Identity.Domain.Tests.csproj" />
+        <Project Path="src/Modules/Identity/AppName.Identity.Application.Tests/AppName.Identity.Application.Tests.csproj" />
+    </Folder>
+<!--#endif-->
+</Solution>
