@@ -3,7 +3,7 @@ using Cheetah.Core.Domain;
 
 namespace Cheetah.Modules.Identity.Domain;
 
-public class IdentityUser<TIdentityRole> : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEntity
+public abstract class IdentityUser<TIdentityRole> : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEntity
     where TIdentityRole : IdentityRole
 {
     public string UserName { get; private set; } = null!;
@@ -34,14 +34,6 @@ public class IdentityUser<TIdentityRole> : AggregateRoot<Guid>, ICreateAtEntity,
         SetEmail(email);
         SecurityStamp = Guid.NewGuid().ToString();
     }
-
-    /// <summary>
-    /// Creates a new user. Concrete modules extending this class should declare their own
-    /// static <c>Create()</c> method (hiding this one with <c>new</c>) and raise
-    /// the appropriate domain event, e.g. <c>UserCreatedEvent</c>.
-    /// </summary>
-    public static IdentityUser<TIdentityRole> Create(string userName, string email)
-        => new(Guid.NewGuid(), userName, email);
 
     // User name
 

@@ -1,7 +1,9 @@
-using Cheetah.Modules.Identity.Api.Endpoints;
+using Cheetah.Modules.Identity.Application.Queries;
+using Cheetah.Modules.Identity.Contracts.Requests;
 
 namespace Crm.Identity.Api.Endpoints;
 
-public sealed class GetAllRolesEndpoint : Cheetah.Modules.Identity.Api.Endpoints.GetAllRolesEndpoint
+public sealed class GetAllRolesEndpoint
+    : Cheetah.Modules.Identity.Api.Endpoints.GetAllRolesEndpoint<GetAllRolesRequest, GetAllRolesQuery>
 {
 }

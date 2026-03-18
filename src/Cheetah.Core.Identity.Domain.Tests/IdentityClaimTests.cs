@@ -12,7 +12,7 @@ public class IdentityClaimTests
     [Fact]
     public void UserClaim_HasCorrectTypeAndValue()
     {
-        var user = IdentityUser<IdentityRole>.Create("john", "john@example.com");
+        var user = TestUser.Create("john", "john@example.com");
         user.AddClaim(new Claim("role", "admin"));
 
         var claim = user.Claims.First();
@@ -24,7 +24,7 @@ public class IdentityClaimTests
     [Fact]
     public void UserClaim_HasCorrectUserId()
     {
-        var user = IdentityUser<IdentityRole>.Create("john", "john@example.com");
+        var user = TestUser.Create("john", "john@example.com");
         user.AddClaim(new Claim("role", "admin"));
 
         user.Claims.First().UserId.ShouldBe(user.Id);
@@ -33,7 +33,7 @@ public class IdentityClaimTests
     [Fact]
     public void UserClaim_GeneratesNewId_ForEachClaim()
     {
-        var user = IdentityUser<IdentityRole>.Create("john", "john@example.com");
+        var user = TestUser.Create("john", "john@example.com");
         user.AddClaim(new Claim("role", "admin"));
         user.AddClaim(new Claim("role", "user"));
 
@@ -43,7 +43,7 @@ public class IdentityClaimTests
     [Fact]
     public void UserClaim_ToClaim_ReturnsClaim_WithCorrectTypeAndValue()
     {
-        var user = IdentityUser<IdentityRole>.Create("john", "john@example.com");
+        var user = TestUser.Create("john", "john@example.com");
         user.AddClaim(new Claim("role", "admin"));
 
         var systemClaim = user.Claims.First().ToClaim();
@@ -59,7 +59,7 @@ public class IdentityClaimTests
     [Fact]
     public void RoleClaim_HasCorrectTypeAndValue()
     {
-        var role = IdentityRole.Create("admin");
+        var role = TestRole.Create("admin");
         role.AddClaim(new Claim("permission", "read"));
 
         var claim = role.Claims.First();
@@ -71,7 +71,7 @@ public class IdentityClaimTests
     [Fact]
     public void RoleClaim_HasCorrectRoleId()
     {
-        var role = IdentityRole.Create("admin");
+        var role = TestRole.Create("admin");
         role.AddClaim(new Claim("permission", "read"));
 
         role.Claims.First().RoleId.ShouldBe(role.Id);
@@ -80,7 +80,7 @@ public class IdentityClaimTests
     [Fact]
     public void RoleClaim_ToClaim_ReturnsClaim_WithCorrectTypeAndValue()
     {
-        var role = IdentityRole.Create("admin");
+        var role = TestRole.Create("admin");
         role.AddClaim(new Claim("permission", "read"));
 
         var systemClaim = role.Claims.First().ToClaim();

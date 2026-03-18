@@ -1,18 +1,17 @@
 using Cheetah.Core.DataAccess.Attributes;
-using Crm.Identity.DataAccess;
-using Crm.Identity.DataAccess.Configurations;
 using Cheetah.Modules.Identity.Domain;
+using Crm.Identity.DataAccess.Configurations;
 using Crm.Identity.Domain;
 using Microsoft.EntityFrameworkCore;
-using BaseIdentityDbContext = Cheetah.Modules.Identity.DataAccess.Context.IdentityDbContext<
-    Crm.Identity.DataAccess.IdentityModuleDbContext,
+using BaseIdentityDbContext = Cheetah.Modules.Identity.DataAccess.Context.CheetahIdentityDbContext<
+    Crm.Identity.DataAccess.IdentityDbContext,
     Crm.Identity.Domain.CrmIdentityUser,
     Crm.Identity.Domain.CrmIdentityRole>;
 
 namespace Crm.Identity.DataAccess;
 
 [ConnectionStringName("Identity")]
-public class IdentityModuleDbContext(DbContextOptions<IdentityModuleDbContext> options)
+public class IdentityDbContext(DbContextOptions<IdentityDbContext> options)
     : BaseIdentityDbContext(options)
 {
     protected override IEntityTypeConfiguration<CrmIdentityUser> GetUserConfiguration()

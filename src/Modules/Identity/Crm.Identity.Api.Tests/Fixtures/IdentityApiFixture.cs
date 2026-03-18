@@ -33,7 +33,7 @@ public class IdentityApiFixture : WebApplicationFactory<Program>, IAsyncLifetime
         await _dbContainer.StartAsync();
 
         using var scope = Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<IdentityModuleDbContext>();
+        var db = scope.ServiceProvider.GetRequiredService<IdentityDbContext>();
         await db.Database.MigrateAsync();
     }
 
@@ -58,14 +58,14 @@ public class IdentityApiFixture : WebApplicationFactory<Program>, IAsyncLifetime
         builder.ConfigureServices(services =>
         {
             var descriptorsToRemove = services
-                .Where(d => d.ServiceType == typeof(DbContextOptions<IdentityModuleDbContext>) ||
-                            d.ServiceType == typeof(IdentityModuleDbContext))
+                .Where(d => d.ServiceType == typeof(DbContextOptions<IdentityDbContext>) ||
+                            d.ServiceType == typeof(IdentityDbContext))
                 .ToList();
 
             foreach (var descriptor in descriptorsToRemove)
                 services.Remove(descriptor);
 
-            services.AddDbContext<IdentityModuleDbContext>(options =>
+            services.AddDbContext<IdentityDbContext>(options =>
                 options.UseNpgsql(_dbContainer.GetConnectionString()));
 
             services.AddSingleton<IEventBus, NullEventBus>();

@@ -5,7 +5,9 @@ using Cheetah.Modules.Identity.Contracts.Requests;
 
 namespace Cheetah.Modules.Identity.Api.Endpoints;
 
-public abstract class CreateRoleEndpoint : CreateCommandEndpoint<CreateRoleRequest, CreateRoleCommand>
+public abstract class CreateRoleEndpoint<TRequest, TCommand> : CreateCommandEndpoint<TRequest, TCommand>
+    where TRequest : CreateRoleRequest
+    where TCommand : CreateRoleCommand
 {
     public override string Route => Constants.RolesRoute;
     public override string GetByIdRouteName => "GetRoleById";

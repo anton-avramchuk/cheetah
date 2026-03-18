@@ -5,7 +5,9 @@ using Cheetah.Modules.Identity.Contracts.Requests;
 
 namespace Cheetah.Modules.Identity.Api.Endpoints;
 
-public abstract class UpdateRoleEndpoint : UpdateCommandEndpoint<UpdateRoleRequest, UpdateRoleCommand>
+public abstract class UpdateRoleEndpoint<TRequest, TCommand> : UpdateCommandEndpoint<TRequest, TCommand>
+    where TRequest : UpdateRoleRequest
+    where TCommand : UpdateRoleCommand
 {
     public override string Route => $"{Constants.RolesRoute}/{{id:guid}}";
 

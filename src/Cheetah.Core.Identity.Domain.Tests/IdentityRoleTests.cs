@@ -7,7 +7,7 @@ public class IdentityRoleTests
     [Fact]
     public void Create_WithValidName_SetsNameAndNormalizedName()
     {
-        var role = IdentityRole.Create("admin");
+        var role = TestRole.Create("admin");
 
         role.Name.ShouldBe("admin");
         role.NormalizedName.ShouldBe("ADMIN");
@@ -16,8 +16,8 @@ public class IdentityRoleTests
     [Fact]
     public void Create_GeneratesNewId()
     {
-        var a = IdentityRole.Create("admin");
-        var b = IdentityRole.Create("admin");
+        var a = TestRole.Create("admin");
+        var b = TestRole.Create("admin");
 
         a.Id.ShouldNotBe(b.Id);
     }
@@ -26,7 +26,7 @@ public class IdentityRoleTests
     public void Create_WithExplicitId_UsesProvidedId()
     {
         var id = Guid.NewGuid();
-        var role = IdentityRole.Create(id, "admin");
+        var role = TestRole.Create(id, "admin");
 
         role.Id.ShouldBe(id);
     }
@@ -37,7 +37,7 @@ public class IdentityRoleTests
     [InlineData("   ")]
     public void Create_WithInvalidName_Throws(string? name)
     {
-        Should.Throw<ArgumentException>(() => IdentityRole.Create(name!));
+        Should.Throw<ArgumentException>(() => TestRole.Create(name!));
     }
 
     [Theory]
@@ -46,7 +46,7 @@ public class IdentityRoleTests
     [InlineData("   ")]
     public void Create_WithExplicitId_WithInvalidName_Throws(string? name)
     {
-        Should.Throw<ArgumentException>(() => IdentityRole.Create(Guid.NewGuid(), name!));
+        Should.Throw<ArgumentException>(() => TestRole.Create(Guid.NewGuid(), name!));
     }
 
     // --- ChangeName ---
@@ -54,7 +54,7 @@ public class IdentityRoleTests
     [Fact]
     public void ChangeName_UpdatesNameAndNormalizedName()
     {
-        var role = IdentityRole.Create("admin");
+        var role = TestRole.Create("admin");
 
         role.ChangeName("moderator");
 
@@ -68,7 +68,7 @@ public class IdentityRoleTests
     [InlineData("   ")]
     public void ChangeName_WithInvalidName_Throws(string? name)
     {
-        var role = IdentityRole.Create("admin");
+        var role = TestRole.Create("admin");
 
         Should.Throw<ArgumentException>(() => role.ChangeName(name!));
     }
@@ -78,7 +78,7 @@ public class IdentityRoleTests
     [Fact]
     public void AddClaim_AppendsClaim()
     {
-        var role = IdentityRole.Create("admin");
+        var role = TestRole.Create("admin");
         var claim = new Claim("permission", "read");
 
         role.AddClaim(claim);
@@ -91,7 +91,7 @@ public class IdentityRoleTests
     [Fact]
     public void AddClaim_WithNullClaim_Throws()
     {
-        var role = IdentityRole.Create("admin");
+        var role = TestRole.Create("admin");
 
         Should.Throw<ArgumentNullException>(() => role.AddClaim(null!));
     }
@@ -99,7 +99,7 @@ public class IdentityRoleTests
     [Fact]
     public void RemoveClaim_RemovesMatchingClaim()
     {
-        var role = IdentityRole.Create("admin");
+        var role = TestRole.Create("admin");
         var claim = new Claim("permission", "read");
         role.AddClaim(claim);
 
@@ -111,7 +111,7 @@ public class IdentityRoleTests
     [Fact]
     public void RemoveClaim_DoesNotRemoveNonMatchingClaims()
     {
-        var role = IdentityRole.Create("admin");
+        var role = TestRole.Create("admin");
         role.AddClaim(new Claim("permission", "read"));
         role.AddClaim(new Claim("permission", "write"));
 
@@ -124,7 +124,7 @@ public class IdentityRoleTests
     [Fact]
     public void RemoveClaim_WithNullClaim_Throws()
     {
-        var role = IdentityRole.Create("admin");
+        var role = TestRole.Create("admin");
 
         Should.Throw<ArgumentNullException>(() => role.RemoveClaim(null!));
     }
@@ -134,12 +134,12 @@ public class IdentityRoleTests
     [Fact]
     public void ImplementsICreateAtEntity()
     {
-        IdentityRole.Create("admin").ShouldBeAssignableTo<Cheetah.Core.Domain.ICreateAtEntity>();
+        TestRole.Create("admin").ShouldBeAssignableTo<Cheetah.Core.Domain.ICreateAtEntity>();
     }
 
     [Fact]
     public void ImplementsIUpdatedAtEntity()
     {
-        IdentityRole.Create("admin").ShouldBeAssignableTo<Cheetah.Core.Domain.IUpdatedAtEntity>();
+        TestRole.Create("admin").ShouldBeAssignableTo<Cheetah.Core.Domain.IUpdatedAtEntity>();
     }
 }

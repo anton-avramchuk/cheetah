@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Crm.Identity.DataAccess.Migrations
 {
-    [DbContext(typeof(IdentityModuleDbContext))]
+    [DbContext(typeof(IdentityDbContext))]
     partial class IdentityModuleDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

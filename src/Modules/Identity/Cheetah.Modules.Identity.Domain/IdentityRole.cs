@@ -3,7 +3,7 @@ using Cheetah.Core.Domain;
 
 namespace Cheetah.Modules.Identity.Domain;
 
-public class IdentityRole : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEntity
+public abstract class IdentityRole : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEntity
 {
     public string Name { get; private set; } = null!;
     public string NormalizedName { get; private set; } = null!;
@@ -20,12 +20,6 @@ public class IdentityRole : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEnti
     {
         SetName(name);
     }
-
-    public static IdentityRole Create(string name)
-        => new(Guid.NewGuid(), name);
-
-    public static IdentityRole Create(Guid id, string name)
-        => new(id, name);
 
     public void ChangeName(string name)
     {

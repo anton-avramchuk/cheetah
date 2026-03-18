@@ -11,7 +11,7 @@ namespace Cheetah.Modules.Identity.DataAccess.Extensions;
 public static class ServiceCollectionExtensions
 {
     public static IdentityBuilder AddIdentityContext<TContext, TIdentityUser, TIdentityRole>(this IServiceCollection services, Action<IdentityOptions> setupAction)
-        where TContext : IdentityDbContext<TContext, TIdentityUser, TIdentityRole> where TIdentityRole : IdentityRole where TIdentityUser : IdentityUser<TIdentityRole>
+        where TContext : CheetahIdentityDbContext<TContext, TIdentityUser, TIdentityRole> where TIdentityRole : IdentityRole where TIdentityUser : IdentityUser<TIdentityRole>
     {
         services.AddApplicationDbContext<TContext>();
 

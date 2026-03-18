@@ -29,7 +29,7 @@ public partial class CrmIdentityDataAccessModule : CrmModule
     {
         RegisterServices(context.Services);
 
-        context.Services.AddIdentityContext<IdentityModuleDbContext, CrmIdentityUser, CrmIdentityRole>(options =>
+        context.Services.AddIdentityContext<IdentityDbContext, CrmIdentityUser, CrmIdentityRole>(options =>
         {
             options.Password.RequiredLength = 8;
             options.Password.RequireUppercase = true;
@@ -38,9 +38,9 @@ public partial class CrmIdentityDataAccessModule : CrmModule
             options.Password.RequireNonAlphanumeric = true;
         });
 
-        context.Services.AddScoped<IdentityModuleDbContext>();
-        context.Services.AddDatabaseMigrator<IdentityModuleDbContext>();
+        context.Services.AddScoped<IdentityDbContext>();
+        context.Services.AddDatabaseMigrator<IdentityDbContext>();
 
-        context.Services.Configure<CrmDbContextOptions>(options => { options.UseNpgsql<IdentityModuleDbContext>(); });
+        context.Services.Configure<CrmDbContextOptions>(options => { options.UseNpgsql<IdentityDbContext>(); });
     }
 }

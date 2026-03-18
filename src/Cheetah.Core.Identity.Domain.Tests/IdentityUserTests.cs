@@ -2,13 +2,13 @@ namespace Cheetah.Core.Identity.Domain.Tests;
 
 public class IdentityUserTests
 {
-    private static IdentityUser<IdentityRole> CreateUser(
+    private static TestUser CreateUser(
         string userName = "john",
         string email = "john@example.com")
-        => IdentityUser<IdentityRole>.Create(userName, email);
+        => TestUser.Create(userName, email);
 
-    private static IdentityRole CreateRole(string name = "admin")
-        => IdentityRole.Create(name);
+    private static TestRole CreateRole(string name = "admin")
+        => TestRole.Create(name);
 
     // --- Create ---
 

@@ -7,7 +7,9 @@ using Cheetah.Modules.Identity.Contracts.Response;
 
 namespace Cheetah.Modules.Identity.Api.Endpoints;
 
-public abstract class GetAllRolesEndpoint : QueryGridEndpoint<GetAllRolesRequest, GetAllRolesQuery, RoleModel, RoleViewModel>
+public abstract class GetAllRolesEndpoint<TRequest, TQuery> : QueryGridEndpoint<TRequest, TQuery, RoleModel, RoleViewModel>
+    where TRequest : GetAllRolesRequest
+    where TQuery : GetAllRolesQuery
 {
     public override string Route => Constants.RolesRoute;
 

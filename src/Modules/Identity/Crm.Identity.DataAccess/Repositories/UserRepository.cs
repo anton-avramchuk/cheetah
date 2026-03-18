@@ -8,5 +8,5 @@ using Microsoft.Extensions.Logging;
 namespace Crm.Identity.DataAccess.Repositories;
 
 [Export(LifetimeType.Scoped, typeof(IGridRepository<CrmIdentityUser>))]
-public class UserRepository(IdentityModuleDbContext context, IObjectMapper mapper, ILogger<UserRepository> logger)
-    : EfGridRepository<IdentityModuleDbContext, CrmIdentityUser>(context, mapper, logger);
+public class UserRepository(IdentityDbContext context, IObjectMapper mapper, ILogger<UserRepository> logger)
+    : EfGridRepository<IdentityDbContext, CrmIdentityUser>(context, mapper, logger);

@@ -3,13 +3,13 @@ using Microsoft.EntityFrameworkCore.Design;
 
 namespace Crm.Identity.DataAccess;
 
-public class IdentityModuleDbContextFactory : IDesignTimeDbContextFactory<IdentityModuleDbContext>
+public class IdentityModuleDbContextFactory : IDesignTimeDbContextFactory<IdentityDbContext>
 {
-    public IdentityModuleDbContext CreateDbContext(string[] args)
+    public IdentityDbContext CreateDbContext(string[] args)
     {
-        var optionsBuilder = new DbContextOptionsBuilder<IdentityModuleDbContext>();
+        var optionsBuilder = new DbContextOptionsBuilder<IdentityDbContext>();
         optionsBuilder.UseNpgsql("Host=localhost;Database=identity;Username=postgres;Password=postgres");
 
-        return new IdentityModuleDbContext(optionsBuilder.Options);
+        return new IdentityDbContext(optionsBuilder.Options);
     }
 }

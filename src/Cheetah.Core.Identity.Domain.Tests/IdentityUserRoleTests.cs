@@ -5,14 +5,14 @@ public class IdentityUserRoleTests
     // IdentityUserRole<T> is internal-constructed via IdentityUser.AddRole.
     // We test it through the aggregate's public API.
 
-    private static IdentityUser<IdentityRole> CreateUser()
-        => IdentityUser<IdentityRole>.Create("john", "john@example.com");
+    private static TestUser CreateUser()
+        => TestUser.Create("john", "john@example.com");
 
     [Fact]
     public void UserRole_HasCorrectUserId()
     {
         var user = CreateUser();
-        var role = IdentityRole.Create("admin");
+        var role = TestRole.Create("admin");
 
         user.AddRole(role);
 
@@ -23,7 +23,7 @@ public class IdentityUserRoleTests
     public void UserRole_HasCorrectRoleId()
     {
         var user = CreateUser();
-        var role = IdentityRole.Create("admin");
+        var role = TestRole.Create("admin");
 
         user.AddRole(role);
 
@@ -34,7 +34,7 @@ public class IdentityUserRoleTests
     public void UserRole_HasRoleReference()
     {
         var user = CreateUser();
-        var role = IdentityRole.Create("admin");
+        var role = TestRole.Create("admin");
 
         user.AddRole(role);
 
@@ -45,7 +45,7 @@ public class IdentityUserRoleTests
     public void UserRole_GetKeys_ReturnsBothIds()
     {
         var user = CreateUser();
-        var role = IdentityRole.Create("admin");
+        var role = TestRole.Create("admin");
         user.AddRole(role);
 
         var userRole = user.Roles.First();
