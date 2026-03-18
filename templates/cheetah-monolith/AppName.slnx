@@ -6,8 +6,17 @@
     <Folder Name="/src/">
         <Project Path="src/AppName.Host/AppName.Host.csproj" />
     </Folder>
-    <Folder Name="/src/Modules/">
-        <Project Path="src/Modules/AppName.Core/AppName.Core.csproj" />
+    <Folder Name="/src/Modules/AppName/">
+        <Project Path="src/Modules/AppName/AppName.DomainEvents/AppName.DomainEvents.csproj" />
+        <Project Path="src/Modules/AppName/AppName.Domain/AppName.Domain.csproj" />
+        <Project Path="src/Modules/AppName/AppName.Contracts/AppName.Contracts.csproj" />
+        <Project Path="src/Modules/AppName/AppName.Application/AppName.Application.csproj" />
+        <Project Path="src/Modules/AppName/AppName.DataAccess/AppName.DataAccess.csproj" />
+        <Project Path="src/Modules/AppName/AppName.Api/AppName.Api.csproj" />
+    </Folder>
+    <Folder Name="/tests/Modules/AppName/">
+        <Project Path="src/Modules/AppName/AppName.Domain.Tests/AppName.Domain.Tests.csproj" />
+        <Project Path="src/Modules/AppName/AppName.Application.Tests/AppName.Application.Tests.csproj" />
     </Folder>
 <!--#if (includeIdentity)-->
     <Folder Name="/src/Modules/Identity/">

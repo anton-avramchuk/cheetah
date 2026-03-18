@@ -1,10 +1,10 @@
-using Cheetah.Core;
+using AppName.Application;
 using Cheetah.Core.Modularity;
 
-namespace AppName.Core;
+namespace AppName.Api;
 
-[DependsOn(typeof(CoreModule))]
-public partial class AppNameCoreModule : CrmModule
+[DependsOn(typeof(AppNameApplicationModule))]
+public partial class AppNameApiModule : CrmModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)
     {

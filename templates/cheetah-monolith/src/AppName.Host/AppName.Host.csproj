@@ -24,7 +24,8 @@
 
 <!--#endif-->
     <ItemGroup Label="Modules">
-        <ProjectReference Include="..\Modules\AppName.Core\AppName.Core.csproj" />
+        <ProjectReference Include="..\Modules\AppName\AppName.Api\AppName.Api.csproj" />
+        <ProjectReference Include="..\Modules\AppName\AppName.DataAccess\AppName.DataAccess.csproj" />
     </ItemGroup>
 
     <ItemGroup Label="Source Generators">

@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+        <ProjectReference Include="..\AppName.Contracts\AppName.Contracts.csproj" />
+        <ProjectReference Include="..\AppName.DomainEvents\AppName.DomainEvents.csproj" />
+        <ProjectReference Include="..\AppName.Domain\AppName.Domain.csproj" />
+    </ItemGroup>
+
+</Project>

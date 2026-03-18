@@ -23,7 +23,7 @@
       "type": "parameter",
       "datatype": "string",
       "description": "Absolute path to local Cheetah NuGet packages directory",
-      "defaultValue": "E:\\packages",
+      "defaultValue": "E:\\\\packages",
       "replaces": "__LocalPackagesPath__"
     },
     "cheetahVersion": {
@@ -32,6 +32,35 @@
       "description": "Cheetah framework NuGet package version",
       "defaultValue": "1.0.0",
       "replaces": "__CheetahVersion__"
+    },
+    "appNameLower": {
+      "type": "derived",
+      "valueSource": "name",
+      "valueTransform": "lowerCase",
+      "replaces": "appname"
+    }
+  },
+  "forms": {
+    "lowerCase": {
+      "identifier": "lowerCase"
+    }
+  },
+  "specialCustomOperations": {
+    "**/*.slnx": {
+      "operations": [
+        {
+          "type": "conditional",
+          "configuration": {
+            "if": ["<!--#if"],
+            "else": ["<!--#else"],
+            "elseif": ["<!--#elseif"],
+            "endif": ["<!--#endif"],
+            "trim": true,
+            "wholeLine": true,
+            "evaluator": "C++"
+          }
+        }
+      ]
     }
   },
   "primaryOutputs": [

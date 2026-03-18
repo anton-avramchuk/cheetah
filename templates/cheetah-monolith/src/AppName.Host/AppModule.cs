@@ -1,4 +1,5 @@
-using AppName.Core;
+using AppName.Api;
+using AppName.DataAccess;
 using Cheetah.AspNetCore;
 using Cheetah.AspNetCore.Contracts;
 using Cheetah.Backend.CQRS;
@@ -30,7 +31,8 @@ namespace AppName.Host;
     typeof(CheetahIdentityApiModule),
     typeof(AppNameIdentityDataAccessModule),
 #endif
-    typeof(AppNameCoreModule)
+    typeof(AppNameApiModule),
+    typeof(AppNameDataAccessModule)
 )]
 [Bootstrapper]
 public partial class AppModule : CrmModule
