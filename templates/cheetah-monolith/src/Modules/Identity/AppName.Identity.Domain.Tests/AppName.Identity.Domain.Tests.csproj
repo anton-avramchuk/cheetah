@@ -16,7 +16,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Cheetah.Modules.Identity.Domain" />
+        <ProjectReference Include="..\AppName.Identity.Domain\AppName.Identity.Domain.csproj" />
     </ItemGroup>
 
     <ItemGroup>

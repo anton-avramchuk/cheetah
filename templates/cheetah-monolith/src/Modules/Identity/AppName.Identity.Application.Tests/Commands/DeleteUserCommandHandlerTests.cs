@@ -1,7 +1,8 @@
+using AppName.Identity.Application.Commands;
+using AppName.Identity.Domain;
 using Cheetah.Core.Domain.Exceptions;
-using Cheetah.Core.Identity.DataAccess.Exceptions;
 using Cheetah.Modules.Identity.Application.Commands;
-using Cheetah.Modules.Identity.Domain;
+using Cheetah.Modules.Identity.DataAccess.Exceptions;
 using Microsoft.AspNetCore.Identity;
 using Moq;
 using Shouldly;
@@ -10,13 +11,13 @@ namespace AppName.Identity.Application.Tests.Commands;
 
 public class DeleteUserCommandHandlerTests
 {
-    private readonly Mock<UserManager<CrmIdentityUser>> _userManagerMock;
+    private readonly Mock<UserManager<AppNameIdentityUser>> _userManagerMock;
     private readonly DeleteUserCommandHandler _handler;
 
     public DeleteUserCommandHandlerTests()
     {
-        var userStoreMock = new Mock<IUserStore<CrmIdentityUser>>();
-        _userManagerMock = new Mock<UserManager<CrmIdentityUser>>(
+        var userStoreMock = new Mock<IUserStore<AppNameIdentityUser>>();
+        _userManagerMock = new Mock<UserManager<AppNameIdentityUser>>(
             userStoreMock.Object, null, null, null, null, null, null, null, null);
         _handler = new DeleteUserCommandHandler(_userManagerMock.Object);
     }
@@ -25,7 +26,7 @@ public class DeleteUserCommandHandlerTests
     public async Task HandleAsync_WithExistingUser_ShouldDeleteUser()
     {
         var userId = Guid.NewGuid();
-        var existingUser = CrmIdentityUser.Create("johndoe", "john@example.com");
+        var existingUser = AppNameIdentityUser.Create("johndoe", "john@example.com");
         var command = new DeleteUserCommand(userId);
 
         _userManagerMock.Setup(m => m.FindByIdAsync(userId.ToString())).ReturnsAsync(existingUser);
@@ -42,7 +43,7 @@ public class DeleteUserCommandHandlerTests
         var userId = Guid.NewGuid();
         var command = new DeleteUserCommand(userId);
 
-        _userManagerMock.Setup(m => m.FindByIdAsync(userId.ToString())).ReturnsAsync((CrmIdentityUser?)null);
+        _userManagerMock.Setup(m => m.FindByIdAsync(userId.ToString())).ReturnsAsync((AppNameIdentityUser?)null);
 
         await Should.ThrowAsync<EntityNotFoundException>(async () => await _handler.HandleAsync(command));
     }
@@ -51,7 +52,7 @@ public class DeleteUserCommandHandlerTests
     public async Task HandleAsync_WhenDeleteFails_ShouldThrowIdentityException()
     {
         var userId = Guid.NewGuid();
-        var existingUser = CrmIdentityUser.Create("johndoe", "john@example.com");
+        var existingUser = AppNameIdentityUser.Create("johndoe", "john@example.com");
         var command = new DeleteUserCommand(userId);
         var failedResult = IdentityResult.Failed(new IdentityError { Code = "Error", Description = "Delete failed" });
 

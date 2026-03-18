@@ -1,6 +1,7 @@
-using Cheetah.Core.Identity.DataAccess.Exceptions;
+using AppName.Identity.Application.Commands;
+using AppName.Identity.Domain;
 using Cheetah.Modules.Identity.Application.Commands;
-using Cheetah.Modules.Identity.Domain;
+using Cheetah.Modules.Identity.DataAccess.Exceptions;
 using Microsoft.AspNetCore.Identity;
 using Moq;
 using Shouldly;
@@ -9,18 +10,18 @@ namespace AppName.Identity.Application.Tests.Commands;
 
 public class CreateUserCommandHandlerTests
 {
-    private readonly Mock<UserManager<CrmIdentityUser>> _userManagerMock;
-    private readonly Mock<RoleManager<CrmIdentityRole>> _roleManagerMock;
+    private readonly Mock<UserManager<AppNameIdentityUser>> _userManagerMock;
+    private readonly Mock<RoleManager<AppNameIdentityRole>> _roleManagerMock;
     private readonly CreateUserCommandHandler _handler;
 
     public CreateUserCommandHandlerTests()
     {
-        var userStoreMock = new Mock<IUserStore<CrmIdentityUser>>();
-        _userManagerMock = new Mock<UserManager<CrmIdentityUser>>(
+        var userStoreMock = new Mock<IUserStore<AppNameIdentityUser>>();
+        _userManagerMock = new Mock<UserManager<AppNameIdentityUser>>(
             userStoreMock.Object, null, null, null, null, null, null, null, null);
 
-        var roleStoreMock = new Mock<IRoleStore<CrmIdentityRole>>();
-        _roleManagerMock = new Mock<RoleManager<CrmIdentityRole>>(
+        var roleStoreMock = new Mock<IRoleStore<AppNameIdentityRole>>();
+        _roleManagerMock = new Mock<RoleManager<AppNameIdentityRole>>(
             roleStoreMock.Object, null, null, null, null);
 
         _handler = new CreateUserCommandHandler(_userManagerMock.Object, _roleManagerMock.Object);
@@ -32,13 +33,13 @@ public class CreateUserCommandHandlerTests
         var command = new CreateUserCommand("johndoe", "john@example.com", "P@ssw0rd!");
 
         _userManagerMock
-            .Setup(m => m.CreateAsync(It.IsAny<CrmIdentityUser>(), command.Password))
+            .Setup(m => m.CreateAsync(It.IsAny<AppNameIdentityUser>(), command.Password))
             .ReturnsAsync(IdentityResult.Success);
 
         var result = await _handler.HandleAsync(command);
 
         result.ShouldNotBe(Guid.Empty);
-        _userManagerMock.Verify(m => m.CreateAsync(It.IsAny<CrmIdentityUser>(), command.Password), Times.Once);
+        _userManagerMock.Verify(m => m.CreateAsync(It.IsAny<AppNameIdentityUser>(), command.Password), Times.Once);
     }
 
     [Theory]
@@ -61,7 +62,7 @@ public class CreateUserCommandHandlerTests
         var failedResult = IdentityResult.Failed(new IdentityError { Code = "PasswordTooWeak", Description = "Password is too weak" });
 
         _userManagerMock
-            .Setup(m => m.CreateAsync(It.IsAny<CrmIdentityUser>(), It.IsAny<string>()))
+            .Setup(m => m.CreateAsync(It.IsAny<AppNameIdentityUser>(), It.IsAny<string>()))
             .ReturnsAsync(failedResult);
 
         await Should.ThrowAsync<IdentityException>(async () => await _handler.HandleAsync(command));

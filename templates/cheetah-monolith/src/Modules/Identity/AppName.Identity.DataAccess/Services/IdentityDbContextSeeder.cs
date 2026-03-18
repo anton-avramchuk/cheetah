@@ -1,14 +1,14 @@
+using AppName.Identity.Domain;
 using Cheetah.Core.DependencyInjection;
 using Cheetah.Core.EntityFramework.Seeding;
-using Cheetah.Modules.Identity.Domain;
 using Microsoft.AspNetCore.Identity;
 
 namespace AppName.Identity.DataAccess.Services;
 
 [Export(LifetimeType.Scoped, typeof(IDatabaseSeeder))]
 public class IdentityDbContextSeeder(
-    RoleManager<CrmIdentityRole> roleManager,
-    UserManager<CrmIdentityUser> userManager) : IDatabaseSeeder
+    RoleManager<AppNameIdentityRole> roleManager,
+    UserManager<AppNameIdentityUser> userManager) : IDatabaseSeeder
 {
     private static readonly string[] Roles = ["admin", "recruiter", "client", "lead"];
 
@@ -25,7 +25,7 @@ public class IdentityDbContextSeeder(
             if (await roleManager.RoleExistsAsync(roleName))
                 continue;
 
-            var role = CrmIdentityRole.Create(roleName);
+            var role = AppNameIdentityRole.Create(roleName);
             var result = await roleManager.CreateAsync(role);
 
             if (!result.Succeeded)
@@ -42,7 +42,7 @@ public class IdentityDbContextSeeder(
         if (await userManager.FindByEmailAsync(email) is not null)
             return;
 
-        var user = CrmIdentityUser.Create(email, email);
+        var user = AppNameIdentityUser.Create(email, email);
         var result = await userManager.CreateAsync(user, password);
 
         if (!result.Succeeded)

@@ -10,7 +10,9 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\AppName.Identity.Application\AppName.Identity.Application.csproj" />
         <ProjectReference Include="..\AppName.Identity.DataAccess\AppName.Identity.DataAccess.csproj" />
+        <ProjectReference Include="..\AppName.Identity.Domain\AppName.Identity.Domain.csproj" />
     </ItemGroup>
 
     <ItemGroup Label="Source Generators">
@@ -19,6 +21,10 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Cheetah.Generators.Application">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Cheetah.Generators.Endpoints">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>

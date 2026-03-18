@@ -1,9 +1,10 @@
+using AppName.Identity.Domain;
 using Cheetah.Core.Modularity;
 using Cheetah.Modules.Identity.DataAccess;
 
 namespace AppName.Identity.DataAccess;
 
-[DependsOn(typeof(CheetahIdentityDataAccessModule))]
+[DependsOn(typeof(CheetahIdentityDataAccessModule), typeof(AppNameIdentityDomainModule))]
 public partial class AppNameIdentityDataAccessModule : CrmModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)
