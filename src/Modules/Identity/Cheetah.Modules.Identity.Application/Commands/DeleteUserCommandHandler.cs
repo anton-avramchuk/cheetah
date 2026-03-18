@@ -1,7 +1,7 @@
 using Cheetah.Core.CQRS;
 using Cheetah.Core.DependencyInjection;
 using Cheetah.Core.Domain.Exceptions;
-using Cheetah.Core.Identity.DataAccess.Exceptions;
+using Cheetah.Modules.Identity.DataAccess.Exceptions;
 using Cheetah.Modules.Identity.Domain;
 using Microsoft.AspNetCore.Identity;
 

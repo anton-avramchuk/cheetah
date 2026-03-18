@@ -1,17 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <ItemGroup>
-        <ProjectReference Include="..\..\..\Cheetah.Core.EntityFramework.PostgreSql\Cheetah.Core.EntityFramework.PostgreSql.csproj" />
-        <ProjectReference Include="..\..\..\Cheetah.Core.Grid\Cheetah.Core.Grid.csproj" />
+        <ProjectReference Include="..\..\..\Cheetah.Core.EntityFramework\Cheetah.Core.EntityFramework.csproj" />
+        <ProjectReference Include="..\..\..\Cheetah.Core.Identity.Domain\Cheetah.Core.Identity.Domain.csproj" />
+        <ProjectReference Include="..\..\..\Cheetah.Core.Security\Cheetah.Core.Security.csproj" />
         <ProjectReference Include="..\..\..\Cheetah.Core\Cheetah.Core.csproj" />
-        <ProjectReference Include="..\..\..\Cheetah.Mapping.Core\Cheetah.Mapping.Core.csproj" />
-        <ProjectReference Include="..\..\..\Cheetah.Core.Identity.DataAccess\Cheetah.Core.Identity.DataAccess.csproj" />
         <ProjectReference Include="..\..\..\Cheetah.Generators.Module\Cheetah.Generators.Module.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
-        <ProjectReference Include="..\Cheetah.Modules.Identity.Domain\Cheetah.Modules.Identity.Domain.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" PrivateAssets="All" />
+        <PackageReference Include="Microsoft.Extensions.Identity.Core" />
     </ItemGroup>
 
 </Project>

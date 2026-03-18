@@ -10,7 +10,7 @@ using Cheetah.Mapping.Mapster;
 using Cheetah.Modules.Identity.Api.Middleware;
 using Cheetah.Modules.Identity.Application;
 using Cheetah.Modules.Identity.Contracts;
-using Cheetah.Modules.Identity.DataAccess;
+using Crm.Identity.DataAccess;
 using Cheetah.Scalar;
 
 namespace Cheetah.Modules.Identity.Api;
@@ -27,7 +27,7 @@ namespace Cheetah.Modules.Identity.Api;
     typeof(CrmBackendJwtModule),
     typeof(CheetahIdentityApplicationModule),
     typeof(CheetahIdentityContractsModule),
-    typeof(CheetahIdentityDataAccessModule)
+    typeof(CrmIdentityDataAccessModule)
 )]
 [Bootstrapper]
 public partial class CheetahIdentityApiModule : CrmModule

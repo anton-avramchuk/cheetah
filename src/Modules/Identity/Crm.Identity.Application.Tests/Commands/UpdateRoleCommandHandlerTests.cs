@@ -1,5 +1,5 @@
 using Cheetah.Core.Domain.Exceptions;
-using Cheetah.Core.Identity.DataAccess.Exceptions;
+using Cheetah.Modules.Identity.DataAccess.Exceptions;
 using Cheetah.Modules.Identity.Application.Commands;
 using Cheetah.Modules.Identity.Domain;
 using Microsoft.AspNetCore.Identity;

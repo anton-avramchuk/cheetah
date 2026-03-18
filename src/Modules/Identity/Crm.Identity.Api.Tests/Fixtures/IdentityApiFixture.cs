@@ -4,7 +4,7 @@ using System.Security.Claims;
 using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
-using Cheetah.Modules.Identity.DataAccess;
+using Crm.Identity.DataAccess;
 using Cheetah.Core.Events;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
