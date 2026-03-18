@@ -19,7 +19,7 @@ public class SyncIndustriesBackgroundTask(
 
     protected override async ValueTask<IReadOnlyList<IndustryViewModel>> FetchAsync(
         IIndustryService service, CancellationToken ct)
-        => (await service.GetAllAsync(new GetAllIndustriesRequest { PageSize = 0 }, ct)).Data.ToList();
+        => (await service.GetAllAsync(new GetIndustriesGridRequest { PageSize = 0 }, ct)).Data.ToList();
 
     protected override Guid GetId(IndustryViewModel vm) => vm.Id;
 

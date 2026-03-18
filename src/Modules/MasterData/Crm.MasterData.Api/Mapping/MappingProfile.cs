@@ -16,7 +16,7 @@ public class MappingProfile : IMapsterMappingProfile
     {
         // StackItem
         config.NewConfig<StackItemModel, StackItemViewModel>();
-        config.NewConfig<GetAllSampleEntitiesRequest, GetAllSampleEntitiesQuery>();
+        config.NewConfig<GetSampleEntitiesGridRequest, GetSampleEntitiesGridQuery>();
         config.NewConfig<GetStackItemByIdRequest, GetStackItemByIdQuery>();
         config.NewConfig<CreateStackItemRequest, CreateStackItemCommand>();
         config.NewConfig<UpdateStackItemRequest, UpdateStackItemCommand>();
@@ -24,7 +24,7 @@ public class MappingProfile : IMapsterMappingProfile
 
         // Industry
         config.NewConfig<IndustryModel, IndustryViewModel>();
-        config.NewConfig<GetAllIndustriesRequest, GetAllIndustriesQuery>();
+        config.NewConfig<GetIndustriesGridRequest, GetIndustriesGridQuery>();
         config.NewConfig<GetIndustryByIdRequest, GetIndustryByIdQuery>();
         config.NewConfig<CreateIndustryRequest, CreateIndustryCommand>();
         config.NewConfig<UpdateIndustryRequest, UpdateIndustryCommand>();
@@ -32,7 +32,7 @@ public class MappingProfile : IMapsterMappingProfile
 
         // Position
         config.NewConfig<PositionModel, PositionViewModel>();
-        config.NewConfig<GetAllPositionsRequest, GetAllPositionsQuery>();
+        config.NewConfig<GetPositionsGridRequest, GetPositionsGridQuery>();
         config.NewConfig<GetPositionByIdRequest, GetPositionByIdQuery>();
         config.NewConfig<CreatePositionRequest, CreatePositionCommand>();
         config.NewConfig<UpdatePositionRequest, UpdatePositionCommand>();
@@ -40,7 +40,7 @@ public class MappingProfile : IMapsterMappingProfile
 
         // WorkFormat
         config.NewConfig<WorkFormatModel, WorkFormatViewModel>();
-        config.NewConfig<GetAllWorkFormatsRequest, GetAllWorkFormatsQuery>();
+        config.NewConfig<GetWorkFormatsGridRequest, GetWorkFormatsGridQuery>();
         config.NewConfig<GetWorkFormatByIdRequest, GetWorkFormatByIdQuery>();
         config.NewConfig<CreateWorkFormatRequest, CreateWorkFormatCommand>();
         config.NewConfig<UpdateWorkFormatRequest, UpdateWorkFormatCommand>();
@@ -48,7 +48,7 @@ public class MappingProfile : IMapsterMappingProfile
 
         // CandidateSource
         config.NewConfig<CandidateSourceModel, CandidateSourceViewModel>();
-        config.NewConfig<GetAllCandidateSourcesRequest, GetAllCandidateSourcesQuery>();
+        config.NewConfig<GetCandidateSourcesGridRequest, GetCandidateSourcesGridQuery>();
         config.NewConfig<GetCandidateSourceByIdRequest, GetCandidateSourceByIdQuery>();
         config.NewConfig<CreateCandidateSourceRequest, CreateCandidateSourceCommand>();
         config.NewConfig<UpdateCandidateSourceRequest, UpdateCandidateSourceCommand>();
@@ -56,7 +56,7 @@ public class MappingProfile : IMapsterMappingProfile
 
         // SkillCategory
         config.NewConfig<SkillCategoryModel, SkillCategoryViewModel>();
-        config.NewConfig<GetAllSkillCategoriesRequest, GetAllSkillCategoriesQuery>();
+        config.NewConfig<GetSkillCategoriesGridRequest, GetSkillCategoriesGridQuery>();
         config.NewConfig<GetSkillCategoryByIdRequest, GetSkillCategoryByIdQuery>();
         config.NewConfig<CreateSkillCategoryRequest, CreateSkillCategoryCommand>();
         config.NewConfig<UpdateSkillCategoryRequest, UpdateSkillCategoryCommand>();
@@ -64,7 +64,7 @@ public class MappingProfile : IMapsterMappingProfile
 
         // Skill
         config.NewConfig<SkillModel, SkillViewModel>();
-        config.NewConfig<GetAllSkillsRequest, GetAllSkillsQuery>();
+        config.NewConfig<GetSkillsGridRequest, GetSkillsGridQuery>();
         config.NewConfig<GetSkillByIdRequest, GetSkillByIdQuery>();
         config.NewConfig<CreateSkillRequest, CreateSkillCommand>();
         config.NewConfig<UpdateSkillRequest, UpdateSkillCommand>();
@@ -72,7 +72,7 @@ public class MappingProfile : IMapsterMappingProfile
 
         // Location
         config.NewConfig<LocationModel, LocationViewModel>();
-        config.NewConfig<GetAllLocationsRequest, GetAllLocationsQuery>();
+        config.NewConfig<GetLocationsGridRequest, GetLocationsGridQuery>();
         config.NewConfig<GetLocationByIdRequest, GetLocationByIdQuery>();
         config.NewConfig<CreateLocationRequest, CreateLocationCommand>();
         config.NewConfig<UpdateLocationRequest, UpdateLocationCommand>();

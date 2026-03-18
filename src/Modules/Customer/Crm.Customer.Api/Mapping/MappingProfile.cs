@@ -15,7 +15,7 @@ public class MappingProfile : IMapsterMappingProfile
     public void Configure(TypeAdapterConfig config)
     {
         config.NewConfig<CustomerModel, CustomerViewModel>();
-        config.NewConfig<GetAllSampleEntitiesRequest, GetAllSampleEntitiesQuery>();
+        config.NewConfig<GetSampleEntitiesGridRequest, GetSampleEntitiesGridQuery>();
         config.NewConfig<GetCustomerByIdRequest, GetCustomerByIdQuery>();
         config.NewConfig<CreateCustomerRequest, CreateCustomerCommand>();
         config.NewConfig<UpdateCustomerRequest, UpdateCustomerCommand>();

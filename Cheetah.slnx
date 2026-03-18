@@ -101,11 +101,11 @@
         <File Path="global.json" />
         <File Path="nuget.config" />
     </Folder>
-    <Folder Name="/src/">
+    <Folder Name="/src/" />
+    <Folder Name="/src/Modules/" />
+    <Folder Name="/src/Modules/Identity/">
         <Project Path="src/Cheetah.Core.Identity.Domain.Tests/Cheetah.Core.Identity.Domain.Tests.csproj" />
     </Folder>
-    <Folder Name="/src/Modules/" />
-    <Folder Name="/src/Modules/Identity/" />
 
     <Folder Name="/Tests/">
         <Project Path="src/Cheetah.Backend.Events.Redis.Tests/Cheetah.Backend.Events.Redis.Tests.csproj" />
