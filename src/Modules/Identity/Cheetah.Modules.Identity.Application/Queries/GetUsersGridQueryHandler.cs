@@ -7,12 +7,13 @@ using Cheetah.Modules.Identity.Domain;
 
 namespace Cheetah.Modules.Identity.Application.Queries;
 
-public abstract class GetUsersGridQueryHandler<TUser, TRole>(IGridRepository<TUser> repository)
-    : IQueryHandler<GetUsersGridQuery, GridResult<UserModel>>
+public abstract class GetUsersGridQueryHandler<TUser, TRole, TUserModel>(IGridRepository<TUser> repository)
+    : IQueryHandler<GetUsersGridQuery<TUserModel>, GridResult<TUserModel>>
     where TRole : IdentityRole
     where TUser : IdentityUser<TRole>
+    where TUserModel : UserModel
 {
-    public async ValueTask<GridResult<UserModel>> HandleAsync(GetUsersGridQuery gridQuery, CancellationToken ct = default)
+    public async ValueTask<GridResult<TUserModel>> HandleAsync(GetUsersGridQuery<TUserModel> gridQuery, CancellationToken ct = default)
     {
         var gridRequest = new GridRequest
         {
@@ -21,6 +22,6 @@ public abstract class GetUsersGridQueryHandler<TUser, TRole>(IGridRepository<TUs
             Sort = gridQuery.Sort,
             Filter = gridQuery.Filter
         };
-        return await repository.GetGridAsync<UserModel>(gridRequest, ct);
+        return await repository.GetGridAsync<TUserModel>(gridRequest, ct);
     }
 }

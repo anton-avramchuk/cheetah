@@ -8,8 +8,8 @@ using Crm.Identity.Domain;
 
 namespace Crm.Identity.Application.Queries;
 
-[Export(LifetimeType.Scoped, typeof(IQueryHandler<GetRolesGridQuery, GridResult<RoleModel>>))]
+[Export(LifetimeType.Scoped, typeof(IQueryHandler<GetRolesGridQuery<RoleModel>, GridResult<RoleModel>>))]
 public class GetRolesGridQueryHandler(IGridRepository<CrmIdentityRole> repository)
-    : Cheetah.Modules.Identity.Application.Queries.GetRolesGridQueryHandler<CrmIdentityRole>(repository)
+    : Cheetah.Modules.Identity.Application.Queries.GetRolesGridQueryHandler<CrmIdentityRole, RoleModel>(repository)
 {
 }

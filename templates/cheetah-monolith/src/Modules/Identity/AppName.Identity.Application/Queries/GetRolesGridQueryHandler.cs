@@ -8,8 +8,8 @@ using Cheetah.Modules.Identity.Application.Queries;
 
 namespace AppName.Identity.Application.Queries;
 
-[Export(LifetimeType.Scoped, typeof(IQueryHandler<GetRolesGridQuery, GridResult<RoleModel>>))]
+[Export(LifetimeType.Scoped, typeof(IQueryHandler<GetRolesGridQuery<RoleModel>, GridResult<RoleModel>>))]
 public class GetRolesGridQueryHandler(IGridRepository<AppNameIdentityRole> repository)
-    : Cheetah.Modules.Identity.Application.Queries.GetRolesGridQueryHandler<AppNameIdentityRole>(repository)
+    : Cheetah.Modules.Identity.Application.Queries.GetRolesGridQueryHandler<AppNameIdentityRole, RoleModel>(repository)
 {
 }

@@ -23,7 +23,7 @@ public class MappingProfile : IMapsterMappingProfile
 
         // Roles
         config.NewConfig<RoleModel, RoleViewModel>();
-        config.NewConfig<GetRolesGridRequest, GetRolesGridQuery>();
+        config.NewConfig(typeof(GetRolesGridRequest), typeof(GetRolesGridQuery<>));
         config.NewConfig<GetRoleByIdRequest, GetRoleByIdQuery>();
         config.NewConfig<CreateRoleRequest, CreateRoleCommand>();
         config.NewConfig<UpdateRoleRequest, UpdateRoleCommand>();
@@ -32,7 +32,7 @@ public class MappingProfile : IMapsterMappingProfile
         // Users
         config.NewConfig<UserModel, UserGridViewModel>();
         config.NewConfig<UserDetailModel, UserDetailViewModel>();
-        config.NewConfig<GetUsersGridRequest, GetUsersGridQuery>();
+        config.NewConfig(typeof(GetUsersGridRequest), typeof(GetUsersGridQuery<>));
         config.NewConfig<GetUserByIdRequest, GetUserByIdQuery>();
         config.NewConfig<CreateUserRequest, CreateUserCommand>();
         config.NewConfig<UpdateUserRequest, UpdateUserCommand>();

@@ -6,6 +6,6 @@ using Cheetah.Modules.Identity.Contracts.Response;
 namespace AppName.Identity.Api.Endpoints;
 
 public sealed class GetRolesGridEndpoint
-    : Cheetah.Modules.Identity.Api.Endpoints.GetRolesGridEndpoint<GetRolesGridRequest, GetRolesGridQuery, RoleModel, RoleViewModel>
+    : Cheetah.Modules.Identity.Api.Endpoints.GetRolesGridEndpoint<GetRolesGridRequest, GetRolesGridQuery<RoleModel>, RoleModel, RoleViewModel>
 {
 }

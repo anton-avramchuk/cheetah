@@ -7,11 +7,12 @@ using Cheetah.Modules.Identity.Domain;
 
 namespace Cheetah.Modules.Identity.Application.Queries;
 
-public abstract class GetRolesGridQueryHandler<TRole>(IGridRepository<TRole> repository)
-    : IQueryHandler<GetRolesGridQuery, GridResult<RoleModel>>
+public abstract class GetRolesGridQueryHandler<TRole, TRoleModel>(IGridRepository<TRole> repository)
+    : IQueryHandler<GetRolesGridQuery<TRoleModel>, GridResult<TRoleModel>>
     where TRole : IdentityRole
+    where TRoleModel : RoleModel
 {
-    public async ValueTask<GridResult<RoleModel>> HandleAsync(GetRolesGridQuery gridQuery, CancellationToken ct = default)
+    public async ValueTask<GridResult<TRoleModel>> HandleAsync(GetRolesGridQuery<TRoleModel> gridQuery, CancellationToken ct = default)
     {
         var gridRequest = new GridRequest
         {
@@ -20,6 +21,6 @@ public abstract class GetRolesGridQueryHandler<TRole>(IGridRepository<TRole> rep
             Sort = gridQuery.Sort,
             Filter = gridQuery.Filter
         };
-        return await repository.GetGridAsync<RoleModel>(gridRequest, ct);
+        return await repository.GetGridAsync<TRoleModel>(gridRequest, ct);
     }
 }

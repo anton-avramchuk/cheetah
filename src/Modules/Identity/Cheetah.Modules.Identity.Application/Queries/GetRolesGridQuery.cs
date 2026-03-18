@@ -12,6 +12,3 @@ public record GetRolesGridQuery<TRoleModel>(
     FilterDescriptor? Filter
 ) : IQuery<GridResult<TRoleModel>>
     where TRoleModel : RoleModel;
-
-public record GetRolesGridQuery(int Page, int PageSize, List<SortDescriptor> Sort, FilterDescriptor? Filter)
-    : GetRolesGridQuery<RoleModel>(Page, PageSize, Sort, Filter);

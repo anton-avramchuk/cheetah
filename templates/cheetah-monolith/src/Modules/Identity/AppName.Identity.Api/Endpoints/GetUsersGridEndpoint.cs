@@ -6,6 +6,6 @@ using Cheetah.Modules.Identity.Contracts.Response;
 namespace AppName.Identity.Api.Endpoints;
 
 public sealed class GetUsersGridEndpoint
-    : Cheetah.Modules.Identity.Api.Endpoints.GetUsersGridEndpoint<GetUsersGridRequest, GetUsersGridQuery, UserModel, UserGridViewModel>
+    : Cheetah.Modules.Identity.Api.Endpoints.GetUsersGridEndpoint<GetUsersGridRequest, GetUsersGridQuery<UserModel>, UserModel, UserGridViewModel>
 {
 }
