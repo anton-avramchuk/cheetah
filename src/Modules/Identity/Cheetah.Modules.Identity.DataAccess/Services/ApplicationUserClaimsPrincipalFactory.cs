@@ -1,4 +1,4 @@
-using Cheetah.Core.Identity.Domain;
+using Cheetah.Modules.Identity.Domain;
 using Cheetah.Core.Security.Claims.Abstraction;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;

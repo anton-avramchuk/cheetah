@@ -1,5 +1,5 @@
 using Cheetah.Core.EntityFramework;
-using Cheetah.Core.Identity.Domain;
+using Cheetah.Modules.Identity.Domain;
 using Microsoft.EntityFrameworkCore;
 
 namespace Cheetah.Modules.Identity.DataAccess.Context;

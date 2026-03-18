@@ -1,6 +1,6 @@
 using System.Security.Claims;
 
-namespace Cheetah.Core.Identity.Domain;
+namespace Cheetah.Modules.Identity.Domain;
 
 public class IdentityRoleClaim : IdentityClaim
 {

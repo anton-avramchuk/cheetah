@@ -22,7 +22,7 @@ namespace Crm.Identity.DataAccess.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Cheetah.Core.Identity.Domain.IdentityRoleClaim", b =>
+            modelBuilder.Entity("Cheetah.Modules.Identity.Domain.IdentityRoleClaim", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -48,7 +48,7 @@ namespace Crm.Identity.DataAccess.Migrations
                     b.ToTable("RoleClaims", "identity");
                 });
 
-            modelBuilder.Entity("Cheetah.Core.Identity.Domain.IdentityUserClaim", b =>
+            modelBuilder.Entity("Cheetah.Modules.Identity.Domain.IdentityUserClaim", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -74,7 +74,7 @@ namespace Crm.Identity.DataAccess.Migrations
                     b.ToTable("UserClaims", "identity");
                 });
 
-            modelBuilder.Entity("Cheetah.Core.Identity.Domain.IdentityUserRole<Cheetah.Modules.Identity.Domain.Role>", b =>
+            modelBuilder.Entity("Cheetah.Modules.Identity.Domain.IdentityUserRole<Cheetah.Modules.Identity.Domain.Role>", b =>
                 {
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
@@ -182,7 +182,7 @@ namespace Crm.Identity.DataAccess.Migrations
                     b.ToTable("Users", "identity");
                 });
 
-            modelBuilder.Entity("Cheetah.Core.Identity.Domain.IdentityRoleClaim", b =>
+            modelBuilder.Entity("Cheetah.Modules.Identity.Domain.IdentityRoleClaim", b =>
                 {
                     b.HasOne("Cheetah.Modules.Identity.Domain.Role", null)
                         .WithMany("Claims")
@@ -191,7 +191,7 @@ namespace Crm.Identity.DataAccess.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Cheetah.Core.Identity.Domain.IdentityUserClaim", b =>
+            modelBuilder.Entity("Cheetah.Modules.Identity.Domain.IdentityUserClaim", b =>
                 {
                     b.HasOne("Cheetah.Modules.Identity.Domain.User", null)
                         .WithMany("Claims")
@@ -200,7 +200,7 @@ namespace Crm.Identity.DataAccess.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Cheetah.Core.Identity.Domain.IdentityUserRole<Cheetah.Modules.Identity.Domain.Role>", b =>
+            modelBuilder.Entity("Cheetah.Modules.Identity.Domain.IdentityUserRole<Cheetah.Modules.Identity.Domain.Role>", b =>
                 {
                     b.HasOne("Cheetah.Modules.Identity.Domain.Role", "Role")
                         .WithMany()

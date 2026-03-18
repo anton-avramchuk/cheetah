@@ -1,5 +1,5 @@
 using Cheetah.Core.Domain.Exceptions;
-using Cheetah.Core.Identity.Domain;
+using Cheetah.Modules.Identity.Domain;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 

@@ -1,4 +1,3 @@
-using Cheetah.Core.Identity.Domain;
 
 namespace Cheetah.Modules.Identity.Domain;
 

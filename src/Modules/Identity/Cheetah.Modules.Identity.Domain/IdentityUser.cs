@@ -1,7 +1,7 @@
 using System.Security.Claims;
 using Cheetah.Core.Domain;
 
-namespace Cheetah.Core.Identity.Domain;
+namespace Cheetah.Modules.Identity.Domain;
 
 public class IdentityUser<TIdentityRole> : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEntity
     where TIdentityRole : IdentityRole

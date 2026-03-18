@@ -19,14 +19,14 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Cheetah.Core.Identity.Domain\Cheetah.Core.Identity.Domain.csproj" />
+        <ProjectReference Include="..\Modules\Identity\Cheetah.Modules.Identity.Domain\Cheetah.Modules.Identity.Domain.csproj" />
     </ItemGroup>
 
     <ItemGroup>
         <Using Include="Xunit" />
         <Using Include="Shouldly" />
         <Using Include="System.Security.Claims" />
-        <Using Include="Cheetah.Core.Identity.Domain" />
+        <Using Include="Cheetah.Modules.Identity.Domain" />
     </ItemGroup>
 
 </Project>

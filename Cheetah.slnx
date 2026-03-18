@@ -42,7 +42,6 @@
         <Project Path="src/Cheetah.Backend.Redis/Cheetah.Backend.Redis.csproj" />
         <Project Path="src/Cheetah.Backend.ReverseProxy/Cheetah.Backend.ReverseProxy.csproj" />
         <Project Path="src/Cheetah.BackgroundTasks/Cheetah.BackgroundTasks.csproj" />
-        <Project Path="src/Cheetah.Core.Identity.Domain/Cheetah.Core.Identity.Domain.csproj" />
         <Project Path="src/Cheetah.OpenApi/Cheetah.OpenApi.csproj" />
         <Project Path="src/Cheetah.Scalar/Cheetah.Scalar.csproj" />
     </Folder>
@@ -102,11 +101,15 @@
         <File Path="global.json" />
         <File Path="nuget.config" />
     </Folder>
+    <Folder Name="/src/">
+        <Project Path="src/Cheetah.Core.Identity.Domain.Tests/Cheetah.Core.Identity.Domain.Tests.csproj" />
+    </Folder>
+    <Folder Name="/src/Modules/" />
+    <Folder Name="/src/Modules/Identity/" />
 
     <Folder Name="/Tests/">
         <Project Path="src/Cheetah.Backend.Events.Redis.Tests/Cheetah.Backend.Events.Redis.Tests.csproj" />
         <Project Path="src/Cheetah.Backend.Redis.Tests/Cheetah.Backend.Redis.Tests.csproj" />
-        <Project Path="src/Cheetah.Core.Identity.Domain.Tests/Cheetah.Core.Identity.Domain.Tests.csproj" />
         <Project Path="src/Cheetah.Core.Tests/Cheetah.Core.Tests.csproj" />
         <Project Path="tests/Cheetah.Core.Specification.Tests/Cheetah.Core.Specification.Tests.csproj" />
         <Project Path="tests/Cheetah.Core.Tenants.Tests/Cheetah.Core.Tenants.Tests.csproj" />

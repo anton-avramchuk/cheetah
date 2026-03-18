@@ -1,5 +1,6 @@
 using Cheetah.Modules.Identity.DataAccess.Configurations;
-using Cheetah.Core.Identity.Domain;
+using Cheetah.Modules.Identity.Domain;
+using Crm.Identity.DataAccess;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Crm.Identity.DataAccess.Configurations;

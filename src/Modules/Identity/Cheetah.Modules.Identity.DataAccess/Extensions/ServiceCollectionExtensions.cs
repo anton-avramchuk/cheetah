@@ -1,7 +1,7 @@
 using Cheetah.Core.EntityFramework.Extensions;
 using Cheetah.Modules.Identity.DataAccess.Context;
 using Cheetah.Modules.Identity.DataAccess.Services;
-using Cheetah.Core.Identity.Domain;
+using Cheetah.Modules.Identity.Domain;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;

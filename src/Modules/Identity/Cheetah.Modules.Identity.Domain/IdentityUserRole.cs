@@ -1,6 +1,6 @@
 using Cheetah.Core.Domain;
 
-namespace Cheetah.Core.Identity.Domain;
+namespace Cheetah.Modules.Identity.Domain;
 
 public class IdentityUserRole<TIdentityRole> : Entity
     where TIdentityRole : IdentityRole
