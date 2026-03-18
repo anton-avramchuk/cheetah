@@ -1,3 +1,4 @@
+using Cheetah.Modules.Identity.Application.Commands;
 using Cheetah.Core.CQRS;
 using Cheetah.Core.DependencyInjection;
 using Cheetah.Core.Domain.Exceptions;
@@ -6,7 +7,7 @@ using Cheetah.Modules.Identity.Domain;
 using Crm.Identity.Domain;
 using Microsoft.AspNetCore.Identity;
 
-namespace Cheetah.Modules.Identity.Application.Commands;
+namespace Crm.Identity.Application.Commands;
 
 [Export(LifetimeType.Scoped, typeof(ICommandHandler<DeleteUserCommand>))]
 public class DeleteUserCommandHandler(UserManager<CrmIdentityUser> userManager)

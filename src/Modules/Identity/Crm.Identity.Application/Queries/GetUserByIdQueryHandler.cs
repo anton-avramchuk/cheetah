@@ -1,3 +1,4 @@
+using Cheetah.Modules.Identity.Application.Queries;
 using Cheetah.Core.CQRS;
 using Cheetah.Core.DependencyInjection;
 using Cheetah.Mapping.Core;
@@ -7,7 +8,7 @@ using Crm.Identity.Domain;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace Cheetah.Modules.Identity.Application.Queries;
+namespace Crm.Identity.Application.Queries;
 
 [Export(LifetimeType.Scoped, typeof(IQueryHandler<GetUserByIdQuery, UserDetailModel?>))]
 public class GetUserByIdQueryHandler(UserManager<CrmIdentityUser> userManager, IObjectMapper mapper)

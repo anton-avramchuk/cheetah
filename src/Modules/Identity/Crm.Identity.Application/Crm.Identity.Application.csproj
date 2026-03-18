@@ -3,6 +3,7 @@
     <ItemGroup>
         <ProjectReference Include="..\..\..\Cheetah.Generators.Module\Cheetah.Generators.Module.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
         <ProjectReference Include="..\Cheetah.Modules.Identity.Application\Cheetah.Modules.Identity.Application.csproj" />
+        <ProjectReference Include="..\Crm.Identity.Domain\Crm.Identity.Domain.csproj" />
     </ItemGroup>
 
 </Project>

@@ -1,3 +1,4 @@
+using Cheetah.Modules.Identity.Application.Commands;
 using Cheetah.Core.CQRS;
 using Cheetah.Core.DependencyInjection;
 using Cheetah.Core.Domain.Exceptions;
@@ -7,7 +8,7 @@ using Crm.Identity.Domain;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace Cheetah.Modules.Identity.Application.Commands;
+namespace Crm.Identity.Application.Commands;
 
 [Export(LifetimeType.Scoped, typeof(ICommandHandler<UpdateUserCommand>))]
 public class UpdateUserCommandHandler(UserManager<CrmIdentityUser> userManager, RoleManager<CrmIdentityRole> roleManager)

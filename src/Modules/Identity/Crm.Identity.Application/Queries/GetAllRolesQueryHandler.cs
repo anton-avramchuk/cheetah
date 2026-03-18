@@ -1,3 +1,4 @@
+using Cheetah.Modules.Identity.Application.Queries;
 using Cheetah.Contracts.Requests;
 using Cheetah.Contracts.Responses;
 using Cheetah.Core.CQRS;
@@ -7,7 +8,7 @@ using Cheetah.Modules.Identity.Application.Models;
 using Cheetah.Modules.Identity.Domain;
 using Crm.Identity.Domain;
 
-namespace Cheetah.Modules.Identity.Application.Queries;
+namespace Crm.Identity.Application.Queries;
 
 [Export(LifetimeType.Scoped, typeof(IQueryHandler<GetAllRolesQuery, GridResult<RoleModel>>))]
 public class GetAllRolesQueryHandler(IGridRepository<CrmIdentityRole> repository)
