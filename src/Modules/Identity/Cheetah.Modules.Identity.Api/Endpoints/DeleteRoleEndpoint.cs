@@ -5,7 +5,7 @@ using Cheetah.Modules.Identity.Contracts.Requests;
 
 namespace Cheetah.Modules.Identity.Api.Endpoints;
 
-public class DeleteRoleEndpoint : DeleteCommandEndpoint<DeleteRoleRequest, DeleteRoleCommand>
+public abstract class DeleteRoleEndpoint : DeleteCommandEndpoint<DeleteRoleRequest, DeleteRoleCommand>
 {
     public override string Route => $"{Constants.RolesRoute}/{{id:guid}}";
 

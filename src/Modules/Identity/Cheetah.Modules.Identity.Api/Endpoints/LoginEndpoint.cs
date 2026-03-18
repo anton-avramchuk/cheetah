@@ -6,7 +6,7 @@ using Cheetah.Modules.Identity.Contracts.Response;
 
 namespace Cheetah.Modules.Identity.Api.Endpoints;
 
-public class LoginEndpoint : CommandWithResultEndpoint<LoginRequest, LoginCommand, TokenResult, TokenViewModel>
+public abstract class LoginEndpoint : CommandWithResultEndpoint<LoginRequest, LoginCommand, TokenResult, TokenViewModel>
 {
     public override string Route => "api/auth/login";
 

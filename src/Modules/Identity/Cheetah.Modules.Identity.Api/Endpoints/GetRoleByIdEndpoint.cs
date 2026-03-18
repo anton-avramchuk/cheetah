@@ -7,7 +7,7 @@ using Cheetah.Modules.Identity.Contracts.Response;
 
 namespace Cheetah.Modules.Identity.Api.Endpoints;
 
-public class GetRoleByIdEndpoint : QueryOrNotFoundEndpoint<GetRoleByIdRequest, GetRoleByIdQuery, RoleModel, RoleViewModel>
+public abstract class GetRoleByIdEndpoint : QueryOrNotFoundEndpoint<GetRoleByIdRequest, GetRoleByIdQuery, RoleModel, RoleViewModel>
 {
     public override string Route => $"{Constants.RolesRoute}/{{id:guid}}";
 

@@ -5,8 +5,6 @@ using Cheetah.Modules.Identity.Application.Models;
 using Cheetah.Modules.Identity.Application.Queries;
 using Cheetah.Modules.Identity.Contracts.Requests;
 using Cheetah.Modules.Identity.Contracts.Response;
-using Cheetah.Modules.Identity.Domain;
-using Crm.Identity.Domain;
 using Mapster;
 
 namespace Cheetah.Modules.Identity.Api.Mapping;
@@ -24,7 +22,6 @@ public class MappingProfile : IMapsterMappingProfile
             .Map(dest => dest.ExpiresIn, src => src.ExpiresInSeconds);
 
         // Roles
-        config.NewConfig<CrmIdentityRole, RoleModel>();
         config.NewConfig<RoleModel, RoleViewModel>();
         config.NewConfig<GetAllRolesRequest, GetAllRolesQuery>();
         config.NewConfig<GetRoleByIdRequest, GetRoleByIdQuery>();
@@ -33,9 +30,6 @@ public class MappingProfile : IMapsterMappingProfile
         config.NewConfig<DeleteRoleRequest, DeleteRoleCommand>();
 
         // Users
-        config.NewConfig<CrmIdentityUser, UserModel>();
-        config.NewConfig<CrmIdentityUser, UserDetailModel>()
-            .Map(dest => dest.RoleIds, src => src.Roles.Select(r => r.RoleId).ToList());
         config.NewConfig<UserModel, UserGridViewModel>();
         config.NewConfig<UserDetailModel, UserDetailViewModel>();
         config.NewConfig<GetAllUsersRequest, GetAllUsersQuery>();
