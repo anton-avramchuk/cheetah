@@ -17,6 +17,7 @@
         <ProjectReference Include="..\Cheetah.Modules.Identity.Api\Cheetah.Modules.Identity.Api.csproj" />
         <ProjectReference Include="..\Crm.Identity.Application\Crm.Identity.Application.csproj" />
         <ProjectReference Include="..\Crm.Identity.DataAccess\Crm.Identity.DataAccess.csproj" />
+        <ProjectReference Include="..\Crm.Identity.Contracts\Crm.Identity.Contracts.csproj" />
         <ProjectReference Include="..\Crm.Identity.Domain\Crm.Identity.Domain.csproj" />
     </ItemGroup>
 

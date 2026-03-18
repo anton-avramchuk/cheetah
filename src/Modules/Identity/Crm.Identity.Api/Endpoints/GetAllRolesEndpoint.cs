@@ -1,5 +1,5 @@
 using Cheetah.Modules.Identity.Application.Queries;
-using Cheetah.Modules.Identity.Contracts.Requests;
+using Crm.Identity.Contracts.Requests;
 
 namespace Crm.Identity.Api.Endpoints;
 
