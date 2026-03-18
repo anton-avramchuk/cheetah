@@ -1,4 +1,5 @@
 using Cheetah.Modules.Identity.Domain;
+using Crm.Identity.Domain;
 using Shouldly;
 
 namespace Crm.Identity.Domain.Tests;

@@ -2,11 +2,12 @@ using Cheetah.Core.DataAccess.Attributes;
 using Crm.Identity.DataAccess;
 using Crm.Identity.DataAccess.Configurations;
 using Cheetah.Modules.Identity.Domain;
+using Crm.Identity.Domain;
 using Microsoft.EntityFrameworkCore;
 using BaseIdentityDbContext = Cheetah.Modules.Identity.DataAccess.Context.IdentityDbContext<
     Crm.Identity.DataAccess.IdentityModuleDbContext,
-    Cheetah.Modules.Identity.Domain.CrmIdentityUser,
-    Cheetah.Modules.Identity.Domain.CrmIdentityRole>;
+    Crm.Identity.Domain.CrmIdentityUser,
+    Crm.Identity.Domain.CrmIdentityRole>;
 
 namespace Crm.Identity.DataAccess;
 

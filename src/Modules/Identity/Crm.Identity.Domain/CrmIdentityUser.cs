@@ -1,5 +1,7 @@
 
-namespace Cheetah.Modules.Identity.Domain;
+using Cheetah.Modules.Identity.Domain;
+
+namespace Crm.Identity.Domain;
 
 public class CrmIdentityUser : IdentityUser<CrmIdentityRole>
 {

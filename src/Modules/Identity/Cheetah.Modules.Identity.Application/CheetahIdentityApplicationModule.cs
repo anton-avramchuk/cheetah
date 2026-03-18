@@ -6,6 +6,7 @@ using Cheetah.Mapping.Core;
 using Cheetah.Modules.Identity.Contracts;
 using Cheetah.Modules.Identity.Domain;
 using Cheetah.Modules.Identity.DomainEvents;
+using Crm.Identity.Domain;
 
 namespace Cheetah.Modules.Identity.Application;
 
@@ -15,6 +16,7 @@ namespace Cheetah.Modules.Identity.Application;
     typeof(CrmMappingCoreModule),
     typeof(CrmIdentityCoreDataAccessModule),
     typeof(CheetahIdentityDomainModule),
+    typeof(CrmIdentityDomainModule),
     typeof(CheetahIdentityContractsModule),
     typeof(CheetahIdentityDomainEventsModule)
 )]

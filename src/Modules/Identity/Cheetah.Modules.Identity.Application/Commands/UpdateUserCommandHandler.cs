@@ -3,6 +3,7 @@ using Cheetah.Core.DependencyInjection;
 using Cheetah.Core.Domain.Exceptions;
 using Cheetah.Modules.Identity.DataAccess.Exceptions;
 using Cheetah.Modules.Identity.Domain;
+using Crm.Identity.Domain;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 

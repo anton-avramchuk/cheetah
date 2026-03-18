@@ -8,6 +8,7 @@ using Cheetah.Mapping.Core;
 using Cheetah.Modules.Identity.DataAccess;
 using Cheetah.Modules.Identity.DataAccess.Extensions;
 using Cheetah.Modules.Identity.Domain;
+using Crm.Identity.Domain;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -16,6 +17,7 @@ namespace Crm.Identity.DataAccess;
 [DependsOn(
     typeof(Cheetah.Core.CoreModule),
     typeof(CheetahIdentityDomainModule),
+    typeof(CrmIdentityDomainModule),
     typeof(CrmIdentityCoreDataAccessModule),
     typeof(CrmEntityFrameworkPostgreSqlModule),
     typeof(CrmGridModule),

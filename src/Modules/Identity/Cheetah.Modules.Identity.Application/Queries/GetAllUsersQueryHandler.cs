@@ -5,6 +5,7 @@ using Cheetah.Core.DependencyInjection;
 using Cheetah.Core.Grid;
 using Cheetah.Modules.Identity.Application.Models;
 using Cheetah.Modules.Identity.Domain;
+using Crm.Identity.Domain;
 
 namespace Cheetah.Modules.Identity.Application.Queries;
 

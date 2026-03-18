@@ -6,6 +6,7 @@ using Cheetah.Modules.Identity.Application.Queries;
 using Cheetah.Modules.Identity.Contracts.Requests;
 using Cheetah.Modules.Identity.Contracts.Response;
 using Cheetah.Modules.Identity.Domain;
+using Crm.Identity.Domain;
 using Mapster;
 
 namespace Cheetah.Modules.Identity.Api.Mapping;
