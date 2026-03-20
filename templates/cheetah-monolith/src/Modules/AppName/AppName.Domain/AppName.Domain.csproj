@@ -1,3 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+    <ItemGroup>
+        <PackageReference Include="Cheetah.Core.Domain" />
+    </ItemGroup>
+
+    <ItemGroup Label="Source Generators">
+        <PackageReference Include="Cheetah.Generators.Module">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+
 </Project>

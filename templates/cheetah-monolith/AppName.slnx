@@ -7,7 +7,7 @@
         <Project Path="src/AppName.Host/AppName.Host.csproj" />
     </Folder>
     <Folder Name="/src/Modules/AppName/">
-        <Project Path="src/Modules/AppName/AppName.DomainEvents/AppName.DomainEvents.csproj" />
+        <Project Path="src/Modules/AppName/AppName.Events/AppName.Events.csproj" />
         <Project Path="src/Modules/AppName/AppName.Domain/AppName.Domain.csproj" />
         <Project Path="src/Modules/AppName/AppName.Contracts/AppName.Contracts.csproj" />
         <Project Path="src/Modules/AppName/AppName.Application/AppName.Application.csproj" />
@@ -20,7 +20,7 @@
     </Folder>
 <!--#if (includeIdentity)-->
     <Folder Name="/src/Modules/Identity/">
-        <Project Path="src/Modules/Identity/AppName.Identity.DomainEvents/AppName.Identity.DomainEvents.csproj" />
+        <Project Path="src/Modules/Identity/AppName.Identity.Events/AppName.Identity.Events.csproj" />
         <Project Path="src/Modules/Identity/AppName.Identity.Domain/AppName.Identity.Domain.csproj" />
         <Project Path="src/Modules/Identity/AppName.Identity.Contracts/AppName.Identity.Contracts.csproj" />
         <Project Path="src/Modules/Identity/AppName.Identity.Application/AppName.Identity.Application.csproj" />

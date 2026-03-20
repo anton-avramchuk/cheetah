@@ -1,7 +1,24 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <ItemGroup>
+        <PackageReference Include="Cheetah.Core.EntityFramework.PostgreSql" />
+        <PackageReference Include="Cheetah.Core.Grid" />
+        <PackageReference Include="Cheetah.Mapping.Core" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
         <ProjectReference Include="..\AppName.Domain\AppName.Domain.csproj" />
+    </ItemGroup>
+
+    <ItemGroup Label="Source Generators">
+        <PackageReference Include="Cheetah.Generators.Module">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
     </ItemGroup>
 
 </Project>

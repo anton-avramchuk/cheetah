@@ -1,6 +1,6 @@
 using AppName.Contracts;
 using AppName.Domain;
-using AppName.DomainEvents;
+using AppName.Events;
 using Cheetah.Core.CQRS;
 using Cheetah.Core.Grid;
 using Cheetah.Core.Modularity;
@@ -12,7 +12,7 @@ namespace AppName.Application;
     typeof(CrmGridModule),
     typeof(AppNameDomainModule),
     typeof(AppNameContractsModule),
-    typeof(AppNameDomainEventsModule)
+    typeof(AppNameEventsModule)
 )]
 public partial class AppNameApplicationModule : CrmModule
 {
