@@ -1,0 +1,9 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="AppName.Host" type="DotNetProject" factoryName=".NET Project">
+    <option name="PROJECT_PATH" value="$PROJECT_DIR$/src/AppName.Host/AppName.Host.csproj" />
+    <option name="PROJECT_KIND" value="DotNetCore" />
+    <option name="PROJECT_ARGS" value="" />
+    <option name="PASS_PARENT_ENVS" value="1" />
+    <method v="2" />
+  </configuration>
+</component>
