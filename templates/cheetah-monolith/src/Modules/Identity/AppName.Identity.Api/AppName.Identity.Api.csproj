@@ -11,6 +11,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\AppName.Identity.Application\AppName.Identity.Application.csproj" />
+        <ProjectReference Include="..\AppName.Identity.Contracts\AppName.Identity.Contracts.csproj" />
         <ProjectReference Include="..\AppName.Identity.DataAccess\AppName.Identity.DataAccess.csproj" />
         <ProjectReference Include="..\AppName.Identity.Domain\AppName.Identity.Domain.csproj" />
     </ItemGroup>

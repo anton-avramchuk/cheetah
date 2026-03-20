@@ -1,7 +1,7 @@
+using AppName.Identity.Contracts.Requests;
+using AppName.Identity.Contracts.Response;
 using Cheetah.Modules.Identity.Application.Models;
 using Cheetah.Modules.Identity.Application.Queries;
-using Cheetah.Modules.Identity.Contracts.Requests;
-using Cheetah.Modules.Identity.Contracts.Response;
 
 namespace AppName.Identity.Api.Endpoints;
 
