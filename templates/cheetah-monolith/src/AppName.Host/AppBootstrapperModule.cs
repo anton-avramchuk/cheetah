@@ -15,8 +15,8 @@ using Cheetah.Core.Modularity;
 using Cheetah.Mapping.Mapster;
 using Cheetah.Scalar;
 #if (includeIdentity)
+using AppName.Identity.Api;
 using AppName.Identity.DataAccess;
-using Cheetah.Modules.Identity.Api;
 #endif
 
 namespace AppName.Host;
@@ -36,14 +36,14 @@ namespace AppName.Host;
     typeof(CrmBackendEndpointsModule),
     typeof(CrmBackendJwtModule),
 #if (includeIdentity)
-    typeof(CheetahIdentityApiModule),
+    typeof(AppNameIdentityApiModule),
     typeof(AppNameIdentityDataAccessModule),
 #endif
     typeof(AppNameApiModule),
     typeof(AppNameDataAccessModule)
 )]
 [Bootstrapper]
-public partial class AppModule : CrmModule
+public partial class AppBootstrapperModule : CrmModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)
     {

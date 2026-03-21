@@ -8,6 +8,6 @@ public partial class CrmCoreSecurityModule : CrmModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
-
+        RegisterServices(context.Services);
     }
 }
