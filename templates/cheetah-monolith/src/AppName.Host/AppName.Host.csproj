@@ -12,7 +12,11 @@
 <!--#endif-->
         <PackageReference Include="Cheetah.Backend.Jwt" />
         <PackageReference Include="Cheetah.Core" />
+<!--#if (databaseType == "postgres")-->
         <PackageReference Include="Cheetah.Core.EntityFramework.PostgreSql" />
+<!--#else-->
+        <PackageReference Include="Cheetah.Core.EntityFramework.MsSql" />
+<!--#endif-->
         <PackageReference Include="Cheetah.CQRS.Dispatcher" />
         <PackageReference Include="Cheetah.Mapping.Mapster" />
         <PackageReference Include="Cheetah.OpenApi" />

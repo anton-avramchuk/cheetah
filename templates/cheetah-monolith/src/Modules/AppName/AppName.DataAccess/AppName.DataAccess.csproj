@@ -1,7 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <ItemGroup>
+<!--#if (databaseType == "postgres")-->
         <PackageReference Include="Cheetah.Core.EntityFramework.PostgreSql" />
+<!--#else-->
+        <PackageReference Include="Cheetah.Core.EntityFramework.MsSql" />
+<!--#endif-->
         <PackageReference Include="Cheetah.Core.Grid" />
         <PackageReference Include="Cheetah.Mapping.Core" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design">

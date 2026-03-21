@@ -1,10 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
-#if (databaseType == "postgres")
-using Npgsql.EntityFrameworkCore.PostgreSQL;
-#else
-using Microsoft.EntityFrameworkCore.SqlServer;
-#endif
 
 namespace AppName.Identity.DataAccess;
 
