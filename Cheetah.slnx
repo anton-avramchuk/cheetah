@@ -13,6 +13,7 @@
     <Folder Name="/Core/">
         <Project Path="src/Cheetah.AspNetCore.Contracts/Cheetah.AspNetCore.Contracts.csproj" />
         <Project Path="src/Cheetah.AspNetCore/Cheetah.AspNetCore.csproj" />
+        <Project Path="src/Cheetah.Backend.Events.InMemory/Cheetah.Backend.Events.InMemory.csproj" />
         <Project Path="src/Cheetah.Contracts/Cheetah.Contracts.csproj" />
         <Project Path="src/Cheetah.Core.Cache/Cheetah.Core.Cache.csproj" />
         <Project Path="src/Cheetah.Core.CQRS/Cheetah.Core.CQRS.csproj" />
@@ -97,11 +98,17 @@
         <Project Path="src/Modules/MasterData/Crm.MasterData.DomainEvents/Crm.MasterData.DomainEvents.csproj" />
     </Folder>
     <Folder Name="/Solution Items/">
+        <File Path="Directory.Build.props" />
+        <File Path="Directory.Packages.props" />
         <File Path="docker-compose.yml" />
         <File Path="global.json" />
+        <File Path="install-templates.ps1" />
         <File Path="nuget.config" />
+        <File Path="pack.ps1" />
     </Folder>
-    <Folder Name="/src/" />
+    <Folder Name="/src/">
+        <Project Path="src/Cheetah.Backend.Events.InMemory.Tests/Cheetah.Backend.Events.InMemory.Tests.csproj" />
+    </Folder>
     <Folder Name="/src/Modules/" />
     <Folder Name="/src/Modules/Identity/">
         <Project Path="src/Cheetah.Core.Identity.Domain.Tests/Cheetah.Core.Identity.Domain.Tests.csproj" />
