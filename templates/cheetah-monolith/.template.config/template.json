@@ -36,6 +36,22 @@
         }
       ]
     },
+    "databaseType": {
+      "type": "parameter",
+      "datatype": "choice",
+      "description": "Database provider",
+      "defaultValue": "postgres",
+      "choices": [
+        {
+          "choice": "postgres",
+          "description": "PostgreSQL via Npgsql (default)"
+        },
+        {
+          "choice": "mssql",
+          "description": "Microsoft SQL Server"
+        }
+      ]
+    },
     "localPackagesPath": {
       "type": "parameter",
       "datatype": "string",

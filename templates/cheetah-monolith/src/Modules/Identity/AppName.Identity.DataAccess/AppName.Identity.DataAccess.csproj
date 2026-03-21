@@ -2,6 +2,13 @@
 
     <ItemGroup>
         <PackageReference Include="Cheetah.Modules.Identity.DataAccess" />
+<!--#if (databaseType == "postgres")-->
+        <PackageReference Include="Cheetah.Core.EntityFramework.PostgreSql" />
+<!--#else-->
+        <PackageReference Include="Cheetah.Core.EntityFramework.MsSql" />
+<!--#endif-->
+        <PackageReference Include="Cheetah.Core.Grid" />
+        <PackageReference Include="Cheetah.Mapping.Core" />
     </ItemGroup>
 
     <ItemGroup>

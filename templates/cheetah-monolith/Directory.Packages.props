@@ -19,7 +19,11 @@
         <PackageVersion Include="Cheetah.Core" Version="__CheetahVersion__" />
         <PackageVersion Include="Cheetah.Core.CQRS" Version="__CheetahVersion__" />
         <PackageVersion Include="Cheetah.Core.Domain" Version="__CheetahVersion__" />
+<!--#if (databaseType == "postgres")-->
         <PackageVersion Include="Cheetah.Core.EntityFramework.PostgreSql" Version="__CheetahVersion__" />
+<!--#else-->
+        <PackageVersion Include="Cheetah.Core.EntityFramework.MsSql" Version="__CheetahVersion__" />
+<!--#endif-->
         <PackageVersion Include="Cheetah.Core.Events" Version="__CheetahVersion__" />
         <PackageVersion Include="Cheetah.Core.Grid" Version="__CheetahVersion__" />
         <PackageVersion Include="Cheetah.Core.Identity.DataAccess" Version="__CheetahVersion__" />
@@ -48,7 +52,12 @@
         <PackageVersion Include="Microsoft.Extensions.Http" Version="10.0.3" />
         <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="10.3.0" />
         <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="10.3.0" />
+<!--#if (databaseType == "postgres")-->
         <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0" />
+<!--#else-->
+        <PackageVersion Include="Microsoft.Data.SqlClient" Version="6.0.2" />
+        <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.3" />
+<!--#endif-->
         <PackageVersion Include="StackExchange.Redis" Version="2.11.0" />
     </ItemGroup>
 

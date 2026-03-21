@@ -106,17 +106,12 @@
         <File Path="nuget.config" />
         <File Path="pack.ps1" />
     </Folder>
-    <Folder Name="/src/">
-        <Project Path="src/Cheetah.Backend.Events.InMemory.Tests/Cheetah.Backend.Events.InMemory.Tests.csproj" />
-    </Folder>
-    <Folder Name="/src/Modules/" />
-    <Folder Name="/src/Modules/Identity/">
-        <Project Path="src/Cheetah.Core.Identity.Domain.Tests/Cheetah.Core.Identity.Domain.Tests.csproj" />
-    </Folder>
 
     <Folder Name="/Tests/">
+        <Project Path="src/Cheetah.Backend.Events.InMemory.Tests/Cheetah.Backend.Events.InMemory.Tests.csproj" />
         <Project Path="src/Cheetah.Backend.Events.Redis.Tests/Cheetah.Backend.Events.Redis.Tests.csproj" />
         <Project Path="src/Cheetah.Backend.Redis.Tests/Cheetah.Backend.Redis.Tests.csproj" />
+        <Project Path="src/Cheetah.Core.Identity.Domain.Tests/Cheetah.Core.Identity.Domain.Tests.csproj" />
         <Project Path="src/Cheetah.Core.Tests/Cheetah.Core.Tests.csproj" />
         <Project Path="tests/Cheetah.Core.Specification.Tests/Cheetah.Core.Specification.Tests.csproj" />
         <Project Path="tests/Cheetah.Core.Tenants.Tests/Cheetah.Core.Tenants.Tests.csproj" />
