@@ -4,7 +4,11 @@ using Cheetah.AspNetCore;
 using Cheetah.AspNetCore.Contracts;
 using Cheetah.Backend.CQRS;
 using Cheetah.Backend.Endpoints;
+#if (eventBus == "redis")
 using Cheetah.Backend.Events.Redis;
+#else
+using Cheetah.Backend.Events.InMemory;
+#endif
 using Cheetah.Backend.Jwt;
 using Cheetah.Core;
 using Cheetah.Core.Modularity;
@@ -24,7 +28,11 @@ namespace AppName.Host;
     typeof(ScalarModule),
     typeof(CrmMapsterModule),
     typeof(CrmBackendCQRSModule),
+#if (eventBus == "redis")
     typeof(CrmBackendEventsRedisModule),
+#else
+    typeof(CrmBackendEventsInMemoryModule),
+#endif
     typeof(CrmBackendEndpointsModule),
     typeof(CrmBackendJwtModule),
 #if (includeIdentity)

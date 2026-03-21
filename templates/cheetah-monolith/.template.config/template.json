@@ -20,6 +20,22 @@
       "description": "Include Cheetah.Modules.Identity.* (authentication, JWT, user management)",
       "defaultValue": "false"
     },
+    "eventBus": {
+      "type": "parameter",
+      "datatype": "choice",
+      "description": "Event bus backend",
+      "defaultValue": "redis",
+      "choices": [
+        {
+          "choice": "redis",
+          "description": "Redis pub/sub event bus (production-ready, distributed)"
+        },
+        {
+          "choice": "inmemory",
+          "description": "In-memory event bus (no external dependencies, suitable for dev/testing)"
+        }
+      ]
+    },
     "localPackagesPath": {
       "type": "parameter",
       "datatype": "string",
@@ -47,6 +63,22 @@
     }
   },
   "specialCustomOperations": {
+    "**/*.json": {
+      "operations": [
+        {
+          "type": "conditional",
+          "configuration": {
+            "if": ["//#if"],
+            "else": ["//#else"],
+            "elseif": ["//#elseif"],
+            "endif": ["//#endif"],
+            "trim": true,
+            "wholeLine": true,
+            "evaluator": "C++"
+          }
+        }
+      ]
+    },
     "**/*.slnx": {
       "operations": [
         {

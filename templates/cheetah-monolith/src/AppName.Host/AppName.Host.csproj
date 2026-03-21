@@ -5,7 +5,11 @@
         <PackageReference Include="Cheetah.AspNetCore.Contracts" />
         <PackageReference Include="Cheetah.Backend.CQRS" />
         <PackageReference Include="Cheetah.Backend.Endpoints" />
+<!--#if (eventBus == "redis")-->
         <PackageReference Include="Cheetah.Backend.Events.Redis" />
+<!--#else-->
+        <PackageReference Include="Cheetah.Backend.Events.InMemory" />
+<!--#endif-->
         <PackageReference Include="Cheetah.Backend.Jwt" />
         <PackageReference Include="Cheetah.Core" />
         <PackageReference Include="Cheetah.Core.EntityFramework.PostgreSql" />

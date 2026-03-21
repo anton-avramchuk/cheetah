@@ -9,7 +9,11 @@
         <PackageVersion Include="Cheetah.AspNetCore.Contracts" Version="__CheetahVersion__" />
         <PackageVersion Include="Cheetah.Backend.CQRS" Version="__CheetahVersion__" />
         <PackageVersion Include="Cheetah.Backend.Endpoints" Version="__CheetahVersion__" />
+<!--#if (eventBus == "redis")-->
         <PackageVersion Include="Cheetah.Backend.Events.Redis" Version="__CheetahVersion__" />
+<!--#else-->
+        <PackageVersion Include="Cheetah.Backend.Events.InMemory" Version="__CheetahVersion__" />
+<!--#endif-->
         <PackageVersion Include="Cheetah.Backend.Jwt" Version="__CheetahVersion__" />
         <PackageVersion Include="Cheetah.Contracts" Version="__CheetahVersion__" />
         <PackageVersion Include="Cheetah.Core" Version="__CheetahVersion__" />
