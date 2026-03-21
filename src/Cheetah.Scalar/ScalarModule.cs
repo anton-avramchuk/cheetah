@@ -69,6 +69,6 @@ public partial class ScalarModule : CrmModule
 
             w.AddPreferredSecuritySchemes(["Bearer"])
              .AddHttpAuthentication("Bearer", _ => { });
-        });
+        }).AllowAnonymous();
     }
 }
