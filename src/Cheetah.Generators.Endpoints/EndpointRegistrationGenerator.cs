@@ -463,12 +463,14 @@ public class EndpointRegistrationGenerator : IIncrementalGenerator
         var tRequest = typeArgs[0].ToDisplayString();
         var tCommand = typeArgs[1].ToDisplayString();
 
-        var parameters = $"[FromBody] {tRequest} request, [FromServices] IDispatcher dispatcher, [FromServices] IObjectMapper mapper, CancellationToken cancellationToken";
+        var parameters = $"[FromBody] {tRequest} bodyRequest, HttpContext httpContext, [FromServices] IDispatcher dispatcher, [FromServices] IObjectMapper mapper, CancellationToken cancellationToken";
         var body = new List<string>
         {
+            $"var request = httpContext.MergeRouteValuesInto(bodyRequest);",
             $"var command = mapper.Map<{tCommand}>(request);",
             $"var id = await dispatcher.SendAsync<{tCommand}, System.Guid>(command, cancellationToken);",
-            "return Results.CreatedAtRoute(endpoint.GetByIdRouteName, new { id }, new Cheetah.Backend.Endpoints.Responses.GuidResponse(id));"
+            "var routeValues = new Microsoft.AspNetCore.Routing.RouteValueDictionary(httpContext.Request.RouteValues) { [\"id\"] = id };",
+            "return Results.CreatedAtRoute(endpoint.GetByIdRouteName, routeValues, new Cheetah.Backend.Endpoints.Responses.GuidResponse(id));"
         };
 
         var produces = new List<string>
