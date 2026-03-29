@@ -52,11 +52,40 @@ public partial class MyBootstrapperModule : CrmModule { }
 }
 ```
 
-| Поле      | Тип    | По умолчанию | Описание                                       |
-|-----------|--------|:------------:|------------------------------------------------|
-| `Enabled` | `bool` | `true`       | Глобальный включатель/выключатель логирования  |
+```json
+{
+  "Diagnostics": {
+    "Enabled": true,
+    "RequestLogging": {
+      "Enabled": true,
+      "LogBody": true,
+      "MaxBodyBytes": 4096,
+      "LogQueryString": true,
+      "LogResponseStatus": true,
+      "ExcludePaths": ["/health", "/metrics", "/swagger"]
+    }
+  }
+}
+```
 
-При `Enabled: false` атрибуты `[MeasureTime]` игнорируются и замеры не производятся.
+### Поля DiagnosticsOptions
+
+| Поле      | Тип    | По умолчанию | Описание                                                                 |
+|-----------|--------|:------------:|--------------------------------------------------------------------------|
+| `Enabled` | `bool` | `true`       | Мастер-выключатель. При `false` отключает всё: тайминги и логирование.   |
+
+### Поля RequestLogging
+
+| Поле                | Тип           | По умолчанию | Описание                                                                                     |
+|---------------------|---------------|:------------:|----------------------------------------------------------------------------------------------|
+| `Enabled`           | `bool`        | `true`       | Включить/выключить логирование HTTP запросов независимо от таймингов.                        |
+| `LogBody`           | `bool`        | `true`       | Логировать тело запроса. Отключи для бинарных загрузок или чувствительных данных.            |
+| `MaxBodyBytes`      | `int`         | `4096`       | Максимальный размер тела в байтах. Превышение усекается с пометкой `[truncated]`.            |
+| `LogQueryString`    | `bool`        | `true`       | Включать query-параметры в лог. Отключи если в параметрах могут быть токены или пароли.     |
+| `LogResponseStatus` | `bool`        | `true`       | Логировать статус-код ответа после выполнения хендлера.                                      |
+| `ExcludePaths`      | `string[]`    | `[]`         | Префиксы путей для исключения. `/health` подавляет также `/health/live`, `/health/ready`.   |
+
+При `Diagnostics.Enabled: false` секция `RequestLogging` полностью игнорируется.
 
 ## Использование атрибута
 
@@ -168,6 +197,34 @@ public class OrderService
    - запускает `Stopwatch`;
    - для async-методов ждёт завершения задачи, затем останавливает таймер;
    - пишет `Information`-лог при успехе или `Warning`-лог при исключении.
+
+### RequestLoggingMiddleware
+
+1. Middleware регистрируется сразу после `UseRouting()` (через зависимость на `CrmAspNetCoreModule`).
+2. При каждом входящем запросе проверяет `Enabled`, `RequestLogging.Enabled` и `ExcludePaths`.
+3. Если нужно логировать — вызывает `EnableBuffering()` и читает не более `MaxBodyBytes` байт тела; сбрасывает позицию стрима обратно, чтобы хендлер получил полное тело.
+4. После выполнения хендлера логирует статус ответа (если `LogResponseStatus: true`).
+
+Пример вывода:
+
+```
+info: RequestLoggingMiddleware
+      HTTP POST /api/orders?source=web | Body: {"productId":"...","qty":2}
+info: RequestLoggingMiddleware
+      HTTP POST /api/orders => 201
+
+info: RequestLoggingMiddleware
+      HTTP GET /api/orders/abc | Body: (empty)
+info: RequestLoggingMiddleware
+      HTTP GET /api/orders/abc => 200
+```
+
+Пример усечённого тела:
+
+```
+info: RequestLoggingMiddleware
+      HTTP POST /api/import | Body: [{"id":1,"name":"foo"},{"id":2,... [truncated — 98432 bytes total]
+```
 
 ### Эндпоинты — IEndpointFilter
 

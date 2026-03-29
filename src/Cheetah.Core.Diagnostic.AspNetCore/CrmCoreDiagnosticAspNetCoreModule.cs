@@ -1,6 +1,7 @@
 using Cheetah.AspNetCore;
 using Cheetah.AspNetCore.Extensions;
 using Cheetah.Core.Diagnostic.AspNetCore.Filters;
+using Cheetah.Core.Diagnostic.AspNetCore.Middleware;
 using Cheetah.Core.Diagnostic.Options;
 using Cheetah.Core.DependencyInjection;
 using Cheetah.Core.Modularity;
@@ -24,6 +25,13 @@ public partial class CrmCoreDiagnosticAspNetCoreModule : CrmModule
     {
         var options = context.GetOptions<DiagnosticsOptions>();
         if (!options.Enabled) return;
+
+        var app = context.GetApplicationBuilder();
+
+        // Request/response logging — registered before endpoint execution so it captures
+        // both the incoming request and the final response status code.
+        if (options.RequestLogging.Enabled)
+            app.UseMiddleware<RequestLoggingMiddleware>();
 
         // Replace the shared IEndpointRouteBuilder with a group that has TimingEndpointFilter.
         // All subsequent modules resolve GetRouteBuilder() and register their routes on this
