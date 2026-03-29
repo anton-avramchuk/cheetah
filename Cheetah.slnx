@@ -16,6 +16,8 @@
         <Project Path="src/Cheetah.Backend.Events.InMemory/Cheetah.Backend.Events.InMemory.csproj" />
         <Project Path="src/Cheetah.Contracts/Cheetah.Contracts.csproj" />
         <Project Path="src/Cheetah.Core.Cache/Cheetah.Core.Cache.csproj" />
+        <Project Path="src/Cheetah.Core.Diagnostic/Cheetah.Core.Diagnostic.csproj" />
+        <Project Path="src/Cheetah.Core.Diagnostic.AspNetCore/Cheetah.Core.Diagnostic.AspNetCore.csproj" />
         <Project Path="src/Cheetah.Core.CQRS/Cheetah.Core.CQRS.csproj" />
         <Project Path="src/Cheetah.Core.DataAccess/Cheetah.Core.DataAccess.csproj" />
         <Project Path="src/Cheetah.Core.Domain/Cheetah.Core.Domain.csproj" />
@@ -106,7 +108,6 @@
         <File Path="nuget.config" />
         <File Path="pack.ps1" />
     </Folder>
-
     <Folder Name="/Tests/">
         <Project Path="src/Cheetah.Backend.Events.InMemory.Tests/Cheetah.Backend.Events.InMemory.Tests.csproj" />
         <Project Path="src/Cheetah.Backend.Events.Redis.Tests/Cheetah.Backend.Events.Redis.Tests.csproj" />

@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <OutputType>Library</OutputType>
+        <NoDefaultLaunchSettingsFile>true</NoDefaultLaunchSettingsFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Cheetah.AspNetCore\Cheetah.AspNetCore.csproj" />
+        <ProjectReference Include="..\Cheetah.Core.Diagnostic\Cheetah.Core.Diagnostic.csproj" />
+        <ProjectReference Include="..\Cheetah.Generators.Module\Cheetah.Generators.Module.csproj"
+                          ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
+    </ItemGroup>
+
+</Project>
