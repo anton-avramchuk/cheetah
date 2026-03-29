@@ -9,7 +9,4 @@ public class DiagnosticsOptions
     /// (timing, request logging) regardless of their individual settings.
     /// </summary>
     public bool Enabled { get; set; } = true;
-
-    /// <summary>HTTP request/response logging settings.</summary>
-    public RequestLoggingOptions RequestLogging { get; set; } = new();
 }

@@ -1,7 +1,12 @@
-namespace Cheetah.Core.Diagnostic.Options;
+using Cheetah.Core.Diagnostic.Options;
+
+namespace Cheetah.Core.Diagnostic.AspNetCore.Options;
 
 public class RequestLoggingOptions
 {
+    /// <summary>Sub-section name inside <see cref="DiagnosticsOptions.SectionName"/>.</summary>
+    public const string SubSection = "RequestLogging";
+
     /// <summary>
     /// Enable or disable HTTP request/response logging.
     /// Independent of the global <see cref="DiagnosticsOptions.Enabled"/> switch —

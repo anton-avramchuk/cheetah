@@ -1,3 +1,4 @@
+using Cheetah.Core.Diagnostic.AspNetCore.Options;
 using Cheetah.Core.Diagnostic.Options;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -8,15 +9,17 @@ namespace Cheetah.Core.Diagnostic.AspNetCore.Middleware;
 public class RequestLoggingMiddleware(
     RequestDelegate next,
     ILogger<RequestLoggingMiddleware> logger,
-    IOptions<DiagnosticsOptions> options)
+    IOptions<DiagnosticsOptions> diagnosticsOptions,
+    IOptions<RequestLoggingOptions> requestLoggingOptions)
 {
-    private readonly DiagnosticsOptions _options = options.Value;
+    private readonly DiagnosticsOptions _diagnostics = diagnosticsOptions.Value;
+    private readonly RequestLoggingOptions _options = requestLoggingOptions.Value;
 
     public async Task InvokeAsync(HttpContext context)
     {
-        var opts = _options.RequestLogging;
+        var opts = _options;
 
-        if (!_options.Enabled || !opts.Enabled || IsExcluded(context.Request.Path, opts))
+        if (!_diagnostics.Enabled || !opts.Enabled || IsExcluded(context.Request.Path, opts))
         {
             await next(context);
             return;
