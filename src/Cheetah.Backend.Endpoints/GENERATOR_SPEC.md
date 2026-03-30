@@ -93,6 +93,18 @@ partial class CrmTenantsApiModule
         if (endpoint.IsDeprecated)
             builder.WithMetadata(new ObsoleteAttribute("This endpoint is deprecated"));
 
+        if (endpoint.CacheControl is { } cache)
+        {
+            builder.AddEndpointFilter(async (ctx, next) =>
+            {
+                var result = await next(ctx);
+                ctx.HttpContext.Response.Headers.CacheControl = cache.NoStore
+                    ? "no-store, no-cache"
+                    : $"{(cache.IsPublic ? "public" : "private")}, max-age={cache.MaxAgeSeconds}";
+                return result;
+            });
+        }
+
         builder.WithOpenApi();
     }
 }
@@ -425,6 +437,18 @@ partial class CrmTenantsApiModule
 
         if (endpoint.IsDeprecated)
             builder.WithMetadata(new ObsoleteAttribute("This endpoint is deprecated"));
+
+        if (endpoint.CacheControl is { } cache)
+        {
+            builder.AddEndpointFilter(async (ctx, next) =>
+            {
+                var result = await next(ctx);
+                ctx.HttpContext.Response.Headers.CacheControl = cache.NoStore
+                    ? "no-store, no-cache"
+                    : $"{(cache.IsPublic ? "public" : "private")}, max-age={cache.MaxAgeSeconds}";
+                return result;
+            });
+        }
 
         builder.WithOpenApi();
     }

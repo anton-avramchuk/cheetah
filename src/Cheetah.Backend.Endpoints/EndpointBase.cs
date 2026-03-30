@@ -27,6 +27,7 @@ public abstract class EndpointBase<TRequest, TResponse> : ICrmEndpoint<TRequest,
     public virtual string[] AuthorizationPolicies => GetConfiguration().AuthorizationPolicies.ToArray();
     public virtual string[] RequiredPermissions => GetConfiguration().RequiredPermissions.ToArray();
     public virtual bool IsDeprecated => GetConfiguration().IsDeprecated;
+    public virtual BrowserCacheSettings? CacheControl => GetConfiguration().CacheControl;
 
     /// <summary>
     /// Configure endpoint metadata

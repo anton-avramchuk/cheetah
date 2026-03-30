@@ -1,3 +1,5 @@
+using Cheetah.Backend.Endpoints.Configuration;
+
 namespace Cheetah.Backend.Endpoints.Abstractions;
 
 /// <summary>
@@ -56,4 +58,10 @@ public interface IEndpointDefinition
     /// Gets whether this endpoint is deprecated
     /// </summary>
     bool IsDeprecated { get; }
+
+    /// <summary>
+    /// Gets browser cache settings (Cache-Control header).
+    /// null means no Cache-Control header is set.
+    /// </summary>
+    BrowserCacheSettings? CacheControl { get; }
 }

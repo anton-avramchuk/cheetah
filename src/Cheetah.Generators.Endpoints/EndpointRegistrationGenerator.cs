@@ -615,6 +615,18 @@ public class EndpointRegistrationGenerator : IIncrementalGenerator
         sb.AppendLine();
         sb.AppendLine("        if (endpoint.IsDeprecated)");
         sb.AppendLine("            builder.WithMetadata(new System.ObsoleteAttribute(\"This endpoint is deprecated\"));");
+        sb.AppendLine();
+        sb.AppendLine("        if (endpoint.CacheControl is { } cache)");
+        sb.AppendLine("        {");
+        sb.AppendLine("            builder.AddEndpointFilter(async (ctx, next) =>");
+        sb.AppendLine("            {");
+        sb.AppendLine("                var result = await next(ctx);");
+        sb.AppendLine("                ctx.HttpContext.Response.Headers.CacheControl = cache.NoStore");
+        sb.AppendLine("                    ? \"no-store, no-cache\"");
+        sb.AppendLine("                    : (cache.IsPublic ? \"public\" : \"private\") + \", max-age=\" + cache.MaxAgeSeconds;");
+        sb.AppendLine("                return result;");
+        sb.AppendLine("            });");
+        sb.AppendLine("        }");
         sb.AppendLine("    }");
     }
 
