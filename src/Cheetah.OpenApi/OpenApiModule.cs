@@ -1,3 +1,4 @@
+using System.Text.Json;
 using System.Text.Json.Nodes;
 using Cheetah.AspNetCore;
 using Cheetah.AspNetCore.Extensions;
@@ -22,6 +23,18 @@ public partial class OpenApiModule : CrmModule
 
         context.Services.AddOpenApi(options =>
         {
+            options.AddSchemaTransformer((schema, ctx, ct) =>
+            {
+                if (ctx.JsonTypeInfo.Type == typeof(JsonElement) ||
+                    ctx.JsonTypeInfo.Type == typeof(JsonElement?))
+                {
+                    schema.Type = JsonSchemaType.Object;
+                    schema.Properties = null;
+                    schema.AdditionalProperties = null;
+                }
+                return Task.CompletedTask;
+            });
+
             options.AddDocumentTransformer((document, ctx, ct) =>
             {
                 if (!string.IsNullOrEmpty(basePath))
@@ -96,7 +109,12 @@ public partial class OpenApiModule : CrmModule
         if (schema.Example is not null)
             return schema.Example.DeepClone();
 
-        var type = schema.Type ?? JsonSchemaType.String;
+        var type = schema.Type ?? (schema.Format switch
+        {
+            "int32" or "int64" => JsonSchemaType.Integer,
+            "float" or "double" => JsonSchemaType.Number,
+            _ => JsonSchemaType.String
+        });
 
         if (type.HasFlag(JsonSchemaType.String))
             return schema.Format switch
@@ -112,11 +130,12 @@ public partial class OpenApiModule : CrmModule
         if (type.HasFlag(JsonSchemaType.Boolean)) return JsonValue.Create(false)!;
         if (type.HasFlag(JsonSchemaType.Array))   return new JsonArray();
 
-        if (type.HasFlag(JsonSchemaType.Object) && schema.Properties is not null)
+        if (type.HasFlag(JsonSchemaType.Object))
         {
             var obj = new JsonObject();
-            foreach (var (name, propSchema) in schema.Properties)
-                obj[name] = GetExampleValue(propSchema);
+            if (schema.Properties is not null)
+                foreach (var (name, propSchema) in schema.Properties)
+                    obj[name] = GetExampleValue(propSchema);
             return obj;
         }
 
