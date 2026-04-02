@@ -6,6 +6,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\..\Cheetah.Backend.Rsa.Abstractions\Cheetah.Backend.Rsa.Abstractions.csproj" />
         <ProjectReference Include="..\..\..\Cheetah.AspNetCore\Cheetah.AspNetCore.csproj" />
         <ProjectReference Include="..\..\..\Cheetah.AspNetCore.Contracts\Cheetah.AspNetCore.Contracts.csproj" />
         <ProjectReference Include="..\..\..\Cheetah.Backend.CQRS\Cheetah.Backend.CQRS.csproj" />

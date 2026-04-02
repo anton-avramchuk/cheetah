@@ -42,6 +42,8 @@
         <Project Path="src/Cheetah.Backend.Events.Redis/Cheetah.Backend.Events.Redis.csproj" />
         <Project Path="src/Cheetah.Backend.Jwt/Cheetah.Backend.Jwt.csproj" />
         <Project Path="src/Cheetah.Backend.Jwt.Abstractions/Cheetah.Backend.Jwt.Abstractions.csproj" />
+        <Project Path="src/Cheetah.Backend.Rsa/Cheetah.Backend.Rsa.csproj" />
+        <Project Path="src/Cheetah.Backend.Rsa.Abstractions/Cheetah.Backend.Rsa.Abstractions.csproj" />
         <Project Path="src/Cheetah.Backend.Redis/Cheetah.Backend.Redis.csproj" />
         <Project Path="src/Cheetah.Backend.ReverseProxy/Cheetah.Backend.ReverseProxy.csproj" />
         <Project Path="src/Cheetah.BackgroundTasks/Cheetah.BackgroundTasks.csproj" />
@@ -52,6 +54,7 @@
         <Project Path="src/Modules/Crm.Proxy/Crm.Proxy.csproj" />
     </Folder>
     <Folder Name="/Modules/Identity/">
+        <Project Path="src/Modules/Identity/Cheetah.Modules.Identity.Application.Tests/Cheetah.Modules.Identity.Application.Tests.csproj" />
         <Project Path="src/Modules/Identity/Cheetah.Modules.Identity.Api/Cheetah.Modules.Identity.Api.csproj" />
         <Project Path="src/Modules/Identity/Cheetah.Modules.Identity.Application/Cheetah.Modules.Identity.Application.csproj" />
         <Project Path="src/Modules/Identity/Cheetah.Modules.Identity.Contracts/Cheetah.Modules.Identity.Contracts.csproj" />
@@ -108,7 +111,9 @@
         <File Path="nuget.config" />
         <File Path="pack.ps1" />
     </Folder>
+
     <Folder Name="/Tests/">
+        <Project Path="src/Cheetah.Backend.Rsa.Tests/Cheetah.Backend.Rsa.Tests.csproj" />
         <Project Path="src/Cheetah.Backend.Events.InMemory.Tests/Cheetah.Backend.Events.InMemory.Tests.csproj" />
         <Project Path="src/Cheetah.Backend.Events.Redis.Tests/Cheetah.Backend.Events.Redis.Tests.csproj" />
         <Project Path="src/Cheetah.Backend.Redis.Tests/Cheetah.Backend.Redis.Tests.csproj" />

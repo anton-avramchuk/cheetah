@@ -1,3 +1,4 @@
+using Cheetah.Backend.Rsa.Abstractions;
 using Cheetah.Core.CQRS;
 using Cheetah.Modules.Identity.Application.Exceptions;
 using Cheetah.Modules.Identity.Application.Services;
@@ -8,7 +9,8 @@ namespace Cheetah.Modules.Identity.Application.Commands;
 
 public abstract class LoginCommandHandler<TUser, TRole>(
     UserManager<TUser> userManager,
-    ITokenGenerator tokenGenerator)
+    ITokenGenerator tokenGenerator,
+    IPasswordDecryptor passwordDecryptor)
     : ICommandHandler<LoginCommand, TokenResult>
     where TRole : IdentityRole
     where TUser : IdentityUser<TRole>
@@ -19,7 +21,9 @@ public abstract class LoginCommandHandler<TUser, TRole>(
         if (user is null)
             throw new InvalidCredentialsException();
 
-        var isPasswordValid = await userManager.CheckPasswordAsync(user, command.Password);
+        var plainPassword = passwordDecryptor.Decrypt(command.Password);
+
+        var isPasswordValid = await userManager.CheckPasswordAsync(user, plainPassword);
         if (!isPasswordValid)
             throw new InvalidCredentialsException();
 

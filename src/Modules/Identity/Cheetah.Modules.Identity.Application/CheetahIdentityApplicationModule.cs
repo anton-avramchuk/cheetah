@@ -1,11 +1,14 @@
+using Cheetah.Backend.Rsa.Abstractions;
 using Cheetah.Core.CQRS;
 using Cheetah.Core.Grid;
 using Cheetah.Modules.Identity.DataAccess;
 using Cheetah.Core.Modularity;
 using Cheetah.Mapping.Core;
+using Cheetah.Modules.Identity.Application.Services;
 using Cheetah.Modules.Identity.Contracts;
 using Cheetah.Modules.Identity.Domain;
 using Cheetah.Modules.Identity.DomainEvents;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Cheetah.Modules.Identity.Application;
 
@@ -23,5 +26,7 @@ public partial class CheetahIdentityApplicationModule : CrmModule
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
         RegisterServices(context.Services);
+        // Fallback: no-op decryptor. Overridden if CrmBackendRsaModule is registered.
+        context.Services.TryAddSingleton<IPasswordDecryptor, PassThroughPasswordDecryptor>();
     }
 }

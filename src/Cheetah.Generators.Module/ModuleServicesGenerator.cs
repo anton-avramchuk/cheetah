@@ -108,18 +108,28 @@ namespace {moduleSymbol.ContainingNamespace}
                 {
                     registrations.AppendLine($"services.{registrationMethod}(typeof({implementationType}));");
                 }
+                else if (exportedTypes.Length == 1)
+                {
+                    var serviceType = exportedTypes[0].Value?.ToString();
+                    if (!string.IsNullOrEmpty(serviceType))
+                    {
+                        registrations.AppendLine($"services.{registrationMethod}(typeof({serviceType}), typeof({implementationType}));");
+                    }
+                    else
+                    {
+                        registrations.AppendLine($"services.{registrationMethod}(typeof({implementationType}));");
+                    }
+                }
                 else
                 {
+                    // Multiple interfaces: register concrete type once, bridge each interface to it
+                    registrations.AppendLine($"services.{registrationMethod}(typeof({implementationType}));");
                     foreach (var exportedType in exportedTypes)
                     {
                         var serviceType = exportedType.Value?.ToString();
                         if (!string.IsNullOrEmpty(serviceType))
                         {
-                            registrations.AppendLine($"services.{registrationMethod}(typeof({serviceType}), typeof({implementationType}));");
-                        }
-                        else
-                        {
-                            registrations.AppendLine($"services.{registrationMethod}(typeof({implementationType}));");
+                            registrations.AppendLine($"services.{registrationMethod}(typeof({serviceType}), sp => sp.GetRequiredService(typeof({implementationType})));");
                         }
                     }
                 }
