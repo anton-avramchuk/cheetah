@@ -93,43 +93,69 @@ namespace {moduleSymbol.ContainingNamespace}
             {
                 var exportType = (LifetimeType)attribute.ConstructorArguments[0].Value!;
                 var exportedTypes = attribute.ConstructorArguments[1].Values;
-
-                var registrationMethod = exportType switch
-                {
-                    LifetimeType.Scoped => "AddScoped",
-                    LifetimeType.Transient => "AddTransient",
-                    LifetimeType.Singleton => "AddSingleton",
-                    _ => throw new NotImplementedException(),
-                };
+                var key = attribute.NamedArguments.FirstOrDefault(a => a.Key == "Key").Value.Value?.ToString();
 
                 string implementationType = GetTypeName(classSymbol);
 
-                if (exportedTypes.Length == 0)
+                if (key != null)
                 {
-                    registrations.AppendLine($"services.{registrationMethod}(typeof({implementationType}));");
-                }
-                else if (exportedTypes.Length == 1)
-                {
-                    var serviceType = exportedTypes[0].Value?.ToString();
-                    if (!string.IsNullOrEmpty(serviceType))
+                    // Keyed service registration
+                    var keyedMethod = exportType switch
                     {
-                        registrations.AppendLine($"services.{registrationMethod}(typeof({serviceType}), typeof({implementationType}));");
+                        LifetimeType.Scoped => "AddKeyedScoped",
+                        LifetimeType.Transient => "AddKeyedTransient",
+                        LifetimeType.Singleton => "AddKeyedSingleton",
+                        _ => throw new NotImplementedException(),
+                    };
+
+                    var escapedKey = key.Replace("\\", "\\\\").Replace("\"", "\\\"");
+
+                    if (exportedTypes.Length == 0)
+                    {
+                        registrations.AppendLine($"services.{keyedMethod}(typeof({implementationType}), \"{escapedKey}\", typeof({implementationType}));");
                     }
                     else
                     {
-                        registrations.AppendLine($"services.{registrationMethod}(typeof({implementationType}));");
+                        foreach (var exportedType in exportedTypes)
+                        {
+                            var serviceType = exportedType.Value?.ToString();
+                            var resolvedServiceType = !string.IsNullOrEmpty(serviceType) ? serviceType : implementationType;
+                            registrations.AppendLine($"services.{keyedMethod}(typeof({resolvedServiceType}), \"{escapedKey}\", typeof({implementationType}));");
+                        }
                     }
                 }
                 else
                 {
-                    // Multiple interfaces: register concrete type once, bridge each interface to it
-                    registrations.AppendLine($"services.{registrationMethod}(typeof({implementationType}));");
-                    foreach (var exportedType in exportedTypes)
+                    // Standard (non-keyed) registration
+                    var registrationMethod = exportType switch
                     {
-                        var serviceType = exportedType.Value?.ToString();
+                        LifetimeType.Scoped => "AddScoped",
+                        LifetimeType.Transient => "AddTransient",
+                        LifetimeType.Singleton => "AddSingleton",
+                        _ => throw new NotImplementedException(),
+                    };
+
+                    if (exportedTypes.Length == 0)
+                    {
+                        registrations.AppendLine($"services.{registrationMethod}(typeof({implementationType}));");
+                    }
+                    else if (exportedTypes.Length == 1)
+                    {
+                        var serviceType = exportedTypes[0].Value?.ToString();
                         if (!string.IsNullOrEmpty(serviceType))
+                            registrations.AppendLine($"services.{registrationMethod}(typeof({serviceType}), typeof({implementationType}));");
+                        else
+                            registrations.AppendLine($"services.{registrationMethod}(typeof({implementationType}));");
+                    }
+                    else
+                    {
+                        // Multiple interfaces: register concrete type once, bridge each interface to it
+                        registrations.AppendLine($"services.{registrationMethod}(typeof({implementationType}));");
+                        foreach (var exportedType in exportedTypes)
                         {
-                            registrations.AppendLine($"services.{registrationMethod}(typeof({serviceType}), sp => sp.GetRequiredService(typeof({implementationType})));");
+                            var serviceType = exportedType.Value?.ToString();
+                            if (!string.IsNullOrEmpty(serviceType))
+                                registrations.AppendLine($"services.{registrationMethod}(typeof({serviceType}), sp => sp.GetRequiredService(typeof({implementationType})));");
                         }
                     }
                 }
