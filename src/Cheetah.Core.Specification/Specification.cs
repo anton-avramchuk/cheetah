@@ -16,8 +16,11 @@ public abstract class Specification<T> : ISpecification<T>
     /// <returns>True if the specification is satisfied, otherwise false.</returns>
     public virtual bool IsSatisfiedBy(T obj)
     {
-        return ToExpression().Compile()(obj);
+        _compiled ??= ToExpression().Compile();
+        return _compiled(obj);
     }
+
+    private Func<T, bool>? _compiled;
 
     /// <summary>
     /// Gets the LINQ expression which represents the current specification.

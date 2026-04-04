@@ -22,6 +22,8 @@ public class AndNotSpecification<T> : CompositeSpecification<T>
     /// Gets the LINQ expression which represents the current specification.
     /// </summary>
     /// <returns>The LINQ expression.</returns>
+    public override bool IsSatisfiedBy(T obj) => Left.IsSatisfiedBy(obj) && !Right.IsSatisfiedBy(obj);
+
     public override Expression<Func<T, bool>> ToExpression()
     {
         var rightExpression = Right.ToExpression();

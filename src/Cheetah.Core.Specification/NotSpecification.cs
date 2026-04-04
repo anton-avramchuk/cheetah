@@ -23,6 +23,8 @@ public class NotSpecification<T> : Specification<T>
     /// Gets the LINQ expression which represents the current specification.
     /// </summary>
     /// <returns>The LINQ expression.</returns>
+    public override bool IsSatisfiedBy(T obj) => !_specification.IsSatisfiedBy(obj);
+
     public override Expression<Func<T, bool>> ToExpression()
     {
         var expression = _specification.ToExpression();
