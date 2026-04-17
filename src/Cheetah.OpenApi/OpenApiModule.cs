@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Text.Json.Serialization.Metadata;
 using Cheetah.AspNetCore;
 using Cheetah.AspNetCore.Extensions;
 using Cheetah.Core;
@@ -79,9 +80,17 @@ public partial class OpenApiModule : CrmModule
                     || schema.Properties.Count == 0)
                     return Task.CompletedTask;
 
+                // Map JSON property name → .NET type for fallback resolution
+                // when property schema uses $ref (Type == null, Format == null)
+                var dotNetProps = ctx.JsonTypeInfo.Properties
+                    .ToDictionary(p => p.Name, p => p.PropertyType, StringComparer.OrdinalIgnoreCase);
+
                 var example = new JsonObject();
                 foreach (var (name, propSchema) in schema.Properties)
-                    example[name] = GetExampleValue(propSchema);
+                {
+                    dotNetProps.TryGetValue(name, out var dotNetType);
+                    example[name] = GetExampleValue(propSchema, dotNetType);
+                }
                 schema.Example = example;
 
                 return Task.CompletedTask;
@@ -104,17 +113,26 @@ public partial class OpenApiModule : CrmModule
         Schema = new OpenApiSchema { Type = type }
     };
 
-    private static JsonNode GetExampleValue(IOpenApiSchema schema)
+    private static JsonNode GetExampleValue(IOpenApiSchema schema, Type? dotNetType = null)
     {
         if (schema.Example is not null)
             return schema.Example.DeepClone();
 
-        var type = schema.Type ?? (schema.Format switch
-        {
-            "int32" or "int64" => JsonSchemaType.Integer,
-            "float" or "double" => JsonSchemaType.Number,
-            _ => JsonSchemaType.String
-        });
+        // anyOf/oneOf: nullable types in OpenAPI 3.1 → pick first non-null inner schema
+        var inner = schema.AnyOf?.FirstOrDefault(s => s.Type != JsonSchemaType.Null)
+                 ?? schema.OneOf?.FirstOrDefault(s => s.Type != JsonSchemaType.Null);
+        if (inner is not null)
+            return GetExampleValue(inner, dotNetType);
+
+        // When schema.Type is null (e.g. $ref component schema), fall back to .NET type
+        var type = schema.Type
+            ?? DotNetTypeToJsonSchemaType(dotNetType)
+            ?? (schema.Format switch
+            {
+                "int32" or "int64" => JsonSchemaType.Integer,
+                "float" or "double" => JsonSchemaType.Number,
+                _ => JsonSchemaType.String
+            });
 
         if (type.HasFlag(JsonSchemaType.String))
             return schema.Format switch
@@ -140,5 +158,21 @@ public partial class OpenApiModule : CrmModule
         }
 
         return JsonValue.Create(string.Empty)!;
+    }
+
+    private static JsonSchemaType? DotNetTypeToJsonSchemaType(Type? type)
+    {
+        if (type is null) return null;
+        var underlying = Nullable.GetUnderlyingType(type) ?? type;
+        if (underlying == typeof(int)   || underlying == typeof(long)  ||
+            underlying == typeof(short) || underlying == typeof(byte)  ||
+            underlying == typeof(uint)  || underlying == typeof(ulong) ||
+            underlying == typeof(sbyte) || underlying == typeof(ushort))
+            return JsonSchemaType.Integer;
+        if (underlying == typeof(float) || underlying == typeof(double) || underlying == typeof(decimal))
+            return JsonSchemaType.Number;
+        if (underlying == typeof(bool))
+            return JsonSchemaType.Boolean;
+        return null;
     }
 }
