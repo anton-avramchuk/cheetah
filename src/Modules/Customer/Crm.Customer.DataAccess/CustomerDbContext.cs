@@ -1,3 +1,4 @@
+using Cheetah.Core.DataAccess.Attributes;
 using Cheetah.Core.EntityFramework;
 using Crm.Customer.DataAccess.Configurations;
 using Crm.Customer.Domain;
@@ -6,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Crm.Customer.DataAccess;
 
+[ConnectionStringName("Customer")]
 public class CustomerDbContext(DbContextOptions<CustomerDbContext> options)
     : CrmDbContext<CustomerDbContext>(options)
 {

@@ -1,6 +1,6 @@
+using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using System.Text.Json.Serialization.Metadata;
 using Cheetah.AspNetCore;
 using Cheetah.AspNetCore.Extensions;
 using Cheetah.Core;
@@ -81,9 +81,16 @@ public partial class OpenApiModule : CrmModule
                     return Task.CompletedTask;
 
                 // Map JSON property name → .NET type for fallback resolution
-                // when property schema uses $ref (Type == null, Format == null)
-                var dotNetProps = ctx.JsonTypeInfo.Properties
-                    .ToDictionary(p => p.Name, p => p.PropertyType, StringComparer.OrdinalIgnoreCase);
+                // when property schema uses $ref (Type == null, Format == null).
+                // Uses reflection instead of JsonTypeInfo.Properties because
+                // positional records use constructor-based serialization and
+                // JsonTypeInfo.Properties may be empty for them.
+                var dotNetProps = ctx.JsonTypeInfo.Type
+                    .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                    .ToDictionary(
+                        p => JsonNamingPolicy.CamelCase.ConvertName(p.Name),
+                        p => p.PropertyType,
+                        StringComparer.OrdinalIgnoreCase);
 
                 var example = new JsonObject();
                 foreach (var (name, propSchema) in schema.Properties)
@@ -134,6 +141,11 @@ public partial class OpenApiModule : CrmModule
                 _ => JsonSchemaType.String
             });
 
+        if (type.HasFlag(JsonSchemaType.Integer)) return JsonValue.Create(0)!;
+        if (type.HasFlag(JsonSchemaType.Number))  return JsonValue.Create(0.0)!;
+        if (type.HasFlag(JsonSchemaType.Boolean)) return JsonValue.Create(false)!;
+        if (type.HasFlag(JsonSchemaType.Array))   return new JsonArray();
+
         if (type.HasFlag(JsonSchemaType.String))
             return schema.Format switch
             {
@@ -142,11 +154,6 @@ public partial class OpenApiModule : CrmModule
                 "email"     => JsonValue.Create("user@example.com")!,
                 _           => JsonValue.Create("string")!,
             };
-
-        if (type.HasFlag(JsonSchemaType.Integer)) return JsonValue.Create(0)!;
-        if (type.HasFlag(JsonSchemaType.Number))  return JsonValue.Create(0.0)!;
-        if (type.HasFlag(JsonSchemaType.Boolean)) return JsonValue.Create(false)!;
-        if (type.HasFlag(JsonSchemaType.Array))   return new JsonArray();
 
         if (type.HasFlag(JsonSchemaType.Object))
         {
