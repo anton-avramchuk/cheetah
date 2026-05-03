@@ -30,6 +30,7 @@
         <Project Path="src/Cheetah.Core.Grid/Cheetah.Core.Grid.csproj" />
         <Project Path="src/Cheetah.Core.Security/Cheetah.Core.Security.csproj" />
         <Project Path="src/Cheetah.Core.Specification/Cheetah.Core.Specification.csproj" />
+        <Project Path="src/Cheetah.Core.StateMachine/Cheetah.Core.StateMachine.csproj" />
         <Project Path="src/Cheetah.Core.Tenants/Cheetah.Core.Tenants.csproj" />
         <Project Path="src/Cheetah.Core/Cheetah.Core.csproj" />
         <Project Path="src/Cheetah.CQRS.Dispatcher/Cheetah.CQRS.Dispatcher.csproj" />
@@ -121,6 +122,7 @@
         <Project Path="src/Cheetah.Core.Identity.Domain.Tests/Cheetah.Core.Identity.Domain.Tests.csproj" />
         <Project Path="src/Cheetah.Core.Tests/Cheetah.Core.Tests.csproj" />
         <Project Path="tests/Cheetah.Core.Specification.Tests/Cheetah.Core.Specification.Tests.csproj" />
+        <Project Path="tests/Cheetah.Core.StateMachine.Tests/Cheetah.Core.StateMachine.Tests.csproj" />
         <Project Path="tests/Cheetah.Core.Tenants.Tests/Cheetah.Core.Tenants.Tests.csproj" />
         <Project Path="tests/Cheetah.Tests.Core/Cheetah.Tests.Core.csproj" />
     </Folder>
