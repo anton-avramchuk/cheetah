@@ -112,6 +112,11 @@
         <File Path="nuget.config" />
         <File Path="pack.ps1" />
     </Folder>
+    <Folder Name="/src/">
+        <Project Path="src/Cheetah.Mapping.Expressions/Cheetah.Mapping.Expressions.csproj" />
+        <Project Path="src/Cheetah.Mapping.Generators.Tests/Cheetah.Mapping.Generators.Tests.csproj" />
+        <Project Path="src/Cheetah.Mapping.Generators/Cheetah.Mapping.Generators.csproj" />
+    </Folder>
 
     <Folder Name="/Tests/">
         <Project Path="src/Cheetah.Backend.Rsa.Tests/Cheetah.Backend.Rsa.Tests.csproj" />
