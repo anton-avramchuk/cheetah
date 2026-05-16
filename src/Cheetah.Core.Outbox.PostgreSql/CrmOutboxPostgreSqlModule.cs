@@ -2,6 +2,7 @@ using Cheetah.Core;
 using Cheetah.Core.Extensions.DependencyInjection;
 using Cheetah.Core.Modularity;
 using Cheetah.Core.Outbox;
+using Cheetah.Core.Outbox.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
@@ -14,7 +15,7 @@ namespace Cheetah.Core.Outbox.PostgreSql;
 /// Polling в OutboxProcessor остаётся как fallback — НЕ убирать.
 /// </summary>
 [DependsOn(typeof(CoreModule))]
-[DependsOn(typeof(CrmOutboxModule))]
+[DependsOn(typeof(CrmOutboxModule), typeof(CrmOutboxEntityFrameworkCoreModule))]
 public partial class CrmOutboxPostgreSqlModule : CrmModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)

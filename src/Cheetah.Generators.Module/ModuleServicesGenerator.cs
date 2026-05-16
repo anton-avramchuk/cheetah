@@ -13,6 +13,10 @@ public class ModuleServicesGenerator : IIncrementalGenerator
 {
     private const string ErrorCode = "MODGEN001";
     private static string ErrorCategory = nameof(ModuleServicesGenerator);
+    private const string IdempotentAttributeName = "Cheetah.Core.Outbox.IdempotentAttribute";
+    private const string EventHandlerInterfacePrefix = "Cheetah.Core.Events.IEventHandler<";
+    private const string IdempotentDecoratorTypeName = "Cheetah.Core.Outbox.InboxIdempotentEventHandler";
+    private const string InboxStoreTypeName = "Cheetah.Core.Outbox.IInboxStore";
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
         // Находим все классы, реализующие IModule
@@ -88,7 +92,10 @@ namespace {moduleSymbol.ContainingNamespace}
         {
             if(classSymbol.IsAbstract)
                 continue;
-            
+
+            var isIdempotent = classSymbol.GetAttributes()
+                .Any(a => a.AttributeClass?.ToDisplayString() == IdempotentAttributeName);
+
             foreach (var attribute in classSymbol.GetAttributes().Where(a => a.AttributeClass?.ToDisplayString() == Constants.ExportAttributeName))
             {
                 var exportType = (LifetimeType)attribute.ConstructorArguments[0].Value!;
@@ -143,9 +150,20 @@ namespace {moduleSymbol.ContainingNamespace}
                     {
                         var serviceType = exportedTypes[0].Value?.ToString();
                         if (!string.IsNullOrEmpty(serviceType))
-                            registrations.AppendLine($"services.{registrationMethod}(typeof({serviceType}), typeof({implementationType}));");
+                        {
+                            if (isIdempotent && IsEventHandlerInterface(serviceType, out var eventType))
+                            {
+                                AppendIdempotentRegistration(registrations, registrationMethod, implementationType, eventType);
+                            }
+                            else
+                            {
+                                registrations.AppendLine($"services.{registrationMethod}(typeof({serviceType}), typeof({implementationType}));");
+                            }
+                        }
                         else
+                        {
                             registrations.AppendLine($"services.{registrationMethod}(typeof({implementationType}));");
+                        }
                     }
                     else
                     {
@@ -154,8 +172,17 @@ namespace {moduleSymbol.ContainingNamespace}
                         foreach (var exportedType in exportedTypes)
                         {
                             var serviceType = exportedType.Value?.ToString();
-                            if (!string.IsNullOrEmpty(serviceType))
+                            if (string.IsNullOrEmpty(serviceType))
+                                continue;
+
+                            if (isIdempotent && IsEventHandlerInterface(serviceType, out var eventType))
+                            {
+                                AppendIdempotentBridge(registrations, registrationMethod, implementationType, eventType);
+                            }
+                            else
+                            {
                                 registrations.AppendLine($"services.{registrationMethod}(typeof({serviceType}), sp => sp.GetRequiredService(typeof({implementationType})));");
+                            }
                         }
                     }
                 }
@@ -163,6 +190,45 @@ namespace {moduleSymbol.ContainingNamespace}
         }
 
         return registrations.ToString();
+    }
+
+    /// <summary>
+    /// Проверяет, является ли строка вида "Cheetah.Core.Events.IEventHandler&lt;TEvent&gt;"
+    /// и извлекает TEvent.
+    /// </summary>
+    private static bool IsEventHandlerInterface(string serviceTypeName, out string eventType)
+    {
+        eventType = string.Empty;
+        if (!serviceTypeName.StartsWith(EventHandlerInterfacePrefix) || !serviceTypeName.EndsWith(">"))
+            return false;
+
+        eventType = serviceTypeName.Substring(
+            EventHandlerInterfacePrefix.Length,
+            serviceTypeName.Length - EventHandlerInterfacePrefix.Length - 1);
+        return eventType.Length > 0;
+    }
+
+    private static void AppendIdempotentRegistration(StringBuilder sb, string registrationMethod, string implementationType, string eventType)
+    {
+        // Регистрируем сам хендлер, чтобы декоратор мог его получить
+        sb.AppendLine($"services.{registrationMethod}(typeof({implementationType}));");
+        sb.AppendLine(
+            $"services.{registrationMethod}<global::{EventHandlerInterfacePrefix.TrimEnd('<')}<global::{eventType}>>(sp => " +
+            $"new global::{IdempotentDecoratorTypeName}<global::{eventType}>(" +
+            $"(global::{EventHandlerInterfacePrefix.TrimEnd('<')}<global::{eventType}>)sp.GetRequiredService(typeof({implementationType})), " +
+            $"sp.GetRequiredService<global::{InboxStoreTypeName}>(), " +
+            $"sp.GetRequiredService<global::Microsoft.Extensions.Logging.ILogger<global::{IdempotentDecoratorTypeName}<global::{eventType}>>>()));");
+    }
+
+    private static void AppendIdempotentBridge(StringBuilder sb, string registrationMethod, string implementationType, string eventType)
+    {
+        // Конкретный тип уже зарегистрирован выше. Только bridge на IEventHandler через декоратор.
+        sb.AppendLine(
+            $"services.{registrationMethod}<global::{EventHandlerInterfacePrefix.TrimEnd('<')}<global::{eventType}>>(sp => " +
+            $"new global::{IdempotentDecoratorTypeName}<global::{eventType}>(" +
+            $"(global::{EventHandlerInterfacePrefix.TrimEnd('<')}<global::{eventType}>)sp.GetRequiredService(typeof({implementationType})), " +
+            $"sp.GetRequiredService<global::{InboxStoreTypeName}>(), " +
+            $"sp.GetRequiredService<global::Microsoft.Extensions.Logging.ILogger<global::{IdempotentDecoratorTypeName}<global::{eventType}>>>()));");
     }
 
     /// <summary>

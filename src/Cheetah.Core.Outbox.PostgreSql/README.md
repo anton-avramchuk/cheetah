@@ -16,8 +16,10 @@ Polling **не отключается** — `pg_notify` может терять�
 | Тип | Назначение |
 |-----|------------|
 | `PostgresOutboxNotifier` | `IOutboxNotifier` + `BackgroundService` с долгоживущим LISTEN-коннектом |
-| `PostgresOutboxOptions` | `ChannelName`, `ConnectionString`/`ConnectionStringName`, `BaseReconnectDelay`, `MaxReconnectDelay` |
+| `PostgresOutboxStore<TContext>` | Multi-instance-safe `IOutboxStore` через `SELECT ... FOR UPDATE SKIP LOCKED` + claim-by-update |
+| `PostgresOutboxOptions` | `ChannelName`, `ConnectionString`/`ConnectionStringName`, `BaseReconnectDelay`, `MaxReconnectDelay`, `ClaimTimeout` |
 | `OutboxNotifyTriggerSql` | SQL для миграций: `Create()` / `Drop()` |
+| `services.AddPostgresOutboxStore<TContext>()` | Регистрирует `PostgresOutboxStore` как `IOutboxStore` |
 | `CrmOutboxPostgreSqlModule` | Перекрывает `IOutboxNotifier` с заглушки на `PostgresOutboxNotifier` |
 
 ## Подключение
@@ -73,6 +75,19 @@ public partial class AddOutboxNotifyTrigger : Migration
 ## Connection string
 
 Notifier держит **отдельный** коннект (не из EF-пула), потому что LISTEN — долгоживущий. По умолчанию читает `ConnectionStrings:Outbox`. Можно явно задать в `PostgresOutboxOptions.ConnectionString`. Желательно использовать read-only учётку с правом `LISTEN`.
+
+## Multi-instance (SKIP LOCKED)
+
+Если приложение запускается в нескольких репликах, используй `PostgresOutboxStore` вместо обычного `EfOutboxStore`:
+
+```csharp
+context.Services.AddDbContext<MyDbContext>(...);
+context.Services.AddPostgresOutboxStore<MyDbContext>();  // вместо AddOutboxStore<MyDbContext>()
+```
+
+Чтение через `SELECT ... FOR UPDATE SKIP LOCKED` атомарно блокирует пачку и сдвигает `NextAttemptAt` на `ClaimTimeout` (default 5 минут). Другие реплики эти строки не увидят. Если процесс упадёт между claim и `MarkProcessedAsync` — через `ClaimTimeout` сообщения опять станут видимы и кто-то другой их подберёт.
+
+> Inbox-декоратор у consumer'а съест возможные дубликаты, если две реплики всё-таки опубликуют одно сообщение в пограничном случае (claim истёк, но первый processor ещё в полёте).
 
 ## Tradeoffs
 

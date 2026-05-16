@@ -3,9 +3,12 @@
     <ItemGroup>
         <ProjectReference Include="..\Cheetah.Core\Cheetah.Core.csproj" />
         <ProjectReference Include="..\Cheetah.Core.Outbox\Cheetah.Core.Outbox.csproj" />
+        <ProjectReference Include="..\Cheetah.Core.Outbox.EntityFrameworkCore\Cheetah.Core.Outbox.EntityFrameworkCore.csproj" />
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="Microsoft.EntityFrameworkCore" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
         <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />

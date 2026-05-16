@@ -25,4 +25,11 @@ public class PostgresOutboxOptions
     public TimeSpan BaseReconnectDelay { get; set; } = TimeSpan.FromSeconds(1);
 
     public TimeSpan MaxReconnectDelay { get; set; } = TimeSpan.FromSeconds(30);
+
+    /// <summary>
+    /// Сколько времени сообщение считается захваченным одной репликой при чтении через
+    /// PostgresOutboxStore (SKIP LOCKED + claim-by-update). Если за это время processor
+    /// не успел пометить ProcessedAt — другая реплика подхватит сообщение.
+    /// </summary>
+    public TimeSpan ClaimTimeout { get; set; } = TimeSpan.FromMinutes(5);
 }
