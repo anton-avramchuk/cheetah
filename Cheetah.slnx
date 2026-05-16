@@ -9,6 +9,7 @@
         <Project Path="src/Cheetah.Generators.Core/Cheetah.Generators.Core.csproj" />
         <Project Path="src/Cheetah.Generators.Endpoints/Cheetah.Generators.Endpoints.csproj" />
         <Project Path="src/Cheetah.Generators.Module/Cheetah.Generators.Module.csproj" />
+        <Project Path="src/Cheetah.Mapping.Generators/Cheetah.Mapping.Generators.csproj" />
     </Folder>
     <Folder Name="/Core/">
         <Project Path="src/Cheetah.AspNetCore.Contracts/Cheetah.AspNetCore.Contracts.csproj" />
@@ -35,6 +36,7 @@
         <Project Path="src/Cheetah.Core/Cheetah.Core.csproj" />
         <Project Path="src/Cheetah.CQRS.Dispatcher/Cheetah.CQRS.Dispatcher.csproj" />
         <Project Path="src/Cheetah.Mapping.Core/Cheetah.Mapping.Core.csproj" />
+        <Project Path="src/Cheetah.Mapping.Expressions/Cheetah.Mapping.Expressions.csproj" />
         <Project Path="src/Cheetah.Mapping.Mapster/Cheetah.Mapping.Mapster.csproj" />
     </Folder>
     <Folder Name="/Core/Backend/">
@@ -112,11 +114,6 @@
         <File Path="nuget.config" />
         <File Path="pack.ps1" />
     </Folder>
-    <Folder Name="/src/">
-        <Project Path="src/Cheetah.Mapping.Expressions/Cheetah.Mapping.Expressions.csproj" />
-        <Project Path="src/Cheetah.Mapping.Generators.Tests/Cheetah.Mapping.Generators.Tests.csproj" />
-        <Project Path="src/Cheetah.Mapping.Generators/Cheetah.Mapping.Generators.csproj" />
-    </Folder>
 
     <Folder Name="/Tests/">
         <Project Path="src/Cheetah.Backend.Rsa.Tests/Cheetah.Backend.Rsa.Tests.csproj" />
@@ -126,6 +123,7 @@
         <Project Path="src/Cheetah.Core.Domain.Tests/Cheetah.Core.Domain.Tests.csproj" />
         <Project Path="src/Cheetah.Core.Identity.Domain.Tests/Cheetah.Core.Identity.Domain.Tests.csproj" />
         <Project Path="src/Cheetah.Core.Tests/Cheetah.Core.Tests.csproj" />
+        <Project Path="src/Cheetah.Mapping.Generators.Tests/Cheetah.Mapping.Generators.Tests.csproj" />
         <Project Path="tests/Cheetah.Core.Specification.Tests/Cheetah.Core.Specification.Tests.csproj" />
         <Project Path="tests/Cheetah.Core.StateMachine.Tests/Cheetah.Core.StateMachine.Tests.csproj" />
         <Project Path="tests/Cheetah.Core.Tenants.Tests/Cheetah.Core.Tenants.Tests.csproj" />

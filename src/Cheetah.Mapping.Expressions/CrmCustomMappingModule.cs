@@ -11,9 +11,7 @@ public partial class CrmCustomMappingModule : CrmModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
-        
-        // Регистрация кастомного маппера как Singleton, 
-        // так как он имеет внутренний статический кэш
+        // Singleton — у маппера внутренний статический кэш скомпилированных делегатов.
         context.Services.AddSingleton<IObjectMapper, ExpressionObjectMapper>();
     }
 }
