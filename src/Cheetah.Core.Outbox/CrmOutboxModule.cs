@@ -3,6 +3,7 @@ using Cheetah.Core.Events;
 using Cheetah.Core.Extensions.DependencyInjection;
 using Cheetah.Core.Modularity;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 
 namespace Cheetah.Core.Outbox;
@@ -31,6 +32,7 @@ public partial class CrmOutboxModule : CrmModule
 
         RegisterServices(services);
 
+        services.TryAddSingleton<IOutboxNotifier, NullOutboxNotifier>();
         services.AddSingleton<IHostedService, OutboxProcessor>();
     }
 

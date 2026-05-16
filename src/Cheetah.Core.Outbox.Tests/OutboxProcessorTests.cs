@@ -88,7 +88,14 @@ public class OutboxProcessorTests
 
         return new OutboxProcessor(
             sp,
+            new NeverSignalsNotifier(),
             Microsoft.Extensions.Options.Options.Create(options ?? new OutboxOptions { PollingInterval = TimeSpan.FromMilliseconds(100) }),
             NullLogger<OutboxProcessor>.Instance);
+    }
+
+    private sealed class NeverSignalsNotifier : IOutboxNotifier
+    {
+        public ValueTask WaitForSignalAsync(CancellationToken cancellationToken)
+            => new(Task.Delay(Timeout.Infinite, cancellationToken));
     }
 }

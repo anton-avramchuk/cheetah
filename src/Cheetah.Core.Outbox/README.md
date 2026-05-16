@@ -37,7 +37,10 @@ CrmRedisEventBus (или другой транспорт)
 | `OutboxMessage` / `InboxMessage` | Entity-записи |
 | `OutboxEventBus` | Scoped-декоратор `IEventBus`, пишет в outbox вместо немедленной отправки |
 | `IInnerEventBus` | Адаптер над реальным транспортом, который зовёт processor |
-| `OutboxProcessor` | `BackgroundService` с polling + экспоненциальный backoff |
+| `OutboxProcessor` | `BackgroundService` с polling + сигнал от `IOutboxNotifier` (что раньше) |
+| `IOutboxNotifier` | Источник пробуждения processor'а. По умолчанию — `NullOutboxNotifier` (только polling). См. `Cheetah.Core.Outbox.PostgreSql` для LISTEN/NOTIFY |
+| `InboxIdempotentEventHandler<TEvent>` | Декоратор IEventHandler: проверка `IInboxStore.AlreadyProcessedAsync` до вызова + запись `InboxMessage` после |
+| `[Idempotent]` | Атрибут-маркер для Source Generator (или ручной `AddIdempotentHandler<TEvent, THandler>()`) |
 | `OutboxOptions` | `BatchSize`, `PollingInterval`, `MaxRetries`, `BaseRetryDelay`, `MaxRetryDelay` |
 | `CrmOutboxModule` | Перехватывает регистрацию `IEventBus`, переносит её на `IInnerEventBus`, регистрирует `OutboxEventBus` и `OutboxProcessor` |
 
@@ -95,17 +98,25 @@ public async ValueTask<Guid> HandleAsync(CreateMyEntityCommand cmd, Cancellation
 
 ## Идемпотентность consumer'а
 
-Outbox защищает publisher'а. На стороне consumer'а используй `IInboxStore`:
+Outbox защищает publisher'а. Для consumer'а используй декоратор `InboxIdempotentEventHandler<TEvent>`:
 
 ```csharp
-public async ValueTask HandleAsync(MyEvent e, CancellationToken ct)
+// в ConfigureServices модуля:
+services.AddIdempotentHandler<MyEvent, MyEventHandler>();
+```
+
+или маркер `[Idempotent]` (требует Source Generator поддержки в `Cheetah.Generators.Application`):
+
+```csharp
+[Idempotent]
+public class MyEventHandler : IEventHandler<MyEvent>
 {
-    if (await _inbox.AlreadyProcessedAsync(e.EventId, nameof(MyEventHandler), ct))
-        return;
-
-    // ... бизнес-логика ...
-
-    await _inbox.AddAsync(new InboxMessage { EventId = e.EventId, ConsumerName = nameof(MyEventHandler), EventType = typeof(MyEvent).FullName! }, ct);
-    await _context.SaveChangesAsync(ct);
+    public async ValueTask HandleAsync(MyEvent e, CancellationToken ct)
+    {
+        // бизнес-логика + _context.SaveChangesAsync(ct)
+        // Inbox-запись добавит декоратор, она зафиксируется в той же транзакции.
+    }
 }
 ```
+
+**Важно:** хендлер сам зовёт `SaveChangesAsync` на том же DbContext, что использует `IInboxStore` — иначе атомарности нет.

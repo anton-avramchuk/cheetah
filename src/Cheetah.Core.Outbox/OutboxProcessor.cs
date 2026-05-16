@@ -17,15 +17,18 @@ public sealed class OutboxProcessor : BackgroundService
         ?? throw new InvalidOperationException("IEventBus.PublishAsync not found");
 
     private readonly IServiceProvider _serviceProvider;
+    private readonly IOutboxNotifier _notifier;
     private readonly OutboxOptions _options;
     private readonly ILogger<OutboxProcessor> _logger;
 
     public OutboxProcessor(
         IServiceProvider serviceProvider,
+        IOutboxNotifier notifier,
         IOptions<OutboxOptions> options,
         ILogger<OutboxProcessor> logger)
     {
         _serviceProvider = serviceProvider;
+        _notifier = notifier;
         _options = options.Value;
         _logger = logger;
     }
@@ -50,11 +53,16 @@ public sealed class OutboxProcessor : BackgroundService
                 _logger.LogError(ex, "Outbox processor batch failed");
             }
 
-            try
-            {
-                await Task.Delay(_options.PollingInterval, stoppingToken);
-            }
-            catch (OperationCanceledException)
+            // Просыпаемся либо по polling-таймеру (fallback + retry), либо по внешнему сигналу
+            // (LISTEN/NOTIFY в реализации Postgres). Что наступит раньше.
+            using var combined = CancellationTokenSource.CreateLinkedTokenSource(stoppingToken);
+            var delay = Task.Delay(_options.PollingInterval, combined.Token);
+            var signal = _notifier.WaitForSignalAsync(combined.Token).AsTask();
+
+            await Task.WhenAny(delay, signal);
+            combined.Cancel(); // отменяем второго ожидающего, чтобы не висел
+
+            if (stoppingToken.IsCancellationRequested)
             {
                 break;
             }

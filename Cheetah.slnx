@@ -30,6 +30,7 @@
         <Project Path="src/Cheetah.Core.Events/Cheetah.Core.Events.csproj" />
         <Project Path="src/Cheetah.Core.Outbox/Cheetah.Core.Outbox.csproj" />
         <Project Path="src/Cheetah.Core.Outbox.EntityFrameworkCore/Cheetah.Core.Outbox.EntityFrameworkCore.csproj" />
+        <Project Path="src/Cheetah.Core.Outbox.PostgreSql/Cheetah.Core.Outbox.PostgreSql.csproj" />
         <Project Path="src/Cheetah.Core.Grid/Cheetah.Core.Grid.csproj" />
         <Project Path="src/Cheetah.Core.Security/Cheetah.Core.Security.csproj" />
         <Project Path="src/Cheetah.Core.Specification/Cheetah.Core.Specification.csproj" />
@@ -122,6 +123,7 @@
         <Project Path="src/Cheetah.Backend.Events.InMemory.Tests/Cheetah.Backend.Events.InMemory.Tests.csproj" />
         <Project Path="src/Cheetah.Backend.Events.Redis.Tests/Cheetah.Backend.Events.Redis.Tests.csproj" />
         <Project Path="src/Cheetah.Core.Outbox.Tests/Cheetah.Core.Outbox.Tests.csproj" />
+        <Project Path="src/Cheetah.Core.Outbox.PostgreSql.Tests/Cheetah.Core.Outbox.PostgreSql.Tests.csproj" />
         <Project Path="src/Cheetah.Backend.Redis.Tests/Cheetah.Backend.Redis.Tests.csproj" />
         <Project Path="src/Cheetah.Core.Domain.Tests/Cheetah.Core.Domain.Tests.csproj" />
         <Project Path="src/Cheetah.Core.Identity.Domain.Tests/Cheetah.Core.Identity.Domain.Tests.csproj" />
