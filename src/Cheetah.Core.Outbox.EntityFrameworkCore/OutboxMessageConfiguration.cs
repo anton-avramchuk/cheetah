@@ -33,3 +33,20 @@ public class InboxMessageConfiguration : IEntityTypeConfiguration<InboxMessage>
         builder.Property(x => x.ReceivedAt).IsRequired();
     }
 }
+
+public class DeadLetterMessageConfiguration : IEntityTypeConfiguration<DeadLetterMessage>
+{
+    public void Configure(EntityTypeBuilder<DeadLetterMessage> builder)
+    {
+        builder.ToTable("DeadLetterMessages");
+        builder.HasKey(x => x.Id);
+
+        builder.Property(x => x.EventType).IsRequired().HasMaxLength(512);
+        builder.Property(x => x.Payload).IsRequired();
+        builder.Property(x => x.OccurredAt).IsRequired();
+        builder.Property(x => x.MovedToDeadLetterAt).IsRequired();
+        builder.Property(x => x.LastError).HasMaxLength(4000);
+
+        builder.HasIndex(x => x.MovedToDeadLetterAt);
+    }
+}

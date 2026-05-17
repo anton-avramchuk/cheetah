@@ -13,7 +13,8 @@ EF Core реализация `IOutboxStore` / `IInboxStore` для [Cheetah.Core
 | `OutboxMessageConfiguration` | EF-конфигурация + индекс `IX_OutboxMessages_Pending` (`ProcessedAt`, `NextAttemptAt`, `OccurredAt`) |
 | `InboxMessageConfiguration` | EF-конфигурация (составной ключ `EventId + ConsumerName`) |
 | `ModelBuilder.AddOutbox()` / `AddInbox()` | Расширения для `OnModelCreating` |
-| `services.AddOutboxStore<TContext>()` / `AddInboxStore<TContext>()` | DI-расширения |
+| `services.AddOutboxStore<TContext>()` / `AddInboxStore<TContext>()` / `AddDeadLetterStore<TContext>()` | DI-расширения |
+| `IDeadLetterDbContext` / `EfDeadLetterStore<TContext>` / `DeadLetterMessageConfiguration` / `modelBuilder.AddDeadLetter()` | EF Core реализация DLQ |
 | `CrmOutboxEntityFrameworkCoreModule` | Зависит от `CrmEntityFrameworkModule` + `CrmOutboxModule` |
 
 ## Подключение

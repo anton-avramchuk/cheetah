@@ -24,4 +24,14 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IInboxStore, EfInboxStore<TContext>>();
         return services;
     }
+
+    /// <summary>
+    /// Регистрирует EfDeadLetterStore поверх указанного DbContext'a как реализацию IDeadLetterStore.
+    /// </summary>
+    public static IServiceCollection AddDeadLetterStore<TContext>(this IServiceCollection services)
+        where TContext : DbContext, IDeadLetterDbContext
+    {
+        services.AddScoped<IDeadLetterStore, EfDeadLetterStore<TContext>>();
+        return services;
+    }
 }

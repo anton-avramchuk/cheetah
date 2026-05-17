@@ -16,6 +16,10 @@ public sealed class OutboxProcessor : BackgroundService
         .GetMethod(nameof(IEventBus.PublishAsync))
         ?? throw new InvalidOperationException("IEventBus.PublishAsync not found");
 
+    private static readonly MethodInfo PublishManyAsyncMethod = typeof(IEventBus)
+        .GetMethod(nameof(IEventBus.PublishManyAsync))
+        ?? throw new InvalidOperationException("IEventBus.PublishManyAsync not found");
+
     private readonly IServiceProvider _serviceProvider;
     private readonly IOutboxNotifier _notifier;
     private readonly OutboxMetrics _metrics;
@@ -77,6 +81,7 @@ public sealed class OutboxProcessor : BackgroundService
         using var scope = _serviceProvider.CreateScope();
         var store = scope.ServiceProvider.GetRequiredService<IOutboxStore>();
         var inner = scope.ServiceProvider.GetRequiredService<IInnerEventBus>();
+        var dlq = scope.ServiceProvider.GetService<IDeadLetterStore>(); // опционально
 
         var pending = await store.GetPendingAsync(_options.BatchSize, ct);
         if (pending.Count == 0)
@@ -84,36 +89,99 @@ public sealed class OutboxProcessor : BackgroundService
             return;
         }
 
-        foreach (var message in pending)
+        // Группируем по EventType: PublishManyAsync<TEvent> экономит round-trip'ы в транспорт.
+        foreach (var group in pending.GroupBy(m => m.EventType))
         {
             ct.ThrowIfCancellationRequested();
+            await ProcessGroupAsync(store, inner, dlq, group.Key, group.ToList(), ct);
+        }
+    }
 
-            var startedAt = System.Diagnostics.Stopwatch.GetTimestamp();
-            try
+    private async Task ProcessGroupAsync(
+        IOutboxStore store, IInnerEventBus inner, IDeadLetterStore? dlq, string eventTypeName, IReadOnlyList<OutboxMessage> messages, CancellationToken ct)
+    {
+        var startedAt = System.Diagnostics.Stopwatch.GetTimestamp();
+        Type? eventType = null;
+        Array? eventsArray = null;
+        try
+        {
+            // Десериализуем всю группу в типизированный массив TEvent[].
+            for (var i = 0; i < messages.Count; i++)
             {
-                var (type, @event) = OutboxEventSerializer.Deserialize(message);
-                var generic = PublishAsyncMethod.MakeGenericMethod(type);
-                var task = (ValueTask)generic.Invoke(inner, new object[] { @event, ct })!;
+                var (type, @event) = OutboxEventSerializer.Deserialize(messages[i]);
+                eventType ??= type;
+                if (type != eventType)
+                {
+                    // Один и тот же EventType.AssemblyQualifiedName, но разные Type? Аномалия.
+                    throw new InvalidOperationException(
+                        $"Inconsistent event type within group '{eventTypeName}'");
+                }
+                eventsArray ??= Array.CreateInstance(eventType, messages.Count);
+                eventsArray.SetValue(@event, i);
+            }
+
+            if (messages.Count == 1)
+            {
+                var generic = PublishAsyncMethod.MakeGenericMethod(eventType!);
+                var task = (ValueTask)generic.Invoke(inner, new object[] { eventsArray!.GetValue(0)!, ct })!;
                 await task;
-
-                await store.MarkProcessedAsync(message.Id, ct);
-
-                var elapsedMs = System.Diagnostics.Stopwatch.GetElapsedTime(startedAt).TotalMilliseconds;
-                _metrics.PublishLatencyMs.Record(elapsedMs,
-                    new KeyValuePair<string, object?>("event_type", message.EventType));
-                _metrics.Published.Add(1,
-                    new KeyValuePair<string, object?>("event_type", message.EventType));
             }
-            catch (Exception ex)
+            else
             {
-                var nextAttempt = ComputeNextAttempt(message.RetryCount);
-                _logger.LogWarning(ex, "Failed to publish outbox message {MessageId} (attempt {Retry}); next attempt at {NextAttempt}",
-                    message.Id, message.RetryCount + 1, nextAttempt);
-
-                await store.MarkFailedAsync(message.Id, ex.ToString(), nextAttempt, ct);
-                _metrics.Failed.Add(1,
-                    new KeyValuePair<string, object?>("event_type", message.EventType));
+                var generic = PublishManyAsyncMethod.MakeGenericMethod(eventType!);
+                var task = (ValueTask)generic.Invoke(inner, new object[] { eventsArray!, ct })!;
+                await task;
             }
+
+            // Все ушли успехом — батчем помечаем processed.
+            foreach (var msg in messages)
+            {
+                await store.MarkProcessedAsync(msg.Id, ct);
+            }
+
+            var elapsedMs = System.Diagnostics.Stopwatch.GetElapsedTime(startedAt).TotalMilliseconds;
+            _metrics.PublishLatencyMs.Record(elapsedMs / messages.Count,
+                new KeyValuePair<string, object?>("event_type", eventTypeName));
+            _metrics.Published.Add(messages.Count,
+                new KeyValuePair<string, object?>("event_type", eventTypeName));
+        }
+        catch (Exception batchEx) when (messages.Count > 1)
+        {
+            // Батч упал целиком — мы не знаем, какое сообщение виновато.
+            // Откатываемся на per-message retry, чтобы точно посчитать RetryCount по каждому.
+            _logger.LogWarning(batchEx, "Batch publish failed for '{EventType}' ({Count} messages); falling back to per-message",
+                eventTypeName, messages.Count);
+
+            foreach (var msg in messages)
+            {
+                await ProcessGroupAsync(store, inner, dlq, eventTypeName, new[] { msg }, ct);
+            }
+        }
+        catch (Exception ex)
+        {
+            // messages.Count == 1: одиночное сообщение упало.
+            var msg = messages[0];
+            var nextRetry = msg.RetryCount + 1;
+
+            // Превышен лимит → DLQ (если зарегистрирован), иначе откладываем "далеко в будущее".
+            if (nextRetry > _options.MaxRetries && dlq is not null)
+            {
+                _logger.LogError(ex, "Outbox message {MessageId} exceeded MaxRetries ({Max}); moving to dead-letter",
+                    msg.Id, _options.MaxRetries);
+
+                await dlq.MoveFromOutboxAsync(msg, ex.ToString(), ct);
+                _metrics.Failed.Add(1,
+                    new KeyValuePair<string, object?>("event_type", eventTypeName),
+                    new KeyValuePair<string, object?>("dead_letter", true));
+                return;
+            }
+
+            var nextAttempt = ComputeNextAttempt(msg.RetryCount);
+            _logger.LogWarning(ex, "Failed to publish outbox message {MessageId} (attempt {Retry}); next attempt at {NextAttempt}",
+                msg.Id, nextRetry, nextAttempt);
+
+            await store.MarkFailedAsync(msg.Id, ex.ToString(), nextAttempt, ct);
+            _metrics.Failed.Add(1, new KeyValuePair<string, object?>("event_type", eventTypeName));
         }
     }
 

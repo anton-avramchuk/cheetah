@@ -39,6 +39,7 @@ CrmRedisEventBus (или другой транспорт)
 | `IInnerEventBus` | Адаптер над реальным транспортом, который зовёт processor |
 | `OutboxProcessor` | `BackgroundService` с polling + сигнал от `IOutboxNotifier` (что раньше) |
 | `OutboxCleanupService` | `BackgroundService`: удаляет обработанные `OutboxMessages` и старые `InboxMessages` старше `RetentionPeriod` (default 7 дней), batch'ами |
+| `IDeadLetterStore` / `DeadLetterMessage` | DLQ: при превышении `MaxRetries` сообщение переезжает в `DeadLetterMessages` (если store зарегистрирован), освобождая горячую таблицу. `RequeueAsync` возвращает обратно с обнулённым `RetryCount` |
 | `OutboxMetrics` | OpenTelemetry-метрики: counters `outbox.published`, `outbox.failed`, `outbox.cleaned`; histogram `outbox.publish_latency`. Meter name: `Cheetah.Core.Outbox` |
 | `IOutboxNotifier` | Источник пробуждения processor'а. По умолчанию — `NullOutboxNotifier` (только polling). См. `Cheetah.Core.Outbox.PostgreSql` для LISTEN/NOTIFY |
 | `InboxIdempotentEventHandler<TEvent>` | Декоратор IEventHandler: проверка `IInboxStore.AlreadyProcessedAsync` до вызова + запись `InboxMessage` после |

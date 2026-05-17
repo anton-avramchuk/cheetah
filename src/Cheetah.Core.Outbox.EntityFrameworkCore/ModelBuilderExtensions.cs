@@ -22,4 +22,13 @@ public static class ModelBuilderExtensions
         modelBuilder.ApplyConfiguration(new InboxMessageConfiguration());
         return modelBuilder;
     }
+
+    /// <summary>
+    /// Подключает таблицу DeadLetterMessages к модели DbContext'a.
+    /// </summary>
+    public static ModelBuilder AddDeadLetter(this ModelBuilder modelBuilder)
+    {
+        modelBuilder.ApplyConfiguration(new DeadLetterMessageConfiguration());
+        return modelBuilder;
+    }
 }

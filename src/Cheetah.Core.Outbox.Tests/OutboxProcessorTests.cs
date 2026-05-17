@@ -41,6 +41,41 @@ public class OutboxProcessorTests
     }
 
     [Fact]
+    public async Task Группа_одинаковых_событий_публикуется_через_PublishManyAsync()
+    {
+        var msgs = Enumerable.Range(0, 5).Select(i =>
+            OutboxEventSerializer.Serialize(new TestEvent($"evt-{i}"))).ToList();
+
+        var store = new Mock<IOutboxStore>();
+        var first = true;
+        store.Setup(s => s.GetPendingAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
+            .Returns(() => first
+                ? new ValueTask<IReadOnlyList<OutboxMessage>>(msgs.AsReadOnly())
+                : new ValueTask<IReadOnlyList<OutboxMessage>>(Array.Empty<OutboxMessage>()))
+            .Callback(() => first = false);
+        store.Setup(s => s.MarkProcessedAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).Returns(ValueTask.CompletedTask);
+
+        var inner = new Mock<IInnerEventBus>();
+        var publishedBatch = 0;
+        inner.Setup(b => b.PublishManyAsync(It.IsAny<IEnumerable<TestEvent>>(), It.IsAny<CancellationToken>()))
+            .Returns<IEnumerable<TestEvent>, CancellationToken>((events, _) =>
+            {
+                publishedBatch = events.Count();
+                return ValueTask.CompletedTask;
+            });
+
+        var sut = BuildProcessor(store.Object, inner.Object);
+        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(2));
+        await sut.StartAsync(cts.Token);
+        await Task.Delay(500);
+        await sut.StopAsync(CancellationToken.None);
+
+        publishedBatch.ShouldBe(5);
+        inner.Verify(b => b.PublishAsync(It.IsAny<TestEvent>(), It.IsAny<CancellationToken>()), Times.Never);
+        store.Verify(s => s.MarkProcessedAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()), Times.AtLeast(5));
+    }
+
+    [Fact]
     public async Task При_ошибке_публикации_зовётся_MarkFailed_с_экспоненциальным_backoff()
     {
         var msg = OutboxEventSerializer.Serialize(new TestEvent("err"));
