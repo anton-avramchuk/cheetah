@@ -49,6 +49,8 @@
         <Project Path="src/Cheetah.FileStorage.Http/Cheetah.FileStorage.Http.csproj" />
         <Project Path="src/Cheetah.FileStorage.Local/Cheetah.FileStorage.Local.csproj" />
         <Project Path="src/Cheetah.FileStorage.S3/Cheetah.FileStorage.S3.csproj" />
+        <Project Path="src/Cheetah.Saga/Cheetah.Saga.csproj" />
+        <Project Path="src/Cheetah.Saga.EntityFrameworkCore/Cheetah.Saga.EntityFrameworkCore.csproj" />
         <Project Path="src/Cheetah.Notifications/Cheetah.Notifications.csproj" />
         <Project Path="src/Cheetah.Notifications.Email/Cheetah.Notifications.Email.csproj" />
         <Project Path="src/Cheetah.Notifications.Sms/Cheetah.Notifications.Sms.csproj" />
@@ -146,6 +148,8 @@
         <Project Path="src/Cheetah.Audit.Tests/Cheetah.Audit.Tests.csproj" />
         <Project Path="src/Cheetah.Audit.Integration.Tests/Cheetah.Audit.Integration.Tests.csproj" />
         <Project Path="src/Cheetah.FileStorage.Tests/Cheetah.FileStorage.Tests.csproj" />
+        <Project Path="src/Cheetah.Saga.Tests/Cheetah.Saga.Tests.csproj" />
+        <Project Path="src/Cheetah.Saga.Integration.Tests/Cheetah.Saga.Integration.Tests.csproj" />
         <Project Path="src/Cheetah.Notifications.Tests/Cheetah.Notifications.Tests.csproj" />
         <Project Path="tests/Cheetah.Core.Specification.Tests/Cheetah.Core.Specification.Tests.csproj" />
         <Project Path="tests/Cheetah.Core.StateMachine.Tests/Cheetah.Core.StateMachine.Tests.csproj" />
