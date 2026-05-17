@@ -37,7 +37,7 @@ public class EfAuditSinkIntegrationTests
     }
 
     [Fact]
-    public async Task SaveChanges_создаёт_AuditEntry_атомарно_с_агрегатом()
+    public async Task SaveChanges_Creates_AuditEntry_Atomically_With_Aggregate()
     {
         await ResetAsync();
 
@@ -57,7 +57,7 @@ public class EfAuditSinkIntegrationTests
     }
 
     [Fact]
-    public async Task Sensitive_свойство_никогда_не_попадает_в_сохранённый_audit()
+    public async Task Sensitive_Property_Never_Leaks_Into_Stored_Audit()
     {
         await ResetAsync();
 
@@ -73,7 +73,7 @@ public class EfAuditSinkIntegrationTests
     }
 
     [Fact]
-    public async Task Откат_транзакции_не_оставляет_AuditEntry()
+    public async Task Transaction_Rollback_Does_Not_Leave_AuditEntry()
     {
         await ResetAsync();
 
@@ -90,7 +90,7 @@ public class EfAuditSinkIntegrationTests
     }
 
     [Fact]
-    public async Task Update_сохраняет_old_и_new_в_changes()
+    public async Task Update_Saves_Old_And_New_In_Changes()
     {
         await ResetAsync();
 

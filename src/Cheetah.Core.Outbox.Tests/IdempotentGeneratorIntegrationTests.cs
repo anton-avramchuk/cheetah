@@ -36,7 +36,7 @@ public partial class TestIdempotentModule : CrmModule
 public class IdempotentGeneratorIntegrationTests
 {
     [Fact]
-    public void Generated_RegisterServices_оборачивает_хендлер_в_InboxIdempotentEventHandler()
+    public void Generated_RegisterServices_Wraps_Handler_In_InboxIdempotentEventHandler()
     {
         var services = new ServiceCollection();
         services.AddSingleton(Mock.Of<IInboxStore>(s =>
@@ -54,7 +54,7 @@ public class IdempotentGeneratorIntegrationTests
     }
 
     [Fact]
-    public async Task Хендлер_вызывается_при_первом_событии_и_пропускается_при_дубликате()
+    public async Task Handler_Is_Called_On_First_Event_And_Skipped_On_Duplicate()
     {
         var seen = new HashSet<Guid>();
         var inboxMock = new Mock<IInboxStore>();

@@ -12,7 +12,7 @@ public class DeadLetterStoreIntegrationTests
     public DeadLetterStoreIntegrationTests(PostgresFixture fx) => _fx = fx;
 
     [Fact]
-    public async Task MoveFromOutbox_удаляет_из_outbox_и_создаёт_dead_letter_в_одной_транзакции()
+    public async Task MoveFromOutbox_Removes_From_Outbox_And_Creates_DeadLetter_In_Single_Transaction()
     {
         await using var db = _fx.CreateDbContext();
         db.OutboxMessages.RemoveRange(db.OutboxMessages);
@@ -40,7 +40,7 @@ public class DeadLetterStoreIntegrationTests
     }
 
     [Fact]
-    public async Task Requeue_возвращает_сообщение_в_outbox_со_сброшенным_RetryCount()
+    public async Task Requeue_Returns_Message_To_Outbox_With_Reset_RetryCount()
     {
         await using var db = _fx.CreateDbContext();
         db.OutboxMessages.RemoveRange(db.OutboxMessages);

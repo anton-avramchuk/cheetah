@@ -23,7 +23,7 @@ public class KafkaAuditPublisherIntegrationTests
     /// → реальный Kafka. Consumer'ом подтверждаем что событие приехало.
     /// </summary>
     [Fact]
-    public async Task End_to_end_AuditEntry_попадает_в_Kafka_через_keyed_IEventBus()
+    public async Task End_To_End_AuditEntry_Reaches_Kafka_Via_Keyed_IEventBus()
     {
         var topicPrefix = $"audit-it-{Guid.NewGuid():N}-";
 
@@ -65,7 +65,7 @@ public class KafkaAuditPublisherIntegrationTests
     }
 
     [Fact]
-    public async Task После_публикации_pending_очередь_пустая()
+    public async Task After_Publish_Pending_Queue_Is_Empty()
     {
         var topicPrefix = $"audit-drain-{Guid.NewGuid():N}-";
 

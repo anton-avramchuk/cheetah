@@ -17,7 +17,7 @@ public class S3FileStorageTests
         NullLogger<S3FileStorage>.Instance);
 
     [Fact]
-    public async Task SaveAsync_шлёт_PutObject_с_правильным_bucket_и_key()
+    public async Task SaveAsync_Sends_PutObject_With_Correct_Bucket_And_Key()
     {
         var client = new Mock<IAmazonS3>();
         client.Setup(c => c.PutObjectAsync(It.IsAny<PutObjectRequest>(), It.IsAny<CancellationToken>()))
@@ -37,7 +37,7 @@ public class S3FileStorageTests
     }
 
     [Fact]
-    public async Task OpenReadAsync_преобразует_404_в_FileStorageNotFoundException()
+    public async Task OpenReadAsync_Translates_404_To_FileStorageNotFoundException()
     {
         var client = new Mock<IAmazonS3>();
         client.Setup(c => c.GetObjectAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
@@ -48,7 +48,7 @@ public class S3FileStorageTests
     }
 
     [Fact]
-    public async Task ExistsAsync_true_если_GetObjectMetadata_успешен()
+    public async Task ExistsAsync_Returns_True_When_GetObjectMetadata_Succeeds()
     {
         var client = new Mock<IAmazonS3>();
         client.Setup(c => c.GetObjectMetadataAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
@@ -59,7 +59,7 @@ public class S3FileStorageTests
     }
 
     [Fact]
-    public async Task ExistsAsync_false_если_404()
+    public async Task ExistsAsync_Returns_False_On_404()
     {
         var client = new Mock<IAmazonS3>();
         client.Setup(c => c.GetObjectMetadataAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
@@ -70,7 +70,7 @@ public class S3FileStorageTests
     }
 
     [Fact]
-    public void Ctor_бросает_если_BucketName_не_задан()
+    public void Ctor_Throws_When_BucketName_Not_Set()
     {
         Should.Throw<InvalidOperationException>(() => new S3FileStorage(
             Mock.Of<IAmazonS3>(),

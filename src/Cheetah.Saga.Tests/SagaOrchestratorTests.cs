@@ -23,7 +23,7 @@ public class SagaOrchestratorTests
     }
 
     [Fact]
-    public async Task SagaStartedBy_создаёт_новую_instance_и_сохраняет_данные()
+    public async Task SagaStartedBy_Creates_New_Instance_And_Saves_Data()
     {
         var (orch, repo) = Build(typeof(OrderProcessingSaga));
 
@@ -39,7 +39,7 @@ public class SagaOrchestratorTests
     }
 
     [Fact]
-    public async Task Последовательные_события_продолжают_ту_же_сагу()
+    public async Task Sequential_Events_Continue_Same_Saga()
     {
         var (orch, repo) = Build(typeof(OrderProcessingSaga));
         var orderId = Guid.NewGuid();
@@ -54,7 +54,7 @@ public class SagaOrchestratorTests
     }
 
     [Fact]
-    public async Task PaymentSucceeded_завершает_сагу_статусом_Completed()
+    public async Task PaymentSucceeded_Finishes_Saga_With_Completed_Status()
     {
         var (orch, repo) = Build(typeof(OrderProcessingSaga));
         var orderId = Guid.NewGuid();
@@ -66,7 +66,7 @@ public class SagaOrchestratorTests
     }
 
     [Fact]
-    public async Task PaymentFailed_переводит_сагу_в_Compensating_с_Reason()
+    public async Task PaymentFailed_Moves_Saga_To_Compensating_With_Reason()
     {
         var (orch, repo) = Build(typeof(OrderProcessingSaga));
         var orderId = Guid.NewGuid();
@@ -80,7 +80,7 @@ public class SagaOrchestratorTests
     }
 
     [Fact]
-    public async Task Event_без_активной_саги_и_не_StartedBy_игнорируется()
+    public async Task Event_Without_Active_Saga_And_Not_StartedBy_Is_Ignored()
     {
         var (orch, repo) = Build(typeof(OrderProcessingSaga));
         await orch.HandleAsync(new InvoiceCreatedEvent(Guid.NewGuid(), Guid.NewGuid()));
@@ -88,7 +88,7 @@ public class SagaOrchestratorTests
     }
 
     [Fact]
-    public async Task Завершённая_сага_не_реагирует_на_новые_события()
+    public async Task Completed_Saga_Does_Not_React_To_New_Events()
     {
         var (orch, repo) = Build(typeof(OrderProcessingSaga));
         var orderId = Guid.NewGuid();
@@ -105,7 +105,7 @@ public class SagaOrchestratorTests
     }
 
     [Fact]
-    public async Task Исключение_в_handler_переводит_сагу_в_Failed_с_Reason()
+    public async Task Exception_In_Handler_Moves_Saga_To_Failed_With_Reason()
     {
         var (orch, repo) = Build(typeof(FailingSaga));
         var orderId = Guid.NewGuid();
@@ -118,7 +118,7 @@ public class SagaOrchestratorTests
     }
 
     [Fact]
-    public async Task Несколько_типов_саг_могут_реагировать_на_один_event_независимо()
+    public async Task Multiple_Saga_Types_Can_React_To_One_Event_Independently()
     {
         var (orch, repo) = Build(typeof(OrderProcessingSaga), typeof(FailingSaga));
         var orderId = Guid.NewGuid();

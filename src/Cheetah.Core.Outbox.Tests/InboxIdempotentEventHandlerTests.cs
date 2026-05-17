@@ -9,7 +9,7 @@ namespace Cheetah.Core.Outbox.Tests;
 public class InboxIdempotentEventHandlerTests
 {
     [Fact]
-    public async Task При_первом_событии_зовётся_inner_и_пишется_inbox()
+    public async Task On_First_Event_Calls_Inner_And_Writes_Inbox()
     {
         var inner = new Mock<IEventHandler<TestEvent>>();
         var inbox = new Mock<IInboxStore>();
@@ -29,7 +29,7 @@ public class InboxIdempotentEventHandlerTests
     }
 
     [Fact]
-    public async Task Если_уже_обработано_inner_не_вызывается()
+    public async Task If_Already_Processed_Inner_Is_Not_Called()
     {
         var inner = new Mock<IEventHandler<TestEvent>>();
         var inbox = new Mock<IInboxStore>();
@@ -46,7 +46,7 @@ public class InboxIdempotentEventHandlerTests
     }
 
     [Fact]
-    public async Task Если_inner_бросает_inbox_не_пишется()
+    public async Task If_Inner_Throws_Inbox_Is_Not_Written()
     {
         var inner = new Mock<IEventHandler<TestEvent>>();
         inner.Setup(h => h.HandleAsync(It.IsAny<TestEvent>(), It.IsAny<CancellationToken>()))

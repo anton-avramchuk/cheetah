@@ -11,7 +11,7 @@ namespace Cheetah.Core.Outbox.Tests;
 public class OutboxProcessorTests
 {
     [Fact]
-    public async Task Обрабатывает_pending_сообщения_и_помечает_processed()
+    public async Task Processes_Pending_Messages_And_Marks_Them_Processed()
     {
         var msg = OutboxEventSerializer.Serialize(new TestEvent("hello"));
 
@@ -44,7 +44,7 @@ public class OutboxProcessorTests
     }
 
     [Fact]
-    public async Task Группа_одинаковых_событий_публикуется_через_PublishManyAsync()
+    public async Task Group_Of_Same_Type_Events_Is_Published_Via_PublishManyAsync()
     {
         var msgs = Enumerable.Range(0, 5).Select(i =>
             OutboxEventSerializer.Serialize(new TestEvent($"evt-{i}"))).ToList();
@@ -84,7 +84,7 @@ public class OutboxProcessorTests
     }
 
     [Fact]
-    public async Task При_ошибке_публикации_зовётся_MarkFailed_с_экспоненциальным_backoff()
+    public async Task On_Publish_Failure_MarkFailed_Is_Called_With_Exponential_Backoff()
     {
         var msg = OutboxEventSerializer.Serialize(new TestEvent("err"));
         msg.RetryCount = 2;

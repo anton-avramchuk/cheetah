@@ -6,7 +6,7 @@ namespace Cheetah.Core.Outbox.PostgreSql.Tests;
 public class OutboxOptimizedIndexSqlTests
 {
     [Fact]
-    public void Create_возвращает_partial_covered_индекс_и_дропает_базовый()
+    public void Create_Returns_Partial_Covered_Index_And_Drops_Base()
     {
         var sql = OutboxOptimizedIndexSql.Create();
 
@@ -18,7 +18,7 @@ public class OutboxOptimizedIndexSqlTests
     }
 
     [Fact]
-    public void Create_без_payload_не_включает_его_в_INCLUDE()
+    public void Create_Without_Payload_Excludes_It_From_INCLUDE()
     {
         var sql = OutboxOptimizedIndexSql.Create(includePayload: false);
 
@@ -27,7 +27,7 @@ public class OutboxOptimizedIndexSqlTests
     }
 
     [Fact]
-    public void Drop_удаляет_оптимизированный_индекс()
+    public void Drop_Removes_Optimized_Index()
     {
         OutboxOptimizedIndexSql.Drop().ShouldContain("DROP INDEX IF EXISTS \"IX_OutboxMessages_Pending_Partial\"");
     }
@@ -35,7 +35,7 @@ public class OutboxOptimizedIndexSqlTests
     [Theory]
     [InlineData("bad name")]
     [InlineData("t;DROP TABLE")]
-    public void Create_отвергает_небезопасные_имена_таблицы(string table)
+    public void Create_Rejects_Unsafe_Table_Names(string table)
     {
         Should.Throw<ArgumentException>(() => OutboxOptimizedIndexSql.Create(table));
     }

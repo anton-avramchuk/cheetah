@@ -10,7 +10,7 @@ namespace Cheetah.Core.Outbox.Tests;
 public class OutboxCleanupServiceTests
 {
     [Fact]
-    public async Task RunOnce_удаляет_batch_ами_пока_store_возвращает_ненулевое()
+    public async Task RunOnce_Deletes_In_Batches_Until_Store_Returns_Zero()
     {
         var outbox = new Mock<IOutboxStore>();
         var calls = 0;
@@ -52,7 +52,7 @@ public class OutboxCleanupServiceTests
     }
 
     [Fact]
-    public async Task Если_IInboxStore_не_зарегистрирован_outbox_всё_равно_чистится()
+    public async Task If_IInboxStore_Not_Registered_Outbox_Is_Still_Cleaned()
     {
         var outbox = new Mock<IOutboxStore>();
         outbox.Setup(s => s.DeleteProcessedAsync(It.IsAny<DateTimeOffset>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))

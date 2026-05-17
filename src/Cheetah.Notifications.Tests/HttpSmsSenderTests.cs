@@ -10,7 +10,7 @@ namespace Cheetah.Notifications.Tests;
 public class HttpSmsSenderTests
 {
     [Fact]
-    public async Task SendAsync_шлёт_POST_с_to_и_body_и_Bearer_если_ApiKey_задан()
+    public async Task SendAsync_Sends_POST_With_To_Body_And_Bearer_When_ApiKey_Set()
     {
         var handler = new RecordingHandler(HttpStatusCode.OK);
         var factory = new TestHttpClientFactory(handler);
@@ -37,7 +37,7 @@ public class HttpSmsSenderTests
     }
 
     [Fact]
-    public async Task SendAsync_бросает_если_ProviderUrl_пустой()
+    public async Task SendAsync_Throws_When_ProviderUrl_Is_Empty()
     {
         var sut = new HttpSmsSender(
             new TestHttpClientFactory(new RecordingHandler(HttpStatusCode.OK)),
@@ -49,7 +49,7 @@ public class HttpSmsSenderTests
     }
 
     [Fact]
-    public async Task SendAsync_бросает_при_не_2xx_ответе()
+    public async Task SendAsync_Throws_On_Non_2xx_Response()
     {
         var sut = new HttpSmsSender(
             new TestHttpClientFactory(new RecordingHandler(HttpStatusCode.InternalServerError)),

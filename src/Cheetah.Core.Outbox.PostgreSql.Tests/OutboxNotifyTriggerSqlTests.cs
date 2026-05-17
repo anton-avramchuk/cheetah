@@ -6,7 +6,7 @@ namespace Cheetah.Core.Outbox.PostgreSql.Tests;
 public class OutboxNotifyTriggerSqlTests
 {
     [Fact]
-    public void Create_содержит_pg_notify_и_имя_канала()
+    public void Create_Contains_PgNotify_And_Channel_Name()
     {
         var sql = OutboxNotifyTriggerSql.Create("outbox_new", "OutboxMessages");
 
@@ -16,7 +16,7 @@ public class OutboxNotifyTriggerSqlTests
     }
 
     [Fact]
-    public void Drop_удаляет_триггер_и_функцию()
+    public void Drop_Removes_Trigger_And_Function()
     {
         var sql = OutboxNotifyTriggerSql.Drop();
 
@@ -28,7 +28,7 @@ public class OutboxNotifyTriggerSqlTests
     [InlineData("bad name")]
     [InlineData("name;DROP")]
     [InlineData("'injection'")]
-    public void Create_отвергает_небезопасные_имена_канала(string channel)
+    public void Create_Rejects_Unsafe_Channel_Names(string channel)
     {
         Should.Throw<ArgumentException>(() => OutboxNotifyTriggerSql.Create(channel));
     }

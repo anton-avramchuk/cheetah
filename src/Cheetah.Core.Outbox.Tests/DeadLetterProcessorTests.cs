@@ -11,7 +11,7 @@ namespace Cheetah.Core.Outbox.Tests;
 public class DeadLetterProcessorTests
 {
     [Fact]
-    public async Task При_превышении_MaxRetries_сообщение_едет_в_DLQ_а_не_в_MarkFailed()
+    public async Task When_MaxRetries_Exceeded_Message_Goes_To_DLQ_Not_MarkFailed()
     {
         var msg = OutboxEventSerializer.Serialize(new TestEvent("dead"));
         msg.RetryCount = 10; // RetryCount + 1 = 11 > MaxRetries(10)
@@ -63,7 +63,7 @@ public class DeadLetterProcessorTests
     }
 
     [Fact]
-    public async Task Если_DLQ_не_зарегистрирован_сообщение_продолжает_retry()
+    public async Task If_DLQ_Not_Registered_Message_Keeps_Retrying()
     {
         var msg = OutboxEventSerializer.Serialize(new TestEvent("ret"));
         msg.RetryCount = 100; // даже выше MaxRetries

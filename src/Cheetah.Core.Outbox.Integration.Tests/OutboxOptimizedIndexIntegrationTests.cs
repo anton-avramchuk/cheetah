@@ -12,7 +12,7 @@ public class OutboxOptimizedIndexIntegrationTests
     public OutboxOptimizedIndexIntegrationTests(PostgresFixture fx) => _fx = fx;
 
     [Fact]
-    public async Task Optimized_индекс_создаётся_и_базовый_удаляется()
+    public async Task Optimized_Index_Is_Created_And_Base_Is_Dropped()
     {
         await using var db = _fx.CreateDbContext();
 

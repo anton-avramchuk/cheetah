@@ -7,7 +7,7 @@ namespace Cheetah.Core.Outbox.OpenTelemetry.Tests;
 public class OpenTelemetryOutboxMetricsTests
 {
     [Fact]
-    public void RecordPublished_отдаёт_события_в_MeterListener_с_тегом_event_type()
+    public void RecordPublished_Emits_To_MeterListener_With_Event_Type_Tag()
     {
         long total = 0;
         string? lastTag = null;
@@ -35,7 +35,7 @@ public class OpenTelemetryOutboxMetricsTests
     }
 
     [Fact]
-    public void RecordFailed_проставляет_dead_letter_tag()
+    public void RecordFailed_Sets_Dead_Letter_Tag()
     {
         bool? deadLetter = null;
         using var listener = new MeterListener

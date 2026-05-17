@@ -10,7 +10,7 @@ public record TestEvent(string Name) : EventBase;
 public class OutboxEventBusTests
 {
     [Fact]
-    public async Task PublishAsync_сохраняет_сообщение_в_store_и_не_шлёт_в_inner_bus()
+    public async Task PublishAsync_Saves_Message_To_Store_And_Does_Not_Call_Inner_Bus()
     {
         var store = new Mock<IOutboxStore>();
         var inner = new Mock<IInnerEventBus>();
@@ -27,7 +27,7 @@ public class OutboxEventBusTests
     }
 
     [Fact]
-    public async Task PublishManyAsync_добавляет_все_сообщения()
+    public async Task PublishManyAsync_Adds_All_Messages()
     {
         var store = new Mock<IOutboxStore>();
         store.Setup(s => s.AddAsync(It.IsAny<OutboxMessage>(), It.IsAny<CancellationToken>()))
@@ -40,7 +40,7 @@ public class OutboxEventBusTests
     }
 
     [Fact]
-    public void Subscribe_делегируется_в_inner_bus()
+    public void Subscribe_Delegates_To_Inner_Bus()
     {
         var inner = new Mock<IInnerEventBus>();
         var sut = new OutboxEventBus(Mock.Of<IOutboxStore>(), inner.Object);
@@ -51,7 +51,7 @@ public class OutboxEventBusTests
     }
 
     [Fact]
-    public void Serializer_сериализует_и_десериализует_событие()
+    public void Serializer_Serializes_And_Deserializes_Event()
     {
         var @event = new TestEvent("payload-x");
         var message = OutboxEventSerializer.Serialize(@event);

@@ -34,7 +34,7 @@ public class RedisDistributedRateLimiterTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task В_пределах_лимита_все_попытки_проходят()
+    public async Task Within_Limit_All_Attempts_Pass()
     {
         var key = $"user:{Guid.NewGuid()}";
         for (var i = 0; i < 5; i++)
@@ -45,7 +45,7 @@ public class RedisDistributedRateLimiterTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task Превышение_лимита_возвращает_NotAllowed_с_RetryAfter()
+    public async Task Exceeding_Limit_Returns_NotAllowed_With_RetryAfter()
     {
         var key = $"user:{Guid.NewGuid()}";
         for (var i = 0; i < 3; i++)
@@ -58,7 +58,7 @@ public class RedisDistributedRateLimiterTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task RemainingPermits_уменьшается_с_каждой_попыткой()
+    public async Task RemainingPermits_Decreases_With_Each_Attempt()
     {
         var key = $"user:{Guid.NewGuid()}";
 
@@ -70,7 +70,7 @@ public class RedisDistributedRateLimiterTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task Разные_keys_не_влияют_друг_на_друга()
+    public async Task Different_Keys_Do_Not_Affect_Each_Other()
     {
         var keyA = $"user-a:{Guid.NewGuid()}";
         var keyB = $"user-b:{Guid.NewGuid()}";
@@ -84,7 +84,7 @@ public class RedisDistributedRateLimiterTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task Sliding_window_освобождает_capacity_по_прошествии_времени()
+    public async Task Sliding_Window_Frees_Capacity_Over_Time()
     {
         var key = $"user:{Guid.NewGuid()}";
         // Маленькое окно для теста
@@ -102,7 +102,7 @@ public class RedisDistributedRateLimiterTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task NamedPolicy_использует_конфигурацию_из_options()
+    public async Task NamedPolicy_Uses_Configuration_From_Options()
     {
         var providerStub = new StubConnectionProvider(_mux);
         var sutWithPolicy = new RedisDistributedRateLimiter(
@@ -120,7 +120,7 @@ public class RedisDistributedRateLimiterTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task NamedPolicy_бросает_если_политика_не_сконфигурирована()
+    public async Task NamedPolicy_Throws_When_Policy_Not_Configured()
     {
         await Should.ThrowAsync<InvalidOperationException>(
             () => _sut.AcquireAsync("nonexistent", "key").AsTask());

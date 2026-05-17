@@ -31,7 +31,7 @@ public class SagaLifecycleTests
     }
 
     [Fact]
-    public async Task Полный_lifecycle_Created_Invoiced_Paid_сохраняется_в_БД()
+    public async Task Full_Lifecycle_Created_Invoiced_Paid_Is_Persisted_To_Db()
     {
         await ResetAsync();
 
@@ -54,7 +54,7 @@ public class SagaLifecycleTests
     }
 
     [Fact]
-    public async Task Уникальный_index_не_даёт_создать_дубль_по_correlation()
+    public async Task Unique_Index_Prevents_Duplicate_By_Correlation()
     {
         await ResetAsync();
 
@@ -70,7 +70,7 @@ public class SagaLifecycleTests
     }
 
     [Fact]
-    public async Task Version_инкрементируется_на_каждом_update()
+    public async Task Version_Increments_On_Every_Update()
     {
         await ResetAsync();
         var orderId = Guid.NewGuid();

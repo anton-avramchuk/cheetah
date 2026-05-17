@@ -9,7 +9,7 @@ public class StorageKeyTests
     [InlineData("file.pdf")]
     [InlineData("attachments/2026/05/file.pdf")]
     [InlineData("a-b_c.d/x")]
-    public void Validate_пропускает_корректные(string key)
+    public void Validate_Accepts_Valid_Keys(string key)
         => Should.NotThrow(() => StorageKey.Validate(key));
 
     [Theory]
@@ -23,6 +23,6 @@ public class StorageKeyTests
     [InlineData("a/../b")]
     [InlineData("with space.txt")]
     [InlineData("with;semicolon")]
-    public void Validate_отвергает_небезопасные(string key)
+    public void Validate_Rejects_Unsafe_Keys(string key)
         => Should.Throw<ArgumentException>(() => StorageKey.Validate(key));
 }

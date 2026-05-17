@@ -17,7 +17,7 @@ public class PostgresOutboxNotifierIntegrationTests
     public PostgresOutboxNotifierIntegrationTests(PostgresFixture fx) => _fx = fx;
 
     [Fact]
-    public async Task LISTEN_NOTIFY_сигналит_быстрее_polling_intervala()
+    public async Task LISTEN_NOTIFY_Signals_Faster_Than_Polling_Interval()
     {
         var options = Microsoft.Extensions.Options.Options.Create(new PostgresOutboxOptions
         {
@@ -61,7 +61,7 @@ public class PostgresOutboxNotifierIntegrationTests
     }
 
     [Fact]
-    public async Task INSERT_в_OutboxMessages_триггерит_NOTIFY()
+    public async Task INSERT_Into_OutboxMessages_Triggers_NOTIFY()
     {
         var options = Microsoft.Extensions.Options.Options.Create(new PostgresOutboxOptions
         {

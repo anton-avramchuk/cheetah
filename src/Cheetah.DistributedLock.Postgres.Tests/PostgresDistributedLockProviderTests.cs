@@ -35,7 +35,7 @@ public class PostgresDistributedLockProviderTests : IAsyncLifetime
     public Task DisposeAsync() => _container.DisposeAsync().AsTask();
 
     [Fact]
-    public async Task TryAcquire_первая_попытка_получает_lock()
+    public async Task TryAcquire_First_Attempt_Acquires_Lock()
     {
         var key = $"test-{Guid.NewGuid()}";
         await using var lockHandle = await _sut.TryAcquireAsync(key);
@@ -45,7 +45,7 @@ public class PostgresDistributedLockProviderTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task TryAcquire_второй_получает_null_пока_первый_удерживает()
+    public async Task TryAcquire_Second_Returns_Null_While_First_Holds()
     {
         var key = $"contended-{Guid.NewGuid()}";
 
@@ -57,7 +57,7 @@ public class PostgresDistributedLockProviderTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task Dispose_освобождает_lock_и_следующий_TryAcquire_получает_его()
+    public async Task Dispose_Releases_Lock_And_Next_TryAcquire_Acquires_It()
     {
         var key = $"release-{Guid.NewGuid()}";
 
@@ -70,7 +70,7 @@ public class PostgresDistributedLockProviderTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task AcquireAsync_с_timeout_бросает_DistributedLockTimeoutException_при_занятости()
+    public async Task AcquireAsync_With_Timeout_Throws_DistributedLockTimeoutException_When_Held()
     {
         var key = $"timeout-{Guid.NewGuid()}";
 
@@ -87,7 +87,7 @@ public class PostgresDistributedLockProviderTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task AcquireAsync_ждёт_и_получает_после_освобождения()
+    public async Task AcquireAsync_Waits_And_Acquires_After_Release()
     {
         var key = $"wait-{Guid.NewGuid()}";
 
@@ -107,7 +107,7 @@ public class PostgresDistributedLockProviderTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task Разные_ключи_не_конкурируют()
+    public async Task Different_Keys_Do_Not_Contend()
     {
         var keyA = $"a-{Guid.NewGuid()}";
         var keyB = $"b-{Guid.NewGuid()}";
@@ -120,7 +120,7 @@ public class PostgresDistributedLockProviderTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task Параллельные_TryAcquire_только_один_получает_lock()
+    public async Task Parallel_TryAcquire_Only_One_Acquires_Lock()
     {
         var key = $"race-{Guid.NewGuid()}";
 

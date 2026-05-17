@@ -10,7 +10,7 @@ namespace Cheetah.Notifications.Tests;
 public class NotificationDispatcherTests
 {
     [Fact]
-    public async Task SendEmailAsync_резолвит_INotificationSender_EmailMessage_из_DI()
+    public async Task SendEmailAsync_Resolves_INotificationSender_EmailMessage_From_DI()
     {
         var sender = new Mock<INotificationSender<EmailMessage>>();
         sender.Setup(s => s.SendAsync(It.IsAny<EmailMessage>(), It.IsAny<CancellationToken>()))
@@ -28,7 +28,7 @@ public class NotificationDispatcherTests
     }
 
     [Fact]
-    public async Task SendSmsAsync_бросает_если_sender_не_зарегистрирован()
+    public async Task SendSmsAsync_Throws_When_Sender_Not_Registered()
     {
         var sp = new ServiceCollection().BuildServiceProvider();
         var dispatcher = new NotificationDispatcher(sp);
@@ -40,7 +40,7 @@ public class NotificationDispatcherTests
     }
 
     [Fact]
-    public async Task SendAsync_универсальный_путь_резолвит_по_типу_TMessage()
+    public async Task SendAsync_Generic_Path_Resolves_By_TMessage_Type()
     {
         var sender = new Mock<INotificationSender<MyChannelMessage>>();
         var services = new ServiceCollection();

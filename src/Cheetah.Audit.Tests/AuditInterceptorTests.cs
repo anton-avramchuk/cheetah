@@ -17,7 +17,7 @@ public class AuditInterceptorTests
     }
 
     [Fact]
-    public async Task Auditable_сущности_создают_AuditEntry_NonAuditable_нет()
+    public async Task Auditable_Entities_Create_AuditEntry_NonAuditable_Do_Not()
     {
         TestAuditDbContext? captureCtx = null;
         var sink = new CaptureSink();
@@ -43,7 +43,7 @@ public class AuditInterceptorTests
     }
 
     [Fact]
-    public async Task User_context_попадает_в_AuditEntry()
+    public async Task User_Context_Is_Captured_In_AuditEntry()
     {
         var user = new StubUser("u-123", "Anton", "tenant-x", "corr-y");
         var sink = new CaptureSink();
@@ -66,7 +66,7 @@ public class AuditInterceptorTests
     }
 
     [Fact]
-    public async Task Multiple_операции_в_одном_SaveChanges_дают_несколько_AuditEntry()
+    public async Task Multiple_Operations_In_One_SaveChanges_Produce_Multiple_AuditEntry()
     {
         var sink = new CaptureSink();
         var interceptor = new AuditInterceptor(new[] { (IAuditSink)sink }, NullAuditUserAccessor.Instance);

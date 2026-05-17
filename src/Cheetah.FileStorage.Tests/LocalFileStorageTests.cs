@@ -44,7 +44,7 @@ public class LocalFileStorageTests : IDisposable
     }
 
     [Fact]
-    public async Task Delete_идемпотентен_и_удаляет_sidecar()
+    public async Task Delete_Is_Idempotent_And_Removes_Sidecar()
     {
         await _sut.SaveAsync("a.bin", new MemoryStream(new byte[] { 1, 2, 3 }), "application/octet-stream");
         await _sut.DeleteAsync("a.bin");
@@ -58,19 +58,19 @@ public class LocalFileStorageTests : IDisposable
     }
 
     [Fact]
-    public async Task OpenRead_бросает_FileStorageNotFoundException()
+    public async Task OpenRead_Throws_FileStorageNotFoundException()
         => await Should.ThrowAsync<FileStorageNotFoundException>(
             () => _sut.OpenReadAsync("nope.bin").AsTask());
 
     [Fact]
-    public async Task Path_traversal_отвергается()
+    public async Task Path_Traversal_Is_Rejected()
     {
         await Should.ThrowAsync<ArgumentException>(
             () => _sut.SaveAsync("../escape.txt", new MemoryStream(), "text/plain").AsTask());
     }
 
     [Fact]
-    public async Task Save_перезаписывает_существующий_файл()
+    public async Task Save_Overwrites_Existing_File()
     {
         await _sut.SaveAsync("k.txt", new MemoryStream(Encoding.UTF8.GetBytes("v1")), "text/plain");
         await _sut.SaveAsync("k.txt", new MemoryStream(Encoding.UTF8.GetBytes("v2-longer")), "text/plain");

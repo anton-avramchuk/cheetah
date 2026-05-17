@@ -14,7 +14,7 @@ public class OutboxStoreIntegrationTests : IClassFixture<PostgresFixture>
     public OutboxStoreIntegrationTests(PostgresFixture fx) => _fx = fx;
 
     [Fact]
-    public async Task EfOutboxStore_сохраняет_и_возвращает_pending()
+    public async Task EfOutboxStore_Saves_And_Returns_Pending()
     {
         await using var db = _fx.CreateDbContext();
         var store = new EfOutboxStore<TestDbContext>(db);
@@ -38,7 +38,7 @@ public class OutboxStoreIntegrationTests : IClassFixture<PostgresFixture>
     }
 
     [Fact]
-    public async Task PostgresOutboxStore_SKIP_LOCKED_не_отдаёт_одно_сообщение_двум_репликам()
+    public async Task PostgresOutboxStore_SKIP_LOCKED_Does_Not_Give_Same_Message_To_Two_Replicas()
     {
         // Чистим таблицу от предыдущих тестов
         await using (var cleanup = _fx.CreateDbContext())
@@ -86,7 +86,7 @@ public class OutboxStoreIntegrationTests : IClassFixture<PostgresFixture>
     }
 
     [Fact]
-    public async Task MarkProcessedBatchAsync_обновляет_все_id_одним_UPDATE_ом()
+    public async Task MarkProcessedBatchAsync_Updates_All_Ids_In_Single_UPDATE()
     {
         await using var db = _fx.CreateDbContext();
         db.OutboxMessages.RemoveRange(db.OutboxMessages);
@@ -110,7 +110,7 @@ public class OutboxStoreIntegrationTests : IClassFixture<PostgresFixture>
     }
 
     [Fact]
-    public async Task DeleteProcessedAsync_удаляет_только_старые_обработанные()
+    public async Task DeleteProcessedAsync_Removes_Only_Old_Processed()
     {
         await using var db = _fx.CreateDbContext();
         db.OutboxMessages.RemoveRange(db.OutboxMessages);

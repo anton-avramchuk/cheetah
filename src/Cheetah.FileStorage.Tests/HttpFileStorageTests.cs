@@ -24,7 +24,7 @@ public class HttpFileStorageTests
     }
 
     [Fact]
-    public async Task SaveAsync_PUT_на_правильный_url_с_Bearer_и_Content_Type()
+    public async Task SaveAsync_Sends_PUT_To_Correct_Url_With_Bearer_And_Content_Type()
     {
         HttpRequestMessage? captured = null;
         var sut = Build(req => { captured = req; return new HttpResponseMessage(HttpStatusCode.OK); });
@@ -43,14 +43,14 @@ public class HttpFileStorageTests
     }
 
     [Fact]
-    public async Task OpenReadAsync_404_бросает_FileStorageNotFoundException()
+    public async Task OpenReadAsync_404_Throws_FileStorageNotFoundException()
     {
         var sut = Build(_ => new HttpResponseMessage(HttpStatusCode.NotFound));
         await Should.ThrowAsync<FileStorageNotFoundException>(() => sut.OpenReadAsync("k").AsTask());
     }
 
     [Fact]
-    public async Task OpenReadAsync_возвращает_содержимое()
+    public async Task OpenReadAsync_Returns_Content()
     {
         var sut = Build(_ => new HttpResponseMessage(HttpStatusCode.OK)
         {
@@ -63,14 +63,14 @@ public class HttpFileStorageTests
     }
 
     [Fact]
-    public async Task DeleteAsync_404_не_бросает()
+    public async Task DeleteAsync_404_Does_Not_Throw()
     {
         var sut = Build(_ => new HttpResponseMessage(HttpStatusCode.NotFound));
         await Should.NotThrowAsync(() => sut.DeleteAsync("missing").AsTask());
     }
 
     [Fact]
-    public async Task ExistsAsync_по_HEAD_200_true_404_false()
+    public async Task ExistsAsync_Uses_HEAD_True_On_200_False_On_404()
     {
         var sutOk = Build(req =>
         {
@@ -84,14 +84,14 @@ public class HttpFileStorageTests
     }
 
     [Fact]
-    public async Task GetMetadataAsync_возвращает_null_при_404()
+    public async Task GetMetadataAsync_Returns_Null_On_404()
     {
         var sut = Build(_ => new HttpResponseMessage(HttpStatusCode.NotFound));
         (await sut.GetMetadataAsync("k")).ShouldBeNull();
     }
 
     [Fact]
-    public async Task GetMetadataAsync_парсит_JSON()
+    public async Task GetMetadataAsync_Parses_JSON()
     {
         var sut = Build(_ => new HttpResponseMessage(HttpStatusCode.OK)
         {
@@ -107,7 +107,7 @@ public class HttpFileStorageTests
     }
 
     [Fact]
-    public void Ctor_бросает_при_пустом_BaseUrl()
+    public void Ctor_Throws_On_Empty_BaseUrl()
     {
         Should.Throw<InvalidOperationException>(() => new HttpFileStorage(
             new SingleClientFactory(new StubHandler(_ => new HttpResponseMessage(HttpStatusCode.OK))),

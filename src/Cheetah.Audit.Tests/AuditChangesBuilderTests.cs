@@ -17,7 +17,7 @@ public class AuditChangesBuilderTests
     }
 
     [Fact]
-    public void Created_содержит_все_не_null_свойства_как_new()
+    public void Created_Contains_All_NonNull_Properties_As_New()
     {
         using var ctx = CreateContext();
         var customer = new TestCustomer { Name = "Ann", Email = "a@x", PasswordHash = "secret" };
@@ -33,7 +33,7 @@ public class AuditChangesBuilderTests
     }
 
     [Fact]
-    public void Created_исключает_NotAudited_свойства()
+    public void Created_Excludes_NotAudited_Properties()
     {
         using var ctx = CreateContext();
         var customer = new TestCustomer { Name = "Ann", LoginCount = 42 };
@@ -45,7 +45,7 @@ public class AuditChangesBuilderTests
     }
 
     [Fact]
-    public async Task Updated_содержит_только_изменённые_свойства_с_old_и_new()
+    public async Task Updated_Contains_Only_Modified_Properties_With_Old_And_New()
     {
         using var ctx = CreateContext();
         var customer = new TestCustomer { Name = "Ann", Email = "a@x" };
@@ -63,7 +63,7 @@ public class AuditChangesBuilderTests
     }
 
     [Fact]
-    public async Task Updated_маскирует_Sensitive_значения_в_diff()
+    public async Task Updated_Masks_Sensitive_Values_In_Diff()
     {
         using var ctx = CreateContext();
         var customer = new TestCustomer { Name = "Ann", PasswordHash = "old-secret" };
@@ -82,7 +82,7 @@ public class AuditChangesBuilderTests
     }
 
     [Fact]
-    public async Task Deleted_содержит_old_значения()
+    public async Task Deleted_Contains_Old_Values()
     {
         using var ctx = CreateContext();
         var customer = new TestCustomer { Name = "Ann", Email = "a@x" };

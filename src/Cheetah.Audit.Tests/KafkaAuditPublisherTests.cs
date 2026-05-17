@@ -11,7 +11,7 @@ namespace Cheetah.Audit.Tests;
 public class KafkaAuditPublisherTests
 {
     [Fact]
-    public async Task Publisher_публикует_pending_через_keyed_IEventBus_и_помечает_published()
+    public async Task Publisher_Publishes_Pending_Via_Keyed_IEventBus_And_Marks_Published()
     {
         var pending = new[] { Sample("E1"), Sample("E2") };
 
@@ -46,7 +46,7 @@ public class KafkaAuditPublisherTests
     }
 
     [Fact]
-    public async Task Publisher_при_исключении_в_IEventBus_зовёт_MarkFailed()
+    public async Task Publisher_Calls_MarkFailed_On_IEventBus_Exception()
     {
         var entry = Sample("FAIL");
         var store = new Mock<IAuditPublishStore>();
@@ -74,7 +74,7 @@ public class KafkaAuditPublisherTests
     }
 
     [Fact]
-    public async Task AuditEntryRecordedEvent_содержит_все_поля_AuditEntry()
+    public async Task AuditEntryRecordedEvent_Contains_All_AuditEntry_Fields()
     {
         var entry = new AuditEntry
         {
