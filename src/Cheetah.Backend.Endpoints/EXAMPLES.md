@@ -407,3 +407,34 @@ protected override void Configure(EndpointConfiguration config)
 - `TCommand` - CQRS command
 - `TCommandResult` - Result from command handler
 - `TResponse` - HTTP response DTO
+
+## Rate limiting
+
+Декларативно через `WithRateLimit(policyName, keySource)`. Source Generator подставит `RateLimitFilter` в сгенерированный endpoint:
+
+```csharp
+public class LoginEndpoint : CommandEndpoint<LoginRequest, LoginCommand>
+{
+    public override string Route => "/api/auth/login";
+
+    protected override void Configure(EndpointConfiguration cfg)
+        => cfg
+            .AllowAnonymousAccess()
+            .WithRateLimit("login", RateLimitKeySource.Ip);  // 5 попыток в минуту по IP
+}
+```
+
+`RateLimitKeySource`:
+- `UserOrIp` (default) — UserId если аутентифицирован, иначе IP
+- `UserOnly` — только UserId; анонимный запрос → 401
+- `Ip` — RemoteIpAddress (с учётом X-Forwarded-For при правильно настроенном ForwardedHeaders)
+- `Global` — один лимит на весь endpoint без partitioning (для admin-операций "не чаще 1 раз в час")
+
+Политика берётся из конфига `RateLimit:Policies:login` (см. `Cheetah.RateLimit.Redis`).
+
+Если `IDistributedRateLimiter` не зарегистрирован — filter fail-open (пропускает запрос). Это удобно для dev-окружения без Redis.
+
+**Headers ответа:**
+- `X-RateLimit-Limit` — лимит политики
+- `X-RateLimit-Remaining` — сколько осталось в текущем окне
+- `Retry-After` (при 429) — секунды до сброса

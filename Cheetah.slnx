@@ -56,6 +56,7 @@
         <Project Path="src/Cheetah.Notifications/Cheetah.Notifications.csproj" />
         <Project Path="src/Cheetah.Notifications.Email/Cheetah.Notifications.Email.csproj" />
         <Project Path="src/Cheetah.Notifications.Sms/Cheetah.Notifications.Sms.csproj" />
+        <Project Path="src/Cheetah.RateLimit/Cheetah.RateLimit.csproj" />
         <Project Path="src/Cheetah.RateLimit.Redis/Cheetah.RateLimit.Redis.csproj" />
     </Folder>
     <Folder Name="/Core/Backend/">

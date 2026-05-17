@@ -1,8 +1,9 @@
-namespace Cheetah.RateLimit.Redis;
+namespace Cheetah.RateLimit;
 
 /// <summary>
-/// Distributed rate limiter — состояние в Redis, разделяется между репликами приложения.
-/// Для in-process ограничения используйте BCL System.Threading.RateLimiting напрямую.
+/// Distributed rate limiter — состояние разделяется между репликами приложения.
+/// Конкретные реализации: <c>Cheetah.RateLimit.Redis</c> и т.п.
+/// Для in-process ограничения используйте BCL <c>System.Threading.RateLimiting</c> напрямую.
 /// </summary>
 public interface IDistributedRateLimiter
 {

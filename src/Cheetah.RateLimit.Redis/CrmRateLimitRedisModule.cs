@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Cheetah.RateLimit.Redis;
 
 [DependsOn(typeof(CoreModule))]
+[DependsOn(typeof(CrmRateLimitModule))]
 [DependsOn(typeof(CrmBackendRedisModule))]
 public partial class CrmRateLimitRedisModule : CrmModule
 {

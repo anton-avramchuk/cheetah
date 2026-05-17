@@ -64,4 +64,10 @@ public interface IEndpointDefinition
     /// null means no Cache-Control header is set.
     /// </summary>
     BrowserCacheSettings? CacheControl { get; }
+
+    /// <summary>
+    /// Distributed rate limit settings (policy + key source).
+    /// null means no rate limiting on this endpoint.
+    /// </summary>
+    RateLimitSettings? RateLimit { get; }
 }

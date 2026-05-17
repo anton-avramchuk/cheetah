@@ -1,4 +1,4 @@
-namespace Cheetah.RateLimit.Redis;
+namespace Cheetah.RateLimit;
 
 /// <summary>
 /// Результат попытки получить permit от distributed rate limiter'а.

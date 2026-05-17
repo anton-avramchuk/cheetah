@@ -627,6 +627,11 @@ public class EndpointRegistrationGenerator : IIncrementalGenerator
         sb.AppendLine("                return result;");
         sb.AppendLine("            });");
         sb.AppendLine("        }");
+        sb.AppendLine();
+        sb.AppendLine("        if (endpoint.RateLimit is { } rateLimit)");
+        sb.AppendLine("        {");
+        sb.AppendLine("            builder.AddEndpointFilter(new global::Cheetah.Backend.Endpoints.Http.RateLimitFilter(rateLimit));");
+        sb.AppendLine("        }");
         sb.AppendLine("    }");
     }
 

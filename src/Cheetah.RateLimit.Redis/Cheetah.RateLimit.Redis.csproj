@@ -2,6 +2,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Cheetah.Core\Cheetah.Core.csproj" />
+        <ProjectReference Include="..\Cheetah.RateLimit\Cheetah.RateLimit.csproj" />
         <ProjectReference Include="..\Cheetah.Backend.Redis\Cheetah.Backend.Redis.csproj" />
     </ItemGroup>
 

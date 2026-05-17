@@ -1,3 +1,5 @@
+using Cheetah.RateLimit;
+
 namespace Cheetah.RateLimit.Redis;
 
 public class RedisRateLimitOptions
@@ -12,13 +14,4 @@ public class RedisRateLimitOptions
     /// Именованные политики — настраиваются через секцию RateLimit:Policies:&lt;name&gt;.
     /// </summary>
     public Dictionary<string, RateLimitPolicy> Policies { get; set; } = new();
-}
-
-public class RateLimitPolicy
-{
-    /// <summary>Максимум запросов в окне.</summary>
-    public long Limit { get; set; }
-
-    /// <summary>Длина окна.</summary>
-    public TimeSpan Window { get; set; } = TimeSpan.FromMinutes(1);
 }

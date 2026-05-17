@@ -14,6 +14,7 @@ public sealed class EndpointConfiguration
     internal List<string> RequiredPermissions { get; } = new();
     internal bool IsDeprecated { get; private set; }
     internal BrowserCacheSettings? CacheControl { get; private set; }
+    internal RateLimitSettings? RateLimit { get; private set; }
 
     public EndpointConfiguration WithName(string name)
     {
@@ -84,6 +85,19 @@ public sealed class EndpointConfiguration
     public EndpointConfiguration WithNoCache()
     {
         CacheControl = new BrowserCacheSettings(0, NoStore: true);
+        return this;
+    }
+
+    /// <summary>
+    /// Применяет distributed rate limiter (IDistributedRateLimiter) к endpoint'у.
+    /// Реализация должна быть зарегистрирована (например через Cheetah.RateLimit.Redis).
+    /// Политика берётся из конфигурации <c>RateLimit:Policies:&lt;policyName&gt;</c>.
+    /// </summary>
+    /// <param name="policyName">Имя политики из конфига.</param>
+    /// <param name="keySource">Как извлечь ключ из HttpContext (по умолчанию — UserId или IP).</param>
+    public EndpointConfiguration WithRateLimit(string policyName, RateLimitKeySource keySource = RateLimitKeySource.UserOrIp)
+    {
+        RateLimit = new RateLimitSettings(policyName, keySource);
         return this;
     }
 }

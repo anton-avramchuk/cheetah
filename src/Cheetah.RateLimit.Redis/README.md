@@ -1,6 +1,6 @@
 # Cheetah.RateLimit.Redis
 
-**Distributed** rate limiting через Redis с sliding-window-counter алгоритмом.
+Реализация [Cheetah.RateLimit](../Cheetah.RateLimit/README.md) через Redis с sliding-window-counter алгоритмом.
 
 ## Зачем не использовать BCL
 
