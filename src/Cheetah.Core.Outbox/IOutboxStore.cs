@@ -25,4 +25,10 @@ public interface IOutboxStore
     /// Зафиксировать ошибку и запланировать повторную попытку.
     /// </summary>
     ValueTask MarkFailedAsync(Guid id, string error, DateTimeOffset nextAttemptAt, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Удалить обработанные сообщения, которые старше olderThan. Возвращает число удалённых.
+    /// Реализация должна работать batch'ами не более <paramref name="batchSize"/>.
+    /// </summary>
+    ValueTask<int> DeleteProcessedAsync(DateTimeOffset olderThan, int batchSize, CancellationToken cancellationToken = default);
 }

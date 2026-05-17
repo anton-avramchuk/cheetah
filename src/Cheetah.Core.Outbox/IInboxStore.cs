@@ -14,4 +14,9 @@ public interface IInboxStore
     /// Фиксирует запись об обработке. SaveChangesAsync вызывает прикладной код.
     /// </summary>
     ValueTask AddAsync(InboxMessage message, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Удалить inbox-записи старше olderThan. Возвращает число удалённых.
+    /// </summary>
+    ValueTask<int> DeleteOlderThanAsync(DateTimeOffset olderThan, int batchSize, CancellationToken cancellationToken = default);
 }

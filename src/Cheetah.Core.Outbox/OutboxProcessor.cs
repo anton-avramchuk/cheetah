@@ -18,17 +18,20 @@ public sealed class OutboxProcessor : BackgroundService
 
     private readonly IServiceProvider _serviceProvider;
     private readonly IOutboxNotifier _notifier;
+    private readonly OutboxMetrics _metrics;
     private readonly OutboxOptions _options;
     private readonly ILogger<OutboxProcessor> _logger;
 
     public OutboxProcessor(
         IServiceProvider serviceProvider,
         IOutboxNotifier notifier,
+        OutboxMetrics metrics,
         IOptions<OutboxOptions> options,
         ILogger<OutboxProcessor> logger)
     {
         _serviceProvider = serviceProvider;
         _notifier = notifier;
+        _metrics = metrics;
         _options = options.Value;
         _logger = logger;
     }
@@ -85,6 +88,7 @@ public sealed class OutboxProcessor : BackgroundService
         {
             ct.ThrowIfCancellationRequested();
 
+            var startedAt = System.Diagnostics.Stopwatch.GetTimestamp();
             try
             {
                 var (type, @event) = OutboxEventSerializer.Deserialize(message);
@@ -93,6 +97,12 @@ public sealed class OutboxProcessor : BackgroundService
                 await task;
 
                 await store.MarkProcessedAsync(message.Id, ct);
+
+                var elapsedMs = System.Diagnostics.Stopwatch.GetElapsedTime(startedAt).TotalMilliseconds;
+                _metrics.PublishLatencyMs.Record(elapsedMs,
+                    new KeyValuePair<string, object?>("event_type", message.EventType));
+                _metrics.Published.Add(1,
+                    new KeyValuePair<string, object?>("event_type", message.EventType));
             }
             catch (Exception ex)
             {
@@ -101,6 +111,8 @@ public sealed class OutboxProcessor : BackgroundService
                     message.Id, message.RetryCount + 1, nextAttempt);
 
                 await store.MarkFailedAsync(message.Id, ex.ToString(), nextAttempt, ct);
+                _metrics.Failed.Add(1,
+                    new KeyValuePair<string, object?>("event_type", message.EventType));
             }
         }
     }

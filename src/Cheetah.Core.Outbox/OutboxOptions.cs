@@ -26,4 +26,19 @@ public class OutboxOptions
     /// Верхний предел задержки между попытками.
     /// </summary>
     public TimeSpan MaxRetryDelay { get; set; } = TimeSpan.FromMinutes(10);
+
+    /// <summary>
+    /// Сколько хранить обработанные OutboxMessages/InboxMessages до удаления.
+    /// </summary>
+    public TimeSpan RetentionPeriod { get; set; } = TimeSpan.FromDays(7);
+
+    /// <summary>
+    /// Интервал запуска cleanup-сервиса. Default = 1 час.
+    /// </summary>
+    public TimeSpan CleanupInterval { get; set; } = TimeSpan.FromHours(1);
+
+    /// <summary>
+    /// Размер batch'а удаления (защита от блокировки большой таблицы).
+    /// </summary>
+    public int CleanupBatchSize { get; set; } = 1000;
 }

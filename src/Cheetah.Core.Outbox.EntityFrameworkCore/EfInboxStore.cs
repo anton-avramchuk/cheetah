@@ -18,4 +18,13 @@ public sealed class EfInboxStore<TContext> : IInboxStore
         _context.InboxMessages.Add(message);
         return ValueTask.CompletedTask;
     }
+
+    public async ValueTask<int> DeleteOlderThanAsync(DateTimeOffset olderThan, int batchSize, CancellationToken cancellationToken = default)
+    {
+        return await _context.InboxMessages
+            .Where(x => x.ReceivedAt < olderThan)
+            .OrderBy(x => x.ReceivedAt)
+            .Take(batchSize)
+            .ExecuteDeleteAsync(cancellationToken);
+    }
 }

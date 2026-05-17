@@ -33,7 +33,9 @@ public partial class CrmOutboxModule : CrmModule
         RegisterServices(services);
 
         services.TryAddSingleton<IOutboxNotifier, NullOutboxNotifier>();
+        services.TryAddSingleton<OutboxMetrics>();
         services.AddSingleton<IHostedService, OutboxProcessor>();
+        services.AddSingleton<IHostedService, OutboxCleanupService>();
     }
 
     /// <summary>

@@ -1,0 +1,82 @@
+using Cheetah.Core.Outbox;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Options;
+using Moq;
+using Shouldly;
+
+namespace Cheetah.Core.Outbox.Tests;
+
+public class OutboxCleanupServiceTests
+{
+    [Fact]
+    public async Task RunOnce_удаляет_batch_ами_пока_store_возвращает_ненулевое()
+    {
+        var outbox = new Mock<IOutboxStore>();
+        var calls = 0;
+        outbox.Setup(s => s.DeleteProcessedAsync(It.IsAny<DateTimeOffset>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))
+            .Returns<DateTimeOffset, int, CancellationToken>((_, _, _) =>
+            {
+                calls++;
+                // 3 батча по 100, потом пусто
+                return new ValueTask<int>(calls <= 3 ? 100 : 0);
+            });
+
+        var inbox = new Mock<IInboxStore>();
+        inbox.Setup(s => s.DeleteOlderThanAsync(It.IsAny<DateTimeOffset>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(0);
+
+        var services = new ServiceCollection();
+        services.AddSingleton(outbox.Object);
+        services.AddSingleton(inbox.Object);
+
+        var sut = new OutboxCleanupService(
+            services.BuildServiceProvider(),
+            new OutboxMetrics(),
+            Microsoft.Extensions.Options.Options.Create(new OutboxOptions
+            {
+                CleanupInterval = TimeSpan.FromMilliseconds(100),
+                RetentionPeriod = TimeSpan.FromDays(1),
+                CleanupBatchSize = 100
+            }),
+            NullLogger<OutboxCleanupService>.Instance);
+
+        using var cts = new CancellationTokenSource(TimeSpan.FromMilliseconds(500));
+        await sut.StartAsync(cts.Token);
+        await Task.Delay(300);
+        await sut.StopAsync(CancellationToken.None);
+
+        // 3 ненулевых вызова + 1 нулевой = 4 минимум
+        outbox.Verify(s => s.DeleteProcessedAsync(It.IsAny<DateTimeOffset>(), 100, It.IsAny<CancellationToken>()),
+            Times.AtLeast(4));
+    }
+
+    [Fact]
+    public async Task Если_IInboxStore_не_зарегистрирован_outbox_всё_равно_чистится()
+    {
+        var outbox = new Mock<IOutboxStore>();
+        outbox.Setup(s => s.DeleteProcessedAsync(It.IsAny<DateTimeOffset>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(0);
+
+        var services = new ServiceCollection();
+        services.AddSingleton(outbox.Object);
+        // IInboxStore намеренно НЕ регистрируем
+
+        var sut = new OutboxCleanupService(
+            services.BuildServiceProvider(),
+            new OutboxMetrics(),
+            Microsoft.Extensions.Options.Options.Create(new OutboxOptions
+            {
+                CleanupInterval = TimeSpan.FromMilliseconds(100)
+            }),
+            NullLogger<OutboxCleanupService>.Instance);
+
+        using var cts = new CancellationTokenSource(TimeSpan.FromMilliseconds(300));
+        await sut.StartAsync(cts.Token);
+        await Task.Delay(200);
+        await sut.StopAsync(CancellationToken.None);
+
+        outbox.Verify(s => s.DeleteProcessedAsync(It.IsAny<DateTimeOffset>(), It.IsAny<int>(), It.IsAny<CancellationToken>()),
+            Times.AtLeastOnce);
+    }
+}

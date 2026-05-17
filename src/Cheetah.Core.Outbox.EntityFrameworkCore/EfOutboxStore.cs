@@ -55,6 +55,25 @@ public class EfOutboxStore<TContext> : IOutboxStore
         await Context.SaveChangesAsync(cancellationToken);
     }
 
+    public virtual async ValueTask<int> DeleteProcessedAsync(DateTimeOffset olderThan, int batchSize, CancellationToken cancellationToken = default)
+    {
+        // ExecuteDelete не поддерживает Take в EF Core у всех провайдеров одинаково,
+        // поэтому используем составной запрос: вычислить Id'шники, потом удалить по ним.
+        var idsToDelete = await Context.OutboxMessages
+            .Where(x => x.ProcessedAt != null && x.ProcessedAt < olderThan)
+            .OrderBy(x => x.ProcessedAt)
+            .Take(batchSize)
+            .Select(x => x.Id)
+            .ToListAsync(cancellationToken);
+
+        if (idsToDelete.Count == 0)
+            return 0;
+
+        return await Context.OutboxMessages
+            .Where(x => idsToDelete.Contains(x.Id))
+            .ExecuteDeleteAsync(cancellationToken);
+    }
+
     private static string Truncate(string value, int max)
         => value.Length <= max ? value : value[..max];
 }

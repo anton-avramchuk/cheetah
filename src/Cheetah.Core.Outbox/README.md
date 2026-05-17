@@ -38,9 +38,11 @@ CrmRedisEventBus (или другой транспорт)
 | `OutboxEventBus` | Scoped-декоратор `IEventBus`, пишет в outbox вместо немедленной отправки |
 | `IInnerEventBus` | Адаптер над реальным транспортом, который зовёт processor |
 | `OutboxProcessor` | `BackgroundService` с polling + сигнал от `IOutboxNotifier` (что раньше) |
+| `OutboxCleanupService` | `BackgroundService`: удаляет обработанные `OutboxMessages` и старые `InboxMessages` старше `RetentionPeriod` (default 7 дней), batch'ами |
+| `OutboxMetrics` | OpenTelemetry-метрики: counters `outbox.published`, `outbox.failed`, `outbox.cleaned`; histogram `outbox.publish_latency`. Meter name: `Cheetah.Core.Outbox` |
 | `IOutboxNotifier` | Источник пробуждения processor'а. По умолчанию — `NullOutboxNotifier` (только polling). См. `Cheetah.Core.Outbox.PostgreSql` для LISTEN/NOTIFY |
 | `InboxIdempotentEventHandler<TEvent>` | Декоратор IEventHandler: проверка `IInboxStore.AlreadyProcessedAsync` до вызова + запись `InboxMessage` после |
-| `[Idempotent]` | Атрибут-маркер для Source Generator (или ручной `AddIdempotentHandler<TEvent, THandler>()`) |
+| `[Idempotent]` | Атрибут-маркер; Source Generator оборачивает помеченные `IEventHandler<TEvent>` в `InboxIdempotentEventHandler<TEvent>` автоматически |
 | `OutboxOptions` | `BatchSize`, `PollingInterval`, `MaxRetries`, `BaseRetryDelay`, `MaxRetryDelay` |
 | `CrmOutboxModule` | Перехватывает регистрацию `IEventBus`, переносит её на `IInnerEventBus`, регистрирует `OutboxEventBus` и `OutboxProcessor` |
 
@@ -63,8 +65,17 @@ CrmRedisEventBus (или другой транспорт)
      "PollingInterval": "00:00:02",
      "MaxRetries": 10,
      "BaseRetryDelay": "00:00:05",
-     "MaxRetryDelay": "00:10:00"
+     "MaxRetryDelay": "00:10:00",
+     "RetentionPeriod": "7.00:00:00",
+     "CleanupInterval": "01:00:00",
+     "CleanupBatchSize": 1000
    }
+   ```
+
+4. (опционально) Подключи метрики в OpenTelemetry:
+   ```csharp
+   builder.Services.AddOpenTelemetry()
+       .WithMetrics(m => m.AddMeter(OutboxMetrics.MeterName));
    ```
 
 ## Использование в коде
