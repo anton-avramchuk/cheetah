@@ -89,15 +89,25 @@ public sealed class EndpointConfiguration
     }
 
     /// <summary>
-    /// Применяет distributed rate limiter (IDistributedRateLimiter) к endpoint'у.
-    /// Реализация должна быть зарегистрирована (например через Cheetah.RateLimit.Redis).
-    /// Политика берётся из конфигурации <c>RateLimit:Policies:&lt;policyName&gt;</c>.
+    /// Named-policy: лимиты резолвятся из конфигурации <c>RateLimit:Policies:&lt;policyName&gt;</c>.
+    /// Удобно когда ops должны крутить лимиты без передеплоя.
     /// </summary>
-    /// <param name="policyName">Имя политики из конфига.</param>
-    /// <param name="keySource">Как извлечь ключ из HttpContext (по умолчанию — UserId или IP).</param>
     public EndpointConfiguration WithRateLimit(string policyName, RateLimitKeySource keySource = RateLimitKeySource.UserOrIp)
     {
         RateLimit = new RateLimitSettings(policyName, keySource);
+        return this;
+    }
+
+    /// <summary>
+    /// Inline: лимит задаётся прямо в коде. Используется когда лимит — это бизнес-правило
+    /// ("не более 3 попыток входа подряд"), а не операционная настройка.
+    /// </summary>
+    /// <param name="limit">Максимум запросов в окне.</param>
+    /// <param name="window">Длина окна.</param>
+    /// <param name="keySource">Как извлечь ключ из HttpContext.</param>
+    public EndpointConfiguration WithRateLimit(long limit, TimeSpan window, RateLimitKeySource keySource = RateLimitKeySource.UserOrIp)
+    {
+        RateLimit = new RateLimitSettings(limit, window, keySource);
         return this;
     }
 }

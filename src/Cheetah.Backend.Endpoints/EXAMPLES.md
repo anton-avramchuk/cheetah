@@ -410,7 +410,9 @@ protected override void Configure(EndpointConfiguration config)
 
 ## Rate limiting
 
-Декларативно через `WithRateLimit(policyName, keySource)`. Source Generator подставит `RateLimitFilter` в сгенерированный endpoint:
+Декларативно через `WithRateLimit(...)`. Source Generator подставит `RateLimitFilter` в сгенерированный endpoint. Два режима:
+
+### 1) Named-policy (лимиты в конфиге)
 
 ```csharp
 public class LoginEndpoint : CommandEndpoint<LoginRequest, LoginCommand>
@@ -420,17 +422,40 @@ public class LoginEndpoint : CommandEndpoint<LoginRequest, LoginCommand>
     protected override void Configure(EndpointConfiguration cfg)
         => cfg
             .AllowAnonymousAccess()
-            .WithRateLimit("login", RateLimitKeySource.Ip);  // 5 попыток в минуту по IP
+            .WithRateLimit("login", RateLimitKeySource.Ip);
 }
 ```
+
+Сами лимиты — в `appsettings.json`:
+
+```json
+"RateLimit": {
+  "Policies": {
+    "login": { "Limit": 5, "Window": "00:01:00" }
+  }
+}
+```
+
+**Когда**: ops должны крутить лимиты без передеплоя (тротлинг публичного API).
+
+### 2) Inline (лимит хардкоден в коде)
+
+```csharp
+protected override void Configure(EndpointConfiguration cfg)
+    => cfg
+        .AllowAnonymousAccess()
+        .WithRateLimit(limit: 5, window: TimeSpan.FromMinutes(1), keySource: RateLimitKeySource.Ip);
+```
+
+**Когда**: лимит — часть бизнес-правила ("не более 3 попыток входа подряд"). Виден прямо в коде endpoint'а, не зависит от конфига.
+
+### Общее
 
 `RateLimitKeySource`:
 - `UserOrIp` (default) — UserId если аутентифицирован, иначе IP
 - `UserOnly` — только UserId; анонимный запрос → 401
 - `Ip` — RemoteIpAddress (с учётом X-Forwarded-For при правильно настроенном ForwardedHeaders)
 - `Global` — один лимит на весь endpoint без partitioning (для admin-операций "не чаще 1 раз в час")
-
-Политика берётся из конфига `RateLimit:Policies:login` (см. `Cheetah.RateLimit.Redis`).
 
 Если `IDistributedRateLimiter` не зарегистрирован — filter fail-open (пропускает запрос). Это удобно для dev-окружения без Redis.
 

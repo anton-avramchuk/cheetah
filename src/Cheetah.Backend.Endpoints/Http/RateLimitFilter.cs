@@ -38,7 +38,15 @@ public sealed class RateLimitFilter : IEndpointFilter
             return Results.StatusCode(StatusCodes.Status401Unauthorized);
         }
 
-        var decision = await limiter.AcquireAsync(_settings.PolicyName, key);
+        var decision = _settings switch
+        {
+            // Inline: лимит хардкоден в коде
+            { Limit: { } l, Window: { } w } => await limiter.AcquireAsync(key, l, w),
+            // Named-policy: резолвим из конфига по имени
+            { PolicyName: { } name } => await limiter.AcquireAsync(name, key),
+            _ => throw new InvalidOperationException(
+                "RateLimitSettings: either PolicyName or (Limit + Window) must be set.")
+        };
 
         http.Response.Headers["X-RateLimit-Limit"] = decision.Limit.ToString();
         http.Response.Headers["X-RateLimit-Remaining"] = decision.RemainingPermits.ToString();

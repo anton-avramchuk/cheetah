@@ -20,6 +20,24 @@ public enum RateLimitKeySource
 
 /// <summary>
 /// Метаданные для применения distributed rate limiter'а к endpoint'у.
-/// Создаётся через <see cref="EndpointConfiguration.WithRateLimit"/>.
+/// Два режима:
+///   1) <b>Named policy</b> — задано <see cref="PolicyName"/>, <see cref="Limit"/>/<see cref="Window"/> = null.
+///      Лимиты резолвятся из <c>RateLimit:Policies:&lt;PolicyName&gt;</c> в appsettings.json.
+///      Удобно когда ops должны крутить лимиты без передеплоя.
+///   2) <b>Inline</b> — <see cref="PolicyName"/> = null, заданы <see cref="Limit"/> + <see cref="Window"/>.
+///      Лимит хардкоден в коде endpoint'а как часть бизнес-правила.
 /// </summary>
-public sealed record RateLimitSettings(string PolicyName, RateLimitKeySource KeySource = RateLimitKeySource.UserOrIp);
+public sealed record RateLimitSettings(
+    string? PolicyName,
+    long? Limit,
+    TimeSpan? Window,
+    RateLimitKeySource KeySource = RateLimitKeySource.UserOrIp)
+{
+    /// <summary>Конструктор named-policy.</summary>
+    public RateLimitSettings(string policyName, RateLimitKeySource keySource = RateLimitKeySource.UserOrIp)
+        : this(policyName, null, null, keySource) { }
+
+    /// <summary>Конструктор inline.</summary>
+    public RateLimitSettings(long limit, TimeSpan window, RateLimitKeySource keySource = RateLimitKeySource.UserOrIp)
+        : this(null, limit, window, keySource) { }
+}
