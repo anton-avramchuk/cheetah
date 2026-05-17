@@ -11,6 +11,24 @@
 - Обработка ошибок - падение одного хэндлера не блокирует другие
 - Конфигурируемое имя Redis инстанса и префикс каналов
 
+## DI-регистрация
+
+`CrmBackendEventsRedisModule` регистрирует Redis-bus **двумя способами одновременно**:
+
+1. **Дефолтная регистрация** (через `[Export]`) — `IEventBus` без ключа. Хендлеры без указания ключа получают именно её:
+   ```csharp
+   public class MyHandler(IEventBus bus) { } // → Redis
+   ```
+
+2. **Keyed-регистрация** `IEventBus(EventBusKeys.Redis)` — тот же singleton, доступен через явный ключ. Полезно когда в приложении подключён ещё один транспорт (например `Cheetah.Backend.Events.Kafka` с keyed `"kafka"`) и хочется быть явным:
+   ```csharp
+   public class AuditPublisher(
+       [FromKeyedServices(EventBusKeys.Redis)] IEventBus redis,
+       [FromKeyedServices(EventBusKeys.Kafka)] IEventBus kafka) { }
+   ```
+
+Обе регистрации указывают на один и тот же singleton, поэтому подписки видны независимо от способа резолва.
+
 ## Конфигурация
 
 Добавьте в `appsettings.json`:
