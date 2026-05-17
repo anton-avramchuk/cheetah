@@ -14,6 +14,9 @@
     <Folder Name="/Core/">
         <Project Path="src/Cheetah.AspNetCore.Contracts/Cheetah.AspNetCore.Contracts.csproj" />
         <Project Path="src/Cheetah.AspNetCore/Cheetah.AspNetCore.csproj" />
+        <Project Path="src/Cheetah.Audit/Cheetah.Audit.csproj" />
+        <Project Path="src/Cheetah.Audit.EntityFrameworkCore/Cheetah.Audit.EntityFrameworkCore.csproj" />
+        <Project Path="src/Cheetah.Audit.Kafka/Cheetah.Audit.Kafka.csproj" />
         <Project Path="src/Cheetah.Backend.Events.InMemory/Cheetah.Backend.Events.InMemory.csproj" />
         <Project Path="src/Cheetah.Contracts/Cheetah.Contracts.csproj" />
         <Project Path="src/Cheetah.Core.Cache/Cheetah.Core.Cache.csproj" />
@@ -139,6 +142,8 @@
         <Project Path="src/Cheetah.Core.Identity.Domain.Tests/Cheetah.Core.Identity.Domain.Tests.csproj" />
         <Project Path="src/Cheetah.Core.Tests/Cheetah.Core.Tests.csproj" />
         <Project Path="src/Cheetah.Mapping.Generators.Tests/Cheetah.Mapping.Generators.Tests.csproj" />
+        <Project Path="src/Cheetah.Audit.Tests/Cheetah.Audit.Tests.csproj" />
+        <Project Path="src/Cheetah.Audit.Integration.Tests/Cheetah.Audit.Integration.Tests.csproj" />
         <Project Path="src/Cheetah.FileStorage.Tests/Cheetah.FileStorage.Tests.csproj" />
         <Project Path="src/Cheetah.Notifications.Tests/Cheetah.Notifications.Tests.csproj" />
         <Project Path="tests/Cheetah.Core.Specification.Tests/Cheetah.Core.Specification.Tests.csproj" />
