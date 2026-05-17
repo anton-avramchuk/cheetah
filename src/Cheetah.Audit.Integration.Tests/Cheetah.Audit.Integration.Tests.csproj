@@ -31,6 +31,8 @@
         <ProjectReference Include="..\Cheetah.Audit\Cheetah.Audit.csproj" />
         <ProjectReference Include="..\Cheetah.Audit.EntityFrameworkCore\Cheetah.Audit.EntityFrameworkCore.csproj" />
         <ProjectReference Include="..\Cheetah.Audit.Kafka\Cheetah.Audit.Kafka.csproj" />
+        <ProjectReference Include="..\Cheetah.Backend.Events.Kafka\Cheetah.Backend.Events.Kafka.csproj" />
+        <ProjectReference Include="..\Cheetah.Core.Events\Cheetah.Core.Events.csproj" />
     </ItemGroup>
 
     <ItemGroup>

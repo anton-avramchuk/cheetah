@@ -56,6 +56,7 @@
     <Folder Name="/Core/Backend/">
         <Project Path="src/Cheetah.Backend.CQRS/Cheetah.Backend.CQRS.csproj" />
         <Project Path="src/Cheetah.Backend.Endpoints/Cheetah.Backend.Endpoints.csproj" />
+        <Project Path="src/Cheetah.Backend.Events.Kafka/Cheetah.Backend.Events.Kafka.csproj" />
         <Project Path="src/Cheetah.Backend.Events.Redis/Cheetah.Backend.Events.Redis.csproj" />
         <Project Path="src/Cheetah.Backend.Jwt/Cheetah.Backend.Jwt.csproj" />
         <Project Path="src/Cheetah.Backend.Jwt.Abstractions/Cheetah.Backend.Jwt.Abstractions.csproj" />

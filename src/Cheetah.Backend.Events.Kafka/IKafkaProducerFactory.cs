@@ -1,18 +1,18 @@
 using Confluent.Kafka;
 
-namespace Cheetah.Audit.Kafka;
+namespace Cheetah.Backend.Events.Kafka;
 
 /// <summary>
-/// Фабрика IProducer — нужна для тестов (подмена на in-memory).
+/// Фабрика IProducer — отделена ради тестируемости (in-memory подмена).
 /// </summary>
 public interface IKafkaProducerFactory
 {
-    IProducer<string, string> Create(KafkaAuditOptions options);
+    IProducer<string, string> Create(KafkaEventBusOptions options);
 }
 
 public sealed class DefaultKafkaProducerFactory : IKafkaProducerFactory
 {
-    public IProducer<string, string> Create(KafkaAuditOptions options)
+    public IProducer<string, string> Create(KafkaEventBusOptions options)
     {
         var config = new ProducerConfig
         {

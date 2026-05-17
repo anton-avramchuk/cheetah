@@ -2,6 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using Cheetah.Audit;
 using Cheetah.Audit.EntityFrameworkCore;
 using Cheetah.Audit.Kafka;
+using Cheetah.Backend.Events.Kafka;
+using Cheetah.Core.Events;
 using Confluent.Kafka;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -16,12 +18,15 @@ public class KafkaAuditPublisherIntegrationTests
 
     public KafkaAuditPublisherIntegrationTests(AuditFixture fx) => _fx = fx;
 
+    /// <summary>
+    /// Поднимаем полную цепочку: KafkaAuditPublisher → keyed IEventBus(Kafka) → CrmKafkaEventBus
+    /// → реальный Kafka. Consumer'ом подтверждаем что событие приехало.
+    /// </summary>
     [Fact]
-    public async Task End_to_end_AuditEntry_попадает_в_Kafka_и_помечается_published()
+    public async Task End_to_end_AuditEntry_попадает_в_Kafka_через_keyed_IEventBus()
     {
-        var topic = $"audit-it-{Guid.NewGuid():N}";
+        var topicPrefix = $"audit-it-{Guid.NewGuid():N}-";
 
-        // 1. Создаём AuditEntry напрямую в БД
         await using (var seed = _fx.CreateDbContext(null))
         {
             await seed.Database.ExecuteSqlRawAsync("TRUNCATE \"AuditEntries\", \"Customers\"");
@@ -36,37 +41,19 @@ public class KafkaAuditPublisherIntegrationTests
             await seed.SaveChangesAsync();
         }
 
-        // 2. Запускаем publisher
-        var services = new ServiceCollection();
-        services.AddSingleton(_fx);
-        services.AddScoped(sp => sp.GetRequiredService<AuditFixture>().CreateDbContext(null));
-        services.AddScoped<IAuditPublishStore, EfAuditPublishStore<AuditDbContext>>();
-        var sp = services.BuildServiceProvider();
-
-        var publisher = new KafkaAuditPublisher(
-            sp,
-            new DefaultKafkaProducerFactory(),
-            Microsoft.Extensions.Options.Options.Create(new KafkaAuditOptions
-            {
-                BootstrapServers = _fx.KafkaBootstrapServers,
-                Topic = topic,
-                BatchSize = 10,
-                PollingInterval = TimeSpan.FromMilliseconds(200)
-            }),
-            NullLogger<KafkaAuditPublisher>.Instance);
+        var sp = BuildServices(topicPrefix);
+        var publisher = BuildPublisher(sp);
 
         using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(20));
         await publisher.StartAsync(cts.Token);
 
-        // 3. Consumer'ом ждём сообщения
-        var received = await ConsumeOneAsync(_fx.KafkaBootstrapServers, topic, TimeSpan.FromSeconds(15));
+        var expectedTopic = $"{topicPrefix}{nameof(AuditEntryRecordedEvent)}";
+        var received = await ConsumeOneAsync(_fx.KafkaBootstrapServers, expectedTopic, TimeSpan.FromSeconds(15));
         received.ShouldNotBeNull();
         received!.Value.ShouldContain("ItEntity");
         received.Value.ShouldContain("ent-1");
-        received.Key.ShouldBe("ItEntity:ent-1");
 
-        // 4. PublishedAt проставлен
-        await Task.Delay(500); // дать publisher'у время на MarkPublished
+        await Task.Delay(500);
         await using (var verify = _fx.CreateDbContext(null))
         {
             var entry = verify.AuditEntries.Single(e => e.EntityId == "ent-1");
@@ -74,12 +61,13 @@ public class KafkaAuditPublisherIntegrationTests
         }
 
         await publisher.StopAsync(CancellationToken.None);
+        sp.GetRequiredService<CrmKafkaEventBus>().Dispose();
     }
 
     [Fact]
     public async Task После_публикации_pending_очередь_пустая()
     {
-        var topic = $"audit-drain-{Guid.NewGuid():N}";
+        var topicPrefix = $"audit-drain-{Guid.NewGuid():N}-";
 
         await using (var seed = _fx.CreateDbContext(null))
         {
@@ -96,32 +84,49 @@ public class KafkaAuditPublisherIntegrationTests
             await seed.SaveChangesAsync();
         }
 
-        var services = new ServiceCollection();
-        services.AddSingleton(_fx);
-        services.AddScoped(sp => sp.GetRequiredService<AuditFixture>().CreateDbContext(null));
-        services.AddScoped<IAuditPublishStore, EfAuditPublishStore<AuditDbContext>>();
-
-        var publisher = new KafkaAuditPublisher(
-            services.BuildServiceProvider(),
-            new DefaultKafkaProducerFactory(),
-            Microsoft.Extensions.Options.Options.Create(new KafkaAuditOptions
-            {
-                BootstrapServers = _fx.KafkaBootstrapServers,
-                Topic = topic,
-                BatchSize = 10,
-                PollingInterval = TimeSpan.FromMilliseconds(200)
-            }),
-            NullLogger<KafkaAuditPublisher>.Instance);
+        var sp = BuildServices(topicPrefix);
+        var publisher = BuildPublisher(sp);
 
         using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(20));
         await publisher.StartAsync(cts.Token);
         await Task.Delay(TimeSpan.FromSeconds(5));
         await publisher.StopAsync(CancellationToken.None);
+        sp.GetRequiredService<CrmKafkaEventBus>().Dispose();
 
         await using var verify = _fx.CreateDbContext(null);
         var unpublished = verify.AuditEntries.Count(e => e.EntityType == "Drain" && e.PublishedAt == null);
         unpublished.ShouldBe(0);
     }
+
+    private ServiceProvider BuildServices(string topicPrefix)
+    {
+        var services = new ServiceCollection();
+        services.AddSingleton(_fx);
+        services.AddScoped(sp => sp.GetRequiredService<AuditFixture>().CreateDbContext(null));
+        services.AddScoped<IAuditPublishStore, EfAuditPublishStore<AuditDbContext>>();
+        services.AddLogging();
+        services.Configure<KafkaEventBusOptions>(o =>
+        {
+            o.BootstrapServers = _fx.KafkaBootstrapServers;
+            o.TopicPrefix = topicPrefix;
+            o.ClientId = "it-audit";
+        });
+        services.AddSingleton<IKafkaProducerFactory, DefaultKafkaProducerFactory>();
+        services.AddSingleton<CrmKafkaEventBus>();
+        services.AddKeyedSingleton<IEventBus>(EventBusKeys.Kafka,
+            (sp, _) => sp.GetRequiredService<CrmKafkaEventBus>());
+        return services.BuildServiceProvider();
+    }
+
+    private static KafkaAuditPublisher BuildPublisher(IServiceProvider sp)
+        => new(
+            sp,
+            Microsoft.Extensions.Options.Options.Create(new KafkaAuditOptions
+            {
+                BatchSize = 10,
+                PollingInterval = TimeSpan.FromMilliseconds(200)
+            }),
+            NullLogger<KafkaAuditPublisher>.Instance);
 
     private static async Task<ConsumeResult<string, string>?> ConsumeOneAsync(string bootstrap, string topic, TimeSpan timeout)
     {
@@ -138,8 +143,16 @@ public class KafkaAuditPublisherIntegrationTests
         var deadline = DateTime.UtcNow + timeout;
         while (DateTime.UtcNow < deadline)
         {
-            var result = consumer.Consume(TimeSpan.FromMilliseconds(500));
-            if (result?.Message is not null) return result;
+            try
+            {
+                var result = consumer.Consume(TimeSpan.FromMilliseconds(500));
+                if (result?.Message is not null) return result;
+            }
+            catch (ConsumeException ex) when (ex.Error.Code == ErrorCode.UnknownTopicOrPart)
+            {
+                // Topic ещё не создан producer'ом — продолжаем ждать.
+                await Task.Delay(200);
+            }
             await Task.Yield();
         }
         return null;

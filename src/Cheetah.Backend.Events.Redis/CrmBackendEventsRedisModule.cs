@@ -17,5 +17,11 @@ public partial class CrmBackendEventsRedisModule : CrmModule
         context.Services.Configure<RedisEventBusOptions>(configuration.GetSection("RedisEventBus"));
 
         RegisterServices(context.Services);
+
+        // Дополнительная keyed-регистрация "redis": тот же singleton-инстанс доступен и через
+        // [FromKeyedServices(EventBusKeys.Redis)] IEventBus, и через дефолтный IEventBus (его
+        // создаёт RegisterServices через [Export]).
+        context.Services.AddKeyedSingleton<IEventBus>(EventBusKeys.Redis,
+            (sp, _) => sp.GetRequiredService<IEventBus>());
     }
 }
