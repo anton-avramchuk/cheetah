@@ -45,6 +45,8 @@
         <Project Path="src/Cheetah.Mapping.Core/Cheetah.Mapping.Core.csproj" />
         <Project Path="src/Cheetah.Mapping.Expressions/Cheetah.Mapping.Expressions.csproj" />
         <Project Path="src/Cheetah.Mapping.Mapster/Cheetah.Mapping.Mapster.csproj" />
+        <Project Path="src/Cheetah.DistributedLock/Cheetah.DistributedLock.csproj" />
+        <Project Path="src/Cheetah.DistributedLock.Postgres/Cheetah.DistributedLock.Postgres.csproj" />
         <Project Path="src/Cheetah.FileStorage/Cheetah.FileStorage.csproj" />
         <Project Path="src/Cheetah.FileStorage.Http/Cheetah.FileStorage.Http.csproj" />
         <Project Path="src/Cheetah.FileStorage.Local/Cheetah.FileStorage.Local.csproj" />
@@ -54,6 +56,7 @@
         <Project Path="src/Cheetah.Notifications/Cheetah.Notifications.csproj" />
         <Project Path="src/Cheetah.Notifications.Email/Cheetah.Notifications.Email.csproj" />
         <Project Path="src/Cheetah.Notifications.Sms/Cheetah.Notifications.Sms.csproj" />
+        <Project Path="src/Cheetah.RateLimit.Redis/Cheetah.RateLimit.Redis.csproj" />
     </Folder>
     <Folder Name="/Core/Backend/">
         <Project Path="src/Cheetah.Backend.CQRS/Cheetah.Backend.CQRS.csproj" />
@@ -151,6 +154,8 @@
         <Project Path="src/Cheetah.Saga.Tests/Cheetah.Saga.Tests.csproj" />
         <Project Path="src/Cheetah.Saga.Integration.Tests/Cheetah.Saga.Integration.Tests.csproj" />
         <Project Path="src/Cheetah.Notifications.Tests/Cheetah.Notifications.Tests.csproj" />
+        <Project Path="src/Cheetah.RateLimit.Redis.Tests/Cheetah.RateLimit.Redis.Tests.csproj" />
+        <Project Path="src/Cheetah.DistributedLock.Postgres.Tests/Cheetah.DistributedLock.Postgres.Tests.csproj" />
         <Project Path="tests/Cheetah.Core.Specification.Tests/Cheetah.Core.Specification.Tests.csproj" />
         <Project Path="tests/Cheetah.Core.StateMachine.Tests/Cheetah.Core.StateMachine.Tests.csproj" />
         <Project Path="tests/Cheetah.Core.Tenants.Tests/Cheetah.Core.Tenants.Tests.csproj" />
