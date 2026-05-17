@@ -42,6 +42,20 @@ public class EfOutboxStore<TContext> : IOutboxStore
         await Context.SaveChangesAsync(cancellationToken);
     }
 
+    public async ValueTask MarkProcessedBatchAsync(IReadOnlyCollection<Guid> ids, CancellationToken cancellationToken = default)
+    {
+        if (ids.Count == 0) return;
+
+        // ExecuteUpdate в EF 7+ компилируется в одиночный UPDATE ... WHERE id IN (...).
+        var now = DateTimeOffset.UtcNow;
+        var idArray = ids as Guid[] ?? ids.ToArray();
+        await Context.OutboxMessages
+            .Where(x => idArray.Contains(x.Id))
+            .ExecuteUpdateAsync(s => s
+                .SetProperty(x => x.ProcessedAt, _ => now)
+                .SetProperty(x => x.Error, _ => null), cancellationToken);
+    }
+
     public async ValueTask MarkFailedAsync(Guid id, string error, DateTimeOffset nextAttemptAt, CancellationToken cancellationToken = default)
     {
         var entity = await Context.OutboxMessages.FindAsync(new object[] { id }, cancellationToken);

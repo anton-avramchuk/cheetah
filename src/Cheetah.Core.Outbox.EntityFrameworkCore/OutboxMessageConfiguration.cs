@@ -15,8 +15,9 @@ public class OutboxMessageConfiguration : IEntityTypeConfiguration<OutboxMessage
         builder.Property(x => x.OccurredAt).IsRequired();
         builder.Property(x => x.Error).HasMaxLength(4000);
 
-        // Горячий индекс: процессор ищет ProcessedAt IS NULL, отсортированные по OccurredAt.
-        builder.HasIndex(x => new { x.ProcessedAt, x.NextAttemptAt, x.OccurredAt })
+        // Базовый индекс, работающий на любом провайдере. Для Postgres-нагрузки замените его
+        // partial+covered индексом из Cheetah.Core.Outbox.PostgreSql (см. OutboxOptimizedIndexSql.Create()).
+        builder.HasIndex(x => new { x.ProcessedAt, x.OccurredAt })
             .HasDatabaseName("IX_OutboxMessages_Pending");
     }
 }

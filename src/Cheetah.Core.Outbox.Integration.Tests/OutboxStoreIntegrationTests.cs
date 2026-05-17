@@ -86,6 +86,30 @@ public class OutboxStoreIntegrationTests : IClassFixture<PostgresFixture>
     }
 
     [Fact]
+    public async Task MarkProcessedBatchAsync_обновляет_все_id_одним_UPDATE_ом()
+    {
+        await using var db = _fx.CreateDbContext();
+        db.OutboxMessages.RemoveRange(db.OutboxMessages);
+        await db.SaveChangesAsync();
+
+        var msgs = Enumerable.Range(0, 20).Select(i => new OutboxMessage
+        {
+            EventType = "BatchE, A", Payload = "{}",
+            OccurredAt = DateTimeOffset.UtcNow.AddSeconds(-i)
+        }).ToList();
+        db.OutboxMessages.AddRange(msgs);
+        await db.SaveChangesAsync();
+
+        var store = new EfOutboxStore<TestDbContext>(db);
+        var ids = msgs.Select(m => m.Id).ToArray();
+        await store.MarkProcessedBatchAsync(ids);
+
+        await using var verify = _fx.CreateDbContext();
+        var processed = verify.OutboxMessages.Where(x => ids.Contains(x.Id) && x.ProcessedAt != null).Count();
+        processed.ShouldBe(20);
+    }
+
+    [Fact]
     public async Task DeleteProcessedAsync_удаляет_только_старые_обработанные()
     {
         await using var db = _fx.CreateDbContext();

@@ -19,6 +19,7 @@ Polling **не отключается** — `pg_notify` может терять�
 | `PostgresOutboxStore<TContext>` | Multi-instance-safe `IOutboxStore` через `SELECT ... FOR UPDATE SKIP LOCKED` + claim-by-update |
 | `PostgresOutboxOptions` | `ChannelName`, `ConnectionString`/`ConnectionStringName`, `BaseReconnectDelay`, `MaxReconnectDelay`, `ClaimTimeout` |
 | `OutboxNotifyTriggerSql` | SQL для миграций: `Create()` / `Drop()` |
+| `OutboxOptimizedIndexSql` | Partial + covered индекс для горячего запроса processor'а. Сокращает GetPendingAsync на ~98% на больших таблицах |
 | `services.AddPostgresOutboxStore<TContext>()` | Регистрирует `PostgresOutboxStore` как `IOutboxStore` |
 | `CrmOutboxPostgreSqlModule` | Перекрывает `IOutboxNotifier` с заглушки на `PostgresOutboxNotifier` |
 
@@ -75,6 +76,28 @@ public partial class AddOutboxNotifyTrigger : Migration
 ## Connection string
 
 Notifier держит **отдельный** коннект (не из EF-пула), потому что LISTEN — долгоживущий. По умолчанию читает `ConnectionStrings:Outbox`. Можно явно задать в `PostgresOutboxOptions.ConnectionString`. Желательно использовать read-only учётку с правом `LISTEN`.
+
+## Оптимизированный индекс
+
+Базовый `IX_OutboxMessages_Pending` (из `Cheetah.Core.Outbox.EntityFrameworkCore`) — провайдер-нейтральный и не использует Postgres-специфики. На больших таблицах горячий запрос всё равно делает heap-fetch за payload.
+
+Замените его partial+covered индексом в миграции:
+
+```csharp
+protected override void Up(MigrationBuilder migrationBuilder)
+    => migrationBuilder.Sql(OutboxOptimizedIndexSql.Create());
+
+protected override void Down(MigrationBuilder migrationBuilder)
+    => migrationBuilder.Sql(OutboxOptimizedIndexSql.Drop());
+```
+
+Что делает:
+1. `DROP IF EXISTS "IX_OutboxMessages_Pending"` — убирает базовый, чтобы не было дублирующих writes.
+2. Создаёт `CREATE INDEX ... ON "OutboxMessages" ("OccurredAt") INCLUDE ("Id","EventType","Payload") WHERE "ProcessedAt" IS NULL`.
+
+`WHERE` делает индекс **partial** — в нём только pending-строки, processed туда не попадают. `INCLUDE` делает его **covered** — все колонки, которые нужны processor'у, лежат в самом индексе, heap-fetch не нужен.
+
+> **Ограничение PG**: index row size ≤ 2712 байт. Если у вас большие payload'ы — вызовите `Create(includePayload: false)`, тогда payload будет fetch'иться из heap (всё равно быстрее, чем без partial+covered индекса вообще).
 
 ## Multi-instance (SKIP LOCKED)
 

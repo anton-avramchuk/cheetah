@@ -20,6 +20,16 @@ public sealed class OutboxProcessor : BackgroundService
         .GetMethod(nameof(IEventBus.PublishManyAsync))
         ?? throw new InvalidOperationException("IEventBus.PublishManyAsync not found");
 
+    // MakeGenericMethod дорогой и под нагрузкой выливается в заметный CPU. Кэшируем.
+    private static readonly System.Collections.Concurrent.ConcurrentDictionary<Type, MethodInfo> PublishAsyncByType = new();
+    private static readonly System.Collections.Concurrent.ConcurrentDictionary<Type, MethodInfo> PublishManyAsyncByType = new();
+
+    private static MethodInfo GetPublishAsync(Type eventType)
+        => PublishAsyncByType.GetOrAdd(eventType, static t => PublishAsyncMethod.MakeGenericMethod(t));
+
+    private static MethodInfo GetPublishManyAsync(Type eventType)
+        => PublishManyAsyncByType.GetOrAdd(eventType, static t => PublishManyAsyncMethod.MakeGenericMethod(t));
+
     private readonly IServiceProvider _serviceProvider;
     private readonly IOutboxNotifier _notifier;
     private readonly IOutboxMetrics _metrics;
@@ -122,22 +132,22 @@ public sealed class OutboxProcessor : BackgroundService
 
             if (messages.Count == 1)
             {
-                var generic = PublishAsyncMethod.MakeGenericMethod(eventType!);
+                var generic = GetPublishAsync(eventType!);
                 var task = (ValueTask)generic.Invoke(inner, new object[] { eventsArray!.GetValue(0)!, ct })!;
                 await task;
             }
             else
             {
-                var generic = PublishManyAsyncMethod.MakeGenericMethod(eventType!);
+                var generic = GetPublishManyAsync(eventType!);
                 var task = (ValueTask)generic.Invoke(inner, new object[] { eventsArray!, ct })!;
                 await task;
             }
 
-            // Все ушли успехом — батчем помечаем processed.
-            foreach (var msg in messages)
-            {
-                await store.MarkProcessedAsync(msg.Id, ct);
-            }
+            // Все ушли успехом — одним UPDATE'ом помечаем processed.
+            var ids = new Guid[messages.Count];
+            for (var i = 0; i < messages.Count; i++)
+                ids[i] = messages[i].Id;
+            await store.MarkProcessedBatchAsync(ids, ct);
 
             var elapsedMs = System.Diagnostics.Stopwatch.GetElapsedTime(startedAt).TotalMilliseconds;
             _metrics.RecordPublishLatencyMs(eventTypeName, elapsedMs / messages.Count);

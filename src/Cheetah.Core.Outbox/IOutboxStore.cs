@@ -22,6 +22,12 @@ public interface IOutboxStore
     ValueTask MarkProcessedAsync(Guid id, CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Пометить пачку сообщений как обработанные одним UPDATE'ом.
+    /// Под нагрузкой это драматически снижает время фиксации batch'а.
+    /// </summary>
+    ValueTask MarkProcessedBatchAsync(IReadOnlyCollection<Guid> ids, CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Зафиксировать ошибку и запланировать повторную попытку.
     /// </summary>
     ValueTask MarkFailedAsync(Guid id, string error, DateTimeOffset nextAttemptAt, CancellationToken cancellationToken = default);

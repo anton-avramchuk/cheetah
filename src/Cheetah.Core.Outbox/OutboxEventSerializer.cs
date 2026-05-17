@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Text.Json;
 using Cheetah.Core.Events;
 
@@ -12,6 +13,9 @@ public static class OutboxEventSerializer
     {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase
     };
+
+    // Type.GetType дорогой при тысячах сообщений в секунду — кэшируем.
+    private static readonly ConcurrentDictionary<string, Type> TypeCache = new();
 
     public static OutboxMessage Serialize<TEvent>(TEvent @event) where TEvent : IEvent
     {
@@ -28,8 +32,10 @@ public static class OutboxEventSerializer
 
     public static (Type Type, IEvent Event) Deserialize(OutboxMessage message)
     {
-        var type = Type.GetType(message.EventType, throwOnError: true)
-                   ?? throw new InvalidOperationException($"Cannot resolve type '{message.EventType}'");
+        var type = TypeCache.GetOrAdd(message.EventType, static name =>
+            Type.GetType(name, throwOnError: true)
+            ?? throw new InvalidOperationException($"Cannot resolve type '{name}'"));
+
         var @event = (IEvent)(JsonSerializer.Deserialize(message.Payload, type, Options)
                               ?? throw new InvalidOperationException($"Cannot deserialize payload for {message.EventType}"));
         return (type, @event);

@@ -23,7 +23,8 @@ public class OutboxProcessorTests
                 if (firstCall) { firstCall = false; return new ValueTask<IReadOnlyList<OutboxMessage>>(new[] { msg }); }
                 return new ValueTask<IReadOnlyList<OutboxMessage>>(Array.Empty<OutboxMessage>());
             });
-        store.Setup(s => s.MarkProcessedAsync(msg.Id, It.IsAny<CancellationToken>())).Returns(ValueTask.CompletedTask);
+        store.Setup(s => s.MarkProcessedBatchAsync(It.IsAny<IReadOnlyCollection<Guid>>(), It.IsAny<CancellationToken>()))
+            .Returns(ValueTask.CompletedTask);
 
         var inner = new Mock<IInnerEventBus>();
         inner.Setup(b => b.PublishAsync(It.IsAny<TestEvent>(), It.IsAny<CancellationToken>()))
@@ -37,7 +38,9 @@ public class OutboxProcessorTests
         await sut.StopAsync(CancellationToken.None);
 
         inner.Verify(b => b.PublishAsync(It.Is<TestEvent>(e => e.Name == "hello"), It.IsAny<CancellationToken>()), Times.AtLeastOnce);
-        store.Verify(s => s.MarkProcessedAsync(msg.Id, It.IsAny<CancellationToken>()), Times.AtLeastOnce);
+        store.Verify(s => s.MarkProcessedBatchAsync(
+            It.Is<IReadOnlyCollection<Guid>>(ids => ids.Contains(msg.Id)),
+            It.IsAny<CancellationToken>()), Times.AtLeastOnce);
     }
 
     [Fact]
@@ -53,7 +56,8 @@ public class OutboxProcessorTests
                 ? new ValueTask<IReadOnlyList<OutboxMessage>>(msgs.AsReadOnly())
                 : new ValueTask<IReadOnlyList<OutboxMessage>>(Array.Empty<OutboxMessage>()))
             .Callback(() => first = false);
-        store.Setup(s => s.MarkProcessedAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).Returns(ValueTask.CompletedTask);
+        store.Setup(s => s.MarkProcessedBatchAsync(It.IsAny<IReadOnlyCollection<Guid>>(), It.IsAny<CancellationToken>()))
+            .Returns(ValueTask.CompletedTask);
 
         var inner = new Mock<IInnerEventBus>();
         var publishedBatch = 0;
@@ -72,7 +76,11 @@ public class OutboxProcessorTests
 
         publishedBatch.ShouldBe(5);
         inner.Verify(b => b.PublishAsync(It.IsAny<TestEvent>(), It.IsAny<CancellationToken>()), Times.Never);
-        store.Verify(s => s.MarkProcessedAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()), Times.AtLeast(5));
+        // MarkProcessedBatch вызывается одной пачкой, а не 5 раз — это и есть оптимизация.
+        store.Verify(s => s.MarkProcessedBatchAsync(
+            It.Is<IReadOnlyCollection<Guid>>(ids => ids.Count == 5),
+            It.IsAny<CancellationToken>()), Times.AtLeastOnce);
+        store.Verify(s => s.MarkProcessedAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
