@@ -22,14 +22,14 @@ public sealed class OutboxProcessor : BackgroundService
 
     private readonly IServiceProvider _serviceProvider;
     private readonly IOutboxNotifier _notifier;
-    private readonly OutboxMetrics _metrics;
+    private readonly IOutboxMetrics _metrics;
     private readonly OutboxOptions _options;
     private readonly ILogger<OutboxProcessor> _logger;
 
     public OutboxProcessor(
         IServiceProvider serviceProvider,
         IOutboxNotifier notifier,
-        OutboxMetrics metrics,
+        IOutboxMetrics metrics,
         IOptions<OutboxOptions> options,
         ILogger<OutboxProcessor> logger)
     {
@@ -140,10 +140,8 @@ public sealed class OutboxProcessor : BackgroundService
             }
 
             var elapsedMs = System.Diagnostics.Stopwatch.GetElapsedTime(startedAt).TotalMilliseconds;
-            _metrics.PublishLatencyMs.Record(elapsedMs / messages.Count,
-                new KeyValuePair<string, object?>("event_type", eventTypeName));
-            _metrics.Published.Add(messages.Count,
-                new KeyValuePair<string, object?>("event_type", eventTypeName));
+            _metrics.RecordPublishLatencyMs(eventTypeName, elapsedMs / messages.Count);
+            _metrics.RecordPublished(eventTypeName, messages.Count);
         }
         catch (Exception batchEx) when (messages.Count > 1)
         {
@@ -170,9 +168,7 @@ public sealed class OutboxProcessor : BackgroundService
                     msg.Id, _options.MaxRetries);
 
                 await dlq.MoveFromOutboxAsync(msg, ex.ToString(), ct);
-                _metrics.Failed.Add(1,
-                    new KeyValuePair<string, object?>("event_type", eventTypeName),
-                    new KeyValuePair<string, object?>("dead_letter", true));
+                _metrics.RecordFailed(eventTypeName, deadLetter: true);
                 return;
             }
 
@@ -181,7 +177,7 @@ public sealed class OutboxProcessor : BackgroundService
                 msg.Id, nextRetry, nextAttempt);
 
             await store.MarkFailedAsync(msg.Id, ex.ToString(), nextAttempt, ct);
-            _metrics.Failed.Add(1, new KeyValuePair<string, object?>("event_type", eventTypeName));
+            _metrics.RecordFailed(eventTypeName);
         }
     }
 

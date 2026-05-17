@@ -124,7 +124,7 @@ public class OutboxProcessorTests
         return new OutboxProcessor(
             sp,
             new NeverSignalsNotifier(),
-            new OutboxMetrics(),
+            new FakeMetrics(),
             Microsoft.Extensions.Options.Options.Create(options ?? new OutboxOptions { PollingInterval = TimeSpan.FromMilliseconds(100) }),
             NullLogger<OutboxProcessor>.Instance);
     }
@@ -133,5 +133,13 @@ public class OutboxProcessorTests
     {
         public ValueTask WaitForSignalAsync(CancellationToken cancellationToken)
             => new(Task.Delay(Timeout.Infinite, cancellationToken));
+    }
+
+    internal sealed class FakeMetrics : IOutboxMetrics
+    {
+        public void RecordPublished(string eventType, long count = 1) { }
+        public void RecordFailed(string eventType, bool deadLetter = false) { }
+        public void RecordPublishLatencyMs(string eventType, double latencyMs) { }
+        public void RecordCleaned(string table, long rows) { }
     }
 }

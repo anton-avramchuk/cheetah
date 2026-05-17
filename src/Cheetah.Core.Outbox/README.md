@@ -40,7 +40,7 @@ CrmRedisEventBus (или другой транспорт)
 | `OutboxProcessor` | `BackgroundService` с polling + сигнал от `IOutboxNotifier` (что раньше) |
 | `OutboxCleanupService` | `BackgroundService`: удаляет обработанные `OutboxMessages` и старые `InboxMessages` старше `RetentionPeriod` (default 7 дней), batch'ами |
 | `IDeadLetterStore` / `DeadLetterMessage` | DLQ: при превышении `MaxRetries` сообщение переезжает в `DeadLetterMessages` (если store зарегистрирован), освобождая горячую таблицу. `RequeueAsync` возвращает обратно с обнулённым `RetryCount` |
-| `OutboxMetrics` | OpenTelemetry-метрики: counters `outbox.published`, `outbox.failed`, `outbox.cleaned`; histogram `outbox.publish_latency`. Meter name: `Cheetah.Core.Outbox` |
+| `IOutboxMetrics` / `NullOutboxMetrics` | Абстракция метрик. По умолчанию — no-op. Для OpenTelemetry-экспорта подключите отдельный модуль `Cheetah.Core.Outbox.OpenTelemetry` |
 | `IOutboxNotifier` | Источник пробуждения processor'а. По умолчанию — `NullOutboxNotifier` (только polling). См. `Cheetah.Core.Outbox.PostgreSql` для LISTEN/NOTIFY |
 | `InboxIdempotentEventHandler<TEvent>` | Декоратор IEventHandler: проверка `IInboxStore.AlreadyProcessedAsync` до вызова + запись `InboxMessage` после |
 | `[Idempotent]` | Атрибут-маркер; Source Generator оборачивает помеченные `IEventHandler<TEvent>` в `InboxIdempotentEventHandler<TEvent>` автоматически |
@@ -73,11 +73,7 @@ CrmRedisEventBus (или другой транспорт)
    }
    ```
 
-4. (опционально) Подключи метрики в OpenTelemetry:
-   ```csharp
-   builder.Services.AddOpenTelemetry()
-       .WithMetrics(m => m.AddMeter(OutboxMetrics.MeterName));
-   ```
+4. (опционально) Подключи метрики через отдельный модуль `Cheetah.Core.Outbox.OpenTelemetry` — см. его README.
 
 ## Использование в коде
 

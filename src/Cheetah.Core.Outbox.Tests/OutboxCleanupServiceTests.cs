@@ -32,7 +32,7 @@ public class OutboxCleanupServiceTests
 
         var sut = new OutboxCleanupService(
             services.BuildServiceProvider(),
-            new OutboxMetrics(),
+            new OutboxProcessorTests.FakeMetrics(),
             Microsoft.Extensions.Options.Options.Create(new OutboxOptions
             {
                 CleanupInterval = TimeSpan.FromMilliseconds(100),
@@ -64,7 +64,7 @@ public class OutboxCleanupServiceTests
 
         var sut = new OutboxCleanupService(
             services.BuildServiceProvider(),
-            new OutboxMetrics(),
+            new OutboxProcessorTests.FakeMetrics(),
             Microsoft.Extensions.Options.Options.Create(new OutboxOptions
             {
                 CleanupInterval = TimeSpan.FromMilliseconds(100)

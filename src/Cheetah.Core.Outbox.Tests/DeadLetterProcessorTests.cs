@@ -40,7 +40,7 @@ public class DeadLetterProcessorTests
         var sut = new OutboxProcessor(
             services.BuildServiceProvider(),
             new NeverSignals(),
-            new OutboxMetrics(),
+            new OutboxProcessorTests.FakeMetrics(),
             Microsoft.Extensions.Options.Options.Create(new OutboxOptions
             {
                 MaxRetries = 10,
@@ -90,7 +90,7 @@ public class DeadLetterProcessorTests
         var sut = new OutboxProcessor(
             services.BuildServiceProvider(),
             new NeverSignals(),
-            new OutboxMetrics(),
+            new OutboxProcessorTests.FakeMetrics(),
             Microsoft.Extensions.Options.Options.Create(new OutboxOptions
             {
                 MaxRetries = 10,

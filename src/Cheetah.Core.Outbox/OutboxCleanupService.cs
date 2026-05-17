@@ -12,13 +12,13 @@ namespace Cheetah.Core.Outbox;
 public sealed class OutboxCleanupService : BackgroundService
 {
     private readonly IServiceProvider _serviceProvider;
-    private readonly OutboxMetrics _metrics;
+    private readonly IOutboxMetrics _metrics;
     private readonly OutboxOptions _options;
     private readonly ILogger<OutboxCleanupService> _logger;
 
     public OutboxCleanupService(
         IServiceProvider serviceProvider,
-        OutboxMetrics metrics,
+        IOutboxMetrics metrics,
         IOptions<OutboxOptions> options,
         ILogger<OutboxCleanupService> logger)
     {
@@ -72,9 +72,9 @@ public sealed class OutboxCleanupService : BackgroundService
                 () => inbox.DeleteOlderThanAsync(threshold, _options.CleanupBatchSize, ct).AsTask(), ct);
 
         if (totalOutbox > 0)
-            _metrics.Cleaned.Add(totalOutbox, new KeyValuePair<string, object?>("table", "outbox"));
+            _metrics.RecordCleaned("outbox", totalOutbox);
         if (totalInbox > 0)
-            _metrics.Cleaned.Add(totalInbox, new KeyValuePair<string, object?>("table", "inbox"));
+            _metrics.RecordCleaned("inbox", totalInbox);
 
         if (totalOutbox > 0 || totalInbox > 0)
         {
