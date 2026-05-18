@@ -50,6 +50,7 @@
         <Project Path="src/Cheetah.Mapping.Mapster/Cheetah.Mapping.Mapster.csproj" />
         <Project Path="src/Cheetah.Expressions/Cheetah.Expressions.csproj" />
         <Project Path="src/Cheetah.Expressions.JsonLogic/Cheetah.Expressions.JsonLogic.csproj" />
+        <Project Path="src/Cheetah.Validation/Cheetah.Validation.csproj" />
         <Project Path="src/Cheetah.DistributedLock/Cheetah.DistributedLock.csproj" />
         <Project Path="src/Cheetah.DistributedLock.Postgres/Cheetah.DistributedLock.Postgres.csproj" />
         <Project Path="src/Cheetah.FileStorage/Cheetah.FileStorage.csproj" />
@@ -149,6 +150,7 @@
         <Project Path="src/Cheetah.Core.Inbox.Integration.Tests/Cheetah.Core.Inbox.Integration.Tests.csproj" />
         <Project Path="src/Cheetah.Expressions.Tests/Cheetah.Expressions.Tests.csproj" />
         <Project Path="src/Cheetah.Expressions.JsonLogic.Tests/Cheetah.Expressions.JsonLogic.Tests.csproj" />
+        <Project Path="src/Cheetah.Validation.Tests/Cheetah.Validation.Tests.csproj" />
         <Project Path="src/Cheetah.Core.Outbox.Tests/Cheetah.Core.Outbox.Tests.csproj" />
         <Project Path="src/Cheetah.Core.Outbox.OpenTelemetry.Tests/Cheetah.Core.Outbox.OpenTelemetry.Tests.csproj" />
         <Project Path="src/Cheetah.Core.Outbox.PostgreSql.Tests/Cheetah.Core.Outbox.PostgreSql.Tests.csproj" />

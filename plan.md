@@ -316,49 +316,48 @@ public interface IValidationEngine
 
 ### 3.4 Встроенные правила
 
-- [ ] `RequiredRule` — значение не null и (для строк) не пустое.
-- [ ] `StringLengthRule(min?, max?)`.
-- [ ] `NumberRangeRule(min?, max?)` — int/long/decimal/double.
-- [ ] `DateRangeRule(min?, max?)`.
-- [ ] `PatternRule(regex)` — regex с тайм-аутом.
-- [ ] `EnumValueRule(allowedValues)`.
-- [ ] `CompareRule(otherFieldPath, op)` — сравнение с другим полем
-      (например, `EndDate > StartDate`).
-- [ ] `RequiredIfRule(expression)` — обязательно, если выражение истинно.
-- [ ] `ExpressionRule(expression, message)` — произвольное JsonLogic-выражение.
-- [ ] `UniqueRule(scope)` — placeholder в MVP (реализация будет в Documents,
-      т.к. требует доступа к репозиторию документов).
+- [x] `RequiredRule` — значение не null и (для строк) не пустое.
+- [x] `StringLengthRule(min?, max?)`.
+- [x] `NumberRangeRule(min?, max?)` — int/long/decimal/double/строковые числа.
+- [x] `DateRangeRule(min?, max?)` — DateTime/DateTimeOffset/ISO-строка.
+- [x] `PatternRule(regex)` — regex с тайм-аутом 50 мс.
+- [x] `EnumValueRule(allowedValues)`.
+- [x] `CompareRule(otherFieldPath, op)` — Eq/Ne/Gt/Ge/Lt/Le.
+- [x] `RequiredIfRule(expression)` — через `IExpressionEvaluator`.
+- [x] `ExpressionRule(expression, message)` — через `IExpressionEvaluator`.
+- [x] `UniqueRule(scope)` — placeholder no-op (реализация в Documents).
 
 ### 3.5 Шаги реализации
 
-- [ ] Создать `Cheetah.Validation` со ссылкой на `Cheetah.Core` и
+- [x] Создать `Cheetah.Validation` со ссылкой на `Cheetah.Core` и
       `Cheetah.Expressions`.
-- [ ] Определить контракты (см. 3.3).
-- [ ] Реализовать каждое правило из 3.4 как отдельный класс,
-      пометить `[JsonPolymorphic]` для (де)сериализации.
-- [ ] Реализовать `ValidationEngine : IValidationEngine` — последовательно
+- [x] Определить контракты (см. 3.3).
+- [x] Реализовать каждое правило из 3.4 как отдельный класс,
+      пометить `[JsonPolymorphic]` на `IValidationRule` через `[JsonDerivedType]`.
+- [x] Реализовать `ValidationEngine : IValidationEngine` — последовательно
       применяет правила, агрегирует ошибки.
-- [ ] Реализовать `CrmValidationModule : CrmModule` с регистрацией
-      движка и встроенных правил.
-- [ ] Реализовать `IValidationRuleSerializer` — Json (де)сериализация
+- [x] Реализовать `CrmValidationModule : CrmModule` с регистрацией
+      движка и сериализатора.
+- [x] Реализовать `IValidationRuleSerializer` — Json (де)сериализация
       набора правил (для хранения в схеме типа).
-- [ ] Реализовать `IOpenApiSchemaExtender` — конвертер правил → OpenAPI
-      constraints (`minLength`, `maxLength`, `pattern`, `minimum`, `maximum`).
-- [ ] Добавить проекты в `Cheetah.slnx`.
-- [ ] Unit-тесты для каждого правила (≥ 3 теста: happy path, граница,
-      нарушение).
-- [ ] Unit-тесты для движка:
-      - [ ] все ошибки агрегируются, не падает на первой
-      - [ ] кросс-полевые правила видят весь словарь значений
-      - [ ] `ExpressionRule` корректно использует `IExpressionEvaluator`
-- [ ] Unit-тесты для сериализации:
-      - [ ] roundtrip каждого правила (rule → json → rule)
-      - [ ] неизвестный тип правила даёт понятную ошибку
-- [ ] README с примерами:
+- [ ] ~~`IOpenApiSchemaExtender`~~ — отложен до появления первого реального
+      потребителя (Documents.Api), чтобы понять точную схему OpenAPI-extension'а.
+- [x] Добавить проекты в `Cheetah.slnx`.
+- [x] Unit-тесты для каждого правила (≥ 3 теста: happy path, граница, нарушение).
+- [x] Unit-тесты для движка:
+      - [x] все ошибки агрегируются, не падает на первой
+      - [x] кросс-полевые правила видят весь словарь значений
+      - [x] `ExpressionRule` корректно использует `IExpressionEvaluator`
+      - [x] Engine использует `Code` из `ValidationOutcome`
+- [x] Unit-тесты для сериализации:
+      - [x] roundtrip каждого правила (rule → json → rule)
+      - [x] неизвестный тип правила даёт `JsonException`
+      - [x] сериализованный JSON содержит `$type` discriminator
+- [x] README с примерами:
       ```json
       [
-        {"$type": "Required"},
-        {"$type": "StringLength", "min": 3, "max": 100}
+        {"$type": "RequiredRule"},
+        {"$type": "StringLengthRule", "min": 3, "max": 100}
       ]
       ```
 
@@ -369,11 +368,13 @@ Stateless. Правила могут потребовать I/O только в 
 
 ### 3.7 Definition of Done
 
-- [ ] Все правила покрыты тестами.
-- [ ] Сериализация/десериализация работает для всех встроенных типов.
-- [ ] README с примерами.
-- [ ] Один из существующих модулей (например, Identity или Customer)
-      использует `IValidationEngine` для валидации команды — proof of concept.
+- [x] Все правила покрыты тестами (45 unit-тестов всего).
+- [x] Сериализация/десериализация работает для всех встроенных типов
+      (включая `CompareRule` с enum-параметром, `EnumValueRule` с массивом).
+- [x] README с примерами.
+- [ ] ~~Proof of concept в существующем модуле~~ — отложен до первого
+      реального потребителя (Documents), чтобы не вносить искусственный
+      use case в Identity/Customer.
 
 ---
 
