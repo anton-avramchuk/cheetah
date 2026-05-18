@@ -83,6 +83,13 @@
     <Folder Name="/Modules/">
         <Project Path="src/Modules/Crm.Proxy/Crm.Proxy.csproj" />
     </Folder>
+    <Folder Name="/Modules/Permissions/">
+        <Project Path="src/Modules/Permissions/Cheetah.Permissions/Cheetah.Permissions.csproj" />
+        <Project Path="src/Modules/Permissions/Cheetah.Permissions.Catalog/Cheetah.Permissions.Catalog.csproj" />
+        <Project Path="src/Modules/Permissions/Cheetah.Permissions.Catalog.Api/Cheetah.Permissions.Catalog.Api.csproj" />
+        <Project Path="src/Modules/Permissions/Cheetah.Permissions.Catalog.Client/Cheetah.Permissions.Catalog.Client.csproj" />
+        <Project Path="src/Modules/Permissions/Cheetah.Permissions.Tests/Cheetah.Permissions.Tests.csproj" />
+    </Folder>
     <Folder Name="/Modules/Identity/">
         <Project Path="src/Modules/Identity/Cheetah.Modules.Identity.Application.Tests/Cheetah.Modules.Identity.Application.Tests.csproj" />
         <Project Path="src/Modules/Identity/Cheetah.Modules.Identity.Api/Cheetah.Modules.Identity.Api.csproj" />

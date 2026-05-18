@@ -391,22 +391,34 @@ RBAC-модуль уровня самого Documents. Нужен **до** Docum
 Должен работать **локально** в монолите и **через HTTP-клиент** в микросервисах,
 с одинаковым интерфейсом `IPermissionsClient`.
 
-### 4.2 Структура проектов
+### 4.2 Структура проектов (реализованная)
+
+**Архитектурное решение принято после анализа `Cheetah.Modules.Identity`:**
+Permissions **не дублирует** Identity. Permission хранится как **claim** в `IdentityRoleClaim` / `IdentityUserClaim`.
+Permissions-модуль — это:
+- декларация permissions в коде через `[Permission]`,
+- каталог объявленных permissions (для UI),
+- helper для проверки `ClaimsPrincipal.HasClaim(...)`.
+
+Это даёт **4 проекта вместо 8**:
 
 ```
 src/Modules/Permissions/
-  ├── Cheetah.Permissions.Events/         ← UserRoleAssignedEvent, RoleCreatedEvent, ...
-  ├── Cheetah.Permissions.Shared/         ← PermissionConstants, BuiltInRoles
-  ├── Cheetah.Permissions.Contracts/      ← UserPermissionsDto, PermissionCheckRequest
-  ├── Cheetah.Permissions.Domain/         ← Role, Permission, UserRoleAssignment, Specs
-  ├── Cheetah.Permissions.Application/    ← CQRS: AssignRole, CheckPermission, ListUserRoles
-  ├── Cheetah.Permissions.DataAccess/     ← EF Core + Postgres
-  ├── Cheetah.Permissions.Api/            ← Minimal API
-  ├── Cheetah.Permissions.Client/         ← IPermissionsClient (HTTP + Local impls)
-  └── Tests/
-       ├── Cheetah.Permissions.Domain.Tests/
-       ├── Cheetah.Permissions.Application.Tests/
-       └── Cheetah.Permissions.Client.Tests/
+  ├── Cheetah.Permissions/                  ← ЯДРО (без БД)
+  │   PermissionAttribute, PermissionRegistry, IPermissionAuthorizer,
+  │   PermissionPolicyProvider, .RequirePermission() extension
+  │
+  ├── Cheetah.Permissions.Catalog/          ← Опционально: БД-каталог
+  │   PermissionDefinition, PermissionsDbContext, SyncRegistryCommand,
+  │   ListPermissionsQuery, LocalRegistrySyncService (hosted)
+  │
+  ├── Cheetah.Permissions.Catalog.Api/      ← Minimal API для каталога
+  │   POST /api/permissions/catalog/sync, GET /api/permissions/catalog
+  │
+  ├── Cheetah.Permissions.Catalog.Client/   ← HTTP-клиент для микросервисов
+  │   IPermissionsCatalogClient, RemoteRegistrySyncService (hosted)
+  │
+  └── Cheetah.Permissions.Tests/            ← 12 unit-тестов (всё ядро)
 ```
 
 ### 4.3 Модель
