@@ -1,4 +1,4 @@
-namespace Cheetah.Core.Outbox;
+namespace Cheetah.Core.Inbox;
 
 /// <summary>
 /// Запись Inbox для идемпотентности consumer'ов:

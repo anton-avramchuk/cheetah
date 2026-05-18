@@ -22,13 +22,8 @@ public class OutboxCleanupServiceTests
                 return new ValueTask<int>(calls <= 3 ? 100 : 0);
             });
 
-        var inbox = new Mock<IInboxStore>();
-        inbox.Setup(s => s.DeleteOlderThanAsync(It.IsAny<DateTimeOffset>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(0);
-
         var services = new ServiceCollection();
         services.AddSingleton(outbox.Object);
-        services.AddSingleton(inbox.Object);
 
         var sut = new OutboxCleanupService(
             services.BuildServiceProvider(),
@@ -49,34 +44,5 @@ public class OutboxCleanupServiceTests
         // 3 ненулевых вызова + 1 нулевой = 4 минимум
         outbox.Verify(s => s.DeleteProcessedAsync(It.IsAny<DateTimeOffset>(), 100, It.IsAny<CancellationToken>()),
             Times.AtLeast(4));
-    }
-
-    [Fact]
-    public async Task If_IInboxStore_Not_Registered_Outbox_Is_Still_Cleaned()
-    {
-        var outbox = new Mock<IOutboxStore>();
-        outbox.Setup(s => s.DeleteProcessedAsync(It.IsAny<DateTimeOffset>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(0);
-
-        var services = new ServiceCollection();
-        services.AddSingleton(outbox.Object);
-        // IInboxStore намеренно НЕ регистрируем
-
-        var sut = new OutboxCleanupService(
-            services.BuildServiceProvider(),
-            new OutboxProcessorTests.FakeMetrics(),
-            Microsoft.Extensions.Options.Options.Create(new OutboxOptions
-            {
-                CleanupInterval = TimeSpan.FromMilliseconds(100)
-            }),
-            NullLogger<OutboxCleanupService>.Instance);
-
-        using var cts = new CancellationTokenSource(TimeSpan.FromMilliseconds(300));
-        await sut.StartAsync(cts.Token);
-        await Task.Delay(200);
-        await sut.StopAsync(CancellationToken.None);
-
-        outbox.Verify(s => s.DeleteProcessedAsync(It.IsAny<DateTimeOffset>(), It.IsAny<int>(), It.IsAny<CancellationToken>()),
-            Times.AtLeastOnce);
     }
 }

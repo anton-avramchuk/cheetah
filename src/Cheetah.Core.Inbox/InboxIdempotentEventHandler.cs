@@ -1,7 +1,7 @@
 using Cheetah.Core.Events;
 using Microsoft.Extensions.Logging;
 
-namespace Cheetah.Core.Outbox;
+namespace Cheetah.Core.Inbox;
 
 /// <summary>
 /// Декоратор IEventHandler, обеспечивающий идемпотентную обработку события:

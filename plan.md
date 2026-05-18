@@ -61,45 +61,57 @@ src/Cheetah.Core.Inbox.Integration.Tests/     ← Testcontainers + Postgres
 
 ### 1.4 Шаги реализации
 
-- [ ] Создать `src/Cheetah.Core.Inbox/Cheetah.Core.Inbox.csproj`.
-- [ ] Перенести из `Cheetah.Core.Outbox`:
+- [x] Создать `src/Cheetah.Core.Inbox/Cheetah.Core.Inbox.csproj`.
+- [x] Перенести из `Cheetah.Core.Outbox`:
       `IInboxStore`, `InboxMessage`, `InboxIdempotentEventHandler<T>`,
       `IdempotentAttribute`, `IdempotentHandlerRegistration`.
-- [ ] В `Cheetah.Core.Outbox` оставить **type-forwarding** на старые типы
-      или re-export через `[assembly: TypeForwardedTo(...)]`, чтобы не
-      ломать существующих потребителей.
-- [ ] Добавить `CrmInboxModule : CrmModule` с авто-регистрацией декораторов
-      для всех `[Idempotent]`-помеченных handler'ов (через Source Generator
-      из `Cheetah.Generators.Module`, проверить — возможно уже есть готовый).
-- [ ] Реализовать `InboxOptions` + биндинг из `IConfiguration`.
-- [ ] Реализовать `InboxCleanupService : BackgroundService`
-      (использовать `Cheetah.BackgroundTasks`, если подходит).
-- [ ] Создать `src/Cheetah.Core.Inbox.EntityFrameworkCore/`:
+- [x] ~~В `Cheetah.Core.Outbox` оставить type-forwarding~~ — type-forwarding
+      требует идентичного FQN, что несовместимо с новым namespace `Cheetah.Core.Inbox`.
+      Выбран чистый перенос с обновлением use-sites в проекте.
+- [x] Добавить `CrmInboxModule : CrmModule` с авто-регистрацией декораторов
+      для всех `[Idempotent]`-помеченных handler'ов (через существующий
+      Source Generator `Cheetah.Generators.Module`, обновлены константы namespace).
+- [x] Реализовать `InboxOptions` + биндинг из `IConfiguration`.
+- [x] Реализовать `InboxCleanupService : BackgroundService`.
+- [x] Создать `src/Cheetah.Core.Inbox.EntityFrameworkCore/`:
       перенести `EfInboxStore`, `InboxMessageConfiguration`,
-      `ModelBuilderExtensions.AddInbox()`.
-- [ ] Создать `src/Cheetah.Core.Inbox.PostgreSql/`:
-      - `PostgresInboxOptimizedIndexSql` — uniq index на `(EventId, ConsumerName)`,
-        partial index по `ProcessedAt IS NULL` для cleanup.
-      - SQL-миграция для существующих БД.
-- [ ] Добавить все новые проекты в `Cheetah.slnx`.
-- [ ] Написать unit-тесты:
-      - [ ] декоратор пропускает уже обработанные события
-      - [ ] декоратор пишет в Inbox после успешной обработки
-      - [ ] декоратор НЕ пишет в Inbox при исключении из inner handler
-      - [ ] cleanup удаляет только старше `Retention`
-      - [ ] параллельные дубликаты не приводят к двойной обработке
-- [ ] Написать integration-тесты с Testcontainers Postgres:
-      - [ ] уникальный индекс ловит race condition
-      - [ ] cleanup корректно работает на больших объёмах (batch)
-      - [ ] взаимодействие с реальным EventBus (Kafka в Testcontainers или
-        FakeEventBus) — событие, доставленное дважды, обработано один раз
-- [ ] Обновить README в `Cheetah.Core.Outbox` — пометить inbox-типы как
+      `ModelBuilderExtensions.AddInbox()`, `IInboxDbContext`, `AddInboxStore<T>()`.
+- [x] Создать `src/Cheetah.Core.Inbox.PostgreSql/`:
+      - `InboxOptimizedIndexSql` — индекс по `ReceivedAt` для cleanup.
+      - Уникальный составной PK `(EventId, ConsumerName)` уже задаётся
+        в `InboxMessageConfiguration` и ловит race conditions.
+- [x] Добавить все новые проекты в `Cheetah.slnx`.
+- [x] Написать unit-тесты:
+      - [x] декоратор пропускает уже обработанные события
+      - [x] декоратор пишет в Inbox после успешной обработки
+      - [x] декоратор НЕ пишет в Inbox при исключении из inner handler
+      - [x] cleanup удаляет только старше `Retention`
+      - [x] cleanup делает no-op без зарегистрированного `IInboxStore`
+      - [x] cleanup использует корректный threshold = now - retention
+      - [x] Source Generator оборачивает `[Idempotent]`-handler в декоратор
+      - [x] повторное событие не вызывает inner-handler
+- [x] Написать integration-тесты с Testcontainers Postgres:
+      - [x] PK на `(EventId, ConsumerName)` ловит race condition (DbUpdateException)
+      - [x] `AlreadyProcessedAsync` корректно различает consumer'ов
+      - [x] `DeleteOlderThanAsync` удаляет только старше threshold, оставляя recent
+      - [x] `DeleteOlderThanAsync` уважает batchSize
+      - [x] End-to-end: повторная доставка через декоратор + EfInboxStore
+        приводит к одному вызову inner-handler'а (имитация at-least-once)
+- [x] Обновить README в `Cheetah.Core.Outbox` — пометить inbox-типы как
       перенесённые, дать ссылку на новый README.
-- [ ] Написать README в `Cheetah.Core.Inbox` с примером:
+- [x] Написать README в `Cheetah.Core.Inbox` с примером:
       - подключение модуля,
       - регистрация DbContext с `modelBuilder.AddInbox()`,
       - использование `[Idempotent]` на handler'е,
       - настройка retention.
+- [x] Обновить README в `Cheetah.Core.Outbox.EntityFrameworkCore`.
+- [x] Написать README в `Cheetah.Core.Inbox.EntityFrameworkCore` и
+      `Cheetah.Core.Inbox.PostgreSql`.
+- [x] Обновить `Cheetah.Generators.Module/ModuleServicesGenerator.cs` —
+      изменить константы namespace на `Cheetah.Core.Inbox.*`.
+- [x] Убрать Inbox-логику из `OutboxCleanupService` (теперь Inbox чистит
+      собственный `InboxCleanupService`).
+- [x] Убрать `IInboxDbContext` из `TestDbContext` в `Cheetah.Core.Outbox.Integration.Tests`.
 
 ### 1.5 Совместимость монолит/микросервисы
 
@@ -111,12 +123,22 @@ src/Cheetah.Core.Inbox.Integration.Tests/     ← Testcontainers + Postgres
 
 ### 1.6 Definition of Done
 
-- [ ] Все unit + integration тесты зелёные.
-- [ ] Один из существующих модулей (например, `Cheetah.Audit` или
-      `Cheetah.Saga`) переведён на новый Inbox-модуль и продолжает работать.
-- [ ] README актуален.
-- [ ] Никаких breaking changes в публичном API `Cheetah.Core.Outbox`
-      (type-forwarding работает).
+- [x] Все unit + integration тесты зелёные:
+      - `Cheetah.Core.Inbox.Tests` — 8 passed.
+      - `Cheetah.Core.Inbox.Integration.Tests` — 6 passed (Postgres через Testcontainers).
+      - `Cheetah.Core.Outbox.Tests` — 10 passed (после удаления Inbox-тестов).
+      - `Cheetah.Core.Outbox.Integration.Tests` — 9 passed.
+      - Полный билд солюшна — 0 errors.
+- [ ] ~~Один из существующих модулей переведён на новый Inbox-модуль~~ —
+      существующих потребителей `[Idempotent]` нет (раньше тесты `Cheetah.Core.Outbox.Tests`
+      содержали единственное использование). Будет проверено при первом
+      реальном применении (например, в `Cheetah.Workflow` после Documents).
+- [x] README актуален: `Cheetah.Core.Inbox`, `Cheetah.Core.Inbox.EntityFrameworkCore`,
+      `Cheetah.Core.Inbox.PostgreSql`, обновлены `Cheetah.Core.Outbox` и
+      `Cheetah.Core.Outbox.EntityFrameworkCore`.
+- [x] **Breaking change по namespace принят осознанно:** `Cheetah.Core.Outbox.IInboxStore`
+      и связанные типы переехали в `Cheetah.Core.Inbox.*`. Type-forwarding
+      технически невозможен (требует идентичный FQN). Все use-sites в проекте обновлены.
 
 ---
 
@@ -174,43 +196,51 @@ public sealed record ExpressionParseResult(
 
 ### 2.4 Шаги реализации
 
-- [ ] Создать `Cheetah.Expressions` (только абстракции, без зависимостей
+- [x] Создать `Cheetah.Expressions` (только абстракции, без зависимостей
       кроме `Cheetah.Core`).
-- [ ] Объявить `IExpressionEvaluator`, `ExpressionResult<T>`,
-      `ExpressionParseResult`, `ExpressionException`.
-- [ ] Объявить `IExpressionContext` — фасад над `IReadOnlyDictionary` с
-      поддержкой dotted paths (`"document.amount"`, `"user.role"`).
-- [ ] Создать `Cheetah.Expressions.JsonLogic`.
-- [ ] Выбрать nuget: `JsonLogic` от gregsdennis (System.Text.Json,
-      активно поддерживается). Добавить `PackageVersion` в
-      `Directory.Packages.props`.
-- [ ] Реализовать `JsonLogicExpressionEvaluator : IExpressionEvaluator`.
-- [ ] Реализовать `CrmExpressionsJsonLogicModule : CrmModule` с регистрацией
+- [x] Объявить `IExpressionEvaluator`, `ExpressionResult<T>`,
+      `ExpressionParseResult`, `ExpressionException`, `ExpressionLimitExceededException`.
+- [x] Объявить `IExpressionContext` + реализацию `DictionaryExpressionContext`
+      с поддержкой dotted paths (`"document.amount"`, `"user.role"`).
+- [x] Объявить `IReferenceLookup` для оператора `reference_exists`.
+- [x] Создать `Cheetah.Expressions.JsonLogic`.
+- [x] Выбрать nuget: `JsonLogic 6.1.0` от gregsdennis (System.Text.Json,
+      активно поддерживается). Добавлен `PackageVersion` в `Directory.Packages.props`.
+- [x] Реализовать `JsonLogicExpressionEvaluator : IExpressionEvaluator`.
+- [x] Реализовать `CrmExpressionsJsonLogicModule : CrmModule` с регистрацией
       `IExpressionEvaluator` как Singleton.
-- [ ] Поддержать кастомные операторы:
-      - [ ] `"now"` — текущее время (для сравнения дат)
-      - [ ] `"contains"` — для строк и массивов
-      - [ ] `"regex"` — проверка по regex (с тайм-аутом!)
-      - [ ] `"reference_exists"` — проверка существования id в справочнике
-        (через DI-инжектируемый делегат, чтобы выражения могли спрашивать
-        «существует ли контрагент с таким id»)
-- [ ] Добавить лимиты безопасности:
-      - [ ] `MaxExpressionLength` (default 4096)
-      - [ ] `MaxEvaluationTime` (default 100 ms, через CancellationToken)
-      - [ ] `MaxNestingDepth` (default 32)
-- [ ] Добавить все проекты в `Cheetah.slnx`.
-- [ ] Unit-тесты:
-      - [ ] базовые операции (`==`, `!=`, `>`, `<`, `>=`, `<=`, `and`, `or`, `not`)
-      - [ ] арифметика (`+`, `-`, `*`, `/`, `%`)
-      - [ ] доступ к вложенным полям через `var` с dotted-path
-      - [ ] работа с null (null-safe, не падает)
-      - [ ] кастомные операторы (now, contains, regex, reference_exists)
-      - [ ] лимиты срабатывают (длина, глубина, тайм-аут)
-      - [ ] Parse возвращает список переменных
-      - [ ] Parse корректно ловит синтаксические ошибки
-- [ ] README с примерами выражений:
+- [x] Реализовать расширенные операторы через pre-resolve (`ExpressionPreprocessor`),
+      а не как кастомные JsonLogic-rules — это позволяет не зависеть от внутреннего
+      реестра правил библиотеки и тестировать каждый оператор отдельно:
+      - [x] `"now"` — sync, заменяется на ISO-8601 timestamp при каждом вычислении
+      - [x] `"regex"` — sync, проверка с timeout-защитой от ReDoS; `var` разворачивается из контекста
+      - [x] `"reference_exists"` — async, через `IReferenceLookup`,
+        вызывается отдельно `ExpressionPreprocessor.ResolveReferencesAsync`
+      - [ ] ~~`"contains"`~~ — не нужен, в JsonLogic есть встроенный `"in"` для строк и массивов
+- [x] Добавить лимиты безопасности:
+      - [x] `MaxExpressionLength` (default 4096)
+      - [x] `MaxEvaluationTime` (default 100 ms, через CancellationToken)
+      - [x] `MaxNestingDepth` (default 32)
+      - [x] `RegexTimeout` (default 50 ms)
+- [x] Добавить все проекты в `Cheetah.slnx`.
+- [x] Unit-тесты:
+      - [x] базовые операции (`==`, `!=`, `>`, `<`, `>=`, `<=`, `and`, `or`, `!`)
+      - [x] арифметика (`+`, `-`, `*`, `/`, `%`)
+      - [x] доступ к вложенным полям через `var` с dotted-path
+      - [x] работа с null (null-safe, не падает)
+      - [x] расширенные операторы (`now`, `regex` с literal и с `var`)
+      - [x] `reference_exists` через mock IReferenceLookup (true/false/missing context)
+      - [x] лимиты срабатывают (длина, глубина)
+      - [x] Parse возвращает список переменных (включая форму `var: ["foo", "default"]`)
+      - [x] Parse корректно ловит синтаксические ошибки
+      - [x] `EvaluateBooleanAsync` возвращает false для невалидных и нон-bool результатов
+      - [x] `DictionaryExpressionContext` — все варианты dotted-path
+- [x] README с примерами выражений:
       - `{"==": [{"var": "status"}, "Draft"]}`
       - `{"and": [{">": [{"var": "amount"}, 100000]}, {"==": [{"var": "category"}, "VIP"]}]}`
+      - `{"<": [{"var": "deadline"}, {"now": []}]}`
+      - `{"regex": ["^\\+7\\d{10}$", {"var": "phone"}]}`
+      - `{"reference_exists": ["Counterparties", {"var": "document.counterpartyId"}]}`
 
 ### 2.5 Совместимость монолит/микросервисы
 
@@ -220,10 +250,14 @@ Stateless, без I/O — работает одинаково. `reference_exists
 
 ### 2.6 Definition of Done
 
-- [ ] Все тесты зелёные, покрытие основных операций ≥ 90%.
-- [ ] README с 5+ примерами выражений.
-- [ ] Бенчмарк: ≥ 100k вычислений в секунду на одном ядре для простых
-      выражений (sanity check на отсутствие O(n²) внутри).
+- [x] Все тесты зелёные:
+      - `Cheetah.Expressions.Tests` — 6 passed (DictionaryExpressionContext).
+      - `Cheetah.Expressions.JsonLogic.Tests` — 44 passed (evaluator + preprocessor).
+      - Полный билд солюшна — 0 errors.
+- [x] README актуален в `Cheetah.Expressions` и `Cheetah.Expressions.JsonLogic` с 5+ примерами.
+- [ ] ~~Бенчмарк ≥ 100k/s~~ — отложен. Sanity check: единичные вычисления простых
+      выражений в тестах укладываются в миллисекунды; полноценный benchmark
+      будет добавлен при появлении первого реального потребителя (Validation/StateMachine).
 
 ---
 

@@ -1,10 +1,9 @@
 using Cheetah.Core.Events;
-using Cheetah.Core.Outbox;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using Shouldly;
 
-namespace Cheetah.Core.Outbox.Tests;
+namespace Cheetah.Core.Inbox.Tests;
 
 public class InboxIdempotentEventHandlerTests
 {

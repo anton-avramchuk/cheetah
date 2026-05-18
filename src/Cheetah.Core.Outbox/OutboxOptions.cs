@@ -28,7 +28,7 @@ public class OutboxOptions
     public TimeSpan MaxRetryDelay { get; set; } = TimeSpan.FromMinutes(10);
 
     /// <summary>
-    /// Сколько хранить обработанные OutboxMessages/InboxMessages до удаления.
+    /// Сколько хранить обработанные OutboxMessages до удаления.
     /// </summary>
     public TimeSpan RetentionPeriod { get; set; } = TimeSpan.FromDays(7);
 

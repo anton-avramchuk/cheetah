@@ -13,10 +13,10 @@ public class ModuleServicesGenerator : IIncrementalGenerator
 {
     private const string ErrorCode = "MODGEN001";
     private static string ErrorCategory = nameof(ModuleServicesGenerator);
-    private const string IdempotentAttributeName = "Cheetah.Core.Outbox.IdempotentAttribute";
+    private const string IdempotentAttributeName = "Cheetah.Core.Inbox.IdempotentAttribute";
     private const string EventHandlerInterfacePrefix = "Cheetah.Core.Events.IEventHandler<";
-    private const string IdempotentDecoratorTypeName = "Cheetah.Core.Outbox.InboxIdempotentEventHandler";
-    private const string InboxStoreTypeName = "Cheetah.Core.Outbox.IInboxStore";
+    private const string IdempotentDecoratorTypeName = "Cheetah.Core.Inbox.InboxIdempotentEventHandler";
+    private const string InboxStoreTypeName = "Cheetah.Core.Inbox.IInboxStore";
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
         // Находим все классы, реализующие IModule

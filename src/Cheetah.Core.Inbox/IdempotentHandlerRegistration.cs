@@ -2,7 +2,7 @@ using Cheetah.Core.Events;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace Cheetah.Core.Outbox;
+namespace Cheetah.Core.Inbox;
 
 public static class IdempotentHandlerRegistration
 {

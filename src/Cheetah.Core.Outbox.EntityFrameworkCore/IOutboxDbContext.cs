@@ -12,13 +12,3 @@ public interface IOutboxDbContext
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }
-
-/// <summary>
-/// Маркер DbContext'a с таблицей InboxMessages для идемпотентной обработки событий.
-/// </summary>
-public interface IInboxDbContext
-{
-    DbSet<InboxMessage> InboxMessages { get; }
-
-    Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
-}

@@ -33,19 +33,19 @@ CrmRedisEventBus (или другой транспорт)
 | Тип | Назначение |
 |-----|------------|
 | `IOutboxStore` | Хранилище outbox-сообщений (реализуется отдельным модулем) |
-| `IInboxStore` | Хранилище обработанных EventId — для идемпотентности consumer'ов |
-| `OutboxMessage` / `InboxMessage` | Entity-записи |
+| `OutboxMessage` | Entity-запись outbox |
 | `OutboxEventBus` | Scoped-декоратор `IEventBus`, пишет в outbox вместо немедленной отправки |
 | `IInnerEventBus` | Адаптер над реальным транспортом, который зовёт processor |
 | `OutboxProcessor` | `BackgroundService` с polling + сигнал от `IOutboxNotifier` (что раньше) |
-| `OutboxCleanupService` | `BackgroundService`: удаляет обработанные `OutboxMessages` и старые `InboxMessages` старше `RetentionPeriod` (default 7 дней), batch'ами |
+| `OutboxCleanupService` | `BackgroundService`: удаляет обработанные `OutboxMessages` старше `RetentionPeriod` (default 7 дней), batch'ами. Inbox чистит отдельный `InboxCleanupService` из `Cheetah.Core.Inbox` |
 | `IDeadLetterStore` / `DeadLetterMessage` | DLQ: при превышении `MaxRetries` сообщение переезжает в `DeadLetterMessages` (если store зарегистрирован), освобождая горячую таблицу. `RequeueAsync` возвращает обратно с обнулённым `RetryCount` |
 | `IOutboxMetrics` / `NullOutboxMetrics` | Абстракция метрик. По умолчанию — no-op. Для OpenTelemetry-экспорта подключите отдельный модуль `Cheetah.Core.Outbox.OpenTelemetry` |
 | `IOutboxNotifier` | Источник пробуждения processor'а. По умолчанию — `NullOutboxNotifier` (только polling). См. `Cheetah.Core.Outbox.PostgreSql` для LISTEN/NOTIFY |
-| `InboxIdempotentEventHandler<TEvent>` | Декоратор IEventHandler: проверка `IInboxStore.AlreadyProcessedAsync` до вызова + запись `InboxMessage` после |
-| `[Idempotent]` | Атрибут-маркер; Source Generator оборачивает помеченные `IEventHandler<TEvent>` в `InboxIdempotentEventHandler<TEvent>` автоматически |
 | `OutboxOptions` | `BatchSize`, `PollingInterval`, `MaxRetries`, `BaseRetryDelay`, `MaxRetryDelay` |
 | `CrmOutboxModule` | Перехватывает регистрацию `IEventBus`, переносит её на `IInnerEventBus`, регистрирует `OutboxEventBus` и `OutboxProcessor` |
+
+**Идемпотентность consumer'а** (Inbox-pattern) — см. отдельный модуль [`Cheetah.Core.Inbox`](../Cheetah.Core.Inbox/README.md):
+типы `IInboxStore`, `InboxMessage`, `InboxIdempotentEventHandler<TEvent>`, `[Idempotent]` переехали туда.
 
 ## Подключение
 
@@ -106,25 +106,5 @@ public async ValueTask<Guid> HandleAsync(CreateMyEntityCommand cmd, Cancellation
 
 ## Идемпотентность consumer'а
 
-Outbox защищает publisher'а. Для consumer'а используй декоратор `InboxIdempotentEventHandler<TEvent>`:
-
-```csharp
-// в ConfigureServices модуля:
-services.AddIdempotentHandler<MyEvent, MyEventHandler>();
-```
-
-или маркер `[Idempotent]` (требует Source Generator поддержки в `Cheetah.Generators.Application`):
-
-```csharp
-[Idempotent]
-public class MyEventHandler : IEventHandler<MyEvent>
-{
-    public async ValueTask HandleAsync(MyEvent e, CancellationToken ct)
-    {
-        // бизнес-логика + _context.SaveChangesAsync(ct)
-        // Inbox-запись добавит декоратор, она зафиксируется в той же транзакции.
-    }
-}
-```
-
-**Важно:** хендлер сам зовёт `SaveChangesAsync` на том же DbContext, что использует `IInboxStore` — иначе атомарности нет.
+Outbox защищает publisher'а. Для consumer'а используется **отдельный модуль** `Cheetah.Core.Inbox`
+(парный с этим). Подробности подключения — в [его README](../Cheetah.Core.Inbox/README.md).

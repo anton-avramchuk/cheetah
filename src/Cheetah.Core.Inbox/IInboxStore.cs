@@ -1,4 +1,4 @@
-namespace Cheetah.Core.Outbox;
+namespace Cheetah.Core.Inbox;
 
 /// <summary>
 /// Хранилище inbox-записей для идемпотентной обработки входящих событий.

@@ -1,19 +1,18 @@
 # Cheetah.Core.Outbox.EntityFrameworkCore
 
-EF Core реализация `IOutboxStore` / `IInboxStore` для [Cheetah.Core.Outbox](../Cheetah.Core.Outbox/README.md).
+EF Core реализация `IOutboxStore` для [Cheetah.Core.Outbox](../Cheetah.Core.Outbox/README.md).
+
+> **Inbox** живёт в отдельном модуле — см. [`Cheetah.Core.Inbox.EntityFrameworkCore`](../Cheetah.Core.Inbox.EntityFrameworkCore/README.md).
 
 ## Состав
 
 | Тип | Назначение |
 |-----|------------|
 | `IOutboxDbContext` | Маркер DbContext'a с `DbSet<OutboxMessage> OutboxMessages` |
-| `IInboxDbContext` | Маркер DbContext'a с `DbSet<InboxMessage> InboxMessages` |
 | `EfOutboxStore<TContext>` | EF Core реализация `IOutboxStore` |
-| `EfInboxStore<TContext>` | EF Core реализация `IInboxStore` |
 | `OutboxMessageConfiguration` | EF-конфигурация + индекс `IX_OutboxMessages_Pending` (`ProcessedAt`, `NextAttemptAt`, `OccurredAt`) |
-| `InboxMessageConfiguration` | EF-конфигурация (составной ключ `EventId + ConsumerName`) |
-| `ModelBuilder.AddOutbox()` / `AddInbox()` | Расширения для `OnModelCreating` |
-| `services.AddOutboxStore<TContext>()` / `AddInboxStore<TContext>()` / `AddDeadLetterStore<TContext>()` | DI-расширения |
+| `ModelBuilder.AddOutbox()` | Расширение для `OnModelCreating` |
+| `services.AddOutboxStore<TContext>()` / `AddDeadLetterStore<TContext>()` | DI-расширения |
 | `IDeadLetterDbContext` / `EfDeadLetterStore<TContext>` / `DeadLetterMessageConfiguration` / `modelBuilder.AddDeadLetter()` | EF Core реализация DLQ |
 | `CrmOutboxEntityFrameworkCoreModule` | Зависит от `CrmEntityFrameworkModule` + `CrmOutboxModule` |
 
@@ -22,11 +21,10 @@ EF Core реализация `IOutboxStore` / `IInboxStore` для [Cheetah.Core
 ### 1. DbContext
 
 ```csharp
-public class MyDbContext : CrmDbContext<MyDbContext>, IOutboxDbContext, IInboxDbContext
+public class MyDbContext : CrmDbContext<MyDbContext>, IOutboxDbContext
 {
     public DbSet<MyEntity> MyEntities { get; set; } = null!;
     public DbSet<OutboxMessage> OutboxMessages { get; set; } = null!;
-    public DbSet<InboxMessage> InboxMessages { get; set; } = null!;
 
     public MyDbContext(DbContextOptions<MyDbContext> options) : base(options) { }
 
@@ -36,7 +34,7 @@ public class MyDbContext : CrmDbContext<MyDbContext>, IOutboxDbContext, IInboxDb
         modelBuilder.ApplyConfiguration(new MyEntityConfiguration());
 
         modelBuilder.AddOutbox();   // ← таблица OutboxMessages
-        modelBuilder.AddInbox();    // ← таблица InboxMessages (опционально)
+        // Для inbox используйте отдельный модуль Cheetah.Core.Inbox.EntityFrameworkCore.
     }
 }
 ```
@@ -60,17 +58,16 @@ public partial class MyDataAccessModule : CrmModule
             options.UseNpgsql(context.Services.GetConfiguration().GetConnectionString("MyModule")));
 
         context.Services.AddOutboxStore<MyDbContext>();
-        context.Services.AddInboxStore<MyDbContext>();
     }
 }
 ```
 
 ### 3. Миграции
 
-После `AddOutbox()` / `AddInbox()` в `OnModelCreating` нужно сгенерировать миграцию:
+После `AddOutbox()` в `OnModelCreating` нужно сгенерировать миграцию:
 
 ```bash
-dotnet ef migrations add AddOutboxAndInbox --project src/Modules/MyModule/MyDataAccess
+dotnet ef migrations add AddOutbox --project src/Modules/MyModule/MyDataAccess
 ```
 
 ## Схема таблиц
@@ -88,14 +85,6 @@ dotnet ef migrations add AddOutboxAndInbox --project src/Modules/MyModule/MyData
 | `Error` | `varchar(4000)?` | последняя ошибка |
 
 Индекс `IX_OutboxMessages_Pending(ProcessedAt, NextAttemptAt, OccurredAt)` — для горячего запроса processor'а.
-
-**InboxMessages**
-| Колонка | Тип | Назначение |
-|---------|-----|------------|
-| `EventId` | `uuid` | PK часть 1 |
-| `ConsumerName` | `varchar(256)` | PK часть 2 |
-| `EventType` | `varchar(512)` | |
-| `ReceivedAt` | `timestamptz` | |
 
 ## Multi-DbContext
 

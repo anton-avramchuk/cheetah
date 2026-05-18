@@ -31,6 +31,9 @@
         <Project Path="src/Cheetah.Core.EntityFramework.Tenants/Cheetah.Core.EntityFramework.Tenants.csproj" />
         <Project Path="src/Cheetah.Core.EntityFramework/Cheetah.Core.EntityFramework.csproj" />
         <Project Path="src/Cheetah.Core.Events/Cheetah.Core.Events.csproj" />
+        <Project Path="src/Cheetah.Core.Inbox/Cheetah.Core.Inbox.csproj" />
+        <Project Path="src/Cheetah.Core.Inbox.EntityFrameworkCore/Cheetah.Core.Inbox.EntityFrameworkCore.csproj" />
+        <Project Path="src/Cheetah.Core.Inbox.PostgreSql/Cheetah.Core.Inbox.PostgreSql.csproj" />
         <Project Path="src/Cheetah.Core.Outbox/Cheetah.Core.Outbox.csproj" />
         <Project Path="src/Cheetah.Core.Outbox.EntityFrameworkCore/Cheetah.Core.Outbox.EntityFrameworkCore.csproj" />
         <Project Path="src/Cheetah.Core.Outbox.OpenTelemetry/Cheetah.Core.Outbox.OpenTelemetry.csproj" />
@@ -45,6 +48,8 @@
         <Project Path="src/Cheetah.Mapping.Core/Cheetah.Mapping.Core.csproj" />
         <Project Path="src/Cheetah.Mapping.Expressions/Cheetah.Mapping.Expressions.csproj" />
         <Project Path="src/Cheetah.Mapping.Mapster/Cheetah.Mapping.Mapster.csproj" />
+        <Project Path="src/Cheetah.Expressions/Cheetah.Expressions.csproj" />
+        <Project Path="src/Cheetah.Expressions.JsonLogic/Cheetah.Expressions.JsonLogic.csproj" />
         <Project Path="src/Cheetah.DistributedLock/Cheetah.DistributedLock.csproj" />
         <Project Path="src/Cheetah.DistributedLock.Postgres/Cheetah.DistributedLock.Postgres.csproj" />
         <Project Path="src/Cheetah.FileStorage/Cheetah.FileStorage.csproj" />
@@ -140,6 +145,10 @@
         <Project Path="src/Cheetah.Backend.Rsa.Tests/Cheetah.Backend.Rsa.Tests.csproj" />
         <Project Path="src/Cheetah.Backend.Events.InMemory.Tests/Cheetah.Backend.Events.InMemory.Tests.csproj" />
         <Project Path="src/Cheetah.Backend.Events.Redis.Tests/Cheetah.Backend.Events.Redis.Tests.csproj" />
+        <Project Path="src/Cheetah.Core.Inbox.Tests/Cheetah.Core.Inbox.Tests.csproj" />
+        <Project Path="src/Cheetah.Core.Inbox.Integration.Tests/Cheetah.Core.Inbox.Integration.Tests.csproj" />
+        <Project Path="src/Cheetah.Expressions.Tests/Cheetah.Expressions.Tests.csproj" />
+        <Project Path="src/Cheetah.Expressions.JsonLogic.Tests/Cheetah.Expressions.JsonLogic.Tests.csproj" />
         <Project Path="src/Cheetah.Core.Outbox.Tests/Cheetah.Core.Outbox.Tests.csproj" />
         <Project Path="src/Cheetah.Core.Outbox.OpenTelemetry.Tests/Cheetah.Core.Outbox.OpenTelemetry.Tests.csproj" />
         <Project Path="src/Cheetah.Core.Outbox.PostgreSql.Tests/Cheetah.Core.Outbox.PostgreSql.Tests.csproj" />

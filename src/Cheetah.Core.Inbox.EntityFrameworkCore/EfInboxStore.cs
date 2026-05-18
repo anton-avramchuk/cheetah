@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace Cheetah.Core.Outbox.EntityFrameworkCore;
+namespace Cheetah.Core.Inbox.EntityFrameworkCore;
 
 public sealed class EfInboxStore<TContext> : IInboxStore
     where TContext : DbContext, IInboxDbContext

@@ -1,13 +1,12 @@
 using Cheetah.Core.DependencyInjection;
 using Cheetah.Core.Events;
 using Cheetah.Core.Modularity;
-using Cheetah.Core.Outbox;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using Shouldly;
 
-namespace Cheetah.Core.Outbox.Tests;
+namespace Cheetah.Core.Inbox.Tests;
 
 /// <summary>
 /// Проверяет, что Source Generator корректно обрабатывает [Idempotent]:
@@ -26,7 +25,7 @@ public class IdempotentTestHandler : IEventHandler<TestEvent>
     }
 }
 
-[DependsOn(typeof(CrmOutboxModule))]
+[DependsOn(typeof(CrmInboxModule))]
 public partial class TestIdempotentModule : CrmModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)

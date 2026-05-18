@@ -4,10 +4,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Cheetah.Core.Outbox.Integration.Tests;
 
-public class TestDbContext : DbContext, IOutboxDbContext, IInboxDbContext, IDeadLetterDbContext
+public class TestDbContext : DbContext, IOutboxDbContext, IDeadLetterDbContext
 {
     public DbSet<OutboxMessage> OutboxMessages { get; set; } = null!;
-    public DbSet<InboxMessage> InboxMessages { get; set; } = null!;
     public DbSet<DeadLetterMessage> DeadLetterMessages { get; set; } = null!;
 
     public TestDbContext(DbContextOptions<TestDbContext> options) : base(options) { }
@@ -16,7 +15,6 @@ public class TestDbContext : DbContext, IOutboxDbContext, IInboxDbContext, IDead
     {
         base.OnModelCreating(modelBuilder);
         modelBuilder.AddOutbox();
-        modelBuilder.AddInbox();
         modelBuilder.AddDeadLetter();
     }
 }

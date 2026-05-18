@@ -15,15 +15,6 @@ public static class ModelBuilderExtensions
     }
 
     /// <summary>
-    /// Подключает таблицу InboxMessages к модели DbContext'a.
-    /// </summary>
-    public static ModelBuilder AddInbox(this ModelBuilder modelBuilder)
-    {
-        modelBuilder.ApplyConfiguration(new InboxMessageConfiguration());
-        return modelBuilder;
-    }
-
-    /// <summary>
     /// Подключает таблицу DeadLetterMessages к модели DbContext'a.
     /// </summary>
     public static ModelBuilder AddDeadLetter(this ModelBuilder modelBuilder)

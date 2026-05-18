@@ -24,7 +24,11 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Cheetah.Core.Outbox\Cheetah.Core.Outbox.csproj" />
+        <ProjectReference Include="..\Cheetah.Core.Inbox\Cheetah.Core.Inbox.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Cheetah.Generators.Module\Cheetah.Generators.Module.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
     </ItemGroup>
 
     <ItemGroup>

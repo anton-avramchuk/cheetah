@@ -3,25 +3,24 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Cheetah.Core.Outbox;
+namespace Cheetah.Core.Inbox;
 
 /// <summary>
-/// Фоновый сервис: удаляет обработанные OutboxMessages, чтобы таблица не росла бесконечно.
-/// Запускается раз в OutboxOptions.CleanupInterval. Чистку InboxMessages выполняет
-/// отдельный InboxCleanupService из Cheetah.Core.Inbox.
+/// Фоновый сервис: удаляет старые InboxMessages, чтобы таблица не росла бесконечно.
+/// Запускается раз в InboxOptions.CleanupInterval.
 /// </summary>
-public sealed class OutboxCleanupService : BackgroundService
+public sealed class InboxCleanupService : BackgroundService
 {
     private readonly IServiceProvider _serviceProvider;
-    private readonly IOutboxMetrics _metrics;
-    private readonly OutboxOptions _options;
-    private readonly ILogger<OutboxCleanupService> _logger;
+    private readonly IInboxMetrics _metrics;
+    private readonly InboxOptions _options;
+    private readonly ILogger<InboxCleanupService> _logger;
 
-    public OutboxCleanupService(
+    public InboxCleanupService(
         IServiceProvider serviceProvider,
-        IOutboxMetrics metrics,
-        IOptions<OutboxOptions> options,
-        ILogger<OutboxCleanupService> logger)
+        IInboxMetrics metrics,
+        IOptions<InboxOptions> options,
+        ILogger<InboxCleanupService> logger)
     {
         _serviceProvider = serviceProvider;
         _metrics = metrics;
@@ -32,7 +31,7 @@ public sealed class OutboxCleanupService : BackgroundService
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         _logger.LogInformation(
-            "Outbox cleanup started. Interval={Interval}, Retention={Retention}, BatchSize={Batch}",
+            "Inbox cleanup started. Interval={Interval}, Retention={Retention}, BatchSize={Batch}",
             _options.CleanupInterval, _options.RetentionPeriod, _options.CleanupBatchSize);
 
         while (!stoppingToken.IsCancellationRequested)
@@ -47,7 +46,7 @@ public sealed class OutboxCleanupService : BackgroundService
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Outbox cleanup iteration failed");
+                _logger.LogError(ex, "Inbox cleanup iteration failed");
             }
 
             try { await Task.Delay(_options.CleanupInterval, stoppingToken); }
@@ -60,12 +59,14 @@ public sealed class OutboxCleanupService : BackgroundService
         var threshold = DateTimeOffset.UtcNow - _options.RetentionPeriod;
 
         using var scope = _serviceProvider.CreateScope();
-        var outbox = scope.ServiceProvider.GetRequiredService<IOutboxStore>();
+        var inbox = scope.ServiceProvider.GetService<IInboxStore>();
+        if (inbox is null)
+            return;
 
         var total = 0;
         while (!ct.IsCancellationRequested)
         {
-            var deleted = await outbox.DeleteProcessedAsync(threshold, _options.CleanupBatchSize, ct);
+            var deleted = await inbox.DeleteOlderThanAsync(threshold, _options.CleanupBatchSize, ct);
             if (deleted == 0)
                 break;
             total += deleted;
@@ -73,9 +74,9 @@ public sealed class OutboxCleanupService : BackgroundService
 
         if (total > 0)
         {
-            _metrics.RecordCleaned("outbox", total);
+            _metrics.RecordCleaned(total);
             _logger.LogInformation(
-                "Outbox cleanup: removed {OutboxCount} rows older than {Threshold}", total, threshold);
+                "Inbox cleanup: removed {Count} rows older than {Threshold}", total, threshold);
         }
     }
 }
