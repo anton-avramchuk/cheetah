@@ -12,6 +12,8 @@ public interface IGridRepository<TEntity, TKey> : IRepository<TEntity, TKey>
         GridRequest request,
         CancellationToken ct = default)
         where TViewModel : class;
+
+    ValueTask<TViewModel?> GetByIdAsync<TViewModel>(TKey id, CancellationToken ct = default);
 }
 
 public interface IGridRepository<TEntity> : IGridRepository<TEntity, Guid>, IRepository<TEntity>

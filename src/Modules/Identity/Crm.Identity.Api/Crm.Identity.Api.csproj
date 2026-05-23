@@ -12,7 +12,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\..\..\Cheetah.ServiceDefaults\Cheetah.ServiceDefaults.csproj" />
         <ProjectReference Include="..\..\..\Cheetah.Core\Cheetah.Core.csproj" />
         <ProjectReference Include="..\Cheetah.Modules.Identity.Api\Cheetah.Modules.Identity.Api.csproj" />
         <ProjectReference Include="..\Crm.Identity.Application\Crm.Identity.Application.csproj" />

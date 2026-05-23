@@ -81,6 +81,13 @@ public class EfGridRepository<TDbContext, TEntity, TKey> : EfRepository<TDbConte
         };
     }
 
+    public async ValueTask<TViewModel?> GetByIdAsync<TViewModel>(TKey id, CancellationToken ct = default)
+    {
+        var query = AsNoTrackingQueryable().Where(x=>x.Id != null && x.Id.Equals(id));
+
+        return await _mapper.ProjectTo<TViewModel>(query).FirstOrDefaultAsync(ct);
+    }
+
     private Expression<Func<TEntity, bool>>? BuildFilterExpression(FilterDescriptor filter)
     {
         var parameter = Expression.Parameter(typeof(TEntity), "e");

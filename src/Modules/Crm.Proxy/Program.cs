@@ -3,7 +3,6 @@ using Crm.Proxy;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.AddServiceDefaults();
 
 builder.Services.AddCors(options =>
 {
@@ -18,8 +17,6 @@ builder.Services.AddCors(options =>
 Bootstrap.Start(builder.Services);
 
 var app = builder.Build();
-
-app.MapDefaultEndpoints();
 
 app.UseCors();
 

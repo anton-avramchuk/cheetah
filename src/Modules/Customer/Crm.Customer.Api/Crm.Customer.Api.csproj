@@ -8,7 +8,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\..\..\Cheetah.ServiceDefaults\Cheetah.ServiceDefaults.csproj" />
       <ProjectReference Include="..\..\..\Cheetah.AspNetCore\Cheetah.AspNetCore.csproj" />
       <ProjectReference Include="..\..\..\Cheetah.AspNetCore.Contracts\Cheetah.AspNetCore.Contracts.csproj" />
       <ProjectReference Include="..\..\..\Cheetah.Backend.CQRS\Cheetah.Backend.CQRS.csproj" />
