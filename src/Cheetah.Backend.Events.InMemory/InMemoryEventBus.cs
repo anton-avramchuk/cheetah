@@ -50,10 +50,17 @@ public sealed class InMemoryEventBus(IServiceProvider serviceProvider) : IEventB
     private async Task HandleEventAsync<TEvent>(TEvent @event, CancellationToken cancellationToken)
         where TEvent : IEvent
     {
+        if (@event is null) return;
+
+        // Используем фактический тип события, а не TEvent: при публикации через
+        // абстракцию (например, перебор research.DomainEvents : IEnumerable<IEvent>)
+        // TEvent выводится как IEvent, и подписки на конкретные типы не находятся.
+        var eventType = @event.GetType();
+
         List<Type> handlerTypes;
         lock (_lock)
         {
-            if (!_subscriptions.TryGetValue(typeof(TEvent), out var handlers))
+            if (!_subscriptions.TryGetValue(eventType, out var handlers))
                 return;
 
             handlerTypes = handlers.ToList();
@@ -61,19 +68,31 @@ public sealed class InMemoryEventBus(IServiceProvider serviceProvider) : IEventB
 
         using var scope = serviceProvider.CreateScope();
 
+        var handlerInterface = typeof(IEventHandler<>).MakeGenericType(eventType);
+        var handleMethod = handlerInterface.GetMethod(nameof(IEventHandler<IEvent>.HandleAsync))!;
+
         foreach (var handlerType in handlerTypes)
         {
             var handler = scope.ServiceProvider.GetService(handlerType);
-            if (handler is IEventHandler<TEvent> eventHandler)
+            if (handler is null)
+                continue;
+
+            try
             {
-                try
+                var result = handleMethod.Invoke(handler, [@event, cancellationToken]);
+                switch (result)
                 {
-                    await eventHandler.HandleAsync(@event, cancellationToken);
+                    case ValueTask vt:
+                        await vt;
+                        break;
+                    case Task t:
+                        await t;
+                        break;
                 }
-                catch
-                {
-                    // TODO: Add logging
-                }
+            }
+            catch
+            {
+                // TODO: Add logging
             }
         }
     }
