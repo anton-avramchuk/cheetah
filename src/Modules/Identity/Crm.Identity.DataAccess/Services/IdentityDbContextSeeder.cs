@@ -1,6 +1,5 @@
 using Cheetah.Core.DependencyInjection;
 using Cheetah.Core.EntityFramework.Seeding;
-using Cheetah.Modules.Identity.Domain;
 using Crm.Identity.Domain;
 using Microsoft.AspNetCore.Identity;
 

@@ -11,7 +11,6 @@
         <ProjectReference Include="..\..\..\Cheetah.AspNetCore.Contracts\Cheetah.AspNetCore.Contracts.csproj" />
         <ProjectReference Include="..\..\..\Cheetah.Backend.CQRS\Cheetah.Backend.CQRS.csproj" />
         <ProjectReference Include="..\..\..\Cheetah.Backend.Endpoints\Cheetah.Backend.Endpoints.csproj" />
-        <ProjectReference Include="..\..\..\Cheetah.Backend.Events.Redis\Cheetah.Backend.Events.Redis.csproj" />
         <ProjectReference Include="..\..\..\Cheetah.Backend.Jwt\Cheetah.Backend.Jwt.csproj" />
         <ProjectReference Include="..\..\..\Cheetah.Core\Cheetah.Core.csproj" />
         <ProjectReference Include="..\..\..\Cheetah.Mapping.Mapster\Cheetah.Mapping.Mapster.csproj" />

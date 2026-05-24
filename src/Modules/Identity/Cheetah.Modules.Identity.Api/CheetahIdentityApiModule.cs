@@ -3,9 +3,8 @@ using Cheetah.AspNetCore.Contracts;
 using Cheetah.AspNetCore.Extensions;
 using Cheetah.Backend.CQRS;
 using Cheetah.Backend.Endpoints;
-using Cheetah.Backend.Events.Redis;
 using Cheetah.Backend.Jwt;
-using Cheetah.Backend.Rsa.Abstractions; // optional dependency — see comment on [DependsOn]
+using Cheetah.Backend.Rsa.Abstractions;
 using Cheetah.Core;
 using Cheetah.Core.Modularity;
 using Cheetah.Mapping.Mapster;
@@ -13,8 +12,7 @@ using Cheetah.Modules.Identity.Api.Middleware;
 using Cheetah.Modules.Identity.Application;
 using Cheetah.Modules.Identity.Contracts;
 using Cheetah.Scalar;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
+// optional dependency — see comment on [DependsOn]
 
 namespace Cheetah.Modules.Identity.Api;
 
@@ -28,7 +26,6 @@ namespace Cheetah.Modules.Identity.Api;
     typeof(ScalarModule),
     typeof(CrmMapsterModule),
     typeof(CrmBackendCQRSModule),
-    typeof(CrmBackendEventsRedisModule),
     typeof(CrmBackendEndpointsModule),
     typeof(CrmBackendJwtModule),
     typeof(CheetahIdentityApplicationModule),
