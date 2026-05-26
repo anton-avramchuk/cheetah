@@ -47,10 +47,16 @@ public class EfGridRepository<TDbContext, TEntity, TKey> : EfRepository<TDbConte
     {
         var queryable = AsNoTrackingQueryable();
 
+        // Imена полей фильтра/сортировки приходят из ViewModel (например, "patientName"),
+        // но Where/OrderBy должны строиться по сущности (TEntity) — после ProjectTo EF
+        // не может транслировать выражения. Достаём проекционную лямбду Mapster и
+        // используем её для разворачивания имён ViewModel в выражения по TEntity.
+        var projection = GetProjectionLambda<TViewModel>();
+
         // 1. Apply filtering
         if (request.Filter is not null)
         {
-            var filterExpression = BuildFilterExpression(request.Filter);
+            var filterExpression = BuildFilterExpression(request.Filter, projection);
             if (filterExpression is not null)
                 queryable = queryable.Where(filterExpression);
         }
@@ -60,7 +66,7 @@ public class EfGridRepository<TDbContext, TEntity, TKey> : EfRepository<TDbConte
 
         // 3. Apply sorting
         if (request.Sort.Count > 0)
-            queryable = ApplySorting(queryable, request.Sort);
+            queryable = ApplySorting(queryable, request.Sort, projection);
 
         // 4. Apply pagination
         if (request.PageSize > 0)
@@ -81,6 +87,30 @@ public class EfGridRepository<TDbContext, TEntity, TKey> : EfRepository<TDbConte
         };
     }
 
+    private LambdaExpression? GetProjectionLambda<TViewModel>()
+    {
+        try
+        {
+            var empty = Array.Empty<TEntity>().AsQueryable();
+            var projected = _mapper.ProjectTo<TViewModel>(empty);
+            if (projected.Expression is MethodCallExpression { Arguments.Count: >= 2 } mc)
+            {
+                return mc.Arguments[1] switch
+                {
+                    UnaryExpression { Operand: LambdaExpression lambda } => lambda,
+                    LambdaExpression lambda => lambda,
+                    _ => null
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Grid: failed to extract projection expression for {Entity} -> {ViewModel}",
+                typeof(TEntity).Name, typeof(TViewModel).Name);
+        }
+        return null;
+    }
+
     public async ValueTask<TViewModel?> GetByIdAsync<TViewModel>(TKey id, CancellationToken ct = default)
     {
         var query = AsNoTrackingQueryable().Where(x=>x.Id != null && x.Id.Equals(id));
@@ -88,10 +118,12 @@ public class EfGridRepository<TDbContext, TEntity, TKey> : EfRepository<TDbConte
         return await _mapper.ProjectTo<TViewModel>(query).FirstOrDefaultAsync(ct);
     }
 
-    private Expression<Func<TEntity, bool>>? BuildFilterExpression(FilterDescriptor filter)
+    private Expression<Func<TEntity, bool>>? BuildFilterExpression(
+        FilterDescriptor filter,
+        LambdaExpression? projection)
     {
         var parameter = Expression.Parameter(typeof(TEntity), "e");
-        var expression = BuildFilterExpressionInternal(filter, parameter);
+        var expression = BuildFilterExpressionInternal(filter, parameter, projection);
 
         if (expression is null)
             return null;
@@ -101,13 +133,14 @@ public class EfGridRepository<TDbContext, TEntity, TKey> : EfRepository<TDbConte
 
     private Expression? BuildFilterExpressionInternal(
         FilterDescriptor filter,
-        ParameterExpression parameter)
+        ParameterExpression parameter,
+        LambdaExpression? projection)
     {
         // Handle composite filters (AND/OR)
         if (filter.Filters.Count > 0)
         {
             var expressions = filter.Filters
-                .Select(f => BuildFilterExpressionInternal(f, parameter))
+                .Select(f => BuildFilterExpressionInternal(f, parameter, projection))
                 .Where(e => e is not null)
                 .Cast<Expression>()
                 .ToList();
@@ -130,7 +163,7 @@ public class EfGridRepository<TDbContext, TEntity, TKey> : EfRepository<TDbConte
         if (string.IsNullOrEmpty(filter.Field) || string.IsNullOrEmpty(filter.Operator))
             return null;
 
-        var propertyExpression = BuildPropertyExpression(parameter, filter.Field);
+        var propertyExpression = BuildPropertyExpression(parameter, filter.Field, projection);
         if (propertyExpression is null)
         {
             _logger.LogWarning("Grid filter: Property '{Field}' not found on type {Type}",
@@ -141,14 +174,30 @@ public class EfGridRepository<TDbContext, TEntity, TKey> : EfRepository<TDbConte
         return BuildComparisonExpression(propertyExpression, filter.Operator, filter.Value, filter.IgnoreCase);
     }
 
-    private static Expression? BuildPropertyExpression(Expression parameter, string propertyPath)
+    private static Expression? BuildPropertyExpression(
+        ParameterExpression entityParameter,
+        string propertyPath,
+        LambdaExpression? projection)
     {
         var parts = propertyPath.Split('.');
-        Expression current = parameter;
+        Expression current = entityParameter;
+        var startIndex = 0;
 
-        foreach (var part in parts)
+        // Сначала пробуем найти первый сегмент как destination-член проекции
+        // (например, "patientName" → src.Direction.Patient.FullName).
+        if (projection is { Body: var body } && projection.Parameters.Count == 1)
         {
-            var property = current.Type.GetProperty(part,
+            var projected = GetProjectedMember(body, parts[0]);
+            if (projected is not null)
+            {
+                current = ReplaceParameter(projected, projection.Parameters[0], entityParameter);
+                startIndex = 1;
+            }
+        }
+
+        for (var i = startIndex; i < parts.Length; i++)
+        {
+            var property = current.Type.GetProperty(parts[i],
                 BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
 
             if (property is null)
@@ -158,6 +207,60 @@ public class EfGridRepository<TDbContext, TEntity, TKey> : EfRepository<TDbConte
         }
 
         return current;
+    }
+
+    private static Expression? GetProjectedMember(Expression projectionBody, string memberName)
+    {
+        switch (projectionBody)
+        {
+            case MemberInitExpression init:
+                foreach (var binding in init.Bindings)
+                {
+                    if (binding is MemberAssignment ma &&
+                        string.Equals(ma.Member.Name, memberName, StringComparison.OrdinalIgnoreCase))
+                        return ma.Expression;
+                }
+                return GetFromNewExpression(init.NewExpression, memberName);
+            case NewExpression ne:
+                return GetFromNewExpression(ne, memberName);
+            default:
+                return null;
+        }
+    }
+
+    private static Expression? GetFromNewExpression(NewExpression ne, string memberName)
+    {
+        if (ne.Members is not null)
+        {
+            for (var i = 0; i < ne.Members.Count; i++)
+            {
+                if (string.Equals(ne.Members[i].Name, memberName, StringComparison.OrdinalIgnoreCase))
+                    return ne.Arguments[i];
+            }
+        }
+
+        var ctorParams = ne.Constructor?.GetParameters();
+        if (ctorParams is not null)
+        {
+            for (var i = 0; i < ctorParams.Length; i++)
+            {
+                if (string.Equals(ctorParams[i].Name, memberName, StringComparison.OrdinalIgnoreCase))
+                    return ne.Arguments[i];
+            }
+        }
+
+        return null;
+    }
+
+    private static Expression ReplaceParameter(Expression source, ParameterExpression from, ParameterExpression to)
+    {
+        return new ParameterReplacer(from, to).Visit(source)!;
+    }
+
+    private sealed class ParameterReplacer(ParameterExpression from, ParameterExpression to) : ExpressionVisitor
+    {
+        protected override Expression VisitParameter(ParameterExpression node) =>
+            node == from ? to : base.VisitParameter(node);
     }
 
     private static Expression? BuildComparisonExpression(
@@ -346,7 +449,8 @@ public class EfGridRepository<TDbContext, TEntity, TKey> : EfRepository<TDbConte
 
     private static IQueryable<TEntity> ApplySorting(
         IQueryable<TEntity> queryable,
-        List<SortDescriptor> sortDescriptors)
+        List<SortDescriptor> sortDescriptors,
+        LambdaExpression? projection)
     {
         var isFirst = true;
 
@@ -356,7 +460,7 @@ public class EfGridRepository<TDbContext, TEntity, TKey> : EfRepository<TDbConte
                 continue;
 
             var parameter = Expression.Parameter(typeof(TEntity), "e");
-            var property = BuildPropertyExpression(parameter, sort.Field);
+            var property = BuildPropertyExpression(parameter, sort.Field, projection);
 
             if (property is null)
                 continue;
