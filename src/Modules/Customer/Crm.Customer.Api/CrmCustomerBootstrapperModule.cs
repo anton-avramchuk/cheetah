@@ -2,6 +2,8 @@ using Cheetah.AspNetCore;
 using Cheetah.AspNetCore.Contracts;
 using Cheetah.Backend.CQRS;
 using Cheetah.Backend.Endpoints;
+using Cheetah.Backend.Grpc;
+using Cheetah.Backend.Grpc.Mapster;
 using Cheetah.Backend.Events.Redis;
 using Cheetah.Backend.Jwt;
 using Cheetah.BackgroundTasks;
@@ -23,6 +25,8 @@ namespace Crm.Customer.Api;
     typeof(CrmBackendCQRSModule),
     typeof(CrmBackendEventsRedisModule),
     typeof(CrmBackendEndpointsModule),
+    typeof(CrmBackendGrpcModule),
+    typeof(CrmBackendGrpcMapsterModule),
     typeof(CrmBackendJwtModule),
     typeof(CrmBackgroundTasksModule),
     typeof(CrmCustomerDataAccessModule),

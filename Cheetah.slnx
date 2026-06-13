@@ -8,6 +8,7 @@
         <Project Path="src/Cheetah.Generators.Common/Cheetah.Generators.Common.csproj" />
         <Project Path="src/Cheetah.Generators.Core/Cheetah.Generators.Core.csproj" />
         <Project Path="src/Cheetah.Generators.Endpoints/Cheetah.Generators.Endpoints.csproj" />
+        <Project Path="src/Cheetah.Generators.Grpc/Cheetah.Generators.Grpc.csproj" />
         <Project Path="src/Cheetah.Generators.Module/Cheetah.Generators.Module.csproj" />
         <Project Path="src/Cheetah.Mapping.Generators/Cheetah.Mapping.Generators.csproj" />
     </Folder>
@@ -72,6 +73,8 @@
         <Project Path="src/Cheetah.Backend.Events.Kafka/Cheetah.Backend.Events.Kafka.csproj" />
         <Project Path="src/Cheetah.Backend.Events.Redis/Cheetah.Backend.Events.Redis.csproj" />
         <Project Path="src/Cheetah.Backend.Jwt/Cheetah.Backend.Jwt.csproj" />
+        <Project Path="src/Cheetah.Backend.Grpc.Mapster/Cheetah.Backend.Grpc.Mapster.csproj" />
+        <Project Path="src/Cheetah.Backend.Grpc/Cheetah.Backend.Grpc.csproj" />
         <Project Path="src/Cheetah.Backend.Jwt.Abstractions/Cheetah.Backend.Jwt.Abstractions.csproj" />
         <Project Path="src/Cheetah.Backend.Rsa/Cheetah.Backend.Rsa.csproj" />
         <Project Path="src/Cheetah.Backend.Rsa.Abstractions/Cheetah.Backend.Rsa.Abstractions.csproj" />
@@ -167,6 +170,7 @@
         <Project Path="src/Cheetah.Core.Domain.Tests/Cheetah.Core.Domain.Tests.csproj" />
         <Project Path="src/Cheetah.Core.Identity.Domain.Tests/Cheetah.Core.Identity.Domain.Tests.csproj" />
         <Project Path="src/Cheetah.Core.Tests/Cheetah.Core.Tests.csproj" />
+        <Project Path="src/Cheetah.Generators.Grpc.Tests/Cheetah.Generators.Grpc.Tests.csproj" />
         <Project Path="src/Cheetah.Mapping.Generators.Tests/Cheetah.Mapping.Generators.Tests.csproj" />
         <Project Path="src/Cheetah.Audit.Tests/Cheetah.Audit.Tests.csproj" />
         <Project Path="src/Cheetah.Audit.Integration.Tests/Cheetah.Audit.Integration.Tests.csproj" />

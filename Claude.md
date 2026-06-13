@@ -381,6 +381,14 @@ Cheetah.MyModule.Application/
 17. **Specifications are MANDATORY for all filtering** - NEVER use raw LINQ predicates (`.Where(x => ...)`) in Application layer handlers; always create a `Specification<T>` class in Domain and pass it to the repository
 18. **Application MUST NOT depend on DataAccess module** - only on Domain (repository interfaces live in Domain)
 
+## ✅ Pre-Commit Checklist
+
+**README review for base modules.** Before committing, go through every **base module** affected by your changes and check its `README.md`. (This applies ONLY to base/infrastructure modules — the `src/Cheetah.*` projects such as `Cheetah.Backend.Grpc`, `Cheetah.AspNetCore`, `Cheetah.Mapping.*`, generators, etc. — NOT to business modules under `/Modules/{ModuleName}/`.)
+
+- If something changed (purpose, public API, dependencies, configuration, usage) — **update** the module's `README.md` accordingly.
+- If the base module has **no** `README.md` — **add** one (purpose, dependencies, how to wire/use it, notable constraints).
+- A base module's README should let a developer understand and use the module without reading its source.
+
 ## 📚 Key Files
 
 - Modularity: `src/Cheetah.Core/Modularity/CrmModule.cs`

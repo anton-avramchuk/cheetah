@@ -10,6 +10,54 @@ namespace Cheetah.Mapping.Expressions;
 
 public static class ExpressionBuilder
 {
+    // Реестр скалярных конвертеров (source -> dest). Generic-конверсии — встроены ниже,
+    // специфичные (например proto Timestamp<->DateTime) регистрируются извне через RegisterConverter.
+    private static readonly ConcurrentDictionary<(Type Source, Type Dest), LambdaExpression> _converters = new();
+
+    // Типы, которые нужно собирать "null-safe" (ссылочные поля не присваиваются null) и допускают
+    // обёртку скаляра в одно-полевое сообщение. Например proto IMessage — регистрируется извне.
+    private static volatile Func<Type, bool> _nullSafeDestPredicate = static _ => false;
+
+    static ExpressionBuilder()
+    {
+        // Встроенные generic-конверсии (без внешних зависимостей).
+        RegisterConverter<Guid, string>(g => g.ToString());
+        RegisterConverter<string, Guid>(s => Guid.Parse(s));
+        RegisterConverter<Guid?, string?>(g => g.HasValue ? g.Value.ToString() : null);
+        RegisterConverter<string, Guid?>(s => string.IsNullOrEmpty(s) ? (Guid?)null : Guid.Parse(s));
+    }
+
+    /// <summary>
+    /// Регистрирует конвертер значения <typeparamref name="TSource"/> -&gt; <typeparamref name="TDest"/>.
+    /// Используется для расширений (например proto well-known types). Сбрасывает кэш скомпилированных мапперов.
+    /// </summary>
+    public static void RegisterConverter<TSource, TDest>(Expression<Func<TSource, TDest>> converter)
+    {
+        _converters[(typeof(TSource), typeof(TDest))] = converter;
+        ClearCaches();
+    }
+
+    /// <summary>
+    /// Помечает типы-назначения, которые нужно собирать null-safe (ссылочные поля не получают null)
+    /// и в которые можно заворачивать скаляр (одно-полевое сообщение). Предикаты OR-комбинируются.
+    /// Например proto-сообщения: <c>t =&gt; typeof(IMessage).IsAssignableFrom(t)</c>.
+    /// </summary>
+    public static void RegisterNullSafeDestinationType(Func<Type, bool> predicate)
+    {
+        if (predicate == null) throw new ArgumentNullException(nameof(predicate));
+        var previous = _nullSafeDestPredicate;
+        _nullSafeDestPredicate = t => previous(t) || predicate(t);
+        ClearCaches();
+    }
+
+    private static void ClearCaches()
+    {
+        _expressionCache.Clear();
+        _delegateCache.Clear();
+        _objectDelegateCache.Clear();
+        _inPlaceDelegateCache.Clear();
+    }
+
     private static readonly ConcurrentDictionary<(Type, Type), Lazy<LambdaExpression>> _expressionCache = new();
     private static readonly ConcurrentDictionary<(Type, Type), Lazy<Delegate>> _delegateCache = new();
     private static readonly ConcurrentDictionary<(Type, Type), Lazy<Func<object, object?>>> _objectDelegateCache = new();
@@ -99,10 +147,17 @@ public static class ExpressionBuilder
 
     private static Expression BuildMemberInit(Expression sourceExpression, Type sourceType, Type destType)
     {
+        // null-safe типы (например proto-сообщения): ссылочные поля не присваиваем null,
+        // а скаляр умеем заворачивать в одно-полевое сообщение.
+        if (_nullSafeDestPredicate(destType))
+            return BuildNullSafeInit(sourceExpression, sourceType, destType);
+
         var ctor = destType.GetConstructor(Type.EmptyTypes);
+
+        // Нет беспараметрического конструктора (позиционные record'ы, CQRS-команды) —
+        // мапим через конструктор, сопоставляя параметры с источником по имени.
         if (ctor == null)
-            throw new InvalidOperationException(
-                $"Type {destType.Name} does not have a parameterless constructor. Strict mapping failed.");
+            return BuildCtorInit(sourceExpression, sourceType, destType);
 
         var newExpr = Expression.New(ctor);
         var bindings = new List<MemberBinding>();
@@ -118,6 +173,118 @@ public static class ExpressionBuilder
 
         return Expression.MemberInit(newExpr, bindings);
     }
+
+    /// <summary>
+    /// Маппинг в тип без беспараметрического конструктора (позиционные record'ы и т.п.):
+    /// параметры конструктора сопоставляются со свойствами источника по имени (без учёта регистра).
+    /// </summary>
+    private static Expression BuildCtorInit(Expression sourceExpression, Type sourceType, Type destType)
+    {
+        var sourceProps = sourceType.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+            .Where(p => p.CanRead)
+            .ToDictionary(p => p.Name, p => p, StringComparer.OrdinalIgnoreCase);
+
+        var ctor = destType.GetConstructors(BindingFlags.Public | BindingFlags.Instance)
+            .Where(c => c.GetParameters().Length > 0)
+            .OrderByDescending(c => c.GetParameters().Length)
+            .FirstOrDefault();
+
+        if (ctor == null)
+            throw new InvalidOperationException(
+                $"Type {destType.Name} has no usable constructor for mapping from {sourceType.Name}.");
+
+        var args = new List<Expression>();
+        foreach (var parameter in ctor.GetParameters())
+        {
+            if (!sourceProps.TryGetValue(parameter.Name!, out var sourceProp))
+            {
+                if (parameter.HasDefaultValue)
+                {
+                    args.Add(Expression.Constant(parameter.DefaultValue, parameter.ParameterType));
+                    continue;
+                }
+
+                throw new InvalidOperationException(
+                    $"Strict Validation Failed: constructor parameter '{destType.Name}({parameter.Name})' " +
+                    $"has no matching property on source '{sourceType.Name}'.");
+            }
+
+            var sourceAccess = Expression.Property(sourceExpression, sourceProp);
+            args.Add(ConvertValue(sourceAccess, sourceProp.PropertyType, parameter.ParameterType,
+                parameter.Name!, destType.Name, sourceType.Name));
+        }
+
+        return Expression.New(ctor, args);
+    }
+
+    /// <summary>
+    /// Null-safe сборка типа-назначения (например proto-сообщения): каждое поле присваивается
+    /// отдельно, ссылочные поля — только если источник не null (proto-сеттер строки кидает на null).
+    /// Скаляр-источник заворачивается в одно-полевое сообщение (например <c>Guid</c> -&gt; <c>GuidReply { Value }</c>).
+    /// </summary>
+    private static Expression BuildNullSafeInit(Expression sourceExpression, Type sourceType, Type destType)
+    {
+        var ctor = destType.GetConstructor(Type.EmptyTypes)
+                   ?? throw new InvalidOperationException(
+                       $"Proto message {destType.Name} must have a parameterless constructor.");
+
+        var d = Expression.Variable(destType, "d");
+        var statements = new List<Expression> { Expression.Assign(d, Expression.New(ctor)) };
+
+        var writableProps = destType.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+            .Where(p => p.CanWrite && p.GetCustomAttribute<MapIgnoreAttribute>() == null)
+            .ToList();
+
+        if (IsScalar(sourceType))
+        {
+            if (writableProps.Count != 1)
+                throw new InvalidOperationException(
+                    $"Cannot wrap scalar '{sourceType.Name}' into proto '{destType.Name}': " +
+                    $"expected exactly one settable field, found {writableProps.Count}.");
+
+            var prop = writableProps[0];
+            var value = ConvertValue(sourceExpression, sourceType, prop.PropertyType, prop.Name, destType.Name, sourceType.Name);
+            statements.Add(Expression.Assign(Expression.Property(d, prop), value));
+        }
+        else
+        {
+            var sourceProps = sourceType.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                .Where(p => p.CanRead)
+                .ToDictionary(p => p.Name, p => p, StringComparer.OrdinalIgnoreCase);
+
+            foreach (var destProp in writableProps)
+            {
+                var sourceName = destProp.GetCustomAttribute<MapPropertyAttribute>()?.SourcePropertyName ?? destProp.Name;
+                if (!sourceProps.TryGetValue(sourceName, out var sourceProp))
+                    continue; // proto-поле без источника просто остаётся значением по умолчанию
+
+                var sourceAccess = Expression.Property(sourceExpression, sourceProp);
+                var value = ConvertValue(sourceAccess, sourceProp.PropertyType, destProp.PropertyType,
+                    destProp.Name, destType.Name, sourceType.Name);
+                Expression assign = Expression.Assign(Expression.Property(d, destProp), value);
+
+                // ссылочное proto-поле (string/ByteString/message) + потенциально null источник -> присваиваем условно
+                if (!destProp.PropertyType.IsValueType && CanBeNull(sourceProp.PropertyType))
+                {
+                    var notNull = Expression.NotEqual(sourceAccess, Expression.Constant(null, sourceProp.PropertyType));
+                    assign = Expression.IfThen(notNull, assign);
+                }
+
+                statements.Add(assign);
+            }
+        }
+
+        statements.Add(d);
+        return Expression.Block(new[] { d }, statements);
+    }
+
+    private static bool IsScalar(Type type)
+        => type != typeof(string)
+           && (type.IsPrimitive || type.IsEnum || type == typeof(Guid) || type == typeof(decimal)
+               || type == typeof(DateTime) || type == typeof(DateTimeOffset)
+               || Nullable.GetUnderlyingType(type) is { } u
+               && (u.IsPrimitive || u.IsEnum || u == typeof(Guid) || u == typeof(decimal)
+                   || u == typeof(DateTime) || u == typeof(DateTimeOffset)));
 
     private static IEnumerable<(PropertyInfo Dest, PropertyInfo Source)> GetMappablePairs(
         Type sourceType, Type destType, bool allowDestWriteOnly)
@@ -163,6 +330,10 @@ public static class ExpressionBuilder
                 ? Expression.Convert(sourceAccess, destType) // boxing
                 : Expression.TypeAs(sourceAccess, destType); // безопасный ref-cast
         }
+
+        // Зарегистрированные конвертеры значений (Guid<->string и расширения вроде proto Timestamp).
+        if (_converters.TryGetValue((sourceType, destType), out var converter))
+            return Expression.Invoke(converter, sourceAccess);
 
         var srcUnderlying = Nullable.GetUnderlyingType(sourceType);
         var destUnderlying = Nullable.GetUnderlyingType(destType);
