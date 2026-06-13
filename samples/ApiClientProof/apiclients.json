@@ -1,0 +1,17 @@
+{
+  "clients": [
+    {
+      "name": "PetStore",
+      "protocol": "rest",
+      "url": "https://petstore3.swagger.io/api/v3/openapi.json",
+      "namespace": "ApiClientProof.PetStore",
+      "className": "PetStoreClient"
+    },
+    {
+      "name": "HelloWorld",
+      "protocol": "grpc",
+      "url": "https://raw.githubusercontent.com/grpc/grpc/master/examples/protos/helloworld.proto",
+      "namespace": "ApiClientProof.HelloWorld"
+    }
+  ]
+}

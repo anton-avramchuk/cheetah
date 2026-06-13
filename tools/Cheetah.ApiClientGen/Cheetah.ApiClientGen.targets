@@ -1,0 +1,63 @@
+<Project>
+
+  <!--
+    Wires the Cheetah.ApiClientGen tool into the build: fetches each external OpenAPI spec
+    (conditional GET + cache) and regenerates the Kiota client into obj/ before compilation.
+    Import this file and set <ApiClientGenDll> (path to the built tool) in the consuming project.
+    A per-project apiclients.json next to the .csproj lists the clients.
+  -->
+
+  <PropertyGroup>
+    <ApiClientsConfig Condition="'$(ApiClientsConfig)' == ''">$(MSBuildProjectDirectory)/apiclients.json</ApiClientsConfig>
+    <!--
+      NOTE: ApiClientsOutDir is intentionally NOT defaulted here. $(IntermediateOutputPath) is not yet
+      set when this imported PropertyGroup is evaluated, so it would resolve to a stray source-tree
+      'apiclients/' folder. It is defaulted inside the target below, where IntermediateOutputPath is set.
+    -->
+  </PropertyGroup>
+
+  <!-- Restore local dotnet tools (Kiota) before generation. Walks up to .config/dotnet-tools.json. -->
+  <Target Name="CheetahApiClientRestore"
+          BeforeTargets="CheetahApiClientGen"
+          Condition="Exists('$(ApiClientsConfig)')">
+    <Exec Command="dotnet tool restore" WorkingDirectory="$(MSBuildProjectDirectory)" />
+  </Target>
+
+  <!--
+    Fetch specs and generate before compilation. Runs before both the C# compile and Grpc.Tools'
+    protobuf prepare step, so a freshly fetched .proto exists on disk before protoc runs.
+
+    REST (Kiota): emitted as .cs and added to @(Compile) dynamically here — CoreCompile reads
+    @(Compile) at execution time, so this works without any per-client wiring.
+
+    gRPC (Grpc.Tools): the .proto is fetched here, but the <Protobuf> ITEM must be declared
+    statically in the consuming project (Grpc.Tools resolves @(Protobuf) at evaluation time, before
+    any target runs). Use a literal path — it survives evaluation even when the file is absent on the
+    first build. See ApiClientProof.csproj for the one-line pattern.
+  -->
+  <!--
+    Runs before PrepareForBuild — the earliest standard build target — so a freshly fetched .proto is
+    on disk well before Grpc.Tools resolves proto roots and invokes protoc (which happens before
+    BeforeCompile). CoreCompile is kept as a fallback for project types without PrepareForBuild.
+  -->
+  <Target Name="CheetahApiClientGen"
+          BeforeTargets="PrepareForBuild;CoreCompile"
+          Condition="Exists('$(ApiClientsConfig)')">
+    <PropertyGroup>
+      <!-- Late default: IntermediateOutputPath is set by now, so this resolves under obj/. -->
+      <ApiClientsOutDir Condition="'$(ApiClientsOutDir)' == ''">$(IntermediateOutputPath)apiclients/</ApiClientsOutDir>
+    </PropertyGroup>
+
+    <Error Condition="!Exists('$(ApiClientGenDll)')"
+           Text="ApiClientGenDll not found at '$(ApiClientGenDll)'. Build tools/Cheetah.ApiClientGen first or set the property." />
+
+    <Exec Command="dotnet &quot;$(ApiClientGenDll)&quot; gen --config &quot;$(ApiClientsConfig)&quot; --out &quot;$(ApiClientsOutDir)&quot;"
+          WorkingDirectory="$(MSBuildProjectDirectory)" />
+
+    <ItemGroup>
+      <Compile Include="$(ApiClientsOutDir)**/*.cs" KeepDuplicates="false" />
+      <FileWrites Include="$(ApiClientsOutDir)**/*" />
+    </ItemGroup>
+  </Target>
+
+</Project>

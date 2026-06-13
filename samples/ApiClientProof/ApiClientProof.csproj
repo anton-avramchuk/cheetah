@@ -1,0 +1,48 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <IsPackable>false</IsPackable>
+        <!-- Kiota-generated code is not warning-clean; don't fail the proof build on its warnings. -->
+        <NoWarn>$(NoWarn);CS1591;CS8602;CS8604;CS0618</NoWarn>
+        <!-- Path to the built generator tool (built first via the ProjectReference below). -->
+        <ApiClientGenDll>$(MSBuildThisFileDirectory)..\..\tools\Cheetah.ApiClientGen\bin\$(Configuration)\net10.0\Cheetah.ApiClientGen.dll</ApiClientGenDll>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <!-- Runtime packages the Kiota-generated REST client needs (abstractions + serialization + HTTP). -->
+        <PackageReference Include="Microsoft.Kiota.Bundle" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <!-- gRPC: Grpc.Tools generates C# from the fetched .proto at build; the rest are runtime. -->
+        <PackageReference Include="Grpc.Tools">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Grpc.Net.Client" />
+        <PackageReference Include="Google.Protobuf" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <!--
+          One literal <Protobuf> per gRPC client. The path matches where Cheetah.ApiClientGen places
+          the fetched proto ($(IntermediateOutputPath)apiclients/<Name>/<Name>.proto). A literal
+          Include survives MSBuild evaluation even before the file is fetched on the first build; the
+          generator's BeforeTargets step then creates it before protoc runs. (Grpc.Tools resolves
+          @(Protobuf) at evaluation time, so unlike REST it can't be added purely dynamically.)
+        -->
+        <Protobuf Include="$(IntermediateOutputPath)apiclients/HelloWorld/HelloWorld.proto"
+                  GrpcServices="Client"
+                  ProtoRoot="$(IntermediateOutputPath)apiclients/HelloWorld" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <!-- Ensures the generator tool is built before this project compiles; we run its DLL, not reference it. -->
+        <ProjectReference Include="..\..\tools\Cheetah.ApiClientGen\Cheetah.ApiClientGen.csproj"
+                          ReferenceOutputAssembly="false" />
+    </ItemGroup>
+
+    <Import Project="..\..\tools\Cheetah.ApiClientGen\Cheetah.ApiClientGen.targets" />
+
+</Project>
