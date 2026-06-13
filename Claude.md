@@ -399,6 +399,5 @@ Cheetah.MyModule.Application/
 
 ## 🎯 Current Modules
 
-1. **Cheetah.Features** - feature flags
-2. **Cheetah.Permissions** - RBAC
-3. **Cheetah.Identity** - users, JWT auth
+1. **Cheetah.Permissions** - RBAC
+2. **Cheetah.Identity** - users, JWT auth
