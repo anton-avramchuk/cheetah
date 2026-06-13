@@ -129,6 +129,66 @@ No per-client `<Protobuf>` lines are required. The subtlety is **timing**: `Grpc
 are picked up and compiled in the **same build**. (Adding them from a later hook, e.g. before
 `CoreCompile`, would be too late — that was the original pitfall.)
 
+## Configuring the generated clients (auth, retry, timeouts)
+
+These are **transport concerns** — configure them where you construct the client, never in the
+generated code or `apiclients.json`. `samples/ApiClientProof/Program.cs` has a runnable bearer-auth +
+retry example for both. In short:
+
+**REST (Kiota)** — auth via an `IAuthenticationProvider`, retry/timeouts via the `HttpClient` pipeline:
+
+```csharp
+var auth = new BaseBearerTokenAuthenticationProvider(new MyTokenProvider()); // IAccessTokenProvider
+
+var handlers = KiotaClientFactory.CreateDefaultHandlers().Where(h => h is not RetryHandler).ToList();
+handlers.Add(new RetryHandler(new RetryHandlerOption { MaxRetry = 3, Delay = 2 }));
+var httpClient = KiotaClientFactory.Create(finalHandler: null, handlers: handlers);
+httpClient.Timeout = TimeSpan.FromSeconds(30);
+
+var client = new PetStoreClient(new DefaultRequestAdapter(auth, httpClient: httpClient));
+```
+
+**gRPC** — per-call bearer credentials + the built-in retry policy via `ServiceConfig`:
+
+```csharp
+var creds = CallCredentials.FromInterceptor((ctx, md) =>
+{
+    md.Add("Authorization", $"Bearer {token}");
+    return Task.CompletedTask;
+});
+var channel = GrpcChannel.ForAddress(url, new GrpcChannelOptions
+{
+    Credentials = ChannelCredentials.Create(ChannelCredentials.SecureSsl, creds),
+    ServiceConfig = new ServiceConfig
+    {
+        MethodConfigs = { new MethodConfig
+        {
+            Names = { MethodName.Default },
+            RetryPolicy = new RetryPolicy
+            {
+                MaxAttempts = 3,
+                InitialBackoff = TimeSpan.FromSeconds(1),
+                MaxBackoff = TimeSpan.FromSeconds(5),
+                BackoffMultiplier = 1.5,
+                RetryableStatusCodes = { StatusCode.Unavailable },
+            },
+        }},
+    },
+});
+var client = new Greeter.GreeterClient(channel);
+```
+
+For production prefer DI: `IHttpClientFactory` + `AddStandardResilienceHandler()` (Polly) for REST, and
+`services.AddGrpcClient<T>().AddCallCredentials(...).ConfigureChannel(...)` for gRPC — same knobs,
+managed lifetimes, the generated client untouched.
+
+| Aspect | REST (Kiota) | gRPC |
+|--------|--------------|------|
+| Auth | `IAuthenticationProvider` (bearer / API key / custom) | `CallCredentials` / interceptor / metadata |
+| Retry | `RetryHandler` / Polly via `IHttpClientFactory` | built-in `ServiceConfig.RetryPolicy` |
+| Timeout | `HttpClient.Timeout` / Polly | per-call `deadline` |
+| Base URL, headers | `adapter.BaseUrl`, middleware handlers | `GrpcChannelOptions`, call metadata |
+
 ## Constraints & notes
 
 - **Fetch-on-every-build** is the configured behaviour; conditional GET (`304`) keeps it cheap and the
