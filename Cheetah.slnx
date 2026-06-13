@@ -111,6 +111,7 @@
         <File Path="pack.ps1" />
     </Folder>
     <Folder Name="/src/">
+        <Project Path="src/Cheetah.Audit.Mongo/Cheetah.Audit.Mongo.csproj" />
         <Project Path="src/Cheetah.Core.Dapper.Integration.Tests/Cheetah.Core.Dapper.Integration.Tests.csproj" />
         <Project Path="src/Cheetah.Core.Dapper.MsSql/Cheetah.Core.Dapper.MsSql.csproj" />
         <Project Path="src/Cheetah.Core.Dapper.MySql/Cheetah.Core.Dapper.MySql.csproj" />
@@ -118,6 +119,12 @@
         <Project Path="src/Cheetah.Core.Dapper.Sqlite/Cheetah.Core.Dapper.Sqlite.csproj" />
         <Project Path="src/Cheetah.Core.Dapper.Tests/Cheetah.Core.Dapper.Tests.csproj" />
         <Project Path="src/Cheetah.Core.Dapper/Cheetah.Core.Dapper.csproj" />
+        <Project Path="src/Cheetah.Core.Inbox.Mongo/Cheetah.Core.Inbox.Mongo.csproj" />
+        <Project Path="src/Cheetah.Core.Mongo.Integration.Tests/Cheetah.Core.Mongo.Integration.Tests.csproj" />
+        <Project Path="src/Cheetah.Core.Mongo.Tests/Cheetah.Core.Mongo.Tests.csproj" />
+        <Project Path="src/Cheetah.Core.Mongo/Cheetah.Core.Mongo.csproj" />
+        <Project Path="src/Cheetah.Core.Outbox.Mongo/Cheetah.Core.Outbox.Mongo.csproj" />
+        <Project Path="src/Cheetah.Saga.Mongo/Cheetah.Saga.Mongo.csproj" />
     </Folder>
 
     <Folder Name="/Tests/">
