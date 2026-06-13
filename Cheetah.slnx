@@ -110,6 +110,15 @@
         <File Path="nuget.config" />
         <File Path="pack.ps1" />
     </Folder>
+    <Folder Name="/src/">
+        <Project Path="src/Cheetah.Core.Dapper.Integration.Tests/Cheetah.Core.Dapper.Integration.Tests.csproj" />
+        <Project Path="src/Cheetah.Core.Dapper.MsSql/Cheetah.Core.Dapper.MsSql.csproj" />
+        <Project Path="src/Cheetah.Core.Dapper.MySql/Cheetah.Core.Dapper.MySql.csproj" />
+        <Project Path="src/Cheetah.Core.Dapper.PostgreSql/Cheetah.Core.Dapper.PostgreSql.csproj" />
+        <Project Path="src/Cheetah.Core.Dapper.Sqlite/Cheetah.Core.Dapper.Sqlite.csproj" />
+        <Project Path="src/Cheetah.Core.Dapper.Tests/Cheetah.Core.Dapper.Tests.csproj" />
+        <Project Path="src/Cheetah.Core.Dapper/Cheetah.Core.Dapper.csproj" />
+    </Folder>
 
     <Folder Name="/Tests/">
         <Project Path="src/Cheetah.Backend.Rsa.Tests/Cheetah.Backend.Rsa.Tests.csproj" />
