@@ -84,9 +84,7 @@
         <Project Path="src/Cheetah.OpenApi/Cheetah.OpenApi.csproj" />
         <Project Path="src/Cheetah.Scalar/Cheetah.Scalar.csproj" />
     </Folder>
-    <Folder Name="/Modules/">
-        <Project Path="src/Modules/Crm.Proxy/Crm.Proxy.csproj" />
-    </Folder>
+    <Folder Name="/Modules/" />
     <Folder Name="/Modules/Permissions/">
         <Project Path="src/Modules/Permissions/Cheetah.Permissions/Cheetah.Permissions.csproj" />
         <Project Path="src/Modules/Permissions/Cheetah.Permissions.Catalog/Cheetah.Permissions.Catalog.csproj" />
