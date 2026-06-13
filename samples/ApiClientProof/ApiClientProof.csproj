@@ -24,18 +24,10 @@
         <PackageReference Include="Google.Protobuf" />
     </ItemGroup>
 
-    <ItemGroup>
-        <!--
-          One literal <Protobuf> per gRPC client. The path matches where Cheetah.ApiClientGen places
-          the fetched proto ($(IntermediateOutputPath)apiclients/<Name>/<Name>.proto). A literal
-          Include survives MSBuild evaluation even before the file is fetched on the first build; the
-          generator's BeforeTargets step then creates it before protoc runs. (Grpc.Tools resolves
-          @(Protobuf) at evaluation time, so unlike REST it can't be added purely dynamically.)
-        -->
-        <Protobuf Include="$(IntermediateOutputPath)apiclients/HelloWorld/HelloWorld.proto"
-                  GrpcServices="Client"
-                  ProtoRoot="$(IntermediateOutputPath)apiclients/HelloWorld" />
-    </ItemGroup>
+    <!--
+      No per-client <Protobuf> lines needed: Cheetah.ApiClientGen fetches each .proto and registers it
+      with Grpc.Tools automatically from apiclients.json (see the tool's .targets).
+    -->
 
     <ItemGroup>
         <!-- Ensures the generator tool is built before this project compiles; we run its DLL, not reference it. -->

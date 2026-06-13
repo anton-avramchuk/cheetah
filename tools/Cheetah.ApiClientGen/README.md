@@ -78,18 +78,12 @@ Place an `apiclients.json` next to the consuming `.csproj`:
     <PackageReference Include="Microsoft.Kiota.Bundle" />
   </ItemGroup>
 
-  <!-- gRPC deps. Grpc.Tools generates at build; the others are runtime. -->
+  <!-- gRPC deps. Grpc.Tools generates at build; the others are runtime. No <Protobuf> lines needed —
+       the generator registers each fetched .proto automatically (see "gRPC integration"). -->
   <ItemGroup>
     <PackageReference Include="Grpc.Tools" PrivateAssets="all" />
     <PackageReference Include="Grpc.Net.Client" />
     <PackageReference Include="Google.Protobuf" />
-  </ItemGroup>
-
-  <!-- gRPC ONLY: one literal <Protobuf> per gRPC client (see "gRPC caveat"). -->
-  <ItemGroup>
-    <Protobuf Include="$(IntermediateOutputPath)apiclients/Pricing/Pricing.proto"
-              GrpcServices="Client"
-              ProtoRoot="$(IntermediateOutputPath)apiclients/Pricing" />
   </ItemGroup>
 
   <Import Project="..\..\tools\Cheetah.ApiClientGen\Cheetah.ApiClientGen.targets" />
@@ -119,23 +113,21 @@ and invoke `dotnet apiclientgen` instead of a DLL path.
 
 ## MSBuild integration (`Cheetah.ApiClientGen.targets`)
 
-The imported target `CheetahApiClientGen` runs **before `PrepareForBuild`** (so a freshly fetched
-`.proto` exists before Grpc.Tools resolves proto roots and runs `protoc`). It:
+The imported target `CheetahApiClientGen` runs **before `PrepareForBuild`** — earlier than the whole
+Grpc.Tools proto graph. It:
 
 - runs `dotnet tool restore` (Kiota),
 - executes the tool to fetch + generate into `$(IntermediateOutputPath)apiclients/`,
-- adds the generated REST `*.cs` to `@(Compile)` dynamically.
+- adds the generated REST `*.cs` to `@(Compile)` and the fetched `*.proto` to `@(Protobuf)`,
+  dynamically (the cache folder `_specs/` is excluded so a spec is never compiled twice).
 
-### gRPC caveat — why the literal `<Protobuf>` line
+### gRPC integration — fully automatic
 
-`Grpc.Tools` resolves `@(Protobuf)` items at **project-evaluation time**, before any target runs, so a
-proto added dynamically inside a target is ignored. Declaring a **literal** `<Protobuf Include="…">`
-(a fixed path, not a glob) makes MSBuild keep the item through evaluation even though the file isn't on
-disk yet; the generator's early target then creates it before `protoc` runs. REST needs no such line
-because `CoreCompile` reads `@(Compile)` at execution time.
-
-> Auto-emitting these `<Protobuf>` lines from `apiclients.json` would need a custom MSBuild task; for
-> now it's one line per gRPC client.
+No per-client `<Protobuf>` lines are required. The subtlety is **timing**: `Grpc.Tools` gathers
+`@(Protobuf)` in targets that run just before `BeforeCompile`. Because `CheetahApiClientGen` runs at
+`PrepareForBuild` — *before* that graph — the `<Protobuf>` items it adds after fetching the `.proto`
+are picked up and compiled in the **same build**. (Adding them from a later hook, e.g. before
+`CoreCompile`, would be too late — that was the original pitfall.)
 
 ## Constraints & notes
 

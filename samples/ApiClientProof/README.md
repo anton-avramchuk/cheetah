@@ -26,8 +26,9 @@ compile and resolve. The OpenAPI/proto fetch happens at **build** time.
 ## What to look at
 
 - `apiclients.json` — the two client definitions (one `rest`, one `grpc`).
-- `ApiClientProof.csproj` — Kiota + gRPC package references, the literal `<Protobuf>` line required for
-  gRPC, and the import of `Cheetah.ApiClientGen.targets`.
+- `ApiClientProof.csproj` — Kiota + gRPC package references and the import of
+  `Cheetah.ApiClientGen.targets`. Note there is **no** `<Protobuf>` line — the generator registers the
+  fetched proto with Grpc.Tools automatically.
 - `Program.cs` — constructs both generated clients.
 
 Generated code is written to `obj/.../apiclients/` and is not committed. On a second build the spec is

@@ -55,7 +55,22 @@
           WorkingDirectory="$(MSBuildProjectDirectory)" />
 
     <ItemGroup>
+      <!-- REST: Kiota-generated sources, fed to the C# compiler (CoreCompile reads @(Compile) late). -->
       <Compile Include="$(ApiClientsOutDir)**/*.cs" KeepDuplicates="false" />
+
+      <!--
+        gRPC: the tool has just placed the .proto(s); add them to @(Protobuf) here. This target runs
+        before PrepareForBuild — earlier than Grpc.Tools' proto graph (which gathers @(Protobuf) in
+        targets that run before BeforeCompile) — so the dynamically added items are honoured, and no
+        per-client <Protobuf> line is needed in the consuming project. The cache folder (_specs) is
+        excluded so a spec is never compiled twice.
+      -->
+      <Protobuf Include="$(ApiClientsOutDir)**/*.proto"
+                Exclude="$(ApiClientsOutDir)_specs/**/*.proto"
+                GrpcServices="Client"
+                ProtoRoot="$(ApiClientsOutDir)"
+                KeepDuplicates="false" />
+
       <FileWrites Include="$(ApiClientsOutDir)**/*" />
     </ItemGroup>
   </Target>
