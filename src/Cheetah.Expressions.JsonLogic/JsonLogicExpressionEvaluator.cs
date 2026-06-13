@@ -62,27 +62,35 @@ public sealed class JsonLogicExpressionEvaluator : IExpressionEvaluator
             return ExpressionResult<T>.Fail($"Parse error: {ex.Message}");
         }
 
-        using var cts = CancellationTokenSource.CreateLinkedTokenSource(ct);
-        cts.CancelAfter(_options.MaxEvaluationTime);
-
         var dataNode = JsonNodeFromContext(context);
 
         try
         {
-            var sw = Stopwatch.StartNew();
-            // Rule.Apply работает синхронно — оборачиваем в Task.Run чтобы прервать.
-            var resultNode = await Task.Run(() => rule.Apply(dataNode), cts.Token);
-            sw.Stop();
+            // rule.Apply — синхронная CPU-работа; токен её прервать не может, поэтому
+            // замеряем ТОЛЬКО время самого вычисления (внутри делегата). Так холодный старт
+            // пула потоков и JIT первого вызова не учитываются как превышение лимита —
+            // иначе первый вызов на медленном раннере ложно падал бы по таймауту.
+            var sw = new Stopwatch();
+            var resultNode = await Task.Run(() =>
+            {
+                sw.Start();
+                var node = rule.Apply(dataNode);
+                sw.Stop();
+                return node;
+            }, ct);
 
             if (sw.Elapsed > _options.MaxEvaluationTime)
+            {
                 _logger.LogWarning("Expression evaluation took {ElapsedMs}ms (limit {LimitMs}ms)",
                     sw.ElapsedMilliseconds, _options.MaxEvaluationTime.TotalMilliseconds);
+                return ExpressionResult<T>.Fail($"Expression evaluation exceeded MaxEvaluationTime={_options.MaxEvaluationTime}");
+            }
 
             return TryConvert<T>(resultNode);
         }
-        catch (OperationCanceledException) when (cts.IsCancellationRequested && !ct.IsCancellationRequested)
+        catch (OperationCanceledException) when (ct.IsCancellationRequested)
         {
-            return ExpressionResult<T>.Fail($"Expression evaluation exceeded MaxEvaluationTime={_options.MaxEvaluationTime}");
+            throw;
         }
         catch (Exception ex)
         {

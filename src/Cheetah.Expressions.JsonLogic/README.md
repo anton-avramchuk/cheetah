@@ -17,7 +17,7 @@ public partial class MyModule : CrmModule { }
   "Expressions": {
     "MaxExpressionLength": 4096,
     "MaxNestingDepth": 32,
-    "MaxEvaluationTime": "00:00:00.1",
+    "MaxEvaluationTime": "00:00:01",
     "RegexTimeout": "00:00:00.05"
   }
 }
@@ -87,7 +87,7 @@ client-библиотека соответствующего сервиса (`Ma
 |---|---|---|
 | `MaxExpressionLength` | 4096 | Защита от гигантских выражений |
 | `MaxNestingDepth` | 32 | Защита от глубоко вложенных AST |
-| `MaxEvaluationTime` | 100 ms | Прерывание зависших выражений (через CancellationToken) |
+| `MaxEvaluationTime` | 1000 ms | Потолок на время самого вычисления выражения (без учёта планирования пула потоков и JIT холодного старта) |
 | `RegexTimeout` | 50 ms | Защита от ReDoS |
 
 Превышение лимита возвращает `ExpressionResult.Fail` (не исключение) — UI должен показать ошибку.
