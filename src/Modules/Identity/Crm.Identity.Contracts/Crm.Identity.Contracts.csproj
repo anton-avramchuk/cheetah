@@ -1,7 +1,0 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
-    <ItemGroup>
-        <ProjectReference Include="..\Cheetah.Modules.Identity.Contracts\Cheetah.Modules.Identity.Contracts.csproj" />
-    </ItemGroup>
-
-</Project>

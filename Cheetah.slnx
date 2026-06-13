@@ -103,46 +103,6 @@
         <Project Path="src/Modules/Identity/Cheetah.Modules.Identity.Domain/Cheetah.Modules.Identity.Domain.csproj" />
         <Project Path="src/Modules/Identity/Cheetah.Modules.Identity.DomainEvents/Cheetah.Modules.Identity.DomainEvents.csproj" />
     </Folder>
-    <Folder Name="/Modules/Recruitment/" />
-    <Folder Name="/Modules/Recruitment/Customer/">
-        <Project Path="src/Modules/Customer/Crm.Customer.Api.Tests/Crm.Customer.Api.Tests.csproj" />
-        <Project Path="src/Modules/Customer/Crm.Customer.Api/Crm.Customer.Api.csproj" />
-        <Project Path="src/Modules/Customer/Crm.Customer.ApiClient.Tests/Crm.Customer.ApiClient.Tests.csproj" />
-        <Project Path="src/Modules/Customer/Crm.Customer.ApiClient/Crm.Customer.ApiClient.csproj" />
-        <Project Path="src/Modules/Customer/Crm.Customer.Application.Tests/Crm.Customer.Application.Tests.csproj" />
-        <Project Path="src/Modules/Customer/Crm.Customer.Application/Crm.Customer.Application.csproj" />
-        <Project Path="src/Modules/Customer/Crm.Customer.Contracts/Crm.Customer.Contracts.csproj" />
-        <Project Path="src/Modules/Customer/Crm.Customer.DataAccess/Crm.Customer.DataAccess.csproj" />
-        <Project Path="src/Modules/Customer/Crm.Customer.Domain.Tests/Crm.Customer.Domain.Tests.csproj" />
-        <Project Path="src/Modules/Customer/Crm.Customer.Domain/Crm.Customer.Domain.csproj" />
-        <Project Path="src/Modules/Customer/Crm.Customer.DomainEvents/Crm.Customer.DomainEvents.csproj" />
-    </Folder>
-    <Folder Name="/Modules/Recruitment/Identity/">
-        <Project Path="src/Modules/Identity/Crm.Identity.Api.Tests/Crm.Identity.Api.Tests.csproj" />
-        <Project Path="src/Modules/Identity/Crm.Identity.Api/Crm.Identity.Api.csproj" />
-        <Project Path="src/Modules/Identity/Crm.Identity.ApiClient.Tests/Crm.Identity.ApiClient.Tests.csproj" />
-        <Project Path="src/Modules/Identity/Crm.Identity.ApiClient/Crm.Identity.ApiClient.csproj" />
-        <Project Path="src/Modules/Identity/Crm.Identity.Application.Tests/Crm.Identity.Application.Tests.csproj" />
-        <Project Path="src/Modules/Identity/Crm.Identity.Application/Crm.Identity.Application.csproj" />
-        <Project Path="src/Modules/Identity/Crm.Identity.Contracts/Crm.Identity.Contracts.csproj" />
-        <Project Path="src/Modules/Identity/Crm.Identity.DataAccess/Crm.Identity.DataAccess.csproj" />
-        <Project Path="src/Modules/Identity/Crm.Identity.Domain.Tests/Crm.Identity.Domain.Tests.csproj" />
-        <Project Path="src/Modules/Identity/Crm.Identity.Domain/Crm.Identity.Domain.csproj" />
-        <Project Path="src/Modules/Identity/Crm.Identity.DomainEvents/Crm.Identity.DomainEvents.csproj" />
-    </Folder>
-    <Folder Name="/Modules/Recruitment/MasterData/">
-        <Project Path="src/Modules/MasterData/Crm.MasterData.Api.Tests/Crm.MasterData.Api.Tests.csproj" />
-        <Project Path="src/Modules/MasterData/Crm.MasterData.Api/Crm.MasterData.Api.csproj" />
-        <Project Path="src/Modules/MasterData/Crm.MasterData.ApiClient.Tests/Crm.MasterData.ApiClient.Tests.csproj" />
-        <Project Path="src/Modules/MasterData/Crm.MasterData.ApiClient/Crm.MasterData.ApiClient.csproj" />
-        <Project Path="src/Modules/MasterData/Crm.MasterData.Application.Tests/Crm.MasterData.Application.Tests.csproj" />
-        <Project Path="src/Modules/MasterData/Crm.MasterData.Application/Crm.MasterData.Application.csproj" />
-        <Project Path="src/Modules/MasterData/Crm.MasterData.Contracts/Crm.MasterData.Contracts.csproj" />
-        <Project Path="src/Modules/MasterData/Crm.MasterData.DataAccess/Crm.MasterData.DataAccess.csproj" />
-        <Project Path="src/Modules/MasterData/Crm.MasterData.Domain.Tests/Crm.MasterData.Domain.Tests.csproj" />
-        <Project Path="src/Modules/MasterData/Crm.MasterData.Domain/Crm.MasterData.Domain.csproj" />
-        <Project Path="src/Modules/MasterData/Crm.MasterData.DomainEvents/Crm.MasterData.DomainEvents.csproj" />
-    </Folder>
     <Folder Name="/Solution Items/">
         <File Path="Directory.Build.props" />
         <File Path="Directory.Packages.props" />

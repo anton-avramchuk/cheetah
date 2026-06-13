@@ -1,9 +1,0 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
-    <ItemGroup>
-        <ProjectReference Include="..\..\..\Cheetah.Generators.Module\Cheetah.Generators.Module.csproj"
-                          ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
-        <ProjectReference Include="..\Cheetah.Modules.Identity.Domain\Cheetah.Modules.Identity.Domain.csproj" />
-    </ItemGroup>
-
-</Project>
