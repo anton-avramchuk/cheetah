@@ -23,3 +23,9 @@ public class TagAssignmentRepository : EfRepository<TagsDbContext, TagAssignment
 {
     public TagAssignmentRepository(TagsDbContext context) : base(context) { }
 }
+
+[Export(LifetimeType.Scoped, typeof(IRepository<User, Guid>))]
+public class UserRepository : EfRepository<TagsDbContext, User, Guid>
+{
+    public UserRepository(TagsDbContext context) : base(context) { }
+}

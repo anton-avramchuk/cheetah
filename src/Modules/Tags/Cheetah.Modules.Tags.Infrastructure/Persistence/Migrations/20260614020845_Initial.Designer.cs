@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Cheetah.Modules.Tags.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(TagsDbContext))]
-    [Migration("20260614012026_Initial")]
+    [Migration("20260614020845_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -94,6 +94,8 @@ namespace Cheetah.Modules.Tags.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AssignedBy");
+
                     b.HasIndex("EntityType", "TagId");
 
                     b.HasIndex("EntityType", "EntityId", "TagId")
@@ -139,6 +141,36 @@ namespace Cheetah.Modules.Tags.Infrastructure.Persistence.Migrations
                     b.HasIndex("OwnerService");
 
                     b.ToTable("TaggableEntityTypes", "tags");
+                });
+
+            modelBuilder.Entity("Cheetah.Modules.Tags.Domain.Entities.User", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("SyncHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users", "tags");
+                });
+
+            modelBuilder.Entity("Cheetah.Modules.Tags.Domain.Entities.TagAssignment", b =>
+                {
+                    b.HasOne("Cheetah.Modules.Tags.Domain.Entities.User", "AssignedByUser")
+                        .WithMany()
+                        .HasForeignKey("AssignedBy")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("AssignedByUser");
                 });
 #pragma warning restore 612, 618
         }

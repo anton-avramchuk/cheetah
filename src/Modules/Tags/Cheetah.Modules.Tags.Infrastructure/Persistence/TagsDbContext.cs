@@ -14,6 +14,7 @@ public class TagsDbContext(DbContextOptions<TagsDbContext> options)
     public DbSet<TaggableEntityType> TaggableEntityTypes => Set<TaggableEntityType>();
     public DbSet<Tag> Tags => Set<Tag>();
     public DbSet<TagAssignment> TagAssignments => Set<TagAssignment>();
+    public DbSet<User> Users => Set<User>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -21,5 +22,6 @@ public class TagsDbContext(DbContextOptions<TagsDbContext> options)
         modelBuilder.ApplyConfiguration(new TaggableEntityTypeConfiguration());
         modelBuilder.ApplyConfiguration(new TagConfiguration());
         modelBuilder.ApplyConfiguration(new TagAssignmentConfiguration());
+        modelBuilder.ApplyConfiguration(new UserConfiguration());
     }
 }

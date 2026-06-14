@@ -7,9 +7,12 @@ using Cheetah.Core.EntityFramework.Migrations;
 using Cheetah.Core.EntityFramework.PostgreSql;
 using Cheetah.Core.EntityFramework.PostgreSql.Extensions;
 using Cheetah.Core.Modularity;
+using Cheetah.Modules.Identity.Client;
 using Cheetah.Modules.Tags.Domain;
+using Cheetah.Modules.Tags.Infrastructure.Identity;
 using Cheetah.Modules.Tags.Infrastructure.Persistence;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace Cheetah.Modules.Tags.Infrastructure;
 
@@ -22,7 +25,8 @@ namespace Cheetah.Modules.Tags.Infrastructure;
     typeof(CrmDomainModule),
     typeof(CrmEntityFrameworkModule),
     typeof(CrmEntityFrameworkPostgreSqlModule),
-    typeof(CheetahTagsDomainModule))]
+    typeof(CheetahTagsDomainModule),
+    typeof(CheetahIdentityClientModule))]
 public partial class CheetahTagsInfrastructureModule : CrmModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)
@@ -34,5 +38,10 @@ public partial class CheetahTagsInfrastructureModule : CrmModule
         services.AddScoped<TagsDbContext>();
         services.AddDatabaseMigrator<TagsDbContext>();
         services.Configure<CrmDbContextOptions>(options => { options.UseNpgsql<TagsDbContext>(); });
+
+        // Bulk-синк реплики пользователей из Identity (через CheetahIdentityClientModule).
+        // Адаптер IIdentityUserDirectory регистрируется автогенератором ([Export]).
+        // Регистрируется ПОСЛЕ мигратора, чтобы синк шёл по готовой схеме.
+        services.AddSingleton<IHostedService, UserDirectorySyncService>();
     }
 }

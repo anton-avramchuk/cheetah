@@ -13,6 +13,13 @@ public class TagAssignmentConfiguration : IEntityTypeConfiguration<TagAssignment
         builder.HasKey(x => x.Id);
         builder.Property(x => x.EntityType).HasMaxLength(TagsConstants.MaxEntityTypeKeyLength).IsRequired();
 
+        // связь инициатора с локальной репликой пользователя (опционально).
+        // SetNull: при удалении пользователя из реплики назначение остаётся, ссылка обнуляется.
+        builder.HasOne(x => x.AssignedByUser)
+            .WithMany()
+            .HasForeignKey(x => x.AssignedBy)
+            .OnDelete(DeleteBehavior.SetNull);
+
         // запрет дублей: один тэг на сущность не более одного раза
         builder.HasIndex(x => new { x.EntityType, x.EntityId, x.TagId }).IsUnique();
         // обратный поиск «сущности по тэгу»

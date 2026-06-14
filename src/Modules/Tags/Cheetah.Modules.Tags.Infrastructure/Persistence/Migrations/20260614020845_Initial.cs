@@ -16,23 +16,6 @@ namespace Cheetah.Modules.Tags.Infrastructure.Persistence.Migrations
                 name: "tags");
 
             migrationBuilder.CreateTable(
-                name: "TagAssignments",
-                schema: "tags",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    TagId = table.Column<Guid>(type: "uuid", nullable: false),
-                    EntityType = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
-                    EntityId = table.Column<Guid>(type: "uuid", nullable: false),
-                    AssignedBy = table.Column<Guid>(type: "uuid", nullable: true),
-                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TagAssignments", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "TaggableEntityTypes",
                 schema: "tags",
                 columns: table => new
@@ -69,6 +52,50 @@ namespace Cheetah.Modules.Tags.Infrastructure.Persistence.Migrations
                 {
                     table.PrimaryKey("PK_Tags", x => x.Id);
                 });
+
+            migrationBuilder.CreateTable(
+                name: "Users",
+                schema: "tags",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserName = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
+                    SyncHash = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Users", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TagAssignments",
+                schema: "tags",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    TagId = table.Column<Guid>(type: "uuid", nullable: false),
+                    EntityType = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
+                    EntityId = table.Column<Guid>(type: "uuid", nullable: false),
+                    AssignedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TagAssignments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TagAssignments_Users_AssignedBy",
+                        column: x => x.AssignedBy,
+                        principalSchema: "tags",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TagAssignments_AssignedBy",
+                schema: "tags",
+                table: "TagAssignments",
+                column: "AssignedBy");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TagAssignments_EntityType_EntityId_TagId",
@@ -116,6 +143,10 @@ namespace Cheetah.Modules.Tags.Infrastructure.Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "Tags",
+                schema: "tags");
+
+            migrationBuilder.DropTable(
+                name: "Users",
                 schema: "tags");
         }
     }

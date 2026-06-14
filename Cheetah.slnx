@@ -15,6 +15,7 @@
     <Folder Name="/Core/">
         <Project Path="src/Cheetah.AspNetCore.Contracts/Cheetah.AspNetCore.Contracts.csproj" />
         <Project Path="src/Cheetah.AspNetCore/Cheetah.AspNetCore.csproj" />
+        <Project Path="src/Cheetah.Audit.Mongo/Cheetah.Audit.Mongo.csproj" />
         <Project Path="src/Cheetah.Audit/Cheetah.Audit.csproj" />
         <Project Path="src/Cheetah.Audit.EntityFrameworkCore/Cheetah.Audit.EntityFrameworkCore.csproj" />
         <Project Path="src/Cheetah.Audit.Kafka/Cheetah.Audit.Kafka.csproj" />
@@ -24,6 +25,13 @@
         <Project Path="src/Cheetah.Core.Diagnostic/Cheetah.Core.Diagnostic.csproj" />
         <Project Path="src/Cheetah.Core.Diagnostic.AspNetCore/Cheetah.Core.Diagnostic.AspNetCore.csproj" />
         <Project Path="src/Cheetah.Core.CQRS/Cheetah.Core.CQRS.csproj" />
+        <Project Path="src/Cheetah.Core.Dapper.Integration.Tests/Cheetah.Core.Dapper.Integration.Tests.csproj" />
+        <Project Path="src/Cheetah.Core.Dapper.MsSql/Cheetah.Core.Dapper.MsSql.csproj" />
+        <Project Path="src/Cheetah.Core.Dapper.MySql/Cheetah.Core.Dapper.MySql.csproj" />
+        <Project Path="src/Cheetah.Core.Dapper.PostgreSql/Cheetah.Core.Dapper.PostgreSql.csproj" />
+        <Project Path="src/Cheetah.Core.Dapper.Sqlite/Cheetah.Core.Dapper.Sqlite.csproj" />
+        <Project Path="src/Cheetah.Core.Dapper.Tests/Cheetah.Core.Dapper.Tests.csproj" />
+        <Project Path="src/Cheetah.Core.Dapper/Cheetah.Core.Dapper.csproj" />
         <Project Path="src/Cheetah.Core.DataAccess/Cheetah.Core.DataAccess.csproj" />
         <Project Path="src/Cheetah.Core.Domain/Cheetah.Core.Domain.csproj" />
         <Project Path="src/Cheetah.Core.EntityFramework.MsSql/Cheetah.Core.EntityFramework.MsSql.csproj" />
@@ -35,9 +43,14 @@
         <Project Path="src/Cheetah.Core.Events/Cheetah.Core.Events.csproj" />
         <Project Path="src/Cheetah.Core.Inbox/Cheetah.Core.Inbox.csproj" />
         <Project Path="src/Cheetah.Core.Inbox.EntityFrameworkCore/Cheetah.Core.Inbox.EntityFrameworkCore.csproj" />
+        <Project Path="src/Cheetah.Core.Inbox.Mongo/Cheetah.Core.Inbox.Mongo.csproj" />
         <Project Path="src/Cheetah.Core.Inbox.PostgreSql/Cheetah.Core.Inbox.PostgreSql.csproj" />
         <Project Path="src/Cheetah.Core.Outbox/Cheetah.Core.Outbox.csproj" />
+        <Project Path="src/Cheetah.Core.Mongo.Integration.Tests/Cheetah.Core.Mongo.Integration.Tests.csproj" />
+        <Project Path="src/Cheetah.Core.Mongo.Tests/Cheetah.Core.Mongo.Tests.csproj" />
+        <Project Path="src/Cheetah.Core.Mongo/Cheetah.Core.Mongo.csproj" />
         <Project Path="src/Cheetah.Core.Outbox.EntityFrameworkCore/Cheetah.Core.Outbox.EntityFrameworkCore.csproj" />
+        <Project Path="src/Cheetah.Core.Outbox.Mongo/Cheetah.Core.Outbox.Mongo.csproj" />
         <Project Path="src/Cheetah.Core.Outbox.OpenTelemetry/Cheetah.Core.Outbox.OpenTelemetry.csproj" />
         <Project Path="src/Cheetah.Core.Outbox.PostgreSql/Cheetah.Core.Outbox.PostgreSql.csproj" />
         <Project Path="src/Cheetah.Core.Grid/Cheetah.Core.Grid.csproj" />
@@ -59,6 +72,7 @@
         <Project Path="src/Cheetah.FileStorage.Http/Cheetah.FileStorage.Http.csproj" />
         <Project Path="src/Cheetah.FileStorage.Local/Cheetah.FileStorage.Local.csproj" />
         <Project Path="src/Cheetah.FileStorage.S3/Cheetah.FileStorage.S3.csproj" />
+        <Project Path="src/Cheetah.Saga.Mongo/Cheetah.Saga.Mongo.csproj" />
         <Project Path="src/Cheetah.Saga/Cheetah.Saga.csproj" />
         <Project Path="src/Cheetah.Saga.EntityFrameworkCore/Cheetah.Saga.EntityFrameworkCore.csproj" />
         <Project Path="src/Cheetah.Notifications/Cheetah.Notifications.csproj" />
@@ -96,6 +110,7 @@
         <Project Path="src/Modules/Identity/Cheetah.Modules.Identity.Application.Tests/Cheetah.Modules.Identity.Application.Tests.csproj" />
         <Project Path="src/Modules/Identity/Cheetah.Modules.Identity.Api/Cheetah.Modules.Identity.Api.csproj" />
         <Project Path="src/Modules/Identity/Cheetah.Modules.Identity.Application/Cheetah.Modules.Identity.Application.csproj" />
+        <Project Path="src/Modules/Identity/Cheetah.Modules.Identity.Client/Cheetah.Modules.Identity.Client.csproj" />
         <Project Path="src/Modules/Identity/Cheetah.Modules.Identity.Contracts/Cheetah.Modules.Identity.Contracts.csproj" />
         <Project Path="src/Modules/Identity/Cheetah.Modules.Identity.DataAccess/Cheetah.Modules.Identity.DataAccess.csproj" />
         <Project Path="src/Modules/Identity/Cheetah.Modules.Identity.Domain/Cheetah.Modules.Identity.Domain.csproj" />
@@ -120,23 +135,6 @@
         <File Path="nuget.config" />
         <File Path="pack.ps1" />
     </Folder>
-    <Folder Name="/src/">
-        <Project Path="src/Cheetah.Audit.Mongo/Cheetah.Audit.Mongo.csproj" />
-        <Project Path="src/Cheetah.Core.Dapper.Integration.Tests/Cheetah.Core.Dapper.Integration.Tests.csproj" />
-        <Project Path="src/Cheetah.Core.Dapper.MsSql/Cheetah.Core.Dapper.MsSql.csproj" />
-        <Project Path="src/Cheetah.Core.Dapper.MySql/Cheetah.Core.Dapper.MySql.csproj" />
-        <Project Path="src/Cheetah.Core.Dapper.PostgreSql/Cheetah.Core.Dapper.PostgreSql.csproj" />
-        <Project Path="src/Cheetah.Core.Dapper.Sqlite/Cheetah.Core.Dapper.Sqlite.csproj" />
-        <Project Path="src/Cheetah.Core.Dapper.Tests/Cheetah.Core.Dapper.Tests.csproj" />
-        <Project Path="src/Cheetah.Core.Dapper/Cheetah.Core.Dapper.csproj" />
-        <Project Path="src/Cheetah.Core.Inbox.Mongo/Cheetah.Core.Inbox.Mongo.csproj" />
-        <Project Path="src/Cheetah.Core.Mongo.Integration.Tests/Cheetah.Core.Mongo.Integration.Tests.csproj" />
-        <Project Path="src/Cheetah.Core.Mongo.Tests/Cheetah.Core.Mongo.Tests.csproj" />
-        <Project Path="src/Cheetah.Core.Mongo/Cheetah.Core.Mongo.csproj" />
-        <Project Path="src/Cheetah.Core.Outbox.Mongo/Cheetah.Core.Outbox.Mongo.csproj" />
-        <Project Path="src/Cheetah.Saga.Mongo/Cheetah.Saga.Mongo.csproj" />
-    </Folder>
-    <Folder Name="/src/Modules/" />
 
     <Folder Name="/Tests/">
         <Project Path="src/Cheetah.Backend.Rsa.Tests/Cheetah.Backend.Rsa.Tests.csproj" />

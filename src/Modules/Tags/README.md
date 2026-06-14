@@ -58,6 +58,25 @@ services.AddTaggableEntityType("crm.deal", "Сделка", o =>
 { "ConnectionStrings": { "Tags": "Host=localhost;Database=tags;Username=postgres;Password=..." } }
 ```
 
+## Локальная реплика пользователей (Identity)
+
+Tags держит денормализованную копию пользователей (`tags.Users`: `Id` + `UserName`) — источник истины Identity:
+
+1. **Bulk-синк при старте** — `UserDirectorySyncService` тянет всех пользователей через
+   `Cheetah.Modules.Identity.Client` (`IIdentityUsersClient`); порт `IIdentityUserDirectory` +
+   адаптер `IdentityClientUserDirectory` маппят контракт Identity в снимок реплики и идемпотентно
+   апсёртят в БД Tags.
+2. **Поддержание по событиям** — подписка на доменные события Identity
+   (`UserCreatedEvent` / `UserNameChangedEvent` / `UserDeletedEvent`) обновляет реплику.
+
+Конфигурация доступа к Identity (секция клиента Identity):
+```json
+{ "Identity": { "Client": { "BaseUrl": "https://identity.internal" } } }
+```
+
+> Если Identity недоступен на старте — синк логирует ошибку и не валит хост (`ContinueOnFailure=true`);
+> реплика наполнится из событий. Auth к Identity API пока не настроен (TODO).
+
 ## API
 
 | Метод | URL | Назначение |
