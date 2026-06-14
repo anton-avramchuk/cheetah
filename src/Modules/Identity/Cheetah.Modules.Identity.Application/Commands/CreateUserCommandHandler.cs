@@ -1,6 +1,8 @@
 using Cheetah.Core.CQRS;
+using Cheetah.Core.Events;
 using Cheetah.Modules.Identity.DataAccess.Exceptions;
 using Cheetah.Modules.Identity.Domain;
+using Cheetah.Modules.Identity.DomainEvents;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,7 +10,8 @@ namespace Cheetah.Modules.Identity.Application.Commands;
 
 public abstract class CreateUserCommandHandler<TUser, TRole>(
     UserManager<TUser> userManager,
-    RoleManager<TRole> roleManager)
+    RoleManager<TRole> roleManager,
+    IEventBus eventBus)
     : ICommandHandler<CreateUserCommand, Guid>
     where TRole : IdentityRole
     where TUser : IdentityUser<TRole>
@@ -34,6 +37,8 @@ public abstract class CreateUserCommandHandler<TUser, TRole>(
             if (!roleResult.Succeeded)
                 throw new IdentityException(roleResult);
         }
+
+        await eventBus.PublishAsync(new UserCreatedEvent(user.Id, user.UserName, user.Email), ct);
 
         return user.Id;
     }

@@ -1,7 +1,9 @@
 using Cheetah.Core.CQRS;
 using Cheetah.Core.Domain.Exceptions;
+using Cheetah.Core.Events;
 using Cheetah.Modules.Identity.DataAccess.Exceptions;
 using Cheetah.Modules.Identity.Domain;
+using Cheetah.Modules.Identity.DomainEvents;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,7 +11,8 @@ namespace Cheetah.Modules.Identity.Application.Commands;
 
 public abstract class UpdateUserCommandHandler<TUser, TRole>(
     UserManager<TUser> userManager,
-    RoleManager<TRole> roleManager)
+    RoleManager<TRole> roleManager,
+    IEventBus eventBus)
     : ICommandHandler<UpdateUserCommand>
     where TRole : IdentityRole
     where TUser : IdentityUser<TRole>
@@ -26,6 +29,7 @@ public abstract class UpdateUserCommandHandler<TUser, TRole>(
         var user = await userManager.FindByIdAsync(command.Id.ToString())
                    ?? throw EntityNotFoundException.For<TUser>(command.Id);
 
+        var oldUserName = user.UserName;
         ApplyChanges(user, command);
         var result = await userManager.UpdateAsync(user);
 
@@ -54,5 +58,8 @@ public abstract class UpdateUserCommandHandler<TUser, TRole>(
                     throw new IdentityException(addResult);
             }
         }
+
+        if (!string.Equals(oldUserName, user.UserName, StringComparison.Ordinal))
+            await eventBus.PublishAsync(new UserNameChangedEvent(user.Id, oldUserName, user.UserName), ct);
     }
 }

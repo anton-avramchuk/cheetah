@@ -1,4 +1,5 @@
 using Cheetah.Core.Domain.Exceptions;
+using Cheetah.Core.Events;
 using Cheetah.Modules.Identity.Application.Commands;
 using Cheetah.Modules.Identity.Application.Tests;
 using Cheetah.Modules.Identity.DataAccess.Exceptions;
@@ -8,8 +9,9 @@ using Shouldly;
 
 namespace Cheetah.Modules.Identity.Application.Tests.Commands;
 
-public sealed class StubUpdateUserCommandHandler(UserManager<StubUser> userManager, RoleManager<StubRole> roleManager)
-    : UpdateUserCommandHandler<StubUser, StubRole>(userManager, roleManager);
+public sealed class StubUpdateUserCommandHandler(
+    UserManager<StubUser> userManager, RoleManager<StubRole> roleManager, IEventBus eventBus)
+    : UpdateUserCommandHandler<StubUser, StubRole>(userManager, roleManager, eventBus);
 
 public class UpdateUserCommandHandlerTests
 {
@@ -25,7 +27,7 @@ public class UpdateUserCommandHandlerTests
         var roleStore = new Mock<IRoleStore<StubRole>>();
         _roleManagerMock = new Mock<RoleManager<StubRole>>(roleStore.Object, null, null, null, null);
 
-        _handler = new StubUpdateUserCommandHandler(_userManagerMock.Object, _roleManagerMock.Object);
+        _handler = new StubUpdateUserCommandHandler(_userManagerMock.Object, _roleManagerMock.Object, new NullEventBus());
     }
 
     [Fact]
