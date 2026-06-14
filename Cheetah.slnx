@@ -126,6 +126,26 @@
         <Project Path="src/Modules/Tags/Cheetah.Modules.Tags.Infrastructure/Cheetah.Modules.Tags.Infrastructure.csproj" />
         <Project Path="src/Modules/Tags/Cheetah.Modules.Tags.Shared/Cheetah.Modules.Tags.Shared.csproj" />
     </Folder>
+    <Folder Name="/Modules/Notification/">
+        <Project Path="src/Modules/Notification/Cheetah.Modules.Notification.Api/Cheetah.Modules.Notification.Api.csproj" />
+        <Project Path="src/Modules/Notification/Cheetah.Modules.Notification.Application/Cheetah.Modules.Notification.Application.csproj" />
+        <Project Path="src/Modules/Notification/Cheetah.Modules.Notification.Contracts/Cheetah.Modules.Notification.Contracts.csproj" />
+        <Project Path="src/Modules/Notification/Cheetah.Modules.Notification.Domain/Cheetah.Modules.Notification.Domain.csproj" />
+        <Project Path="src/Modules/Notification/Cheetah.Modules.Notification.DomainEvents/Cheetah.Modules.Notification.DomainEvents.csproj" />
+        <Project Path="src/Modules/Notification/Cheetah.Modules.Notification.Infrastructure/Cheetah.Modules.Notification.Infrastructure.csproj" />
+        <Project Path="src/Modules/Notification/Cheetah.Modules.Notification.Shared/Cheetah.Modules.Notification.Shared.csproj" />
+        <Project Path="src/Modules/Notification/Cheetah.Modules.Notification.Application.Tests/Cheetah.Modules.Notification.Application.Tests.csproj" />
+        <Project Path="src/Modules/Notification/Cheetah.Modules.Notification.Infrastructure.Tests/Cheetah.Modules.Notification.Infrastructure.Tests.csproj" />
+    </Folder>
+    <Folder Name="/Modules/Email/">
+        <Project Path="src/Modules/Email/Cheetah.Modules.Email.Api/Cheetah.Modules.Email.Api.csproj" />
+        <Project Path="src/Modules/Email/Cheetah.Modules.Email.Application/Cheetah.Modules.Email.Application.csproj" />
+        <Project Path="src/Modules/Email/Cheetah.Modules.Email.Domain/Cheetah.Modules.Email.Domain.csproj" />
+        <Project Path="src/Modules/Email/Cheetah.Modules.Email.DomainEvents/Cheetah.Modules.Email.DomainEvents.csproj" />
+        <Project Path="src/Modules/Email/Cheetah.Modules.Email.Infrastructure/Cheetah.Modules.Email.Infrastructure.csproj" />
+        <Project Path="src/Modules/Email/Cheetah.Modules.Email.Shared/Cheetah.Modules.Email.Shared.csproj" />
+        <Project Path="src/Modules/Email/Cheetah.Modules.Email.Application.Tests/Cheetah.Modules.Email.Application.Tests.csproj" />
+    </Folder>
     <Folder Name="/Solution Items/">
         <File Path="Directory.Build.props" />
         <File Path="Directory.Packages.props" />
