@@ -151,7 +151,6 @@
         <Project Path="src/Cheetah.Core.Outbox.Integration.Tests/Cheetah.Core.Outbox.Integration.Tests.csproj" />
         <Project Path="src/Cheetah.Backend.Redis.Tests/Cheetah.Backend.Redis.Tests.csproj" />
         <Project Path="src/Cheetah.Core.Domain.Tests/Cheetah.Core.Domain.Tests.csproj" />
-        <Project Path="src/Cheetah.Core.Identity.Domain.Tests/Cheetah.Core.Identity.Domain.Tests.csproj" />
         <Project Path="src/Cheetah.Core.Tests/Cheetah.Core.Tests.csproj" />
         <Project Path="src/Cheetah.Generators.Grpc.Tests/Cheetah.Generators.Grpc.Tests.csproj" />
         <Project Path="src/Cheetah.Mapping.Generators.Tests/Cheetah.Mapping.Generators.Tests.csproj" />
