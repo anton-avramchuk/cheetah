@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\..\Cheetah.Core\Cheetah.Core.csproj" />
+        <ProjectReference Include="..\..\..\Cheetah.Core.DataAccess\Cheetah.Core.DataAccess.csproj" />
+        <ProjectReference Include="..\..\..\Cheetah.Core.Domain\Cheetah.Core.Domain.csproj" />
+        <ProjectReference Include="..\..\..\Cheetah.Core.EntityFramework\Cheetah.Core.EntityFramework.csproj" />
+        <ProjectReference Include="..\..\..\Cheetah.Core.EntityFramework.PostgreSql\Cheetah.Core.EntityFramework.PostgreSql.csproj" />
+        <ProjectReference Include="..\Cheetah.Modules.Customer.Domain\Cheetah.Modules.Customer.Domain.csproj" />
+        <ProjectReference Include="..\..\..\Cheetah.Generators.Module\Cheetah.Generators.Module.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.EntityFrameworkCore" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" />
+    </ItemGroup>
+
+</Project>

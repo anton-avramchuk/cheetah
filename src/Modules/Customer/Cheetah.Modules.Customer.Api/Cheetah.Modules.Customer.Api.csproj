@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\..\Cheetah.AspNetCore\Cheetah.AspNetCore.csproj" />
+        <ProjectReference Include="..\..\..\Cheetah.Core\Cheetah.Core.csproj" />
+        <ProjectReference Include="..\..\..\Cheetah.Core.CQRS\Cheetah.Core.CQRS.csproj" />
+        <ProjectReference Include="..\Cheetah.Modules.Customer.Application\Cheetah.Modules.Customer.Application.csproj" />
+        <ProjectReference Include="..\Cheetah.Modules.Customer.Contracts\Cheetah.Modules.Customer.Contracts.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    </ItemGroup>
+
+</Project>

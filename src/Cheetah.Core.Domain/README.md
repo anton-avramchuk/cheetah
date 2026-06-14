@@ -13,7 +13,7 @@
 | `ICreateAtEntity`, `IUpdatedAtEntity`, `IRemovedAtEntity` | Аудит-маркеры (`CreatedAt`/`UpdatedAt`/`RemovedAt` как `DateTimeOffset?`) |
 | `EntityByIdSpecification<T>` | Готовая спецификация «сущность по Guid Id» |
 | `EntityNotFoundException` | Бросается при отсутствии сущности |
-| Value objects: `Email`, `Color` | Готовые VO |
+| Value objects: `Email`, `Phone`, `Color` | Готовые VO (нормализация + валидация через `Create`) |
 
 ## Сущность и агрегат
 

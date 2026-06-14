@@ -1,6 +1,6 @@
 # Модуль `Cheetah.Modules.Customer.*` — план реализации
 
-> **Статус:** черновик плана, реализация не начата.
+> **Статус:** реализация завершена — все сборки в `Cheetah.slnx`, решение собирается, тесты зелёные (Domain 10 / Application 7), README модуля добавлен.
 > **Тип модуля:** абстрактный шаблон-каркас (base/template), а не готовый микросервис.
 > Отмечай прогресс галочками `- [x]` по мере выполнения.
 
@@ -62,7 +62,7 @@ CRUD «из коробки», дописав минимум кода.
 Customer.DomainEvents   → Core.Events                              (конкретные record-события, Guid id)
 Customer.Shared         → Core                                     (константы, enum CustomerStatus)
 Customer.Contracts      → Core + Shared                            (ABSTRACT базовые DTO/Request)
-Customer.Domain         → DomainEvents + Specification + Contracts (abstract CustomerBase, ICustomerFactory, generic-спеки)
+Customer.Domain         → DomainEvents + Specification             (abstract CustomerBase, generic-спеки)
 Customer.Infrastructure → Domain + EF + EF.PostgreSql              (abstract DbContextBase/ConfigBase, AddCustomerInfrastructure<>)
 Customer.Application     → Domain + Contracts + CQRS + Events      (generic handlers, AddCustomerApplication<>)
 Customer.Api            → Application + Contracts + AspNetCore      (abstract CustomerEndpointsBase<…>, ApiModuleBase)
@@ -72,51 +72,50 @@ Tests: Domain.Tests, Application.Tests
 > **Client намеренно отсутствует** — HTTP-клиент для server-to-server создаст
 > конкретная реализация (у неё будут закрытые типы DTO/Request).
 
-> Зависимость `Domain → Contracts` нужна, потому что фабрика принимает абстрактный
-> `CreateCustomerRequestBase`. Это допустимо: Contracts зависит только от Core+Shared,
-> цикла не возникает.
+> `ICustomerFactory` вынесен в **Application** (маппинг request→entity — прикладная забота),
+> поэтому Domain не зависит от Contracts и остаётся чистым, как у `Tags`.
 
 ---
 
 ## 3. Детальный план по проектам
 
 ### Фаза 0. Подготовка
-- [ ] Создать дерево каталогов `src/Modules/Customer/Cheetah.Modules.Customer.{Layer}`
-- [ ] Сверить версии пакетов в `Directory.Packages.props` (EF Core, Hosting.Abstractions и т.п.) — добавить отсутствующие `<PackageVersion>`
-- [ ] **`Phone` ValueObject** в `src/Cheetah.Core.Domain/ValueObjects/Phone.cs` (по образцу `Email.cs`):
-  - [ ] `partial class Phone : ValueObject`, `string Value`, приватный ctor, `static Create(string)` с нормализацией + regex-валидацией, `GetEqualityComponents`, `implicit operator string`
-  - [ ] это правка **базового модуля** `Cheetah.Core.Domain` → обновить его `README.md`, если есть (правило pre-commit для base-модулей)
+- [x] Создать дерево каталогов `src/Modules/Customer/Cheetah.Modules.Customer.{Layer}`
+- [x] Сверить версии пакетов в `Directory.Packages.props` (EF Core, Hosting.Abstractions и т.п.) — добавить отсутствующие `<PackageVersion>`
+- [x] **`Phone` ValueObject** в `src/Cheetah.Core.Domain/ValueObjects/Phone.cs` (по образцу `Email.cs`):
+  - [x] `partial class Phone : ValueObject`, `string Value`, приватный ctor, `static Create(string)` с нормализацией + regex-валидацией, `GetEqualityComponents`, `implicit operator string`
+  - [x] это правка **базового модуля** `Cheetah.Core.Domain` → обновить его `README.md`, если есть (правило pre-commit для base-модулей)
 
 ### Фаза 1. `Customer.Shared`
-- [ ] `Cheetah.Modules.Customer.Shared.csproj` (ссылка: `Cheetah.Core`)
-- [ ] `CheetahCustomerSharedModule.cs` — `[DependsOn(typeof(CoreModule))] class … : CrmModule`
-- [ ] `CustomerConstants.cs`:
-  - [ ] `ConnectionStringName = "Customer"`
-  - [ ] `MaxNameLength = 256`, `MaxEmailLength = 320`, `MaxPhoneLength = 32`
-  - [ ] `DefaultSchema = "customer"`, `DefaultTableName = "Customers"`
-  - [ ] `DefaultRoutePrefix = "api/customers"`
-- [ ] `CustomerStatus.cs` — enum `Active / Inactive / Archived`
+- [x] `Cheetah.Modules.Customer.Shared.csproj` (ссылка: `Cheetah.Core`)
+- [x] `CheetahCustomerSharedModule.cs` — `[DependsOn(typeof(CoreModule))] class … : CrmModule`
+- [x] `CustomerConstants.cs`:
+  - [x] `ConnectionStringName = "Customer"`
+  - [x] `MaxNameLength = 256`, `MaxEmailLength = 320`, `MaxPhoneLength = 32`
+  - [x] `DefaultSchema = "customer"`, `DefaultTableName = "Customers"`
+  - [x] `DefaultRoutePrefix = "api/customers"`
+- [x] `CustomerStatus.cs` — enum `Active / Inactive / Archived`
 
 ### Фаза 2. `Customer.DomainEvents`
-- [ ] `Cheetah.Modules.Customer.DomainEvents.csproj` (ссылка: `Cheetah.Core.Events`)
-- [ ] `CheetahCustomerDomainEventsModule.cs` — `[DependsOn(CoreModule, CrmEventsCoreModule)]`
-- [ ] `CustomerCreatedEvent.cs` — `record(Guid CustomerId, string DisplayName) : EventBase`
-- [ ] `CustomerRenamedEvent.cs` — `record(Guid CustomerId, string DisplayName)`
-- [ ] `CustomerContactsChangedEvent.cs` — `record(Guid CustomerId, string? Email, string? Phone)`
-- [ ] `CustomerArchivedEvent.cs` — `record(Guid CustomerId)`
+- [x] `Cheetah.Modules.Customer.DomainEvents.csproj` (ссылка: `Cheetah.Core.Events`)
+- [x] `CheetahCustomerDomainEventsModule.cs` — `[DependsOn(CoreModule, CrmEventsCoreModule)]`
+- [x] `CustomerCreatedEvent.cs` — `record(Guid CustomerId, string DisplayName) : EventBase`
+- [x] `CustomerRenamedEvent.cs` — `record(Guid CustomerId, string DisplayName)`
+- [x] `CustomerContactsChangedEvent.cs` — `record(Guid CustomerId, string? Email, string? Phone)`
+- [x] `CustomerArchivedEvent.cs` — `record(Guid CustomerId)`
 
 > События **конкретны** (id уже `Guid`) — наследник переиспользует их как есть и при
 > необходимости публикует свои.
 
 ### Фаза 3. `Customer.Contracts` (абстрактные)
-- [ ] `Cheetah.Modules.Customer.Contracts.csproj` (ссылки: `Core`, `Customer.Shared`)
-- [ ] `CheetahCustomerContractsModule.cs` — `[DependsOn(CoreModule, CheetahCustomerSharedModule)]`
-- [ ] `CustomerDtoBase.cs` — `public abstract record CustomerDtoBase` с core-полями
+- [x] `Cheetah.Modules.Customer.Contracts.csproj` (ссылки: `Core`, `Customer.Shared`)
+- [x] `CheetahCustomerContractsModule.cs` — `[DependsOn(CoreModule, CheetahCustomerSharedModule)]`
+- [x] `CustomerDtoBase.cs` — `public abstract record CustomerDtoBase` с core-полями
       (`Id, DisplayName, Email, Phone, Status, CreatedAt`); `Email`/`Phone` — `string?`
       (граница API, VO не протекают наружу)
-- [ ] `CreateCustomerRequestBase.cs` — `public abstract record CreateCustomerRequestBase`
+- [x] `CreateCustomerRequestBase.cs` — `public abstract record CreateCustomerRequestBase`
       (`DisplayName, Email, Phone` — `string?`)
-- [ ] `UpdateCustomerRequestBase.cs` — `public abstract record UpdateCustomerRequestBase`
+- [x] `UpdateCustomerRequestBase.cs` — `public abstract record UpdateCustomerRequestBase`
       (`DisplayName, Email, Phone` — `string?`)
 
 > Абстрактные record нельзя инстанцировать/забиндить — наследник объявляет
@@ -124,54 +123,51 @@ Tests: Domain.Tests, Application.Tests
 > закрывается этими конкретными типами.
 
 ### Фаза 4. `Customer.Domain`
-- [ ] `Cheetah.Modules.Customer.Domain.csproj` (ссылки: `Core`, `Core.Domain`,
-      `Core.Specification`, `Customer.Shared`, `Customer.DomainEvents`, `Customer.Contracts`,
+- [x] `Cheetah.Modules.Customer.Domain.csproj` (ссылки: `Core`, `Core.Domain`,
+      `Core.Specification`, `Customer.Shared`, `Customer.DomainEvents`,
       генератор модулей как Analyzer)
-- [ ] `CheetahCustomerDomainModule.cs` — `[DependsOn(CoreModule, CrmDomainModule, CrmSpecificationModule, SharedModule, DomainEventsModule, ContractsModule)]`
-- [ ] `Entities/CustomerBase.cs`:
-  - [ ] `abstract class CustomerBase : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEntity, IRemovedAtEntity`
-  - [ ] свойства `DisplayName : string`, `Email : Email?`, `Phone : Phone?`, `Status` — все `private set`; audit-поля
-  - [ ] `protected CustomerBase() {}` для EF
-  - [ ] `protected void InitializeCore(Guid id, string displayName, string? email, string? phone)`
+- [x] `CheetahCustomerDomainModule.cs` — `[DependsOn(CoreModule, CrmDomainModule, CrmSpecificationModule, SharedModule, DomainEventsModule)]`
+- [x] `Entities/CustomerBase.cs`:
+  - [x] `abstract class CustomerBase : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEntity, IRemovedAtEntity`
+  - [x] свойства `DisplayName : string`, `Email : Email?`, `Phone : Phone?`, `Status` — все `private set`; audit-поля
+  - [x] `protected CustomerBase() {}` для EF
+  - [x] `protected void InitializeCore(Guid id, string displayName, string? email, string? phone)`
         — принимает строки, конвертирует через `Email.Create`/`Phone.Create` (null → null);
         `Status = Active` + `AddDomainEvent(new CustomerCreatedEvent(...))`
-  - [ ] `public void Rename(string name)` → `CustomerRenamedEvent`
-  - [ ] `public void ChangeContacts(string? email, string? phone)` — строки → VO →
+  - [x] `public void Rename(string name)` → `CustomerRenamedEvent`
+  - [x] `public void ChangeContacts(string? email, string? phone)` — строки → VO →
         `CustomerContactsChangedEvent` (в событии — строковые значения VO)
-  - [ ] `public void Archive()` → `Status = Archived` + `RemovedAt` + `CustomerArchivedEvent`
-  - [ ] `protected virtual` hook'и для расширения (опционально)
-- [ ] `Abstractions/ICustomerFactory.cs`:
-  - [ ] `interface ICustomerFactory<TCustomer, TCreateRequest> where TCustomer : CustomerBase where TCreateRequest : CreateCustomerRequestBase`
-  - [ ] метод `TCustomer Create(TCreateRequest request)`
-- [ ] `Specifications/CustomerSpecifications.cs` (generic, `where TCustomer : CustomerBase`):
-  - [ ] `CustomerByEmailSpecification<TCustomer>`
-  - [ ] `CustomerByIdsSpecification<TCustomer>`
-  - [ ] `ActiveCustomersSpecification<TCustomer>` (Status == Active)
+  - [x] `public void Archive()` → `Status = Archived` + `RemovedAt` + `CustomerArchivedEvent`
+  - [x] `protected virtual` hook'и для расширения (опционально)
+- [x] `Specifications/CustomerSpecifications.cs` (generic, `where TCustomer : CustomerBase`):
+  - [x] `CustomerByEmailSpecification<TCustomer>`
+  - [x] `CustomerByIdsSpecification<TCustomer>`
+  - [x] `ActiveCustomersSpecification<TCustomer>` (Status == Active)
 
 ### Фаза 5. `Customer.Infrastructure`
-- [ ] `Cheetah.Modules.Customer.Infrastructure.csproj` (ссылки: `Core`, `Core.DataAccess`,
+- [x] `Cheetah.Modules.Customer.Infrastructure.csproj` (ссылки: `Core`, `Core.DataAccess`,
       `Core.Domain`, `Core.EntityFramework`, `Core.EntityFramework.PostgreSql`,
       `Customer.Domain`, генератор; пакеты EFCore/Relational/Hosting.Abstractions/Logging.Abstractions/EFCore.Design)
-  - [ ] `<EmitCompilerGeneratedFiles>true</…>`
-- [ ] `CheetahCustomerInfrastructureModule.cs` — `[DependsOn(CoreModule, CrmDataAccessModule, CrmDomainModule, CrmEntityFrameworkModule, CrmEntityFrameworkPostgreSqlModule, CheetahCustomerDomainModule)]`
+  - [x] `<EmitCompilerGeneratedFiles>true</…>`
+- [x] `CheetahCustomerInfrastructureModule.cs` — `[DependsOn(CoreModule, CrmDataAccessModule, CrmDomainModule, CrmEntityFrameworkModule, CrmEntityFrameworkPostgreSqlModule, CheetahCustomerDomainModule)]`
       (только `RegisterServices`; конкретный DbContext НЕ регистрирует — это делает наследник)
-- [ ] `Persistence/CustomerDbContextBase.cs`:
-  - [ ] `abstract class CustomerDbContextBase<TContext, TCustomer> : CrmDbContext<TContext> where TContext : DbContext where TCustomer : CustomerBase`
-  - [ ] `DbSet<TCustomer> Customers => Set<TCustomer>()`
-  - [ ] `protected override void OnModelCreating(ModelBuilder b)` → `b.ApplyConfiguration(CreateCustomerConfiguration())`
-  - [ ] `protected abstract IEntityTypeConfiguration<TCustomer> CreateCustomerConfiguration()`
-- [ ] `Persistence/Configurations/CustomerConfigurationBase.cs`:
-  - [ ] `abstract class CustomerConfigurationBase<TCustomer> : IEntityTypeConfiguration<TCustomer> where TCustomer : CustomerBase`
-  - [ ] `virtual Configure(...)`: `ToTable(TableName, Schema)`, `Ignore(DomainEvents)`,
+- [x] `Persistence/CustomerDbContextBase.cs`:
+  - [x] `abstract class CustomerDbContextBase<TContext, TCustomer> : CrmDbContext<TContext> where TContext : DbContext where TCustomer : CustomerBase`
+  - [x] `DbSet<TCustomer> Customers => Set<TCustomer>()`
+  - [x] `protected override void OnModelCreating(ModelBuilder b)` → `b.ApplyConfiguration(CreateCustomerConfiguration())`
+  - [x] `protected abstract IEntityTypeConfiguration<TCustomer> CreateCustomerConfiguration()`
+- [x] `Persistence/Configurations/CustomerConfigurationBase.cs`:
+  - [x] `abstract class CustomerConfigurationBase<TCustomer> : IEntityTypeConfiguration<TCustomer> where TCustomer : CustomerBase`
+  - [x] `virtual Configure(...)`: `ToTable(TableName, Schema)`, `Ignore(DomainEvents)`,
         `HasKey(Id)`, длины из `CustomerConstants`, индекс по `Email`, вызов `ConfigureCustom`
-  - [ ] **VO-конвертеры**: `Property(x => x.Email).HasConversion(e => e.Value, v => Email.Create(v)).HasMaxLength(MaxEmailLength)`
+  - [x] **VO-конвертеры**: `Property(x => x.Email).HasConversion(e => e.Value, v => Email.Create(v)).HasMaxLength(MaxEmailLength)`
         и аналогично `Phone` (конвертер не вызывается для `null` → nullable-колонки работают как есть)
-  - [ ] `protected virtual string TableName/Schema` (из констант)
-  - [ ] `protected virtual void ConfigureCustom(EntityTypeBuilder<TCustomer> b) {}` — hook
-- [ ] `Extensions/CustomerInfrastructureServiceCollectionExtensions.cs`:
-  - [ ] `AddCustomerInfrastructure<TContext, TCustomer>(this IServiceCollection)`
+  - [x] `protected virtual string TableName/Schema` (из констант)
+  - [x] `protected virtual void ConfigureCustom(EntityTypeBuilder<TCustomer> b) {}` — hook
+- [x] `Extensions/CustomerInfrastructureServiceCollectionExtensions.cs`:
+  - [x] `AddCustomerInfrastructure<TContext, TCustomer>(this IServiceCollection)`
         `where TContext : CustomerDbContextBase<TContext, TCustomer> where TCustomer : CustomerBase`
-  - [ ] внутри: `AddApplicationDbContext<TContext>()`, `AddScoped<TContext>()`,
+  - [x] внутри: `AddApplicationDbContext<TContext>()`, `AddScoped<TContext>()`,
         `AddDatabaseMigrator<TContext>()`, `Configure<CrmDbContextOptions>(o => o.UseNpgsql<TContext>())`,
         `AddScoped<IRepository<TCustomer,Guid>, EfRepository<TContext,TCustomer,Guid>>()`
 
@@ -179,66 +175,67 @@ Tests: Domain.Tests, Application.Tests
 > конкретный `DbContext` и генерирует миграции у себя.
 
 ### Фаза 6. `Customer.Application` (generic CQRS)
-- [ ] `Cheetah.Modules.Customer.Application.csproj` (ссылки: `Core`, `Core.CQRS`,
+- [x] `Cheetah.Modules.Customer.Application.csproj` (ссылки: `Core`, `Core.CQRS`,
       `Core.DataAccess`, `Core.Events`, `Customer.Domain`, `Customer.Contracts`, генератор)
-- [ ] `CheetahCustomerApplicationModule.cs` — `[DependsOn(CoreModule, CrmCQRSCoreModule, CrmDataAccessModule, CrmEventsCoreModule, DomainModule, ContractsModule, DomainEventsModule)]`
-- [ ] `Exceptions/CustomerValidationException.cs`
-- [ ] `Customers/CreateCustomerCommand.cs`:
-  - [ ] `record CreateCustomerCommand<TCreateRequest>(TCreateRequest Request) : ICommand<Guid> where TCreateRequest : CreateCustomerRequestBase`
-  - [ ] `CreateCustomerCommandHandler<TCustomer, TCreateRequest> : ICommandHandler<CreateCustomerCommand<TCreateRequest>, Guid>`
+- [x] `CheetahCustomerApplicationModule.cs` — `[DependsOn(CoreModule, CrmCQRSCoreModule, CrmDataAccessModule, CrmEventsCoreModule, DomainModule, ContractsModule, DomainEventsModule)]`
+- [x] `Abstractions/ICustomerFactory.cs` — `interface ICustomerFactory<TCustomer, TCreateRequest> where TCustomer : CustomerBase where TCreateRequest : CreateCustomerRequestBase` с методом `TCustomer Create(TCreateRequest request)`
+- [x] `Exceptions/CustomerValidationException.cs`
+- [x] `Customers/CreateCustomerCommand.cs`:
+  - [x] `record CreateCustomerCommand<TCreateRequest>(TCreateRequest Request) : ICommand<Guid> where TCreateRequest : CreateCustomerRequestBase`
+  - [x] `CreateCustomerCommandHandler<TCustomer, TCreateRequest> : ICommandHandler<CreateCustomerCommand<TCreateRequest>, Guid>`
         — inject `ICustomerFactory<,>`, `IRepository<TCustomer,Guid>`, `IEventBus`;
         `factory.Create → repo.Add → SaveChangesAsync → publish DomainEvents → ClearDomainEvents`
-- [ ] `Customers/UpdateCustomerCommand.cs`:
-  - [ ] `record UpdateCustomerCommand<TUpdateRequest>(Guid Id, TUpdateRequest Request) : ICommand`
-  - [ ] handler `…<TCustomer, TUpdateRequest>`: `GetById → Rename/ChangeContacts → Save → publish`
-- [ ] `Customers/ArchiveCustomerCommand.cs`:
-  - [ ] `record ArchiveCustomerCommand(Guid Id) : ICommand`
-  - [ ] handler `…<TCustomer>`: `GetById → Archive() → Save → publish`
-- [ ] `Customers/GetCustomerByIdQuery.cs`:
-  - [ ] `record GetCustomerByIdQuery<TDto>(Guid Id) : IQuery<TDto?> where TDto : CustomerDtoBase`
-  - [ ] handler `…<TCustomer, TDto>`: `AsNoTracking → IObjectMapper.Map<TDto>`
-- [ ] `Customers/ListCustomersQuery.cs`:
-  - [ ] `record ListCustomersQuery<TDto>(bool ActiveOnly = false) : IQuery<IReadOnlyList<TDto>>`
-  - [ ] handler `…<TCustomer, TDto>`: спека + проекция через `IObjectMapper`
-- [ ] `Extensions/CustomerApplicationServiceCollectionExtensions.cs`:
-  - [ ] `AddCustomerApplication<TCustomer, TCreateRequest, TUpdateRequest, TDto, TFactory>(this IServiceCollection)`
-  - [ ] регистрация фабрики и всех закрытых handler'ов (`ICommandHandler<…>`, `IQueryHandler<…>`)
+- [x] `Customers/UpdateCustomerCommand.cs`:
+  - [x] `record UpdateCustomerCommand<TUpdateRequest>(Guid Id, TUpdateRequest Request) : ICommand`
+  - [x] handler `…<TCustomer, TUpdateRequest>`: `GetById → Rename/ChangeContacts → Save → publish`
+- [x] `Customers/ArchiveCustomerCommand.cs`:
+  - [x] `record ArchiveCustomerCommand(Guid Id) : ICommand`
+  - [x] handler `…<TCustomer>`: `GetById → Archive() → Save → publish`
+- [x] `Customers/GetCustomerByIdQuery.cs`:
+  - [x] `record GetCustomerByIdQuery<TDto>(Guid Id) : IQuery<TDto?> where TDto : CustomerDtoBase`
+  - [x] handler `…<TCustomer, TDto>`: `AsNoTracking → IObjectMapper.Map<TDto>`
+- [x] `Customers/ListCustomersQuery.cs`:
+  - [x] `record ListCustomersQuery<TDto>(bool ActiveOnly = false) : IQuery<IReadOnlyList<TDto>>`
+  - [x] handler `…<TCustomer, TDto>`: спека + проекция через `IObjectMapper`
+- [x] `Extensions/CustomerApplicationServiceCollectionExtensions.cs`:
+  - [x] `AddCustomerApplication<TCustomer, TCreateRequest, TUpdateRequest, TDto, TFactory>(this IServiceCollection)`
+  - [x] регистрация фабрики и всех закрытых handler'ов (`ICommandHandler<…>`, `IQueryHandler<…>`)
 
 > Маппинг `TCustomer → TDto` — через `IObjectMapper` (Mapster). Наследник при желании
 > добавляет правила маппинга для своих доп. полей.
 
 ### Фаза 7. `Customer.Api` (абстрактные эндпоинты)
-- [ ] `Cheetah.Modules.Customer.Api.csproj` (ссылки: `Core`, `Core.CQRS`, `AspNetCore`,
+- [x] `Cheetah.Modules.Customer.Api.csproj` (ссылки: `Core`, `Core.CQRS`, `AspNetCore`,
       `Customer.Application`, `Customer.Contracts`)
-- [ ] `Endpoints/CustomerEndpointsBase.cs`:
-  - [ ] `abstract class CustomerEndpointsBase<TCustomer, TCreateRequest, TUpdateRequest, TDto>`
+- [x] `Endpoints/CustomerEndpointsBase.cs`:
+  - [x] `abstract class CustomerEndpointsBase<TCustomer, TCreateRequest, TUpdateRequest, TDto>`
         с ограничениями на base-типы Contracts/Domain
-  - [ ] `public void Map(IEndpointRouteBuilder routes)` — `POST/GET{id}/GET/PUT{id}/DELETE{id}`
+  - [x] `public void Map(IEndpointRouteBuilder routes)` — `POST/GET{id}/GET/PUT{id}/DELETE{id}`
         на `RoutePrefix`, диспетчеризация в `IDispatcher` с закрытыми generic-командами/запросами
-  - [ ] `protected virtual string RoutePrefix => CustomerConstants.DefaultRoutePrefix`
-  - [ ] обработка `CustomerValidationException → BadRequest` (как в `CheetahTagsApiModule`)
-  - [ ] хендлеры эндпоинтов `protected virtual` — чтобы наследник мог переопределить отдельный маршрут
-- [ ] `CheetahCustomerApiModuleBase.cs`:
-  - [ ] `abstract class CheetahCustomerApiModuleBase<…> : CrmModule`
-  - [ ] `OnApplicationInitialization` → `new {Endpoints}().Map(context.GetRouteBuilder())`
-  - [ ] наследник ставит `[DependsOn]` на свои Application/Contracts и закрывает generic-параметры
+  - [x] `protected virtual string RoutePrefix => CustomerConstants.DefaultRoutePrefix`
+  - [x] обработка `CustomerValidationException → BadRequest` (как в `CheetahTagsApiModule`)
+  - [x] хендлеры эндпоинтов `protected virtual` — чтобы наследник мог переопределить отдельный маршрут
+- [x] `CheetahCustomerApiModuleBase.cs`:
+  - [x] `abstract class CheetahCustomerApiModuleBase<…> : CrmModule`
+  - [x] `OnApplicationInitialization` → `new {Endpoints}().Map(context.GetRouteBuilder())`
+  - [x] наследник ставит `[DependsOn]` на свои Application/Contracts и закрывает generic-параметры
 
 ### Фаза 8. Тесты
-- [ ] `Customer.Domain.Tests` — тестовый наследник `TestCustomer`: инварианты,
+- [x] `Customer.Domain.Tests` — тестовый наследник `TestCustomer`: инварианты,
       доменные события (`Created/Renamed/ContactsChanged/Archived`), переходы статуса
-- [ ] `Customer.Application.Tests` — generic-handler'ы на `TestCustomer`/`TestCreateRequest`/`TestDto`
+- [x] `Customer.Application.Tests` — generic-handler'ы на `TestCustomer`/`TestCreateRequest`/`TestDto`
       с fake `IRepository`/`ICustomerFactory`/`IEventBus`/`IObjectMapper`
 
 ### Фаза 9. Интеграция в решение
-- [ ] `dotnet sln Cheetah.slnx add` всех проектов в папку `/Modules/Customer/`
-- [ ] добавить новую `<Folder Name="/Modules/Customer/">` в `Cheetah.slnx`
-- [ ] `dotnet build Cheetah.slnx` — сборка зелёная
-- [ ] `dotnet test` по двум тестовым проектам — зелёные
+- [x] `dotnet sln Cheetah.slnx add` всех проектов в папку `/Modules/Customer/`
+- [x] добавить новую `<Folder Name="/Modules/Customer/">` в `Cheetah.slnx`
+- [x] `dotnet build Cheetah.slnx` — сборка зелёная
+- [x] `dotnet test` по двум тестовым проектам — зелёные
 
 ### Фаза 10. Документация модуля
-- [ ] `src/Modules/Customer/README.md` — назначение, граф зависимостей, **пример наследования**
+- [x] `src/Modules/Customer/README.md` — назначение, граф зависимостей, **пример наследования**
       (см. §4), список extension-методов, ограничение «миграции у наследника»
-- [ ] удалить возможные `nul`-файлы перед коммитом
+- [x] удалить возможные `nul`-файлы перед коммитом
 
 ---
 
@@ -296,7 +293,7 @@ public sealed class AppCustomerEndpoints
 ## 5. Открытые вопросы / заметки
 
 - [x] `Email`/`Phone` — ValueObject в Domain (`Email` из `Core.Domain`, `Phone` создаём там же), строки в Contracts. **Решено.**
-- [ ] `DisplayName` через `Email`-маппинг в DTO: при проекции `TCustomer → TDto` через Mapster нужно правило `Email? → string?` (`e => e == null ? null : e.Value`) — наследник регистрирует, либо добавить глобальный конвертер в `CrmMapsterModule`.
+- [x] Проекция `TCustomer → TDto`: вместо Mapster введён `ICustomerProjector<TCustomer, TDto>` (реализует наследник) — VO `Email?/Phone? → string?` без скрытой конфигурации маппера. **Решено.**
 - [ ] Soft-delete: `Archive()` ставит `Status=Archived` + `RemovedAt`. Решить, нужен ли глобальный query-filter `RemovedAt == null` в `CustomerConfigurationBase` (по умолчанию — нет, чтобы не скрывать архив).
 - [ ] Нужен ли отдельный `RestoreCustomerCommand` (разархивация) — пока вне scope.
 - [ ] Подписки на события Identity (как в Tags) в Customer **не предусмотрены** — добавить только если появится реплика пользователей.
@@ -305,14 +302,40 @@ public sealed class AppCustomerEndpoints
 
 ## 6. Чек-лист прогресса (сводка по фазам)
 
-- [ ] Фаза 0 — Подготовка
-- [ ] Фаза 1 — Shared
-- [ ] Фаза 2 — DomainEvents
-- [ ] Фаза 3 — Contracts (абстрактные)
-- [ ] Фаза 4 — Domain
-- [ ] Фаза 5 — Infrastructure
-- [ ] Фаза 6 — Application
-- [ ] Фаза 7 — Api (абстрактные эндпоинты)
-- [ ] Фаза 8 — Тесты
-- [ ] Фаза 9 — Интеграция в решение
-- [ ] Фаза 10 — Документация
+- [x] Фаза 0 — Подготовка
+- [x] Фаза 1 — Shared
+- [x] Фаза 2 — DomainEvents
+- [x] Фаза 3 — Contracts (абстрактные)
+- [x] Фаза 4 — Domain
+- [x] Фаза 5 — Infrastructure
+- [x] Фаза 6 — Application
+- [x] Фаза 7 — Api (абстрактные эндпоинты)
+- [x] Фаза 8 — Тесты
+- [x] Фаза 9 — Интеграция в решение
+- [x] Фаза 10 — Документация
+
+---
+
+## 7. Расширение после базового плана: контакты + ответственный
+
+Добавлено сверх исходного плана (по запросу — «сотрудники клиента»):
+
+### A. Ответственный со стороны нашей компании
+- [x] `OwnerId : Guid?` на `CustomerBase` (ссылка на пользователя Identity по Id, без FK)
+- [x] мутатор `AssignOwner(Guid?)` + событие `CustomerOwnerChangedEvent` (только при изменении)
+- [x] `OwnerId` в `CustomerDtoBase`/`Create`/`UpdateCustomerRequestBase`; вызов `AssignOwner` в update-handler
+- [x] индекс по `OwnerId` в `CustomerConfigurationBase`; `CustomersByOwnerSpecification<>`
+
+### B. Контактные лица клиента (отдельный абстрактный агрегат `ContactBase`)
+- [x] DomainEvents: `ContactAddedEvent`, `ContactRenamedEvent`, `ContactContactsChangedEvent`, `ContactRemovedEvent`
+- [x] Shared: длины `MaxFullNameLength`/`MaxPositionLength`, имя таблицы и суффикс маршрута контактов
+- [x] Contracts: `ContactDtoBase`, `Create/UpdateContactRequestBase` (abstract record)
+- [x] Domain: `ContactBase : AggregateRoot<Guid>` (`CustomerId`, `FullName`, `Position?`, `Email?`, `Phone?`; `Rename/ChangePosition/ChangeContacts/Remove`); спеки `ContactsByCustomer`/`ContactByEmail`
+- [x] Infrastructure: `CustomerDbContextBase<TContext, TCustomer, TContact>` (оба агрегата в одной БД), `ContactConfigurationBase<TContact>`, регистрация `IRepository<TContact,Guid>` в `AddCustomerInfrastructure<,,>`
+- [x] Application: generic CQRS `Add/Update/Remove` + `GetContactById/ListContactsByCustomer`, `IContactFactory`/`IContactProjector`, extension `AddCustomerContacts<…>`
+- [x] Api: `ContactEndpointsBase<…>` (вложенные маршруты `api/customers/{customerId}/contacts`), `CheetahCustomerContactsApiModuleBase<…>`
+- [x] Тесты: Domain (`ContactBaseTests`) + Application (`ContactCommandHandlerTests`/`ContactQueryHandlerTests`) — всего Domain 21 / Application 15, зелёные
+
+> **Breaking** относительно §3-плана: `CustomerDbContextBase` и `AddCustomerInfrastructure`
+> получили доп. type-параметр `TContact`. Это новый, ещё не выпущенный модуль без потребителей —
+> сигнатуры эволюционированы, README обновлён.

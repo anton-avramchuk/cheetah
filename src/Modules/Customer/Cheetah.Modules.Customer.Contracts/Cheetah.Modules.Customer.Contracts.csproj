@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\..\Cheetah.Core\Cheetah.Core.csproj" />
+        <ProjectReference Include="..\Cheetah.Modules.Customer.Shared\Cheetah.Modules.Customer.Shared.csproj" />
+    </ItemGroup>
+
+</Project>
