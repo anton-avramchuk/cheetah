@@ -22,7 +22,7 @@ Cheetah.{ModuleName}/
 ├── Contracts/           # DTOs, ViewModels, Requests (depends on Core + Shared)
 ├── Domain/              # Entities, Value Objects (depends on Events)
 ├── Application/         # CQRS, Business Logic (depends on Domain)
-├── DataAccess/          # EF Core, Migrations (depends on Domain)
+├── Infrastructure/      # EF Core, Migrations, repository impls, external integrations (depends on Domain)
 ├── Api/                 # Minimal API (depends on Application + Contracts)
 ├── Client/              # HTTP client for server-to-server integration (depends on Contracts)
 └── Tests/
@@ -135,7 +135,7 @@ public class MyEntityByNameSpecification : Specification<MyEntity>
 }
 ```
 
-**Repository Implementation (DataAccess layer):**
+**Repository Implementation (Infrastructure layer):**
 ```csharp
 [Export(LifetimeType.Scoped, typeof(IMyEntityRepository))]
 public class MyEntityRepository : IMyEntityRepository
@@ -157,7 +157,9 @@ public class MyEntityRepository : IMyEntityRepository
 }
 ```
 
-### DataAccess Layer (EF Core)
+### Infrastructure Layer (EF Core, integrations)
+
+**Single infrastructure assembly per module** (`{ModuleName}.Infrastructure`). Holds EVERYTHING infrastructural: EF Core `DbContext` + migrations, repository implementations, external integrations (HTTP/gRPC adapters, message-bus producers, cache/file-storage adapters, third-party SDK wrappers). There is **no separate `DataAccess` assembly** — data access is just one part of Infrastructure.
 
 **MUST** depend on `CrmEntityFrameworkModule` + `CrmEntityFrameworkPostgreSqlModule`.
 
@@ -165,7 +167,7 @@ public class MyEntityRepository : IMyEntityRepository
 [DependsOn(typeof(MyDomainModule))]
 [DependsOn(typeof(CrmEntityFrameworkModule))]
 [DependsOn(typeof(CrmEntityFrameworkPostgreSqlModule))]
-public partial class MyDataAccessModule : CrmModule
+public partial class MyInfrastructureModule : CrmModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
@@ -282,7 +284,7 @@ Contracts (Core + Shared)
   ↓
 Domain (Events) → Application (Domain) → Api (Application + Contracts)
   ↓
-DataAccess (Domain)
+Infrastructure (Domain)
 
 Client (Contracts)   ← used for server-to-server integration only
 ```
@@ -353,8 +355,8 @@ Cheetah.MyModule.Application/
 2. Shared (constants, enums)
 3. Contracts (DTOs, depends on Core + Shared)
 4. Domain (depends on Events)
-5. DataAccess (depends on Domain + `CrmEntityFrameworkModule` + `CrmEntityFrameworkPostgreSqlModule`)
-6. Application (CQRS handlers, depends on Domain only — NOT DataAccess)
+5. Infrastructure (depends on Domain + `CrmEntityFrameworkModule` + `CrmEntityFrameworkPostgreSqlModule`)
+6. Application (CQRS handlers, depends on Domain only — NOT Infrastructure)
 7. Api (Minimal API, depends on Application + Contracts + `CrmMapsterModule`)
 8. Client (HTTP client, depends on Contracts) — only if other .NET modules need to call this one
 9. Tests: Domain.Tests, Application.Tests, Client.Tests (if Client exists)
@@ -379,7 +381,7 @@ Cheetah.MyModule.Application/
 15. **Project references MUST match module dependencies**
 16. **Repository Pattern MANDATORY** - Application layer MUST NOT use DbContext directly
 17. **Specifications are MANDATORY for all filtering** - NEVER use raw LINQ predicates (`.Where(x => ...)`) in Application layer handlers; always create a `Specification<T>` class in Domain and pass it to the repository
-18. **Application MUST NOT depend on DataAccess module** - only on Domain (repository interfaces live in Domain)
+18. **Application MUST NOT depend on Infrastructure module** - only on Domain (repository interfaces live in Domain)
 
 ## ✅ Pre-Commit Checklist
 

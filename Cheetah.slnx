@@ -101,6 +101,16 @@
         <Project Path="src/Modules/Identity/Cheetah.Modules.Identity.Domain/Cheetah.Modules.Identity.Domain.csproj" />
         <Project Path="src/Modules/Identity/Cheetah.Modules.Identity.DomainEvents/Cheetah.Modules.Identity.DomainEvents.csproj" />
     </Folder>
+    <Folder Name="/Modules/Tags/">
+        <Project Path="src/Modules/Tags/Cheetah.Modules.Tags.Api/Cheetah.Modules.Tags.Api.csproj" />
+        <Project Path="src/Modules/Tags/Cheetah.Modules.Tags.Application/Cheetah.Modules.Tags.Application.csproj" />
+        <Project Path="src/Modules/Tags/Cheetah.Modules.Tags.Client/Cheetah.Modules.Tags.Client.csproj" />
+        <Project Path="src/Modules/Tags/Cheetah.Modules.Tags.Contracts/Cheetah.Modules.Tags.Contracts.csproj" />
+        <Project Path="src/Modules/Tags/Cheetah.Modules.Tags.Domain/Cheetah.Modules.Tags.Domain.csproj" />
+        <Project Path="src/Modules/Tags/Cheetah.Modules.Tags.DomainEvents/Cheetah.Modules.Tags.DomainEvents.csproj" />
+        <Project Path="src/Modules/Tags/Cheetah.Modules.Tags.Infrastructure/Cheetah.Modules.Tags.Infrastructure.csproj" />
+        <Project Path="src/Modules/Tags/Cheetah.Modules.Tags.Shared/Cheetah.Modules.Tags.Shared.csproj" />
+    </Folder>
     <Folder Name="/Solution Items/">
         <File Path="Directory.Build.props" />
         <File Path="Directory.Packages.props" />
@@ -126,6 +136,7 @@
         <Project Path="src/Cheetah.Core.Outbox.Mongo/Cheetah.Core.Outbox.Mongo.csproj" />
         <Project Path="src/Cheetah.Saga.Mongo/Cheetah.Saga.Mongo.csproj" />
     </Folder>
+    <Folder Name="/src/Modules/" />
 
     <Folder Name="/Tests/">
         <Project Path="src/Cheetah.Backend.Rsa.Tests/Cheetah.Backend.Rsa.Tests.csproj" />

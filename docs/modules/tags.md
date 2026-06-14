@@ -129,7 +129,7 @@ src/Modules/Tags/
 ├── Cheetah.Modules.Tags.Shared/          # enums (TagEntityIdType, TagGroupMode), конвенции ключей
 ├── Cheetah.Modules.Tags.Contracts/       # DTO, Request/Response, TaggableEntityTypeDescriptor
 ├── Cheetah.Modules.Tags.Domain/          # агрегаты, спецификации, интерфейсы репозиториев
-├── Cheetah.Modules.Tags.DataAccess/      # EF Core, конфигурации, миграции (PostgreSQL)
+├── Cheetah.Modules.Tags.Infrastructure/  # EF Core, миграции, реализации репозиториев, интеграции (PostgreSQL)
 ├── Cheetah.Modules.Tags.Application/      # CQRS-хендлеры
 ├── Cheetah.Modules.Tags.Api/             # Minimal API + gRPC endpoints
 ├── Cheetah.Modules.Tags.Client/          # клиент для потребителей (регистрация + тэгирование)
