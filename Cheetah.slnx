@@ -126,6 +126,20 @@
         <Project Path="src/Modules/Tags/Cheetah.Modules.Tags.Infrastructure/Cheetah.Modules.Tags.Infrastructure.csproj" />
         <Project Path="src/Modules/Tags/Cheetah.Modules.Tags.Shared/Cheetah.Modules.Tags.Shared.csproj" />
     </Folder>
+    <Folder Name="/Modules/Calendar/">
+        <Project Path="src/Modules/Calendar/Cheetah.Modules.Calendar.Api/Cheetah.Modules.Calendar.Api.csproj" />
+        <Project Path="src/Modules/Calendar/Cheetah.Modules.Calendar.Application/Cheetah.Modules.Calendar.Application.csproj" />
+        <Project Path="src/Modules/Calendar/Cheetah.Modules.Calendar.Client/Cheetah.Modules.Calendar.Client.csproj" />
+        <Project Path="src/Modules/Calendar/Cheetah.Modules.Calendar.Contracts/Cheetah.Modules.Calendar.Contracts.csproj" />
+        <Project Path="src/Modules/Calendar/Cheetah.Modules.Calendar.Domain/Cheetah.Modules.Calendar.Domain.csproj" />
+        <Project Path="src/Modules/Calendar/Cheetah.Modules.Calendar.DomainEvents/Cheetah.Modules.Calendar.DomainEvents.csproj" />
+        <Project Path="src/Modules/Calendar/Cheetah.Modules.Calendar.Infrastructure/Cheetah.Modules.Calendar.Infrastructure.csproj" />
+        <Project Path="src/Modules/Calendar/Cheetah.Modules.Calendar.Shared/Cheetah.Modules.Calendar.Shared.csproj" />
+        <Project Path="src/Modules/Calendar/Cheetah.Modules.Calendar.Domain.Tests/Cheetah.Modules.Calendar.Domain.Tests.csproj" />
+        <Project Path="src/Modules/Calendar/Cheetah.Modules.Calendar.Application.Tests/Cheetah.Modules.Calendar.Application.Tests.csproj" />
+        <Project Path="src/Modules/Calendar/Cheetah.Modules.Calendar.Infrastructure.Tests/Cheetah.Modules.Calendar.Infrastructure.Tests.csproj" />
+        <Project Path="src/Modules/Calendar/Cheetah.Modules.Calendar.Client.Tests/Cheetah.Modules.Calendar.Client.Tests.csproj" />
+    </Folder>
     <Folder Name="/Modules/Notification/">
         <Project Path="src/Modules/Notification/Cheetah.Modules.Notification.Api/Cheetah.Modules.Notification.Api.csproj" />
         <Project Path="src/Modules/Notification/Cheetah.Modules.Notification.Application/Cheetah.Modules.Notification.Application.csproj" />
