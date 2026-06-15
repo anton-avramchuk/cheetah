@@ -126,6 +126,17 @@
         <Project Path="src/Modules/Tags/Cheetah.Modules.Tags.Infrastructure/Cheetah.Modules.Tags.Infrastructure.csproj" />
         <Project Path="src/Modules/Tags/Cheetah.Modules.Tags.Shared/Cheetah.Modules.Tags.Shared.csproj" />
     </Folder>
+    <Folder Name="/Modules/Activities/">
+        <Project Path="src/Modules/Activities/Cheetah.Modules.Activities.Api/Cheetah.Modules.Activities.Api.csproj" />
+        <Project Path="src/Modules/Activities/Cheetah.Modules.Activities.Application.Tests/Cheetah.Modules.Activities.Application.Tests.csproj" />
+        <Project Path="src/Modules/Activities/Cheetah.Modules.Activities.Application/Cheetah.Modules.Activities.Application.csproj" />
+        <Project Path="src/Modules/Activities/Cheetah.Modules.Activities.Contracts/Cheetah.Modules.Activities.Contracts.csproj" />
+        <Project Path="src/Modules/Activities/Cheetah.Modules.Activities.Domain.Tests/Cheetah.Modules.Activities.Domain.Tests.csproj" />
+        <Project Path="src/Modules/Activities/Cheetah.Modules.Activities.Domain/Cheetah.Modules.Activities.Domain.csproj" />
+        <Project Path="src/Modules/Activities/Cheetah.Modules.Activities.DomainEvents/Cheetah.Modules.Activities.DomainEvents.csproj" />
+        <Project Path="src/Modules/Activities/Cheetah.Modules.Activities.Infrastructure/Cheetah.Modules.Activities.Infrastructure.csproj" />
+        <Project Path="src/Modules/Activities/Cheetah.Modules.Activities.Shared/Cheetah.Modules.Activities.Shared.csproj" />
+    </Folder>
     <Folder Name="/Modules/Calendar/">
         <Project Path="src/Modules/Calendar/Cheetah.Modules.Calendar.Api/Cheetah.Modules.Calendar.Api.csproj" />
         <Project Path="src/Modules/Calendar/Cheetah.Modules.Calendar.Application/Cheetah.Modules.Calendar.Application.csproj" />
