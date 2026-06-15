@@ -1,16 +1,16 @@
 using Cheetah.Contracts.Responses;
-using Cheetah.Modules.Leads.Shared;
 
 namespace Cheetah.Modules.Leads.Contracts;
 
 /// <summary>
 /// Базовый запрос на создание лида. Абстрактен: наследник объявляет конкретный
 /// <c>sealed record CreateLeadRequest : CreateLeadRequestBase</c> и добавляет свои поля.
+/// <c>SourceId</c> — ссылка на справочник источников.
 /// </summary>
 public abstract record CreateLeadRequestBase
 {
     public string FullName { get; init; } = null!;
-    public LeadSource Source { get; init; }
+    public Guid SourceId { get; init; }
     public string? Email { get; init; }
     public string? Phone { get; init; }
     public string? Company { get; init; }

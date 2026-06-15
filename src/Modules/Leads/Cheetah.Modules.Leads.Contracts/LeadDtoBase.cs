@@ -1,12 +1,12 @@
 using Cheetah.Contracts.Responses;
-using Cheetah.Modules.Leads.Shared;
 
 namespace Cheetah.Modules.Leads.Contracts;
 
 /// <summary>
 /// Базовый ViewModel лида (граница API). Абстрактен: наследник объявляет конкретный
-/// <c>sealed record LeadDto : LeadDtoBase</c> и при необходимости добавляет свои поля
-/// (например, <c>Utm</c>, <c>Industry</c>). Контакты — строки (VO живут только в Domain).
+/// <c>sealed record LeadDto : LeadDtoBase</c> и при необходимости добавляет свои поля.
+/// Статус/источник — ссылки на справочники (<c>StatusId</c>/<c>SourceId</c>); названия отдаются
+/// отдельными lookup-эндпоинтами. Контакты — строки (VO живут только в Domain).
 /// </summary>
 public abstract record LeadDtoBase : ICrmResponse
 {
@@ -15,8 +15,8 @@ public abstract record LeadDtoBase : ICrmResponse
     public string? Company { get; init; }
     public string? Email { get; init; }
     public string? Phone { get; init; }
-    public LeadSource Source { get; init; }
-    public LeadStatus Status { get; init; }
+    public Guid SourceId { get; init; }
+    public Guid StatusId { get; init; }
     public int Score { get; init; }
     public Guid? OwnerId { get; init; }
     public Guid? ConvertedCustomerId { get; init; }

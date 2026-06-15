@@ -1,11 +1,9 @@
 using Cheetah.Core.CQRS;
 using Cheetah.Core.DataAccess.Abstractions;
 using Cheetah.Core.Events;
-using Cheetah.Core.StateMachine;
 using Cheetah.Modules.Leads.Application.Exceptions;
 using Cheetah.Modules.Leads.Contracts;
 using Cheetah.Modules.Leads.Domain.Entities;
-using Cheetah.Modules.Leads.Shared;
 
 namespace Cheetah.Modules.Leads.Application.Leads;
 
@@ -35,7 +33,7 @@ public class UpdateLeadCommandHandler<TLead, TUpdateRequest> : ICommandHandler<U
 
 // ── Квалификация ─────────────────────────────────────────────────────────────────────────────
 
-/// <summary>Квалифицировать лид.</summary>
+/// <summary>Квалифицировать лид. Переход валидируется доменно (New/Working → Qualified).</summary>
 public sealed record QualifyLeadCommand(Guid Id) : ICommand;
 
 public class QualifyLeadCommandHandler<TLead> : ICommandHandler<QualifyLeadCommand>
@@ -43,14 +41,11 @@ public class QualifyLeadCommandHandler<TLead> : ICommandHandler<QualifyLeadComma
 {
     private readonly IRepository<TLead, Guid> _repository;
     private readonly IEventBus _eventBus;
-    private readonly IStateMachineValidator<LeadStatus> _stateMachine;
 
-    public QualifyLeadCommandHandler(
-        IRepository<TLead, Guid> repository, IEventBus eventBus, IStateMachineValidator<LeadStatus> stateMachine)
+    public QualifyLeadCommandHandler(IRepository<TLead, Guid> repository, IEventBus eventBus)
     {
         _repository = repository;
         _eventBus = eventBus;
-        _stateMachine = stateMachine;
     }
 
     public async ValueTask HandleAsync(QualifyLeadCommand command, CancellationToken ct = default)
@@ -58,7 +53,6 @@ public class QualifyLeadCommandHandler<TLead> : ICommandHandler<QualifyLeadComma
         var lead = await _repository.GetByIdAsync(command.Id, ct)
             ?? throw new LeadValidationException($"Lead '{command.Id}' not found");
 
-        _stateMachine.ValidateTransition(lead.Status, LeadStatus.Qualified);
         lead.Qualify();
         await SaveAndPublishAsync(_repository, _eventBus, lead, ct);
     }
@@ -83,14 +77,11 @@ public class DisqualifyLeadCommandHandler<TLead> : ICommandHandler<DisqualifyLea
 {
     private readonly IRepository<TLead, Guid> _repository;
     private readonly IEventBus _eventBus;
-    private readonly IStateMachineValidator<LeadStatus> _stateMachine;
 
-    public DisqualifyLeadCommandHandler(
-        IRepository<TLead, Guid> repository, IEventBus eventBus, IStateMachineValidator<LeadStatus> stateMachine)
+    public DisqualifyLeadCommandHandler(IRepository<TLead, Guid> repository, IEventBus eventBus)
     {
         _repository = repository;
         _eventBus = eventBus;
-        _stateMachine = stateMachine;
     }
 
     public async ValueTask HandleAsync(DisqualifyLeadCommand command, CancellationToken ct = default)
@@ -98,7 +89,6 @@ public class DisqualifyLeadCommandHandler<TLead> : ICommandHandler<DisqualifyLea
         var lead = await _repository.GetByIdAsync(command.Id, ct)
             ?? throw new LeadValidationException($"Lead '{command.Id}' not found");
 
-        _stateMachine.ValidateTransition(lead.Status, LeadStatus.Disqualified);
         lead.Disqualify(command.Reason);
         await QualifyLeadCommandHandler<TLead>.SaveAndPublishAsync(_repository, _eventBus, lead, ct);
     }

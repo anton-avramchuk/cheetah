@@ -29,6 +29,8 @@ public abstract class LeadEndpointsBase<TCreateRequest, TUpdateRequest, TConvert
 
         routes.MapPost(prefix, CreateAsync).WithName("CreateLead").WithTags("Leads");
         routes.MapGet(prefix, ListAsync).WithName("ListLeads").WithTags("Leads");
+        routes.MapGet($"{prefix}/statuses", ListStatusesAsync).WithName("ListLeadStatuses").WithTags("Leads");
+        routes.MapGet($"{prefix}/sources", ListSourcesAsync).WithName("ListLeadSources").WithTags("Leads");
         routes.MapGet($"{prefix}/{{id:guid}}", GetByIdAsync).WithName("GetLeadById").WithTags("Leads");
         routes.MapPut($"{prefix}/{{id:guid}}", UpdateAsync).WithName("UpdateLead").WithTags("Leads");
         routes.MapPost($"{prefix}/{{id:guid}}/qualify", QualifyAsync).WithName("QualifyLead").WithTags("Leads");
@@ -54,14 +56,30 @@ public abstract class LeadEndpointsBase<TCreateRequest, TUpdateRequest, TConvert
     }
 
     protected virtual async Task<IResult> ListAsync(
-        [FromQuery] LeadStatus? status,
-        [FromQuery] LeadSource? source,
+        [FromQuery] Guid? statusId,
+        [FromQuery] Guid? sourceId,
         [FromQuery] Guid? ownerId,
         [FromServices] IDispatcher dispatcher,
         CancellationToken ct)
     {
         var items = await dispatcher.QueryAsync<ListLeadsQuery<TDto>, IReadOnlyList<TDto>>(
-            new ListLeadsQuery<TDto>(status, source, ownerId), ct);
+            new ListLeadsQuery<TDto>(statusId, sourceId, ownerId), ct);
+        return Results.Ok(items);
+    }
+
+    protected virtual async Task<IResult> ListStatusesAsync(
+        [FromServices] IDispatcher dispatcher, CancellationToken ct)
+    {
+        var items = await dispatcher.QueryAsync<ListLeadStatusesQuery, IReadOnlyList<LeadStatusDto>>(
+            new ListLeadStatusesQuery(), ct);
+        return Results.Ok(items);
+    }
+
+    protected virtual async Task<IResult> ListSourcesAsync(
+        [FromServices] IDispatcher dispatcher, CancellationToken ct)
+    {
+        var items = await dispatcher.QueryAsync<ListLeadSourcesQuery, IReadOnlyList<LeadSourceDto>>(
+            new ListLeadSourcesQuery(), ct);
         return Results.Ok(items);
     }
 

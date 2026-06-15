@@ -15,7 +15,7 @@ public sealed class TestLead : LeadBase
     public static TestLead Create(TestCreateRequest r)
     {
         var lead = new TestLead();
-        lead.InitializeCore(Guid.NewGuid(), r.FullName, r.Source, r.Email, r.Phone, r.Company, r.OwnerId);
+        lead.InitializeCore(Guid.NewGuid(), r.FullName, r.SourceId, r.Email, r.Phone, r.Company, r.OwnerId);
         lead.Industry = r.Industry;
         return lead;
     }
@@ -49,8 +49,8 @@ public sealed class TestLeadProjector : ILeadProjector<TestLead, TestLeadDto>
         Company = l.Company,
         Email = l.Email?.Value,
         Phone = l.Phone?.Value,
-        Source = l.Source,
-        Status = l.Status,
+        SourceId = l.SourceId,
+        StatusId = l.StatusId,
         Score = l.Score,
         OwnerId = l.OwnerId,
         ConvertedCustomerId = l.ConvertedCustomerId,
@@ -67,7 +67,7 @@ internal static class TestData
     public static TestCreateRequest CreateRequest(string fullName = "John Doe", string? email = null) => new()
     {
         FullName = fullName,
-        Source = LeadSource.Web,
+        SourceId = LeadWellKnownIds.SourceWeb,
         Email = email,
         OwnerId = Guid.NewGuid()
     };

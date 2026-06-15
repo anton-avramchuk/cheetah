@@ -42,7 +42,7 @@ public class ConvertLeadCommandHandler<TLead, TConvertRequest>
         var lead = await _repository.GetByIdAsync(command.Id, ct)
             ?? throw new LeadValidationException($"Lead '{command.Id}' not found");
 
-        if (lead.Status != LeadStatus.Qualified)
+        if (lead.StatusId != LeadWellKnownIds.StatusQualified)
             throw new LeadValidationException("Only a qualified lead can be converted.");
 
         var request = new LeadConversionRequest(

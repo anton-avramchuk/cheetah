@@ -44,7 +44,7 @@ public class LeadQueryHandlerTests
         var handler = new ListLeadsQueryHandler<TestLead, TestLeadDto>(_repo.Object, new TestLeadProjector());
 
         var result = await handler.HandleAsync(
-            new ListLeadsQuery<TestLeadDto>(LeadStatus.New, LeadSource.Web, null));
+            new ListLeadsQuery<TestLeadDto>(LeadWellKnownIds.StatusNew, LeadWellKnownIds.SourceWeb, null));
 
         result.Count.ShouldBe(2);
         _repo.Verify(r => r.GetAllAsync(

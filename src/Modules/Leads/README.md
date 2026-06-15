@@ -16,13 +16,18 @@
 **Главное требование — расширяемость:** и сущность, и ViewModel наследуемы; приложение добавляет свои
 поля без форка модуля. Дополнительно расширяемы **скоринг** и **конвертация**.
 
+**Статус и источник — справочники-сущности** (`LeadStatus`/`LeadSource`, не enum и не абстрактные):
+отдельные lookup-таблицы со **seed-данными** (`HasData`); лид ссылается на них по FK
+`StatusId`/`SourceId`. Жизненный цикл валидируется доменно по стабильным well-known идентификаторам
+(`LeadWellKnownIds`), без enum-автомата. Источники/статусы можно добавлять как данные.
+
 ## Состав сборок и граф зависимостей
 
 ```
 Leads.DomainEvents   → Core.Events                          (LeadCreated/Qualified/Disqualified/Converted)
-Leads.Shared         → Core                                 (enum LeadStatus/LeadSource, константы)
+Leads.Shared         → Core                                 (коды статусов/источников, LeadWellKnownIds, константы)
 Leads.Contracts      → Core + Contracts + Shared            (ABSTRACT DTO/Request + ConvertLeadResult)
-Leads.Domain         → DomainEvents + Specification + SM     (abstract LeadBase, generic-спеки, ILeadConversionOrchestrator)
+Leads.Domain         → DomainEvents + Specification          (abstract LeadBase, lookup LeadStatus/LeadSource, спеки, ILeadConversionOrchestrator)
 Leads.Infrastructure → Domain + EF + EF.PostgreSql          (abstract DbContextBase/ConfigBase с VO-конвертерами, AddLeadsInfrastructure<>)
 Leads.Application     → Domain + Contracts + CQRS + Events   (generic handlers, ILeadFactory/Projector, AddLeadsApplication<>)
 Leads.Api            → Application + Contracts + AspNetCore  (abstract LeadEndpointsBase<>, ApiModuleBase)
@@ -114,7 +119,8 @@ public sealed class AppLeadsApiModule
 | Метод | Маршрут |
 |---|---|
 | POST | `/api/leads` |
-| GET | `/api/leads?status=&source=&ownerId=` |
+| GET | `/api/leads?statusId=&sourceId=&ownerId=` |
+| GET | `/api/leads/statuses` · `/api/leads/sources` (справочники) |
 | GET | `/api/leads/{id}` |
 | PUT | `/api/leads/{id}` |
 | POST | `/api/leads/{id}/qualify` · `/disqualify` · `/convert` |
