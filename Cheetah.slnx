@@ -164,6 +164,17 @@
         <Project Path="src/Modules/Deals/Cheetah.Modules.Deals.Application.Tests/Cheetah.Modules.Deals.Application.Tests.csproj" />
         <Project Path="src/Modules/Deals/Cheetah.Modules.Deals.Client.Tests/Cheetah.Modules.Deals.Client.Tests.csproj" />
     </Folder>
+    <Folder Name="/Modules/Leads/">
+        <Project Path="src/Modules/Leads/Cheetah.Modules.Leads.Api/Cheetah.Modules.Leads.Api.csproj" />
+        <Project Path="src/Modules/Leads/Cheetah.Modules.Leads.Application.Tests/Cheetah.Modules.Leads.Application.Tests.csproj" />
+        <Project Path="src/Modules/Leads/Cheetah.Modules.Leads.Application/Cheetah.Modules.Leads.Application.csproj" />
+        <Project Path="src/Modules/Leads/Cheetah.Modules.Leads.Contracts/Cheetah.Modules.Leads.Contracts.csproj" />
+        <Project Path="src/Modules/Leads/Cheetah.Modules.Leads.Domain.Tests/Cheetah.Modules.Leads.Domain.Tests.csproj" />
+        <Project Path="src/Modules/Leads/Cheetah.Modules.Leads.Domain/Cheetah.Modules.Leads.Domain.csproj" />
+        <Project Path="src/Modules/Leads/Cheetah.Modules.Leads.DomainEvents/Cheetah.Modules.Leads.DomainEvents.csproj" />
+        <Project Path="src/Modules/Leads/Cheetah.Modules.Leads.Infrastructure/Cheetah.Modules.Leads.Infrastructure.csproj" />
+        <Project Path="src/Modules/Leads/Cheetah.Modules.Leads.Shared/Cheetah.Modules.Leads.Shared.csproj" />
+    </Folder>
     <Folder Name="/Modules/Notification/">
         <Project Path="src/Modules/Notification/Cheetah.Modules.Notification.Api/Cheetah.Modules.Notification.Api.csproj" />
         <Project Path="src/Modules/Notification/Cheetah.Modules.Notification.Application/Cheetah.Modules.Notification.Application.csproj" />
