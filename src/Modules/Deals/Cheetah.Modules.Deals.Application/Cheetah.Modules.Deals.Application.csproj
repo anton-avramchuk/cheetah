@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\..\Cheetah.Core\Cheetah.Core.csproj" />
+        <ProjectReference Include="..\..\..\Cheetah.Core.CQRS\Cheetah.Core.CQRS.csproj" />
+        <ProjectReference Include="..\..\..\Cheetah.Core.DataAccess\Cheetah.Core.DataAccess.csproj" />
+        <ProjectReference Include="..\..\..\Cheetah.Core.Events\Cheetah.Core.Events.csproj" />
+        <ProjectReference Include="..\..\..\Cheetah.Core.StateMachine\Cheetah.Core.StateMachine.csproj" />
+        <ProjectReference Include="..\Cheetah.Modules.Deals.Domain\Cheetah.Modules.Deals.Domain.csproj" />
+        <ProjectReference Include="..\Cheetah.Modules.Deals.Contracts\Cheetah.Modules.Deals.Contracts.csproj" />
+        <ProjectReference Include="..\Cheetah.Modules.Deals.DomainEvents\Cheetah.Modules.Deals.DomainEvents.csproj" />
+        <ProjectReference Include="..\..\..\Cheetah.Generators.Module\Cheetah.Generators.Module.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
+    </ItemGroup>
+
+</Project>

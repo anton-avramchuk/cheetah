@@ -140,6 +140,19 @@
         <Project Path="src/Modules/Calendar/Cheetah.Modules.Calendar.Infrastructure.Tests/Cheetah.Modules.Calendar.Infrastructure.Tests.csproj" />
         <Project Path="src/Modules/Calendar/Cheetah.Modules.Calendar.Client.Tests/Cheetah.Modules.Calendar.Client.Tests.csproj" />
     </Folder>
+    <Folder Name="/Modules/Deals/">
+        <Project Path="src/Modules/Deals/Cheetah.Modules.Deals.Api/Cheetah.Modules.Deals.Api.csproj" />
+        <Project Path="src/Modules/Deals/Cheetah.Modules.Deals.Application/Cheetah.Modules.Deals.Application.csproj" />
+        <Project Path="src/Modules/Deals/Cheetah.Modules.Deals.Client/Cheetah.Modules.Deals.Client.csproj" />
+        <Project Path="src/Modules/Deals/Cheetah.Modules.Deals.Contracts/Cheetah.Modules.Deals.Contracts.csproj" />
+        <Project Path="src/Modules/Deals/Cheetah.Modules.Deals.Domain/Cheetah.Modules.Deals.Domain.csproj" />
+        <Project Path="src/Modules/Deals/Cheetah.Modules.Deals.DomainEvents/Cheetah.Modules.Deals.DomainEvents.csproj" />
+        <Project Path="src/Modules/Deals/Cheetah.Modules.Deals.Infrastructure/Cheetah.Modules.Deals.Infrastructure.csproj" />
+        <Project Path="src/Modules/Deals/Cheetah.Modules.Deals.Shared/Cheetah.Modules.Deals.Shared.csproj" />
+        <Project Path="src/Modules/Deals/Cheetah.Modules.Deals.Domain.Tests/Cheetah.Modules.Deals.Domain.Tests.csproj" />
+        <Project Path="src/Modules/Deals/Cheetah.Modules.Deals.Application.Tests/Cheetah.Modules.Deals.Application.Tests.csproj" />
+        <Project Path="src/Modules/Deals/Cheetah.Modules.Deals.Client.Tests/Cheetah.Modules.Deals.Client.Tests.csproj" />
+    </Folder>
     <Folder Name="/Modules/Notification/">
         <Project Path="src/Modules/Notification/Cheetah.Modules.Notification.Api/Cheetah.Modules.Notification.Api.csproj" />
         <Project Path="src/Modules/Notification/Cheetah.Modules.Notification.Application/Cheetah.Modules.Notification.Application.csproj" />
@@ -179,6 +192,7 @@
         <File Path="install-templates.ps1" />
         <File Path="nuget.config" />
         <File Path="pack.ps1" />
+        <File Path="version.props" />
     </Folder>
 
     <Folder Name="/Tests/">
