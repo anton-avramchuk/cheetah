@@ -41,9 +41,10 @@ public class HttpCalendarClientTests
         var handler = new StubHandler(HttpStatusCode.Created, $"{{\"id\":\"{id}\"}}");
         var client = Client(handler);
 
+        var calendarId = Guid.NewGuid();
         var result = await client.CreateEventAsync(
-            Guid.NewGuid(),
-            new CreateEventRequest("M", DateTime.UtcNow, DateTime.UtcNow.AddHours(1), Guid.NewGuid()));
+            calendarId,
+            new CreateEventRequest(calendarId, "M", DateTime.UtcNow, DateTime.UtcNow.AddHours(1), Guid.NewGuid()));
 
         result.ShouldBe(id);
         handler.LastRequest!.Method.ShouldBe(HttpMethod.Post);

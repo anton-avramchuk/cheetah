@@ -4,15 +4,16 @@ using Cheetah.Core.Events;
 using Cheetah.Modules.Calendar.Application.Abstractions;
 using Cheetah.Modules.Calendar.Application.Events;
 using Cheetah.Modules.Calendar.Application.Options;
-using Cheetah.Modules.Calendar.Contracts;
 using Cheetah.Modules.Calendar.Domain.Abstractions;
+using Cheetah.Modules.Calendar.Shared;
 using Microsoft.Extensions.Options;
 
 namespace Cheetah.Modules.Calendar.Application.Reminders;
 
 // Изменение набора напоминаний пересобирает материализованные триггеры события.
 
-public sealed record AddReminderCommand(Guid EventId, AddReminderRequest Request) : ICommand<Guid>;
+public sealed record AddReminderCommand(
+    Guid EventId, TimeSpan OffsetBeforeStart, ReminderTarget Target, string? ForceChannel) : ICommand<Guid>;
 
 [Export(LifetimeType.Scoped, typeof(ICommandHandler<AddReminderCommand, Guid>))]
 public sealed class AddReminderCommandHandler : ICommandHandler<AddReminderCommand, Guid>
@@ -36,7 +37,7 @@ public sealed class AddReminderCommandHandler : ICommandHandler<AddReminderComma
     {
         var @event = await EventCommandShared.LoadAsync(_events, command.EventId, ct);
         var reminder = @event.AddReminder(
-            command.Request.OffsetBeforeStart, command.Request.Target, command.Request.ForceChannel);
+            command.OffsetBeforeStart, command.Target, command.ForceChannel);
         await _scheduler.RebuildAsync(@event, DateTime.UtcNow.AddDays(_options.HorizonDays), cancellationToken: ct);
         await EventCommandShared.PublishAndSaveAsync(_events, _eventBus, @event, ct);
         return reminder.Id;

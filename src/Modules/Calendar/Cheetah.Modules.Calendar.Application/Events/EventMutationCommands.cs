@@ -4,7 +4,6 @@ using Cheetah.Core.Events;
 using Cheetah.Modules.Calendar.Application.Abstractions;
 using Cheetah.Modules.Calendar.Application.Exceptions;
 using Cheetah.Modules.Calendar.Application.Options;
-using Cheetah.Modules.Calendar.Contracts;
 using Cheetah.Modules.Calendar.Domain.Abstractions;
 using Cheetah.Modules.Calendar.Domain.Entities;
 using Cheetah.Modules.Calendar.Domain.ValueObjects;
@@ -14,7 +13,8 @@ namespace Cheetah.Modules.Calendar.Application.Events;
 
 // ── Изменение реквизитов (не влияет на тайминг → напоминания не пересобираем) ──────────────
 
-public sealed record UpdateEventDetailsCommand(Guid EventId, UpdateEventDetailsRequest Request) : ICommand;
+public sealed record UpdateEventDetailsCommand(
+    Guid EventId, string Title, string? Description, string? Location) : ICommand;
 
 [Export(LifetimeType.Scoped, typeof(ICommandHandler<UpdateEventDetailsCommand>))]
 public sealed class UpdateEventDetailsCommandHandler : ICommandHandler<UpdateEventDetailsCommand>
@@ -31,7 +31,7 @@ public sealed class UpdateEventDetailsCommandHandler : ICommandHandler<UpdateEve
     public async ValueTask HandleAsync(UpdateEventDetailsCommand command, CancellationToken ct = default)
     {
         var @event = await Load(_events, command.EventId, ct);
-        @event.ChangeDetails(command.Request.Title, command.Request.Description, command.Request.Location);
+        @event.ChangeDetails(command.Title, command.Description, command.Location);
         await EventCommandShared.PublishAndSaveAsync(_events, _eventBus, @event, ct);
     }
 
@@ -41,7 +41,8 @@ public sealed class UpdateEventDetailsCommandHandler : ICommandHandler<UpdateEve
 
 // ── Перенос (меняет тайминг → пересобираем напоминания) ──────────────────────────────────
 
-public sealed record RescheduleEventCommand(Guid EventId, RescheduleEventRequest Request) : ICommand;
+public sealed record RescheduleEventCommand(
+    Guid EventId, DateTime StartUtc, DateTime EndUtc, string TimeZoneId, bool IsAllDay) : ICommand;
 
 [Export(LifetimeType.Scoped, typeof(ICommandHandler<RescheduleEventCommand>))]
 public sealed class RescheduleEventCommandHandler : ICommandHandler<RescheduleEventCommand>
@@ -64,8 +65,7 @@ public sealed class RescheduleEventCommandHandler : ICommandHandler<RescheduleEv
     public async ValueTask HandleAsync(RescheduleEventCommand command, CancellationToken ct = default)
     {
         var @event = await EventCommandShared.LoadAsync(_events, command.EventId, ct);
-        var r = command.Request;
-        @event.Reschedule(r.StartUtc, r.EndUtc, r.TimeZoneId, r.IsAllDay);
+        @event.Reschedule(command.StartUtc, command.EndUtc, command.TimeZoneId, command.IsAllDay);
         await _scheduler.RebuildAsync(@event, DateTime.UtcNow.AddDays(_options.HorizonDays), cancellationToken: ct);
         await EventCommandShared.PublishAndSaveAsync(_events, _eventBus, @event, ct);
     }
@@ -73,7 +73,8 @@ public sealed class RescheduleEventCommandHandler : ICommandHandler<RescheduleEv
 
 // ── Установка/очистка правила повторения ─────────────────────────────────────────────────
 
-public sealed record SetEventRecurrenceCommand(Guid EventId, SetRecurrenceRequest Request) : ICommand;
+public sealed record SetEventRecurrenceCommand(
+    Guid EventId, string? RRule, IReadOnlyList<DateTime>? ExDatesUtc) : ICommand;
 
 [Export(LifetimeType.Scoped, typeof(ICommandHandler<SetEventRecurrenceCommand>))]
 public sealed class SetEventRecurrenceCommandHandler : ICommandHandler<SetEventRecurrenceCommand>
@@ -96,9 +97,9 @@ public sealed class SetEventRecurrenceCommandHandler : ICommandHandler<SetEventR
     public async ValueTask HandleAsync(SetEventRecurrenceCommand command, CancellationToken ct = default)
     {
         var @event = await EventCommandShared.LoadAsync(_events, command.EventId, ct);
-        var rule = string.IsNullOrWhiteSpace(command.Request.RRule)
+        var rule = string.IsNullOrWhiteSpace(command.RRule)
             ? null
-            : new RecurrenceRule(command.Request.RRule, command.Request.ExDatesUtc);
+            : new RecurrenceRule(command.RRule, command.ExDatesUtc);
         @event.SetRecurrence(rule);
         await _scheduler.RebuildAsync(@event, DateTime.UtcNow.AddDays(_options.HorizonDays), cancellationToken: ct);
         await EventCommandShared.PublishAndSaveAsync(_events, _eventBus, @event, ct);

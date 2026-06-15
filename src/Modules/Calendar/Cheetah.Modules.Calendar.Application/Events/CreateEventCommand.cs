@@ -15,7 +15,21 @@ using Microsoft.Extensions.Options;
 namespace Cheetah.Modules.Calendar.Application.Events;
 
 /// <summary>Создать событие (разовое или серию) с участниками и напоминаниями.</summary>
-public sealed record CreateEventCommand(Guid CalendarId, CreateEventRequest Request) : ICommand<Guid>;
+public sealed record CreateEventCommand(
+    Guid CalendarId,
+    string Title,
+    DateTime StartUtc,
+    DateTime EndUtc,
+    Guid OrganizerUserId,
+    string? Description,
+    string? Location,
+    string TimeZoneId,
+    bool IsAllDay,
+    string? EntityType,
+    Guid? EntityId,
+    string? RRule,
+    IReadOnlyList<CreateAttendeeRequest>? Attendees,
+    IReadOnlyList<CreateReminderRequest>? Reminders) : ICommand<Guid>;
 
 [Export(LifetimeType.Scoped, typeof(ICommandHandler<CreateEventCommand, Guid>))]
 public sealed class CreateEventCommandHandler : ICommandHandler<CreateEventCommand, Guid>
@@ -42,7 +56,7 @@ public sealed class CreateEventCommandHandler : ICommandHandler<CreateEventComma
 
     public async ValueTask<Guid> HandleAsync(CreateEventCommand command, CancellationToken ct = default)
     {
-        var r = command.Request;
+        var r = command;
 
         if (!string.IsNullOrWhiteSpace(r.EntityType))
         {

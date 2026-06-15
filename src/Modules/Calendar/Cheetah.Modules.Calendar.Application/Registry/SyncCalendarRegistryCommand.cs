@@ -10,7 +10,8 @@ namespace Cheetah.Modules.Calendar.Application.Registry;
 /// <summary>
 /// Идемпотентный upsert реестра привязываемых типов (вызывает Client потребителя при старте).
 /// </summary>
-public sealed record SyncCalendarRegistryCommand(CalendarRegistrySyncRequest Request) : ICommand;
+public sealed record SyncCalendarRegistryCommand(
+    string OwnerService, IReadOnlyList<CalendarableEntityTypeRegistration> Items) : ICommand;
 
 [Export(LifetimeType.Scoped, typeof(ICommandHandler<SyncCalendarRegistryCommand>))]
 public sealed class SyncCalendarRegistryCommandHandler : ICommandHandler<SyncCalendarRegistryCommand>
@@ -21,15 +22,15 @@ public sealed class SyncCalendarRegistryCommandHandler : ICommandHandler<SyncCal
 
     public async ValueTask HandleAsync(SyncCalendarRegistryCommand command, CancellationToken ct = default)
     {
-        var keys = command.Request.Items.Select(i => i.EntityType).Distinct().ToArray();
+        var keys = command.Items.Select(i => i.EntityType).Distinct().ToArray();
 
         // Один запрос на весь батч вместо N точечных lookup-ов.
         var existing = await _types.GetAllAsync(new CalendarableTypesByKeysSpecification(keys), ct);
         var existingByKey = existing.ToDictionary(t => t.EntityType);
 
-        foreach (var item in command.Request.Items)
+        foreach (var item in command.Items)
         {
-            var owner = item.OwnerService ?? command.Request.OwnerService;
+            var owner = item.OwnerService ?? command.OwnerService;
             if (existingByKey.TryGetValue(item.EntityType, out var type))
             {
                 type.Update(item.DisplayName, item.DefaultColor, item.AllowMultiplePerEntity, owner);

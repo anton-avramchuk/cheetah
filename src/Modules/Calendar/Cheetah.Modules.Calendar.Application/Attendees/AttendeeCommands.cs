@@ -2,15 +2,15 @@ using Cheetah.Core.CQRS;
 using Cheetah.Core.DependencyInjection;
 using Cheetah.Core.Events;
 using Cheetah.Modules.Calendar.Application.Events;
-using Cheetah.Modules.Calendar.Contracts;
 using Cheetah.Modules.Calendar.Domain.Abstractions;
+using Cheetah.Modules.Calendar.Shared;
 
 namespace Cheetah.Modules.Calendar.Application.Attendees;
 
 // Изменение состава/ответов участников не пересобирает триггеры: получатели резолвятся
 // в момент отправки по Target, а не материализуются заранее.
 
-public sealed record AddAttendeeCommand(Guid EventId, AddAttendeeRequest Request) : ICommand;
+public sealed record AddAttendeeCommand(Guid EventId, Guid UserId, AttendeeRole Role) : ICommand;
 
 [Export(LifetimeType.Scoped, typeof(ICommandHandler<AddAttendeeCommand>))]
 public sealed class AddAttendeeCommandHandler : ICommandHandler<AddAttendeeCommand>
@@ -27,12 +27,12 @@ public sealed class AddAttendeeCommandHandler : ICommandHandler<AddAttendeeComma
     public async ValueTask HandleAsync(AddAttendeeCommand command, CancellationToken ct = default)
     {
         var @event = await EventCommandShared.LoadAsync(_events, command.EventId, ct);
-        @event.AddAttendee(command.Request.UserId, command.Request.Role);
+        @event.AddAttendee(command.UserId, command.Role);
         await EventCommandShared.PublishAndSaveAsync(_events, _eventBus, @event, ct);
     }
 }
 
-public sealed record RespondToInviteCommand(Guid EventId, RespondToInviteRequest Request) : ICommand;
+public sealed record RespondToInviteCommand(Guid EventId, Guid UserId, AttendeeResponse Response) : ICommand;
 
 [Export(LifetimeType.Scoped, typeof(ICommandHandler<RespondToInviteCommand>))]
 public sealed class RespondToInviteCommandHandler : ICommandHandler<RespondToInviteCommand>
@@ -49,7 +49,7 @@ public sealed class RespondToInviteCommandHandler : ICommandHandler<RespondToInv
     public async ValueTask HandleAsync(RespondToInviteCommand command, CancellationToken ct = default)
     {
         var @event = await EventCommandShared.LoadAsync(_events, command.EventId, ct);
-        @event.RespondToInvite(command.Request.UserId, command.Request.Response);
+        @event.RespondToInvite(command.UserId, command.Response);
         await EventCommandShared.PublishAndSaveAsync(_events, _eventBus, @event, ct);
     }
 }

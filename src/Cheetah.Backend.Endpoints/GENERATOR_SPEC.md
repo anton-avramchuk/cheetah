@@ -193,11 +193,16 @@ routeBuilder.MapGet(endpoint.Route, async (
 
 #### Pattern: CommandEndpoint (void)
 
+Route values are merged into the body request (so `[FromRoute]` params on the DTO work),
+and an empty body is allowed (route-only sub-actions must not fail with 400).
+
 ```csharp
 routeBuilder.MapPost(endpoint.Route, async (
-    [FromBody] TRequest request,
+    [FromBody(EmptyBodyBehavior = Microsoft.AspNetCore.Mvc.ModelBinding.EmptyBodyBehavior.Allow)] TRequest bodyRequest,
+    HttpContext httpContext,
     CancellationToken cancellationToken) =>
 {
+    var request = httpContext.MergeRouteValuesInto(bodyRequest);
     var command = mapper.Map<TCommand>(request);
     await dispatcher.SendAsync(command, cancellationToken);
     return Results.NoContent();
@@ -206,11 +211,15 @@ routeBuilder.MapPost(endpoint.Route, async (
 
 #### Pattern: CommandWithResultEndpoint
 
+Like `CommandEndpoint`, route values are merged into the body request and an empty body is allowed.
+
 ```csharp
 routeBuilder.MapPost(endpoint.Route, async (
-    [FromBody] TRequest request,
+    [FromBody(EmptyBodyBehavior = Microsoft.AspNetCore.Mvc.ModelBinding.EmptyBodyBehavior.Allow)] TRequest bodyRequest,
+    HttpContext httpContext,
     CancellationToken cancellationToken) =>
 {
+    var request = httpContext.MergeRouteValuesInto(bodyRequest);
     var command = mapper.Map<TCommand>(request);
     var result = await dispatcher.SendAsync<TCommand, TCommandResult>(command, cancellationToken);
     var response = mapper.Map<TResponse>(result);
@@ -261,7 +270,10 @@ routeBuilder.MapDelete(endpoint.Route, async (
 
 **Rule:**
 - GET/DELETE endpoints → Use `[AsParameters]` (query string + route parameters)
-- POST/PUT/PATCH endpoints → Use `[FromBody]` (request body)
+- POST/PUT/PATCH endpoints → Use `[FromBody]` (request body) **plus** `httpContext.MergeRouteValuesInto(bodyRequest)`,
+  which injects route values for DTO constructor params marked `[FromRoute]`. Command POST endpoints
+  (`CommandEndpoint`, `CommandWithResultEndpoint`) additionally use `EmptyBodyBehavior.Allow` so route-only
+  sub-actions (no body) bind correctly.
 
 ### 6. Apply Metadata
 

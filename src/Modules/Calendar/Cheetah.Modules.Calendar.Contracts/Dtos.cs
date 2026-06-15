@@ -1,3 +1,4 @@
+using Cheetah.Contracts.Responses;
 using Cheetah.Modules.Calendar.Shared;
 
 namespace Cheetah.Modules.Calendar.Contracts;
@@ -10,7 +11,7 @@ public sealed record CalendarDto(
     Guid OwnerUserId,
     string DefaultTimeZoneId,
     string? Color,
-    DateTimeOffset? CreatedAt);
+    DateTimeOffset? CreatedAt) : ICrmResponse;
 
 /// <summary>Событие календаря с участниками и напоминаниями.</summary>
 public sealed record CalendarEventDto(
@@ -29,7 +30,7 @@ public sealed record CalendarEventDto(
     EventStatus Status,
     Guid OrganizerUserId,
     IReadOnlyList<EventAttendeeDto> Attendees,
-    IReadOnlyList<EventReminderDto> Reminders);
+    IReadOnlyList<EventReminderDto> Reminders) : ICrmResponse;
 
 /// <summary>Участник события.</summary>
 public sealed record EventAttendeeDto(
@@ -57,7 +58,7 @@ public sealed record EventOccurrenceDto(
     DateTime EndUtc,
     bool IsAllDay,
     string OccurrenceKey,
-    bool IsOverride);
+    bool IsOverride) : ICrmResponse;
 
 /// <summary>Зарегистрированный тип сущности, к которой можно привязывать события.</summary>
 public sealed record CalendarableEntityTypeDto(
@@ -65,4 +66,4 @@ public sealed record CalendarableEntityTypeDto(
     string DisplayName,
     string? DefaultColor,
     bool AllowMultiplePerEntity,
-    string? OwnerService);
+    string? OwnerService) : ICrmResponse;

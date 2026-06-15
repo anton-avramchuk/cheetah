@@ -30,6 +30,7 @@ Incremental source generator: по декларативным endpoint-клас�
 - Endpoint'ы группируются по модулю; на модуль эмитится один регистрационный класс.
 - Метаданные (маршрут, теги, авторизация/permissions, Cache-Control, rate-limit) берутся из `EndpointConfiguration` endpoint-класса.
 - Маппинг request↔command/query и result↔response выполняется через `IObjectMapper` (Mapster).
+- **Привязка маршрута:** GET/DELETE — `[AsParameters]`; POST/PUT/PATCH — `[FromBody]` + `httpContext.MergeRouteValuesInto(...)`, подставляющий значения пути в поля DTO с `[FromRoute]`. У `CommandEndpoint`/`CommandWithResultEndpoint` тело необязательно (`EmptyBodyBehavior.Allow`) — POST-подэкшены без тела (`.../{id}/cancel`) не падают с 400.
 
 ## Диагностики
 
