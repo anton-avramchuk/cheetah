@@ -9,14 +9,14 @@
 
 | Сборка | Назначение |
 |---|---|
-| `Cheetah.Modules.Calendar.DomainEvents` | События `CalendarEventScheduled/Rescheduled/Cancelled`, `EventAttendeeInvited/Responded` |
-| `Cheetah.Modules.Calendar.Shared` | Enum'ы (`CalendarType`, `EventStatus`, `AttendeeRole/Response`, `ReminderTarget`, `ReminderTriggerStatus`), константы, ключи шаблонов |
-| `Cheetah.Modules.Calendar.Contracts` | DTO/Request; сущность адресуется парой `EntityType` (string) + `EntityId` (Guid), RRULE — строка |
-| `Cheetah.Modules.Calendar.Domain` | Агрегаты (`CalendarEvent`, `Calendar`, `ReminderTrigger`, `CalendarableEntityType`), VO `RecurrenceRule`, `IRecurrenceExpander`, спецификации, репозитории-интерфейсы |
-| `Cheetah.Modules.Calendar.Infrastructure` | EF Core `CalendarDbContext`, конфигурации, репозитории, RRULE-экспандер, миграции, Outbox |
-| `Cheetah.Modules.Calendar.Application` | CQRS, материализация `ReminderTrigger`, фоновые задачи рассылки |
-| `Cheetah.Modules.Calendar.Api` | Minimal API (`/api/calendars/**`, `/api/calendar-events/**`) |
-| `Cheetah.Modules.Calendar.Client` | HTTP-клиент + авто-регистрация привязываемых типов при старте |
+| [`…DomainEvents`](Cheetah.Modules.Calendar.DomainEvents/README.md) | События `CalendarEventScheduled/Rescheduled/Cancelled`, `EventAttendeeInvited/Responded` |
+| [`…Shared`](Cheetah.Modules.Calendar.Shared/README.md) | Enum'ы (`CalendarType`, `EventStatus`, `AttendeeRole/Response`, `ReminderTarget`, `ReminderTriggerStatus`), константы, ключи шаблонов |
+| [`…Contracts`](Cheetah.Modules.Calendar.Contracts/README.md) | DTO/Request; сущность адресуется парой `EntityType` (string) + `EntityId` (Guid), RRULE — строка |
+| [`…Domain`](Cheetah.Modules.Calendar.Domain/README.md) | Агрегаты (`CalendarEvent`, `Calendar`, `ReminderTrigger`, `CalendarableEntityType`), VO `RecurrenceRule`, `IRecurrenceExpander`, спецификации, репозитории-интерфейсы |
+| [`…Infrastructure`](Cheetah.Modules.Calendar.Infrastructure/README.md) | EF Core `CalendarDbContext`, конфигурации, репозитории, RRULE-экспандер, миграции, Outbox |
+| [`…Application`](Cheetah.Modules.Calendar.Application/README.md) | CQRS, материализация `ReminderTrigger`, фоновые задачи рассылки |
+| [`…Api`](Cheetah.Modules.Calendar.Api/README.md) | Minimal API на декларативных эндпоинтах + генератор (`/api/calendars/**`, `/api/calendar-events/**`) |
+| [`…Client`](Cheetah.Modules.Calendar.Client/README.md) | HTTP-клиент + авто-регистрация привязываемых типов при старте |
 
 ## Конвейер напоминаний (ядро)
 
