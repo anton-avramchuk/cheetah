@@ -12,3 +12,12 @@ public sealed class CalendarableTypeByKeySpecification : Specification<Calendara
     public override Expression<Func<CalendarableEntityType, bool>> ToExpression()
         => t => t.EntityType == _entityType;
 }
+
+/// <summary>Привязываемые типы по набору ключей (для пакетного upsert реестра одним запросом).</summary>
+public sealed class CalendarableTypesByKeysSpecification : Specification<CalendarableEntityType>
+{
+    private readonly IReadOnlyCollection<string> _entityTypes;
+    public CalendarableTypesByKeysSpecification(IReadOnlyCollection<string> entityTypes) => _entityTypes = entityTypes;
+    public override Expression<Func<CalendarableEntityType, bool>> ToExpression()
+        => t => _entityTypes.Contains(t.EntityType);
+}

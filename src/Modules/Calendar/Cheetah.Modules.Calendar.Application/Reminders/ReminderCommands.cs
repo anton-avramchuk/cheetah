@@ -37,7 +37,7 @@ public sealed class AddReminderCommandHandler : ICommandHandler<AddReminderComma
         var @event = await EventCommandShared.LoadAsync(_events, command.EventId, ct);
         var reminder = @event.AddReminder(
             command.Request.OffsetBeforeStart, command.Request.Target, command.Request.ForceChannel);
-        await _scheduler.RebuildAsync(@event, DateTime.UtcNow.AddDays(_options.HorizonDays), ct);
+        await _scheduler.RebuildAsync(@event, DateTime.UtcNow.AddDays(_options.HorizonDays), cancellationToken: ct);
         await EventCommandShared.PublishAndSaveAsync(_events, _eventBus, @event, ct);
         return reminder.Id;
     }
@@ -67,7 +67,7 @@ public sealed class RemoveReminderCommandHandler : ICommandHandler<RemoveReminde
     {
         var @event = await EventCommandShared.LoadAsync(_events, command.EventId, ct);
         @event.RemoveReminder(command.ReminderId);
-        await _scheduler.RebuildAsync(@event, DateTime.UtcNow.AddDays(_options.HorizonDays), ct);
+        await _scheduler.RebuildAsync(@event, DateTime.UtcNow.AddDays(_options.HorizonDays), cancellationToken: ct);
         await EventCommandShared.PublishAndSaveAsync(_events, _eventBus, @event, ct);
     }
 }

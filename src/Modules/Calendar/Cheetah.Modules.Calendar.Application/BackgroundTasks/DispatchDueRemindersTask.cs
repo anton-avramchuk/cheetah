@@ -67,9 +67,18 @@ public sealed class DispatchDueRemindersTask : PeriodicBackgroundTask
             if (due.Count == 0)
                 return;
 
+            // Кэш на батч: одно событие обычно порождает несколько триггеров (разные напоминания /
+            // экземпляры серии) — грузим каждое событие с деталями максимум один раз.
+            var eventCache = new Dictionary<Guid, CalendarEvent?>();
+
             foreach (var trigger in due)
             {
-                var @event = await events.GetWithDetailsAsync(trigger.EventId, cancellationToken);
+                if (!eventCache.TryGetValue(trigger.EventId, out var @event))
+                {
+                    @event = await events.GetWithDetailsAsync(trigger.EventId, cancellationToken);
+                    eventCache[trigger.EventId] = @event;
+                }
+
                 if (@event is null || @event.Status == EventStatus.Cancelled)
                 {
                     trigger.Skip();

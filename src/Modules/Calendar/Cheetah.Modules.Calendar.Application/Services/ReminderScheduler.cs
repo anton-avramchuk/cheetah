@@ -20,12 +20,16 @@ public sealed class ReminderScheduler : IReminderScheduler
         _expander = expander;
     }
 
-    public async ValueTask RebuildAsync(CalendarEvent @event, DateTime horizonEndUtc, CancellationToken cancellationToken = default)
+    public async ValueTask RebuildAsync(
+        CalendarEvent @event, DateTime horizonEndUtc, bool eventIsNew = false, CancellationToken cancellationToken = default)
     {
         var now = DateTime.UtcNow;
 
-        // Текущие ожидающие срабатывания события — основа для idempotent upsert.
-        var existing = await _triggers.GetAllAsync(new PendingTriggersByEventSpecification(@event.Id), cancellationToken);
+        // Текущие ожидающие срабатывания события — основа для idempotent upsert. У только что
+        // созданного события их заведомо нет → пропускаем запрос на горячем пути создания.
+        var existing = eventIsNew
+            ? new List<ReminderTrigger>()
+            : await _triggers.GetAllAsync(new PendingTriggersByEventSpecification(@event.Id), cancellationToken);
         var existingByKey = existing.ToDictionary(t => (t.ReminderId, t.OccurrenceKey));
 
         // Событие отменено или без напоминаний — гасим всё ожидающее.

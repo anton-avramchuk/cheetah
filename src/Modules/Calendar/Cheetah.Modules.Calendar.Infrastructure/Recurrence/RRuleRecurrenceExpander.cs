@@ -51,7 +51,7 @@ public sealed class RRuleRecurrenceExpander : IRecurrenceExpander
             if (++iterations > MaxIterations)
                 yield break;
 
-            var startUtc = DateTime.SpecifyKind(TimeZoneInfo.ConvertTimeToUtc(localCandidate, tz), DateTimeKind.Utc);
+            var startUtc = ToUtcSafe(localCandidate, tz);
 
             // UNTIL — граница серии (включительно); дальше не идём.
             if (rule.UntilUtc is { } until && startUtc > until)
@@ -161,12 +161,43 @@ public sealed class RRuleRecurrenceExpander : IRecurrenceExpander
             }
 
             case RRuleParser.Freq.Yearly:
-                for (var y = localStart; ; y = y.AddYears(interval))
-                    yield return y;
+            {
+                // BYMONTHDAY раскрывается внутри месяца события (BYMONTH движок не поддерживает),
+                // шаг — год * INTERVAL. Без BYMONTHDAY — годовщина исходной даты.
+                var monthDays = rule.ByMonthDay.Count > 0 ? rule.ByMonthDay : new List<int> { localStart.Day };
+                var ordered = monthDays.Distinct().OrderBy(x => x).ToList();
+                for (var year = localStart.Year; ; year += interval)
+                    foreach (var md in ordered)
+                    {
+                        if (md < 1 || md > DateTime.DaysInMonth(year, localStart.Month))
+                            continue;
+                        var date = new DateTime(year, localStart.Month, md,
+                            localStart.Hour, localStart.Minute, localStart.Second, DateTimeKind.Unspecified);
+                        if (date < localStart)
+                            continue;
+                        yield return date;
+                    }
+            }
 
             default:
                 yield break;
         }
+    }
+
+    /// <summary>
+    /// Перевод локального времени экземпляра в UTC. Если время попадает в «дыру» весеннего
+    /// перехода (несуществующее локальное время), сдвигаем вперёд до ближайшего валидного — как
+    /// делает Google Calendar, — иначе <see cref="TimeZoneInfo.ConvertTimeToUtc(DateTime, TimeZoneInfo)"/>
+    /// бросает исключение и роняет всё раскрытие серии. Неоднозначное время осеннего перехода
+    /// конвертер разрешает сам (стандартное смещение) и не бросает.
+    /// </summary>
+    private static DateTime ToUtcSafe(DateTime local, TimeZoneInfo tz)
+    {
+        var probe = local;
+        // Шаг 30 минут покрывает и часовые, и получасовые переходы; «дыра» конечна — цикл завершится.
+        while (tz.IsInvalidTime(probe))
+            probe = probe.AddMinutes(30);
+        return DateTime.SpecifyKind(TimeZoneInfo.ConvertTimeToUtc(probe, tz), DateTimeKind.Utc);
     }
 
     // iCal default WKST=MO: порядок дней внутри недели от понедельника.

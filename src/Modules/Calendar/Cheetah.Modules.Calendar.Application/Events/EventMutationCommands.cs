@@ -66,7 +66,7 @@ public sealed class RescheduleEventCommandHandler : ICommandHandler<RescheduleEv
         var @event = await EventCommandShared.LoadAsync(_events, command.EventId, ct);
         var r = command.Request;
         @event.Reschedule(r.StartUtc, r.EndUtc, r.TimeZoneId, r.IsAllDay);
-        await _scheduler.RebuildAsync(@event, DateTime.UtcNow.AddDays(_options.HorizonDays), ct);
+        await _scheduler.RebuildAsync(@event, DateTime.UtcNow.AddDays(_options.HorizonDays), cancellationToken: ct);
         await EventCommandShared.PublishAndSaveAsync(_events, _eventBus, @event, ct);
     }
 }
@@ -100,7 +100,7 @@ public sealed class SetEventRecurrenceCommandHandler : ICommandHandler<SetEventR
             ? null
             : new RecurrenceRule(command.Request.RRule, command.Request.ExDatesUtc);
         @event.SetRecurrence(rule);
-        await _scheduler.RebuildAsync(@event, DateTime.UtcNow.AddDays(_options.HorizonDays), ct);
+        await _scheduler.RebuildAsync(@event, DateTime.UtcNow.AddDays(_options.HorizonDays), cancellationToken: ct);
         await EventCommandShared.PublishAndSaveAsync(_events, _eventBus, @event, ct);
     }
 }
@@ -132,7 +132,7 @@ public sealed class CancelEventCommandHandler : ICommandHandler<CancelEventComma
         var @event = await EventCommandShared.LoadAsync(_events, command.EventId, ct);
         @event.Cancel();
         // Отменённое событие → гасим все ожидающие напоминания.
-        await _scheduler.RebuildAsync(@event, DateTime.UtcNow.AddDays(_options.HorizonDays), ct);
+        await _scheduler.RebuildAsync(@event, DateTime.UtcNow.AddDays(_options.HorizonDays), cancellationToken: ct);
         await EventCommandShared.PublishAndSaveAsync(_events, _eventBus, @event, ct);
     }
 }

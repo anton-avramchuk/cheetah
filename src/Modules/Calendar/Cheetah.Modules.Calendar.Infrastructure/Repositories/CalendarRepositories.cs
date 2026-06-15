@@ -4,6 +4,7 @@ using Cheetah.Core.EntityFramework.Repositories;
 using Cheetah.Core.Specification;
 using Cheetah.Modules.Calendar.Domain.Abstractions;
 using Cheetah.Modules.Calendar.Domain.Entities;
+using Cheetah.Modules.Calendar.Domain.Specifications;
 using Cheetah.Modules.Calendar.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -45,7 +46,7 @@ public class ReminderTriggerRepository : EfRepository<CalendarDbContext, Reminde
     public async ValueTask<List<ReminderTrigger>> GetDueAsync(
         DateTime nowUtc, int batchSize, CancellationToken cancellationToken = default)
         => await DbSet
-            .Where(t => t.Status == Shared.ReminderTriggerStatus.Pending && t.FireAtUtc <= nowUtc)
+            .Where(new DueReminderTriggersSpecification(nowUtc).ToExpression())
             .OrderBy(t => t.FireAtUtc)
             .Take(batchSize)
             .ToListAsync(cancellationToken);

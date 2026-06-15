@@ -10,5 +10,10 @@ namespace Cheetah.Modules.Calendar.Application.Abstractions;
 /// </summary>
 public interface IReminderScheduler
 {
-    ValueTask RebuildAsync(CalendarEvent @event, DateTime horizonEndUtc, CancellationToken cancellationToken = default);
+    /// <param name="eventIsNew">
+    /// Событие только что создано в текущей транзакции — ожидающих триггеров у него заведомо нет,
+    /// поэтому загрузка существующих пропускается (экономит round-trip на горячем пути создания).
+    /// </param>
+    ValueTask RebuildAsync(
+        CalendarEvent @event, DateTime horizonEndUtc, bool eventIsNew = false, CancellationToken cancellationToken = default);
 }

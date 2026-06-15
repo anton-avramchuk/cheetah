@@ -35,7 +35,7 @@ public sealed class CancelOccurrenceCommandHandler : ICommandHandler<CancelOccur
     {
         var @event = await EventCommandShared.LoadAsync(_events, command.EventId, ct);
         @event.CancelOccurrence(command.OccurrenceKey);
-        await _scheduler.RebuildAsync(@event, DateTime.UtcNow.AddDays(_options.HorizonDays), ct);
+        await _scheduler.RebuildAsync(@event, DateTime.UtcNow.AddDays(_options.HorizonDays), cancellationToken: ct);
         await EventCommandShared.PublishAndSaveAsync(_events, _eventBus, @event, ct);
     }
 }
@@ -69,7 +69,7 @@ public sealed class OverrideOccurrenceCommandHandler : ICommandHandler<OverrideO
     {
         var @event = await EventCommandShared.LoadAsync(_events, command.EventId, ct);
         @event.OverrideOccurrence(command.OccurrenceKey, command.NewStartUtc, command.NewEndUtc, command.NewTitle);
-        await _scheduler.RebuildAsync(@event, DateTime.UtcNow.AddDays(_options.HorizonDays), ct);
+        await _scheduler.RebuildAsync(@event, DateTime.UtcNow.AddDays(_options.HorizonDays), cancellationToken: ct);
         await EventCommandShared.PublishAndSaveAsync(_events, _eventBus, @event, ct);
     }
 }

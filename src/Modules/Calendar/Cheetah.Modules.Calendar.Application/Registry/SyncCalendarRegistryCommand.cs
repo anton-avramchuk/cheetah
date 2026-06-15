@@ -21,18 +21,23 @@ public sealed class SyncCalendarRegistryCommandHandler : ICommandHandler<SyncCal
 
     public async ValueTask HandleAsync(SyncCalendarRegistryCommand command, CancellationToken ct = default)
     {
+        var keys = command.Request.Items.Select(i => i.EntityType).Distinct().ToArray();
+
+        // Один запрос на весь батч вместо N точечных lookup-ов.
+        var existing = await _types.GetAllAsync(new CalendarableTypesByKeysSpecification(keys), ct);
+        var existingByKey = existing.ToDictionary(t => t.EntityType);
+
         foreach (var item in command.Request.Items)
         {
             var owner = item.OwnerService ?? command.Request.OwnerService;
-            var existing = await _types.GetBySpecAsync(new CalendarableTypeByKeySpecification(item.EntityType), ct);
-            if (existing is null)
+            if (existingByKey.TryGetValue(item.EntityType, out var type))
             {
-                _types.Add(CalendarableEntityType.Create(
-                    item.EntityType, item.DisplayName, item.DefaultColor, item.AllowMultiplePerEntity, owner));
+                type.Update(item.DisplayName, item.DefaultColor, item.AllowMultiplePerEntity, owner);
             }
             else
             {
-                existing.Update(item.DisplayName, item.DefaultColor, item.AllowMultiplePerEntity, owner);
+                _types.Add(CalendarableEntityType.Create(
+                    item.EntityType, item.DisplayName, item.DefaultColor, item.AllowMultiplePerEntity, owner));
             }
         }
 

@@ -61,7 +61,7 @@ public sealed class MaterializeRemindersTask : PeriodicBackgroundTask
 
             var horizonEnd = DateTime.UtcNow.AddDays(_options.HorizonDays);
             foreach (var @event in recurring.Where(e => e.Reminders.Count > 0))
-                await scheduler.RebuildAsync(@event, horizonEnd, cancellationToken);
+                await scheduler.RebuildAsync(@event, horizonEnd, cancellationToken: cancellationToken);
 
             await triggers.SaveChangesAsync(cancellationToken);
             _logger.LogDebug("Calendar reminder horizon materialized for {Count} recurring events", recurring.Count);

@@ -68,7 +68,7 @@ public sealed class CreateEventCommandHandler : ICommandHandler<CreateEventComma
 
         _events.Add(@event);
 
-        await _scheduler.RebuildAsync(@event, DateTime.UtcNow.AddDays(_options.HorizonDays), ct);
+        await _scheduler.RebuildAsync(@event, DateTime.UtcNow.AddDays(_options.HorizonDays), eventIsNew: true, cancellationToken: ct);
 
         foreach (var e in @event.DomainEvents)
             await _eventBus.PublishAsync(e, ct);
