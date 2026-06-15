@@ -7,6 +7,11 @@
 > `EndpointsBase`+`IDispatcher`. Конвертация — через порт `ILeadConversionOrchestrator` (реализацию,
 > вкл. Saga/Client-вызовы, подключает наследник). Не вошло (follow-up): `.Default` + миграция, `Client`,
 > публичный приём, политика слияния дублей, Outbox, коды 404/409.
+>
+> **Уточнение (отличие от §4.1):** `LeadStatus` и `LeadSource` сделаны **сущностями-справочниками**
+> (lookup-таблицы, не enum и не абстрактные) со **seed** (`HasData`); лид ссылается по FK
+> `StatusId`/`SourceId`. enum-автомат убран — переходы валидируются доменно по `LeadWellKnownIds`
+> (как стадии в Deals). Добавлены lookup-эндпоинты `GET /api/leads/statuses|sources`.
 > Документ — пошаговый план сборки модуля по канону `CLAUDE.md`
 > (Events → Shared → Contracts → Domain → Infrastructure → Application → Api (+ Client)),
 > своя БД PostgreSQL, общение через REST/gRPC + события через шину.

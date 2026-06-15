@@ -5,7 +5,6 @@
         <ProjectReference Include="..\..\..\Cheetah.Core.DataAccess\Cheetah.Core.DataAccess.csproj" />
         <ProjectReference Include="..\..\..\Cheetah.Core.Domain\Cheetah.Core.Domain.csproj" />
         <ProjectReference Include="..\..\..\Cheetah.Core.Specification\Cheetah.Core.Specification.csproj" />
-        <ProjectReference Include="..\..\..\Cheetah.Core.StateMachine\Cheetah.Core.StateMachine.csproj" />
         <ProjectReference Include="..\..\..\Cheetah.Generators.Module\Cheetah.Generators.Module.csproj"
                           ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
         <ProjectReference Include="..\Cheetah.Modules.Leads.Shared\Cheetah.Modules.Leads.Shared.csproj" />

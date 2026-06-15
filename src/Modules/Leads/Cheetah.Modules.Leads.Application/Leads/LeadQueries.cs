@@ -4,7 +4,6 @@ using Cheetah.Modules.Leads.Application.Abstractions;
 using Cheetah.Modules.Leads.Contracts;
 using Cheetah.Modules.Leads.Domain.Entities;
 using Cheetah.Modules.Leads.Domain.Specifications;
-using Cheetah.Modules.Leads.Shared;
 
 namespace Cheetah.Modules.Leads.Application.Leads;
 
@@ -37,7 +36,7 @@ public class GetLeadByIdQueryHandler<TLead, TDto> : IQueryHandler<GetLeadByIdQue
 // ── Список лидов ─────────────────────────────────────────────────────────────────────────────
 
 /// <summary>Список лидов с комбинированным фильтром (любой критерий опционален).</summary>
-public sealed record ListLeadsQuery<TDto>(LeadStatus? Status, LeadSource? Source, Guid? OwnerId)
+public sealed record ListLeadsQuery<TDto>(Guid? StatusId, Guid? SourceId, Guid? OwnerId)
     : IQuery<IReadOnlyList<TDto>>
     where TDto : LeadDtoBase;
 
@@ -56,7 +55,7 @@ public class ListLeadsQueryHandler<TLead, TDto> : IQueryHandler<ListLeadsQuery<T
 
     public async ValueTask<IReadOnlyList<TDto>> HandleAsync(ListLeadsQuery<TDto> query, CancellationToken ct = default)
     {
-        var spec = new LeadsFilterSpecification<TLead>(query.Status, query.Source, query.OwnerId);
+        var spec = new LeadsFilterSpecification<TLead>(query.StatusId, query.SourceId, query.OwnerId);
         var items = await _repository.GetAllAsync(spec, ct);
         return items.Select(_projector.ToDto).ToArray();
     }

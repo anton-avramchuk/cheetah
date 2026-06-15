@@ -1,31 +1,27 @@
 using Cheetah.Core.Domain;
 using Cheetah.Core.Domain.ValueObjects;
-using Cheetah.Core.StateMachine;
 using Cheetah.Modules.Leads.DomainEvents;
 using Cheetah.Modules.Leads.Shared;
 
 namespace Cheetah.Modules.Leads.Domain.Entities;
 
 /// <summary>
-/// Абстрактный базовый агрегат лида. Шаблонный модуль не инстанцирует его сам — наследник объявляет
-/// конкретный <c>sealed class Lead : LeadBase</c> со своей фабрикой (через <see cref="InitializeCore"/>)
-/// и доп. полями. Это точка расширяемости сущности; скоринг расширяется через переопределение
-/// <see cref="CalculateScore"/>.
+/// Абстрактный базовый агрегат лида. Наследник объявляет <c>sealed class Lead : LeadBase</c> со своими
+/// полями (точка расширяемости); скоринг расширяется через <see cref="CalculateScore"/>.
 /// <para>
-/// Жизненный цикл (<see cref="LeadStatus"/>) участвует в конечном автомате через
-/// <see cref="IStateMachineEntity{TState}"/>. Контакты — value objects (<see cref="Email"/>/<see cref="Phone"/>);
-/// на границе API — строки.
+/// Статус и источник — данные (справочники <see cref="LeadStatus"/>/<see cref="LeadSource"/>), лид
+/// ссылается на них по <see cref="StatusId"/>/<see cref="SourceId"/>. Жизненный цикл валидируется
+/// доменно по стабильным well-known идентификаторам (<see cref="LeadWellKnownIds"/>), без enum-автомата.
 /// </para>
 /// </summary>
-public abstract class LeadBase : AggregateRoot<Guid>,
-    IStateMachineEntity<LeadStatus>, ICreateAtEntity, IUpdatedAtEntity, IRemovedAtEntity
+public abstract class LeadBase : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEntity, IRemovedAtEntity
 {
     public string FullName { get; private set; } = null!;
     public string? Company { get; private set; }
     public Email? Email { get; private set; }
     public Phone? Phone { get; private set; }
-    public LeadSource Source { get; private set; }
-    public LeadStatus Status { get; private set; }
+    public Guid SourceId { get; private set; }
+    public Guid StatusId { get; private set; }
     public int Score { get; private set; }
     public Guid? OwnerId { get; private set; }
     public Guid? ConvertedCustomerId { get; private set; }
@@ -39,42 +35,42 @@ public abstract class LeadBase : AggregateRoot<Guid>,
     public DateTimeOffset? UpdatedAt { get; set; }
     public DateTimeOffset? RemovedAt { get; set; }
 
-    /// <inheritdoc />
-    public LeadStatus State => Status;
-
     protected LeadBase() { } // EF + наследник
 
     /// <summary>
     /// Заводит инварианты нового лида и доменное событие создания. Вызывается фабрикой наследника.
-    /// Контакты передаются строками и валидируются через VO.
+    /// Статус ставится в New (well-known id). Контакты передаются строками и валидируются через VO.
     /// </summary>
-    protected void InitializeCore(Guid id, string fullName, LeadSource source,
+    protected void InitializeCore(Guid id, string fullName, Guid sourceId,
         string? email, string? phone, string? company, Guid? ownerId)
     {
+        if (sourceId == Guid.Empty)
+            throw new ArgumentException("SourceId is required.", nameof(sourceId));
+
         Id = id;
         SetFullName(fullName);
-        Source = source;
+        SourceId = sourceId;
         Company = company;
         Email = ParseEmail(email);
         Phone = ParsePhone(phone);
         OwnerId = ownerId;
-        Status = LeadStatus.New;
+        StatusId = LeadWellKnownIds.StatusNew;
         Score = CalculateScore();
-        AddDomainEvent(new LeadCreatedIntegrationEvent(Id, source.ToString()));
+        AddDomainEvent(new LeadCreatedIntegrationEvent(Id, SourceId));
     }
 
     public virtual void StartWorking()
     {
-        if (Status == LeadStatus.New)
-            Status = LeadStatus.Working;
+        if (StatusId == LeadWellKnownIds.StatusNew)
+            StatusId = LeadWellKnownIds.StatusWorking;
     }
 
     public virtual void Qualify()
     {
-        if (Status is not (LeadStatus.New or LeadStatus.Working))
+        if (StatusId != LeadWellKnownIds.StatusNew && StatusId != LeadWellKnownIds.StatusWorking)
             throw new InvalidOperationException("Only a new/working lead can be qualified.");
 
-        Status = LeadStatus.Qualified;
+        StatusId = LeadWellKnownIds.StatusQualified;
         AddDomainEvent(new LeadQualifiedIntegrationEvent(Id));
     }
 
@@ -82,10 +78,10 @@ public abstract class LeadBase : AggregateRoot<Guid>,
     {
         if (string.IsNullOrWhiteSpace(reason))
             throw new ArgumentException("A disqualify reason is required.", nameof(reason));
-        if (Status == LeadStatus.Converted)
+        if (StatusId == LeadWellKnownIds.StatusConverted)
             throw new InvalidOperationException("A converted lead cannot be disqualified.");
 
-        Status = LeadStatus.Disqualified;
+        StatusId = LeadWellKnownIds.StatusDisqualified;
         DisqualifyReason = reason.Trim();
         AddDomainEvent(new LeadDisqualifiedIntegrationEvent(Id, DisqualifyReason));
     }
@@ -93,10 +89,10 @@ public abstract class LeadBase : AggregateRoot<Guid>,
     /// <summary>Фиксация результата конвертации после успеха оркестратора (см. Application).</summary>
     public virtual void MarkConverted(Guid customerId, Guid? dealId)
     {
-        if (Status == LeadStatus.Converted)
+        if (StatusId == LeadWellKnownIds.StatusConverted)
             return;
 
-        Status = LeadStatus.Converted;
+        StatusId = LeadWellKnownIds.StatusConverted;
         ConvertedCustomerId = customerId;
         ConvertedDealId = dealId;
         AddDomainEvent(new LeadConvertedIntegrationEvent(Id, customerId, dealId));
@@ -122,7 +118,8 @@ public abstract class LeadBase : AggregateRoot<Guid>,
         if (Email is not null) s += 30;
         if (Phone is not null) s += 30;
         if (!string.IsNullOrWhiteSpace(Company)) s += 20;
-        s += Source switch { LeadSource.Referral => 20, LeadSource.Web => 10, _ => 0 };
+        if (SourceId == LeadWellKnownIds.SourceReferral) s += 20;
+        else if (SourceId == LeadWellKnownIds.SourceWeb) s += 10;
         return Math.Min(s, 100);
     }
 

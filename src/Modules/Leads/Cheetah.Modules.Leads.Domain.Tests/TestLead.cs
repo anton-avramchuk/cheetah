@@ -13,11 +13,12 @@ public sealed class TestLead : LeadBase
 
     private TestLead() { }
 
-    public static TestLead Create(string fullName, LeadSource source,
+    public static TestLead Create(string fullName, Guid? sourceId = null,
         string? email = null, string? phone = null, string? company = null, Guid? ownerId = null)
     {
         var lead = new TestLead();
-        lead.InitializeCore(Guid.NewGuid(), fullName, source, email, phone, company, ownerId);
+        lead.InitializeCore(Guid.NewGuid(), fullName, sourceId ?? LeadWellKnownIds.SourceWeb,
+            email, phone, company, ownerId);
         return lead;
     }
 
@@ -29,10 +30,10 @@ public sealed class CustomScoreLead : LeadBase
 {
     private CustomScoreLead() { }
 
-    public static CustomScoreLead Create(string fullName, LeadSource source)
+    public static CustomScoreLead Create(string fullName)
     {
         var lead = new CustomScoreLead();
-        lead.InitializeCore(Guid.NewGuid(), fullName, source, null, null, null, null);
+        lead.InitializeCore(Guid.NewGuid(), fullName, LeadWellKnownIds.SourceManual, null, null, null, null);
         return lead;
     }
 

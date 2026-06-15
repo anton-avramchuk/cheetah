@@ -1,7 +1,6 @@
 using Cheetah.Core.DataAccess.Abstractions;
 using Cheetah.Core.Events;
 using Cheetah.Core.Specification;
-using Cheetah.Core.StateMachine;
 using Cheetah.Modules.Leads.Application.Exceptions;
 using Cheetah.Modules.Leads.Application.Leads;
 using Cheetah.Modules.Leads.Domain.Abstractions;
@@ -16,7 +15,6 @@ public class LeadCommandHandlerTests
 {
     private readonly Mock<IRepository<TestLead, Guid>> _repo = new();
     private readonly Mock<IEventBus> _eventBus = new();
-    private readonly Mock<IStateMachineValidator<LeadStatus>> _sm = new();
 
     [Fact]
     public async Task Create_AddsSavesAndPublishesCreatedEvent()
@@ -61,16 +59,15 @@ public class LeadCommandHandlerTests
     }
 
     [Fact]
-    public async Task Qualify_ValidatesTransition_AndPublishes()
+    public async Task Qualify_SetsQualified_AndPublishes()
     {
         var lead = TestData.NewLead();
         _repo.Setup(r => r.GetByIdAsync(lead.Id, It.IsAny<CancellationToken>())).ReturnsAsync(lead);
-        var handler = new QualifyLeadCommandHandler<TestLead>(_repo.Object, _eventBus.Object, _sm.Object);
+        var handler = new QualifyLeadCommandHandler<TestLead>(_repo.Object, _eventBus.Object);
 
         await handler.HandleAsync(new QualifyLeadCommand(lead.Id));
 
-        _sm.Verify(s => s.ValidateTransition(LeadStatus.New, LeadStatus.Qualified), Times.Once);
-        lead.Status.ShouldBe(LeadStatus.Qualified);
+        lead.StatusId.ShouldBe(LeadWellKnownIds.StatusQualified);
         _eventBus.Verify(b => b.PublishAsync(
             It.Is<IEvent>(e => e is LeadQualifiedIntegrationEvent), It.IsAny<CancellationToken>()), Times.Once);
     }
@@ -80,11 +77,11 @@ public class LeadCommandHandlerTests
     {
         var lead = TestData.NewLead();
         _repo.Setup(r => r.GetByIdAsync(lead.Id, It.IsAny<CancellationToken>())).ReturnsAsync(lead);
-        var handler = new DisqualifyLeadCommandHandler<TestLead>(_repo.Object, _eventBus.Object, _sm.Object);
+        var handler = new DisqualifyLeadCommandHandler<TestLead>(_repo.Object, _eventBus.Object);
 
         await handler.HandleAsync(new DisqualifyLeadCommand(lead.Id, "no budget"));
 
-        lead.Status.ShouldBe(LeadStatus.Disqualified);
+        lead.StatusId.ShouldBe(LeadWellKnownIds.StatusDisqualified);
         _eventBus.Verify(b => b.PublishAsync(
             It.Is<IEvent>(e => e is LeadDisqualifiedIntegrationEvent), It.IsAny<CancellationToken>()), Times.Once);
     }
@@ -119,7 +116,7 @@ public class LeadCommandHandlerTests
 
         result.CustomerId.ShouldBe(customerId);
         result.DealId.ShouldBe(dealId);
-        lead.Status.ShouldBe(LeadStatus.Converted);
+        lead.StatusId.ShouldBe(LeadWellKnownIds.StatusConverted);
         lead.ConvertedCustomerId.ShouldBe(customerId);
         orchestrator.Verify(o => o.ConvertAsync(
             It.Is<LeadConversionRequest>(r => r.LeadId == lead.Id && r.CreateDeal), It.IsAny<CancellationToken>()), Times.Once);

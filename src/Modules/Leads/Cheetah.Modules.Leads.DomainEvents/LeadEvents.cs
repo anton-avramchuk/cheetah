@@ -2,8 +2,8 @@ using Cheetah.Core.Events;
 
 namespace Cheetah.Modules.Leads.DomainEvents;
 
-/// <summary>Лид создан (захвачен из формы/импорта/рекламы).</summary>
-public record LeadCreatedIntegrationEvent(Guid LeadId, string Source) : EventBase;
+/// <summary>Лид создан (захвачен из формы/импорта/рекламы). <c>SourceId</c> — ссылка на справочник.</summary>
+public record LeadCreatedIntegrationEvent(Guid LeadId, Guid SourceId) : EventBase;
 
 /// <summary>Лид квалифицирован.</summary>
 public record LeadQualifiedIntegrationEvent(Guid LeadId) : EventBase;

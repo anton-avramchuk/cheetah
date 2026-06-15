@@ -37,27 +37,27 @@ public sealed class ActiveLeadsByOwnerSpecification<TLead> : Specification<TLead
 
     public override Expression<Func<TLead, bool>> ToExpression()
         => l => l.OwnerId == _ownerId
-                && l.Status != LeadStatus.Converted
-                && l.Status != LeadStatus.Disqualified;
+                && l.StatusId != LeadWellKnownIds.StatusConverted
+                && l.StatusId != LeadWellKnownIds.StatusDisqualified;
 }
 
 /// <summary>Комбинированный фильтр списка лидов (любой критерий опционален).</summary>
 public sealed class LeadsFilterSpecification<TLead> : Specification<TLead>
     where TLead : LeadBase
 {
-    private readonly LeadStatus? _status;
-    private readonly LeadSource? _source;
+    private readonly Guid? _statusId;
+    private readonly Guid? _sourceId;
     private readonly Guid? _ownerId;
 
-    public LeadsFilterSpecification(LeadStatus? status, LeadSource? source, Guid? ownerId)
+    public LeadsFilterSpecification(Guid? statusId, Guid? sourceId, Guid? ownerId)
     {
-        _status = status;
-        _source = source;
+        _statusId = statusId;
+        _sourceId = sourceId;
         _ownerId = ownerId;
     }
 
     public override Expression<Func<TLead, bool>> ToExpression()
-        => l => (_status == null || l.Status == _status)
-                && (_source == null || l.Source == _source)
+        => l => (_statusId == null || l.StatusId == _statusId)
+                && (_sourceId == null || l.SourceId == _sourceId)
                 && (_ownerId == null || l.OwnerId == _ownerId);
 }
