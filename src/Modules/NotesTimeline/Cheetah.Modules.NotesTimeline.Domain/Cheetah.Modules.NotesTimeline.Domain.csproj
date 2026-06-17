@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\..\Cheetah.Core\Cheetah.Core.csproj" />
+        <ProjectReference Include="..\..\..\Cheetah.Core.DataAccess\Cheetah.Core.DataAccess.csproj" />
+        <ProjectReference Include="..\..\..\Cheetah.Core.Domain\Cheetah.Core.Domain.csproj" />
+        <ProjectReference Include="..\..\..\Cheetah.Core.Events\Cheetah.Core.Events.csproj" />
+        <ProjectReference Include="..\..\..\Cheetah.Core.Specification\Cheetah.Core.Specification.csproj" />
+        <ProjectReference Include="..\..\..\Cheetah.Generators.Module\Cheetah.Generators.Module.csproj"
+                          ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
+        <ProjectReference Include="..\Cheetah.Modules.NotesTimeline.Shared\Cheetah.Modules.NotesTimeline.Shared.csproj" />
+        <ProjectReference Include="..\Cheetah.Modules.NotesTimeline.DomainEvents\Cheetah.Modules.NotesTimeline.DomainEvents.csproj" />
+    </ItemGroup>
+
+</Project>
