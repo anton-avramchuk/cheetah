@@ -195,6 +195,17 @@
         <Project Path="src/Modules/Email/Cheetah.Modules.Email.Shared/Cheetah.Modules.Email.Shared.csproj" />
         <Project Path="src/Modules/Email/Cheetah.Modules.Email.Application.Tests/Cheetah.Modules.Email.Application.Tests.csproj" />
     </Folder>
+    <Folder Name="/Modules/Catalog/">
+        <Project Path="src/Modules/Catalog/Cheetah.Modules.Catalog.Api/Cheetah.Modules.Catalog.Api.csproj" />
+        <Project Path="src/Modules/Catalog/Cheetah.Modules.Catalog.Application.Tests/Cheetah.Modules.Catalog.Application.Tests.csproj" />
+        <Project Path="src/Modules/Catalog/Cheetah.Modules.Catalog.Application/Cheetah.Modules.Catalog.Application.csproj" />
+        <Project Path="src/Modules/Catalog/Cheetah.Modules.Catalog.Contracts/Cheetah.Modules.Catalog.Contracts.csproj" />
+        <Project Path="src/Modules/Catalog/Cheetah.Modules.Catalog.Domain.Tests/Cheetah.Modules.Catalog.Domain.Tests.csproj" />
+        <Project Path="src/Modules/Catalog/Cheetah.Modules.Catalog.Domain/Cheetah.Modules.Catalog.Domain.csproj" />
+        <Project Path="src/Modules/Catalog/Cheetah.Modules.Catalog.DomainEvents/Cheetah.Modules.Catalog.DomainEvents.csproj" />
+        <Project Path="src/Modules/Catalog/Cheetah.Modules.Catalog.Infrastructure/Cheetah.Modules.Catalog.Infrastructure.csproj" />
+        <Project Path="src/Modules/Catalog/Cheetah.Modules.Catalog.Shared/Cheetah.Modules.Catalog.Shared.csproj" />
+    </Folder>
     <Folder Name="/Modules/Customer/">
         <Project Path="src/Modules/Customer/Cheetah.Modules.Customer.Api/Cheetah.Modules.Customer.Api.csproj" />
         <Project Path="src/Modules/Customer/Cheetah.Modules.Customer.Application/Cheetah.Modules.Customer.Application.csproj" />
