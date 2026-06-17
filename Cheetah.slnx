@@ -227,6 +227,19 @@
         <File Path="pack.ps1" />
         <File Path="version.props" />
     </Folder>
+    <Folder Name="/src/" />
+    <Folder Name="/src/Modules/" />
+    <Folder Name="/Modules/SalesDocuments/">
+        <Project Path="src/Modules/SalesDocuments/Cheetah.Modules.SalesDocuments.Api/Cheetah.Modules.SalesDocuments.Api.csproj" />
+        <Project Path="src/Modules/SalesDocuments/Cheetah.Modules.SalesDocuments.Application.Tests/Cheetah.Modules.SalesDocuments.Application.Tests.csproj" />
+        <Project Path="src/Modules/SalesDocuments/Cheetah.Modules.SalesDocuments.Application/Cheetah.Modules.SalesDocuments.Application.csproj" />
+        <Project Path="src/Modules/SalesDocuments/Cheetah.Modules.SalesDocuments.Contracts/Cheetah.Modules.SalesDocuments.Contracts.csproj" />
+        <Project Path="src/Modules/SalesDocuments/Cheetah.Modules.SalesDocuments.Domain.Tests/Cheetah.Modules.SalesDocuments.Domain.Tests.csproj" />
+        <Project Path="src/Modules/SalesDocuments/Cheetah.Modules.SalesDocuments.Domain/Cheetah.Modules.SalesDocuments.Domain.csproj" />
+        <Project Path="src/Modules/SalesDocuments/Cheetah.Modules.SalesDocuments.DomainEvents/Cheetah.Modules.SalesDocuments.DomainEvents.csproj" />
+        <Project Path="src/Modules/SalesDocuments/Cheetah.Modules.SalesDocuments.Infrastructure/Cheetah.Modules.SalesDocuments.Infrastructure.csproj" />
+        <Project Path="src/Modules/SalesDocuments/Cheetah.Modules.SalesDocuments.Shared/Cheetah.Modules.SalesDocuments.Shared.csproj" />
+    </Folder>
 
     <Folder Name="/Tests/">
         <Project Path="src/Cheetah.Backend.Rsa.Tests/Cheetah.Backend.Rsa.Tests.csproj" />
