@@ -138,9 +138,13 @@
         <Project Path="src/Modules/Activities/Cheetah.Modules.Activities.Shared/Cheetah.Modules.Activities.Shared.csproj" />
     </Folder>
     <Folder Name="/Modules/Booking/">
+        <Project Path="src/Modules/Booking/Cheetah.Modules.Booking.Api/Cheetah.Modules.Booking.Api.csproj" />
         <Project Path="src/Modules/Booking/Cheetah.Modules.Booking.Application.Tests/Cheetah.Modules.Booking.Application.Tests.csproj" />
         <Project Path="src/Modules/Booking/Cheetah.Modules.Booking.Application/Cheetah.Modules.Booking.Application.csproj" />
+        <Project Path="src/Modules/Booking/Cheetah.Modules.Booking.Client.Tests/Cheetah.Modules.Booking.Client.Tests.csproj" />
+        <Project Path="src/Modules/Booking/Cheetah.Modules.Booking.Client/Cheetah.Modules.Booking.Client.csproj" />
         <Project Path="src/Modules/Booking/Cheetah.Modules.Booking.Contracts/Cheetah.Modules.Booking.Contracts.csproj" />
+        <Project Path="src/Modules/Booking/Cheetah.Modules.Booking.Default/Cheetah.Modules.Booking.Default.csproj" />
         <Project Path="src/Modules/Booking/Cheetah.Modules.Booking.Domain.Tests/Cheetah.Modules.Booking.Domain.Tests.csproj" />
         <Project Path="src/Modules/Booking/Cheetah.Modules.Booking.Domain/Cheetah.Modules.Booking.Domain.csproj" />
         <Project Path="src/Modules/Booking/Cheetah.Modules.Booking.DomainEvents/Cheetah.Modules.Booking.DomainEvents.csproj" />

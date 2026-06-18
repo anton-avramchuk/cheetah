@@ -1,8 +1,11 @@
 # Cheetah.Modules.Booking.* — модуль «Scheduling / Booking» (Calendly внутри CRM, расширяемый шаблон)
 
-> Статус: **план (проектирование).** Кода в репозитории ещё нет. Документ — пошаговый план сборки
-> модуля по канону `CLAUDE.md` (Events → Shared → Contracts → Domain → Infrastructure → Application →
-> Api (+ Client)), своя БД PostgreSQL, общение через REST/gRPC + события через шину.
+> Статус: **реализовано (MVP).** Код — в `src/Modules/Booking/` (10 сборок: 7 шаблонных + `.Default` +
+> `Client` + 3 тестовых). Тесты зелёные: Domain 17 (слот-движок + инварианты), Application 13
+> (анти-дабл-букинг, слоты, lifecycle), Client 5. Гайд по расширению — `src/Modules/Booking/README.md`.
+> Предпосылка free/busy в Calendar реализована (`docs/modules/calendar-free-busy.md`). Документ —
+> пошаговый план сборки модуля по канону `CLAUDE.md` (Events → Shared → Contracts → Domain →
+> Infrastructure → Application → Api (+ Client)), своя БД PostgreSQL, общение через REST + события через шину.
 >
 > Источник: раздел [§12](../plans.md) общего плана. Это **п.5 рекомендуемого порядка реализации**
 > (после Activities + готового free/busy в Calendar; вместе с Notes & Timeline закрывает Tier 2).

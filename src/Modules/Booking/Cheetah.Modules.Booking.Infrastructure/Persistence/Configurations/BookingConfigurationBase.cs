@@ -1,7 +1,6 @@
 using Cheetah.Modules.Booking.Domain.Entities;
 using Cheetah.Modules.Booking.Shared;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Cheetah.Modules.Booking.Infrastructure.Persistence.Configurations;
@@ -39,9 +38,6 @@ public abstract class BookingConfigurationBase<TBooking> : IEntityTypeConfigurat
             nb.HasKey(a => a.Id);
             nb.Property(a => a.Question).HasMaxLength(BookingConstants.MaxNameLength).IsRequired();
         });
-        builder.Navigation(x => x.Answers)
-            .HasField("_answers")
-            .UsePropertyAccessMode(PropertyAccessMode.Field);
 
         builder.HasIndex(x => x.ManageToken).IsUnique();
         builder.HasIndex(x => new { x.HostUserId, x.Status, x.StartUtc });

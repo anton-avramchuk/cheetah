@@ -1,7 +1,6 @@
 using Cheetah.Modules.Booking.Domain.Entities;
 using Cheetah.Modules.Booking.Shared;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Cheetah.Modules.Booking.Infrastructure.Persistence.Configurations;
@@ -32,19 +31,12 @@ public abstract class AvailabilityScheduleConfigurationBase<TSchedule> : IEntity
             nb.HasKey(r => r.Id);
             nb.Property(r => r.DayOfWeek).HasConversion<int>();
         });
-        builder.Navigation(x => x.WeeklyRules)
-            .HasField("_weeklyRules")
-            .UsePropertyAccessMode(PropertyAccessMode.Field);
-
         builder.OwnsMany(x => x.DateOverrides, nb =>
         {
             nb.ToTable("AvailabilityDateOverrides", Schema);
             nb.WithOwner().HasForeignKey(o => o.ScheduleId);
             nb.HasKey(o => o.Id);
         });
-        builder.Navigation(x => x.DateOverrides)
-            .HasField("_dateOverrides")
-            .UsePropertyAccessMode(PropertyAccessMode.Field);
 
         builder.HasIndex(x => x.HostUserId).IsUnique();
 
