@@ -64,3 +64,30 @@ public sealed class BookingByManageTokenSpecification<TBooking> : Specification<
     public override Expression<Func<TBooking, bool>> ToExpression()
         => b => b.ManageToken == _token;
 }
+
+/// <summary>
+/// Комбинированный фильтр списка броней (для host). Любой критерий опционален (null = не учитывать).
+/// Используется generic query-handler'ом вместо raw LINQ.
+/// </summary>
+public sealed class BookingsFilterSpecification<TBooking> : Specification<TBooking>
+    where TBooking : BookingBase
+{
+    private readonly Guid? _hostUserId;
+    private readonly BookingStatus? _status;
+    private readonly DateTimeOffset? _from;
+    private readonly DateTimeOffset? _to;
+
+    public BookingsFilterSpecification(Guid? hostUserId, BookingStatus? status, DateTimeOffset? from, DateTimeOffset? to)
+    {
+        _hostUserId = hostUserId;
+        _status = status;
+        _from = from;
+        _to = to;
+    }
+
+    public override Expression<Func<TBooking, bool>> ToExpression()
+        => b => (_hostUserId == null || b.HostUserId == _hostUserId)
+                && (_status == null || b.Status == _status)
+                && (_from == null || b.StartUtc >= _from)
+                && (_to == null || b.StartUtc < _to);
+}
