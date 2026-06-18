@@ -144,6 +144,7 @@
         <Project Path="src/Modules/Booking/Cheetah.Modules.Booking.Domain.Tests/Cheetah.Modules.Booking.Domain.Tests.csproj" />
         <Project Path="src/Modules/Booking/Cheetah.Modules.Booking.Domain/Cheetah.Modules.Booking.Domain.csproj" />
         <Project Path="src/Modules/Booking/Cheetah.Modules.Booking.DomainEvents/Cheetah.Modules.Booking.DomainEvents.csproj" />
+        <Project Path="src/Modules/Booking/Cheetah.Modules.Booking.Infrastructure/Cheetah.Modules.Booking.Infrastructure.csproj" />
         <Project Path="src/Modules/Booking/Cheetah.Modules.Booking.Shared/Cheetah.Modules.Booking.Shared.csproj" />
     </Folder>
     <Folder Name="/Modules/NotesTimeline/">
