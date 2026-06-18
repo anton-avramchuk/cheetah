@@ -61,6 +61,12 @@ public interface IBookingCalendarGateway
 
     /// <summary>Создать событие в календаре host'а для подтверждённой брони. Возвращает Id события (или null).</summary>
     ValueTask<Guid?> CreateEventAsync(BookingBase booking, BookingTypeBase type, CancellationToken ct = default);
+
+    /// <summary>Перенести ранее созданное событие брони на новое время (при переносе брони).</summary>
+    ValueTask RescheduleEventAsync(Guid calendarEventId, DateTimeOffset startUtc, DateTimeOffset endUtc, CancellationToken ct = default);
+
+    /// <summary>Отменить ранее созданное событие брони (при отмене брони).</summary>
+    ValueTask CancelEventAsync(Guid calendarEventId, CancellationToken ct = default);
 }
 
 /// <summary>

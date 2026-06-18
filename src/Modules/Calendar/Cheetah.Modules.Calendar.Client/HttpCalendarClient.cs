@@ -47,6 +47,20 @@ public sealed class HttpCalendarClient : ICalendarClient
         return body ?? new List<BusyIntervalDto>();
     }
 
+    public async ValueTask RescheduleEventAsync(
+        Guid eventId, DateTimeOffset startUtc, DateTimeOffset endUtc, CancellationToken ct = default)
+    {
+        var request = new RescheduleEventRequest(eventId, startUtc.UtcDateTime, endUtc.UtcDateTime);
+        var resp = await _http.PostAsJsonAsync($"api/calendar-events/{eventId}/reschedule", request, ct);
+        await EnsureSuccessOrThrowAsync(resp, "POST /calendar-events/{id}/reschedule", ct);
+    }
+
+    public async ValueTask CancelEventAsync(Guid eventId, CancellationToken ct = default)
+    {
+        var resp = await _http.DeleteAsync($"api/calendar-events/{eventId}", ct);
+        await EnsureSuccessOrThrowAsync(resp, "DELETE /calendar-events/{id}", ct);
+    }
+
     private sealed record CreatedResponse(Guid Id);
 
     private static async ValueTask EnsureSuccessOrThrowAsync(HttpResponseMessage resp, string op, CancellationToken ct)

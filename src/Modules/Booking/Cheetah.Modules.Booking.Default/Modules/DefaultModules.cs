@@ -1,9 +1,13 @@
 using Cheetah.AspNetCore;
 using Cheetah.AspNetCore.Extensions;
 using Cheetah.Core;
+using Cheetah.Core.Events;
 using Cheetah.Core.Modularity;
 using Cheetah.Modules.Booking.Application;
+using Cheetah.Modules.Booking.Application.Bookings;
 using Cheetah.Modules.Booking.Application.Extensions;
+using Cheetah.Modules.Booking.DomainEvents;
+using Microsoft.Extensions.DependencyInjection;
 using Cheetah.Modules.Booking.Contracts;
 using Cheetah.Modules.Booking.Domain;
 using Cheetah.Modules.Booking.Default.Contracts;
@@ -46,5 +50,10 @@ public partial class CheetahBookingDefaultModule : CrmModule
     public override void OnApplicationInitialization(ApplicationInitializationContext context)
     {
         new BookingEndpoints().Map(context.GetRouteBuilder());
+
+        // Синхронизация события Calendar при отмене/переносе брони.
+        var eventBus = context.ServiceProvider.GetRequiredService<IEventBus>();
+        eventBus.Subscribe<BookingCancelledIntegrationEvent, BookingCancelledCalendarSyncHandler<BookingEntity>>();
+        eventBus.Subscribe<BookingRescheduledIntegrationEvent, BookingRescheduledCalendarSyncHandler<BookingEntity>>();
     }
 }

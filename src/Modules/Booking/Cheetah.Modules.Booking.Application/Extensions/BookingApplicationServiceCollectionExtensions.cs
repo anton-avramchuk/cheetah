@@ -81,6 +81,10 @@ public static class BookingApplicationServiceCollectionExtensions
         services.AddScoped<IQueryHandler<ListBookingsQuery<TBookingDto>, IReadOnlyList<TBookingDto>>,
             ListBookingsQueryHandler<TBooking, TBookingDto>>();
 
+        // Подписчики синхронизации события Calendar (подписка — в OnApplicationInitialization наследника).
+        services.AddScoped<BookingCancelledCalendarSyncHandler<TBooking>>();
+        services.AddScoped<BookingRescheduledCalendarSyncHandler<TBooking>>();
+
         return services;
     }
 }

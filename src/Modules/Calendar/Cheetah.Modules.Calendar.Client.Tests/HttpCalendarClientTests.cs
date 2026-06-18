@@ -99,6 +99,33 @@ public class HttpCalendarClientTests
     }
 
     [Fact]
+    public async Task RescheduleEventAsync_PostsToRescheduleRoute()
+    {
+        var handler = new StubHandler(HttpStatusCode.NoContent);
+        var client = Client(handler);
+        var eventId = Guid.NewGuid();
+
+        await client.RescheduleEventAsync(eventId,
+            DateTimeOffset.Parse("2026-02-01T09:00:00Z"), DateTimeOffset.Parse("2026-02-01T10:00:00Z"));
+
+        handler.LastRequest!.Method.ShouldBe(HttpMethod.Post);
+        handler.LastRequest.RequestUri!.AbsolutePath.ShouldEndWith($"/calendar-events/{eventId}/reschedule");
+    }
+
+    [Fact]
+    public async Task CancelEventAsync_DeletesEvent()
+    {
+        var handler = new StubHandler(HttpStatusCode.NoContent);
+        var client = Client(handler);
+        var eventId = Guid.NewGuid();
+
+        await client.CancelEventAsync(eventId);
+
+        handler.LastRequest!.Method.ShouldBe(HttpMethod.Delete);
+        handler.LastRequest.RequestUri!.AbsolutePath.ShouldEndWith($"/calendar-events/{eventId}");
+    }
+
+    [Fact]
     public async Task SyncRegistryAsync_OnError_Throws()
     {
         var handler = new StubHandler(HttpStatusCode.BadRequest, "bad");

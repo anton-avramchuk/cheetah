@@ -90,12 +90,19 @@ services.AddBookingApplication<BookingType, Booking, Schedule, /* Contracts */, 
 **Приватные (host):** CRUD `api/booking-types`, `PUT api/availability`,
 `GET api/bookings`, `GET api/bookings/{id}`, `POST api/bookings/{id}/no-show`.
 
+## Синхронизация с Calendar
+
+При отмене/переносе брони закреплённое за ней событие Calendar синхронизируется через подписку на
+`BookingCancelledIntegrationEvent`/`BookingRescheduledIntegrationEvent`
+(`BookingCancelled/RescheduledCalendarSyncHandler<TBooking>` → `ICalendarClient.CancelEventAsync`/
+`RescheduleEventAsync`). Идемпотентно: нет закреплённого события — действие пропускается. Подписка
+регистрируется в `OnApplicationInitialization` (в `.Default` — «из коробки»).
+
 ## Статус
 
 MVP реализован: Domain (слот-движок), Infrastructure (EF + анти-дабл-букинг + шлюз Calendar),
-Application (слоты + бронь + lifecycle), Api, Default (+ миграция), Client. Тесты: Domain 17,
-Application 13, Client 5 — зелёные.
+Application (слоты + бронь + lifecycle + синк Calendar), Api, Default (+ миграция), Client. Тесты:
+Domain 17, Application 17, Client 5 — зелёные.
 
-**Follow-up:** подписка на `BookingCancelled`/`Rescheduled` → синхронизация события Calendar
-(нужны методы отмены/переноса в `Calendar.Client`); реальный `IHostCalendarResolver`; Saga-компенсации;
-round-robin (несколько host'ов); RateLimit-политика на публичных маршрутах; интеграционный smoke-тест `.Default`.
+**Follow-up:** реальный `IHostCalendarResolver`; Saga-компенсации; round-robin (несколько host'ов);
+RateLimit-политика на публичных маршрутах; интеграционный smoke-тест `.Default`.

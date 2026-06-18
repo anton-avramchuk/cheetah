@@ -24,4 +24,10 @@ public interface ICalendarClient
     /// </summary>
     ValueTask<IReadOnlyList<BusyIntervalDto>> GetUserBusyAsync(
         Guid hostUserId, DateTimeOffset from, DateTimeOffset to, CancellationToken ct = default);
+
+    /// <summary>Перенести событие на новое время (UTC) — например, при переносе брони.</summary>
+    ValueTask RescheduleEventAsync(Guid eventId, DateTimeOffset startUtc, DateTimeOffset endUtc, CancellationToken ct = default);
+
+    /// <summary>Отменить (мягко) событие — например, при отмене брони.</summary>
+    ValueTask CancelEventAsync(Guid eventId, CancellationToken ct = default);
 }

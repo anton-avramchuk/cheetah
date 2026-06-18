@@ -53,4 +53,10 @@ public sealed class BookingCalendarGateway : IBookingCalendarGateway
 
         return await _calendar.CreateEventAsync(cid, request, ct);
     }
+
+    public ValueTask RescheduleEventAsync(Guid calendarEventId, DateTimeOffset startUtc, DateTimeOffset endUtc, CancellationToken ct = default)
+        => _calendar.RescheduleEventAsync(calendarEventId, startUtc, endUtc, ct);
+
+    public ValueTask CancelEventAsync(Guid calendarEventId, CancellationToken ct = default)
+        => _calendar.CancelEventAsync(calendarEventId, ct);
 }
