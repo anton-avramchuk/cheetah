@@ -60,6 +60,14 @@ public sealed record EventOccurrenceDto(
     string OccurrenceKey,
     bool IsOverride) : ICrmResponse;
 
+/// <summary>
+/// Занятый интервал пользователя (UTC) — результат разворота серий и слияния пересечений
+/// (free/busy). Деталей события не несёт: используется для вычисления свободных слотов (Booking).
+/// </summary>
+public sealed record BusyIntervalDto(
+    DateTime StartUtc,
+    DateTime EndUtc) : ICrmResponse;
+
 /// <summary>Зарегистрированный тип сущности, к которой можно привязывать события.</summary>
 public sealed record CalendarableEntityTypeDto(
     string EntityType,

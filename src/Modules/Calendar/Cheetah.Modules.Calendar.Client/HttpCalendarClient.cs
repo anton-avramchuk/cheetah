@@ -35,6 +35,18 @@ public sealed class HttpCalendarClient : ICalendarClient
         return body ?? new List<EventOccurrenceDto>();
     }
 
+    public async ValueTask<IReadOnlyList<BusyIntervalDto>> GetUserBusyAsync(
+        Guid hostUserId, DateTimeOffset from, DateTimeOffset to, CancellationToken ct = default)
+    {
+        var url = $"api/calendar/users/{hostUserId}/busy"
+                  + $"?from={Uri.EscapeDataString(from.UtcDateTime.ToString("O"))}"
+                  + $"&to={Uri.EscapeDataString(to.UtcDateTime.ToString("O"))}";
+        var resp = await _http.GetAsync(url, ct);
+        await EnsureSuccessOrThrowAsync(resp, "GET /calendar/users/{id}/busy", ct);
+        var body = await resp.Content.ReadFromJsonAsync<List<BusyIntervalDto>>(ct);
+        return body ?? new List<BusyIntervalDto>();
+    }
+
     private sealed record CreatedResponse(Guid Id);
 
     private static async ValueTask EnsureSuccessOrThrowAsync(HttpResponseMessage resp, string op, CancellationToken ct)

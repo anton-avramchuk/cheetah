@@ -8,7 +8,7 @@ HTTP-клиент к Calendar.Api для server-to-server интеграции +
 
 | Тип | Назначение |
 |---|---|
-| `ICalendarClient` | Контракт: `SyncRegistryAsync`, `CreateEventAsync`, `GetByEntityAsync` |
+| `ICalendarClient` | Контракт: `SyncRegistryAsync`, `CreateEventAsync`, `GetByEntityAsync`, `GetUserBusyAsync` (free/busy host'а для Booking) |
 | `HttpCalendarClient` | Реализация поверх типизированного `HttpClient` |
 | `CalendarRegistrationSyncService` | Hosted-сервис: при старте отправляет объявленные типы в Calendar |
 | `CalendarableTypeRegistrationExtensions.AddCalendarableEntityType` | Объявление типа сущности сервиса |

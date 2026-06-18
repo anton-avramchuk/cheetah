@@ -101,6 +101,12 @@ public sealed record ListAgendaRequest(
     DateTime FromUtc,
     DateTime ToUtc) : ICrmRequest;
 
+/// <summary>Занятые интервалы пользователя (free/busy) в окне [FromUtc, ToUtc).</summary>
+public sealed record GetUserBusyRequest(
+    [property: FromRoute] Guid HostUserId,
+    DateTime FromUtc,
+    DateTime ToUtc) : ICrmRequest;
+
 // ── Экземпляры серии ─────────────────────────────────────────────────────────────────────
 
 /// <summary>Отмена одного экземпляра серии.</summary>

@@ -68,6 +68,37 @@ public class HttpCalendarClientTests
     }
 
     [Fact]
+    public async Task GetUserBusyAsync_ParsesIntervalsAndBuildsUrl()
+    {
+        var json = "[{\"startUtc\":\"2026-01-05T09:00:00Z\",\"endUtc\":\"2026-01-05T10:00:00Z\"}," +
+                   "{\"startUtc\":\"2026-01-05T11:00:00Z\",\"endUtc\":\"2026-01-05T11:30:00Z\"}]";
+        var handler = new StubHandler(HttpStatusCode.OK, json);
+        var client = Client(handler);
+
+        var hostId = Guid.NewGuid();
+        var items = await client.GetUserBusyAsync(
+            hostId, DateTimeOffset.Parse("2026-01-05T00:00:00Z"), DateTimeOffset.Parse("2026-01-06T00:00:00Z"));
+
+        items.Count.ShouldBe(2);
+        items[0].StartUtc.ShouldBe(new DateTime(2026, 1, 5, 9, 0, 0, DateTimeKind.Utc));
+        items[1].EndUtc.ShouldBe(new DateTime(2026, 1, 5, 11, 30, 0, DateTimeKind.Utc));
+        handler.LastRequest!.Method.ShouldBe(HttpMethod.Get);
+        handler.LastRequest.RequestUri!.AbsolutePath.ShouldContain($"users/{hostId}/busy");
+        handler.LastRequest.RequestUri.Query.ShouldContain("from=");
+        handler.LastRequest.RequestUri.Query.ShouldContain("to=");
+    }
+
+    [Fact]
+    public async Task GetUserBusyAsync_OnError_Throws()
+    {
+        var handler = new StubHandler(HttpStatusCode.InternalServerError, "boom");
+        var client = Client(handler);
+
+        await Should.ThrowAsync<HttpRequestException>(() =>
+            client.GetUserBusyAsync(Guid.NewGuid(), DateTimeOffset.UtcNow, DateTimeOffset.UtcNow.AddDays(1)).AsTask());
+    }
+
+    [Fact]
     public async Task SyncRegistryAsync_OnError_Throws()
     {
         var handler = new StubHandler(HttpStatusCode.BadRequest, "bad");

@@ -34,6 +34,7 @@ public sealed class CalendarMappingProfile : IMapsterMappingProfile
         config.NewConfig<CancelEventRequest, CancelEventCommand>();
         config.NewConfig<ListEventsByEntityRequest, ListEventsByEntityQuery>();
         config.NewConfig<ListAgendaRequest, ListAgendaQuery>();
+        config.NewConfig<GetUserBusyRequest, GetUserBusyQuery>();
 
         // Экземпляры серии
         config.NewConfig<CancelOccurrenceRequest, CancelOccurrenceCommand>();

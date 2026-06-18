@@ -27,6 +27,7 @@ HTTP-слой Calendar на **декларативных эндпоинтах** 
 |---|---|
 | POST/GET | `api/calendars`, `api/calendars/{calendarId}` |
 | GET | `api/calendars/{calendarId}/events`, `api/calendar-events/by-entity/{entityType}/{entityId}`, `api/agenda/{userId}` |
+| GET | `api/calendar/users/{hostUserId}/busy` — занятые интервалы пользователя (free/busy) в окне `[from, to)` |
 | POST/GET/PATCH/DELETE | `api/calendar-events/{eventId}` (+ `/reschedule`, `/recurrence`, `/occurrences/{key}/cancel|override`, `/attendees`, `/reminders`) |
 | POST/GET | `api/calendar/registry/sync`, `api/calendar/registry` |
 

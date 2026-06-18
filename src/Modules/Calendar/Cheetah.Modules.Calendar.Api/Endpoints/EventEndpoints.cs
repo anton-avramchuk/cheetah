@@ -80,3 +80,13 @@ public sealed class AgendaEndpoint
     protected override void Configure(EndpointConfiguration config)
         => config.WithName("GetAgenda").WithTags("Events");
 }
+
+/// <summary>GET api/calendar/users/{hostUserId}/busy — занятые интервалы пользователя (free/busy) в окне.</summary>
+public sealed class GetUserBusyEndpoint
+    : QueryCollectionEndpoint<GetUserBusyRequest, GetUserBusyQuery, BusyIntervalDto, BusyIntervalDto>
+{
+    public override string Route => "api/calendar/users/{hostUserId:guid}/busy";
+
+    protected override void Configure(EndpointConfiguration config)
+        => config.WithName("GetUserBusy").WithTags("Events");
+}

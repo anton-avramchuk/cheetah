@@ -17,4 +17,11 @@ public interface ICalendarClient
     /// <summary>Получить экземпляры событий, привязанных к сущности, в окне [from, to).</summary>
     ValueTask<IReadOnlyList<EventOccurrenceDto>> GetByEntityAsync(
         string entityType, Guid entityId, DateTimeOffset from, DateTimeOffset to, CancellationToken ct = default);
+
+    /// <summary>
+    /// Получить занятые интервалы пользователя (free/busy) в окне [from, to): серии развёрнуты,
+    /// пересечения слиты. Используется для вычисления свободных слотов (Booking).
+    /// </summary>
+    ValueTask<IReadOnlyList<BusyIntervalDto>> GetUserBusyAsync(
+        Guid hostUserId, DateTimeOffset from, DateTimeOffset to, CancellationToken ct = default);
 }
