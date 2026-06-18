@@ -137,6 +137,13 @@
         <Project Path="src/Modules/Activities/Cheetah.Modules.Activities.Infrastructure/Cheetah.Modules.Activities.Infrastructure.csproj" />
         <Project Path="src/Modules/Activities/Cheetah.Modules.Activities.Shared/Cheetah.Modules.Activities.Shared.csproj" />
     </Folder>
+    <Folder Name="/Modules/Booking/">
+        <Project Path="src/Modules/Booking/Cheetah.Modules.Booking.Contracts/Cheetah.Modules.Booking.Contracts.csproj" />
+        <Project Path="src/Modules/Booking/Cheetah.Modules.Booking.Domain.Tests/Cheetah.Modules.Booking.Domain.Tests.csproj" />
+        <Project Path="src/Modules/Booking/Cheetah.Modules.Booking.Domain/Cheetah.Modules.Booking.Domain.csproj" />
+        <Project Path="src/Modules/Booking/Cheetah.Modules.Booking.DomainEvents/Cheetah.Modules.Booking.DomainEvents.csproj" />
+        <Project Path="src/Modules/Booking/Cheetah.Modules.Booking.Shared/Cheetah.Modules.Booking.Shared.csproj" />
+    </Folder>
     <Folder Name="/Modules/NotesTimeline/">
         <Project Path="src/Modules/NotesTimeline/Cheetah.Modules.NotesTimeline.Api/Cheetah.Modules.NotesTimeline.Api.csproj" />
         <Project Path="src/Modules/NotesTimeline/Cheetah.Modules.NotesTimeline.Application.Tests/Cheetah.Modules.NotesTimeline.Application.Tests.csproj" />
