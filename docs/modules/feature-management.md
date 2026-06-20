@@ -813,13 +813,17 @@ services.AddFeatureManagement()                 // абстракция: IFeatur
     настроек), проекция, батч-Evaluate с дедупом — 5 зелёных.
 
 **Фаза 5 — API + (Default) + клиент**
-14. `Api`: `FeatureEndpointsBase<>` + `ApiModuleBase` (§9): админка + registry + evaluate.
-15. (Опц.) `.Default`: sealed `FeatureFlag`, конкретные Contracts, фабрика/проектор,
-    `FeatureManagementDbContext` + `IDesignTimeDbContextFactory` + миграция `InitialFeatures` (схема
-    `features`), готовые регистрации.
-16. `Client`: `IFeatureCatalogClient` + `FeatureRegistrationSyncService` + `.RegisterFeatures(...)` +
-    **`RemoteFeatureDefinitionProvider` / `.UseRemoteReplica()`** (микросервисный режим, §2.1),
-    `Client.Tests`.
+14. ✅ `Api`: `FeatureFlagEndpointsBase<TCreateRequest,TDto>` + `CheetahFeatureManagementApiModuleBase<>`
+    (§9): реестр (registry/sync, list), админка (CRUD, enable/disable, targeting, tenant-override),
+    `evaluate` и `definitions` (снимок для реплики). Customer-стиль `virtual`-методы.
+15. ✅ `.Default`: sealed `FeatureFlag`, конкретные `CreateFeatureFlagRequest`/`FeatureFlagDto`,
+    `FeatureFlagFactory`/`FeatureFlagProjector`, `FeatureManagementDbContext` + `IDesignTimeDbContextFactory`
+    + миграция `InitialFeatures` (схема `features`), единый `CheetahFeatureManagementDefaultModule`
+    (AddInfrastructure+AddApplication, маппинг эндпоинтов, подписка инвалидатора — шаг 17).
+16. ✅ `Client`: `IFeatureCatalogClient`/`HttpFeatureCatalogClient` (Sync/Evaluate/PullDefinitions),
+    `FeatureClientHostedService` (registry-sync + первый pull, `ContinueOnFailure`),
+    **`RemoteFeatureDefinitionProvider` + `.UseRemoteReplica()`** (локальная реплика, push по событиям, §2.1),
+    `.AddFeatureManagementClient(...)`/`.RegisterFeatures(...)`. `Client.Tests` — 4 зелёных.
 
 **Фаза 6 — интеграция**
 17. Подписка-инвалидатор кэша через шину (все инстансы); идемпотентность — `Cheetah.Core.Inbox` (опц.).

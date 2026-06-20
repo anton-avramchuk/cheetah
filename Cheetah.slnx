@@ -267,9 +267,13 @@
         <Project Path="src/Modules/SalesDocuments/Cheetah.Modules.SalesDocuments.Shared/Cheetah.Modules.SalesDocuments.Shared.csproj" />
     </Folder>
     <Folder Name="/Modules/FeatureManagement/">
+        <Project Path="src/Modules/FeatureManagement/Cheetah.Modules.FeatureManagement.Api/Cheetah.Modules.FeatureManagement.Api.csproj" />
         <Project Path="src/Modules/FeatureManagement/Cheetah.Modules.FeatureManagement.Application/Cheetah.Modules.FeatureManagement.Application.csproj" />
         <Project Path="src/Modules/FeatureManagement/Cheetah.Modules.FeatureManagement.Application.Tests/Cheetah.Modules.FeatureManagement.Application.Tests.csproj" />
+        <Project Path="src/Modules/FeatureManagement/Cheetah.Modules.FeatureManagement.Client/Cheetah.Modules.FeatureManagement.Client.csproj" />
+        <Project Path="src/Modules/FeatureManagement/Cheetah.Modules.FeatureManagement.Client.Tests/Cheetah.Modules.FeatureManagement.Client.Tests.csproj" />
         <Project Path="src/Modules/FeatureManagement/Cheetah.Modules.FeatureManagement.Contracts/Cheetah.Modules.FeatureManagement.Contracts.csproj" />
+        <Project Path="src/Modules/FeatureManagement/Cheetah.Modules.FeatureManagement.Default/Cheetah.Modules.FeatureManagement.Default.csproj" />
         <Project Path="src/Modules/FeatureManagement/Cheetah.Modules.FeatureManagement.Domain/Cheetah.Modules.FeatureManagement.Domain.csproj" />
         <Project Path="src/Modules/FeatureManagement/Cheetah.Modules.FeatureManagement.Domain.Tests/Cheetah.Modules.FeatureManagement.Domain.Tests.csproj" />
         <Project Path="src/Modules/FeatureManagement/Cheetah.Modules.FeatureManagement.DomainEvents/Cheetah.Modules.FeatureManagement.DomainEvents.csproj" />

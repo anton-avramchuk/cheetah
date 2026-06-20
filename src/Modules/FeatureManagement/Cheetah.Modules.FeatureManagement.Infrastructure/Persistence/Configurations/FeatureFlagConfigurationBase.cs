@@ -31,14 +31,16 @@ public abstract class FeatureFlagConfigurationBase<TFlag> : IEntityTypeConfigura
         builder.HasIndex(x => x.Key).IsUnique();          // ключ — стабильный контракт
         builder.HasIndex(x => x.OwnerService);
 
+        // Backing-поля (_rules/_variants/_overrides) находит конвенция; явный HasField на приватных
+        // полях базового класса EF не разрешает.
         builder.HasMany(x => x.Rules).WithOne().HasForeignKey(r => r.FlagId).OnDelete(DeleteBehavior.Cascade);
-        builder.Navigation(x => x.Rules).HasField("_rules").UsePropertyAccessMode(PropertyAccessMode.Field);
+        builder.Navigation(x => x.Rules).UsePropertyAccessMode(PropertyAccessMode.Field);
 
         builder.HasMany(x => x.Variants).WithOne().HasForeignKey(v => v.FlagId).OnDelete(DeleteBehavior.Cascade);
-        builder.Navigation(x => x.Variants).HasField("_variants").UsePropertyAccessMode(PropertyAccessMode.Field);
+        builder.Navigation(x => x.Variants).UsePropertyAccessMode(PropertyAccessMode.Field);
 
         builder.HasMany(x => x.Overrides).WithOne().HasForeignKey(o => o.FlagId).OnDelete(DeleteBehavior.Cascade);
-        builder.Navigation(x => x.Overrides).HasField("_overrides").UsePropertyAccessMode(PropertyAccessMode.Field);
+        builder.Navigation(x => x.Overrides).UsePropertyAccessMode(PropertyAccessMode.Field);
 
         ConfigureCustom(builder);
     }

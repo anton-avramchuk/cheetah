@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\..\Cheetah.FeatureManagement\Cheetah.FeatureManagement.csproj" />
+        <ProjectReference Include="..\Cheetah.Modules.FeatureManagement.Domain\Cheetah.Modules.FeatureManagement.Domain.csproj" />
+        <ProjectReference Include="..\Cheetah.Modules.FeatureManagement.Contracts\Cheetah.Modules.FeatureManagement.Contracts.csproj" />
+        <ProjectReference Include="..\Cheetah.Modules.FeatureManagement.Application\Cheetah.Modules.FeatureManagement.Application.csproj" />
+        <ProjectReference Include="..\Cheetah.Modules.FeatureManagement.Infrastructure\Cheetah.Modules.FeatureManagement.Infrastructure.csproj" />
+        <ProjectReference Include="..\Cheetah.Modules.FeatureManagement.Api\Cheetah.Modules.FeatureManagement.Api.csproj" />
+        <ProjectReference Include="..\..\..\Cheetah.Generators.Module\Cheetah.Generators.Module.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.EntityFrameworkCore" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    </ItemGroup>
+
+</Project>
