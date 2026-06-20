@@ -1,7 +1,11 @@
 # Cheetah.FeatureManagement + Cheetah.Modules.FeatureManagement.* — управление фич-флагами (расширяемый шаблон)
 
-> Статус: **проектный план (черновик).** Кода ещё нет. Документ — пошаговый план сборки по канону
-> `CLAUDE.md` (Events → Shared → Contracts → Domain → Infrastructure → Application → Api (+ Client)),
+> Статус: **реализовано (MVP).** Код — в `src/Cheetah.FeatureManagement/` (абстракция) и
+> `src/Modules/FeatureManagement/` (бизнес-модуль, 10 сборок + 4 тест-проекта). Полная солюшн
+> `Cheetah.slnx` собирается; тесты зелёные: абстракция 16 + Domain 6 + Application 5 + Client 4 = **31**.
+> Краткие гайды — `src/Cheetah.FeatureManagement/README.md` и `src/Modules/FeatureManagement/README.md`.
+> Документ — пошаговый план сборки по канону `CLAUDE.md`
+> (Events → Shared → Contracts → Domain → Infrastructure → Application → Api (+ Client)),
 > своя БД PostgreSQL, общение через REST/gRPC + события через шину.
 >
 > Источник: раздел [§11](../plans.md) общего плана. Это **первый из платформенных модулей Tier 3**
@@ -826,14 +830,15 @@ services.AddFeatureManagement()                 // абстракция: IFeatur
     `.AddFeatureManagementClient(...)`/`.RegisterFeatures(...)`. `Client.Tests` — 4 зелёных.
 
 **Фаза 6 — интеграция**
-17. Подписка-инвалидатор кэша через шину (все инстансы); идемпотентность — `Cheetah.Core.Inbox` (опц.).
-18. Аудит изменений флагов через `Cheetah.Audit`. Пилот: завести флаг `deals.kanban-v2`, выкатить
-    percentage-rollout, проверить стабильность и инвалидацию.
+17. ✅ Подписка-инвалидатор кэша через шину (`CheetahFeatureManagementDefaultModule.OnApplicationInitialization`
+    → `eventBus.Subscribe<…, FeatureCacheInvalidator>()`); реплика потребителя — `CrmFeatureManagementClientModule`.
+18. ⏳ Follow-up: аудит изменений через `Cheetah.Audit`; идемпотентность подписки через `Cheetah.Core.Inbox`;
+    транзакционный Outbox; gRPC; end-to-end пилот `deals.kanban-v2` на живой БД/шине.
 
 **Фаза 7 — финал**
-19. README обеих сборок (это **базовые/шаблонные** модули → README обязателен по чек-листу `CLAUDE.md`:
-    назначение, точки расширения — `IFeatureFilter` + наследование, extension-методы, пример).
-20. Обновить статус этого плана на «реализовано» + ссылка на код; обновить `MEMORY.md`.
+19. ✅ README обеих сборок: `src/Cheetah.FeatureManagement/README.md` (абстракция, движок, `IFeatureFilter`,
+    `RequireFeature`) и `src/Modules/FeatureManagement/README.md` (шаблон, Default, расширение, реплика).
+20. ✅ Статус плана → «реализовано»; обновлены оглавление/порядок в `plans.md` и `MEMORY.md`.
 
 ---
 

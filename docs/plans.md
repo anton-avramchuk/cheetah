@@ -22,7 +22,7 @@
 | 8 | [Workflow / Automation](#8-workflow--automation-бизнес-процессы) | 🟡 3 | Триггеры и автодействия | StateMachine, Events, BackgroundTasks |
 | 9 | [Webhooks](#9-webhooks-исходящие-интеграции) | 🟡 3 | Доставка событий наружу | Outbox, RateLimit |
 | 10 | [Search](#10-search-сквозной-поиск) | 🟡 3 | Полнотекстовый поиск по сущностям | Events, проекции |
-| 11 | [Feature Management](#11-feature-management-управление-фич-флагами) 📐 *(план готов, next)* | 🟡 3 | Фич-флаги, таргетинг, постепенный rollout | Expressions.JsonLogic, Cache, Tenants |
+| 11 | [Feature Management](#11-feature-management-управление-фич-флагами) ✅ *(MVP реализован)* | 🟡 3 | Фич-флаги, таргетинг, постепенный rollout | Expressions.JsonLogic, Cache, Tenants |
 | 12 | [Scheduling / Booking](#12-scheduling--booking-calendly-внутри-crm) | 🟠 2 | Публичные страницы записи, слоты, бронирование (Calendly) | Calendar, Notification, DistributedLock, RateLimit |
 
 ---
@@ -506,12 +506,12 @@ date/bool/enum/reference), обязательность, валидацию, в�
 
 ## 11. Feature Management (управление фич-флагами)
 
-> **📐 Детальный план готов:** [`docs/modules/feature-management.md`](modules/feature-management.md)
-> (код-уровень: §0–§15 + §2.1 «Микросервисный режим», 7 фаз реализации). Это **следующий модуль на
-> реализацию** — первый из платформенных Tier 3. Кода ещё нет. Уточнения относительно эскиза ниже:
-> модуль делается **расширяемым шаблоном** (как Activities/Customer) + опц. `.Default`; добавлена вторая
-> ось расширяемости — plugin `IFeatureFilter`; микросервисный режим (`RemoteFeatureDefinitionProvider` +
-> локальная реплика) поднят в **основное решение**, не follow-up.
+> **✅ MVP реализован.** Код: `src/Cheetah.FeatureManagement/` + `src/Modules/FeatureManagement/`;
+> детальный план с отметками о выполнении — [`docs/modules/feature-management.md`](modules/feature-management.md)
+> (§0–§15 + §2.1 «Микросервисный режим»). Первый из платформенных Tier 3. Уточнения относительно эскиза:
+> модуль сделан **расширяемым шаблоном** (как Activities/Customer) + `.Default`; вторая ось расширяемости —
+> plugin `IFeatureFilter`; микросервисный режим (`RemoteFeatureDefinitionProvider` + локальная реплика) —
+> **основное решение**. Solution собирается, 31 тест зелёный.
 
 > **Tier 3 — платформенная возможность.** Включать/выключать функциональность в рантайме без
 > передеплоя, выкатывать постепенно (percentage rollout), таргетировать на тенант/пользователя/роль,
@@ -1019,10 +1019,10 @@ Leads (создать лид из брони), Activities (встреча по �
 4. **Catalog** → **Sales Documents** — коммерческий контур (порядок строгий: документы зависят от каталога).
 5. **Notes & Timeline** — слой вовлечённости поверх уже существующих событий.
    **Scheduling / Booking** — после Activities + готового free/busy в Calendar (зависит от обоих).
-6. **Feature Management** — **следующий на реализацию** (детальный план готов:
-   [`docs/modules/feature-management.md`](modules/feature-management.md)). Разумно поднять первым среди
+6. **Feature Management** — ✅ **MVP реализован**
+   ([`docs/modules/feature-management.md`](modules/feature-management.md)). Поднят первым среди
    платформенных: фич-флаги позволяют безопасно выкатывать сами новые модули (Deals/Activities/…) через
-   постепенный rollout. Затем **Custom Fields**, **Workflow**, **Webhooks**, **Search** — внедряются по
+   постепенный rollout. Далее **Custom Fields**, **Workflow**, **Webhooks**, **Search** — внедряются по
    мере появления интеграционных событий из п.1–5.
 
 ## Сквозные решения, которые стоит зафиксировать до старта
