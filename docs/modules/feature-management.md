@@ -779,9 +779,9 @@ services.AddFeatureManagement()                 // абстракция: IFeatur
    фильтров — `Cheetah.FeatureManagement.Tests` (16 зелёных). Добавлено в `Cheetah.slnx`.
 
 **Фаза 1 — контракты бизнес-модуля**
-2. `DomainEvents`: `FeatureFlagCreated/Changed/Toggled` (§5.2/§13).
-3. `Shared`: enums + `FeatureKeys`/`BuiltInFilters` (§5.3).
-4. `Contracts`: абстрактные `FeatureFlagDtoBase`/`…RequestBase` + `FeatureDefinitionDescriptor` (§6).
+2. ✅ `DomainEvents`: `FeatureFlagCreated/Changed/Toggled` (§5.2/§13).
+3. ✅ `Shared`: `RolloutType` + `FeatureKeys.Compose`. (`BuiltInFilterNames` живёт в абстракции — не дублируем; `FeatureValueType` тоже в абстракции, т.к. на него опирается движок.)
+4. ✅ `Contracts`: абстрактные `FeatureFlagDtoBase`/`CreateFeatureFlagRequestBase`/`SetTargetingRequestBase`/`SetTenantOverrideRequestBase` + `TargetingRuleDto`/`FeatureVariantDto`/`FeatureEvaluationDto` + `FeatureDefinitionDescriptor` (§6). Все собираются, добавлены в `Cheetah.slnx`.
 
 **Фаза 2 — домен**
 5. `Domain`: `FeatureFlagBase` + child-сущности (`TargetingRuleBase`, `FeatureVariantDef`,
