@@ -80,6 +80,7 @@
         <Project Path="src/Cheetah.Notifications.Sms/Cheetah.Notifications.Sms.csproj" />
         <Project Path="src/Cheetah.RateLimit/Cheetah.RateLimit.csproj" />
         <Project Path="src/Cheetah.RateLimit.Redis/Cheetah.RateLimit.Redis.csproj" />
+        <Project Path="src/Cheetah.FeatureManagement/Cheetah.FeatureManagement.csproj" />
     </Folder>
     <Folder Name="/Core/Backend/">
         <Project Path="src/Cheetah.Backend.CQRS/Cheetah.Backend.CQRS.csproj" />
@@ -267,6 +268,7 @@
     </Folder>
 
     <Folder Name="/Tests/">
+        <Project Path="src/Cheetah.FeatureManagement.Tests/Cheetah.FeatureManagement.Tests.csproj" />
         <Project Path="src/Cheetah.Backend.Rsa.Tests/Cheetah.Backend.Rsa.Tests.csproj" />
         <Project Path="src/Cheetah.Backend.Events.InMemory.Tests/Cheetah.Backend.Events.InMemory.Tests.csproj" />
         <Project Path="src/Cheetah.Backend.Events.Redis.Tests/Cheetah.Backend.Events.Redis.Tests.csproj" />

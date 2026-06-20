@@ -771,10 +771,12 @@ services.AddFeatureManagement()                 // абстракция: IFeatur
 > `Cheetah.slnx`. Пакеты — через `Directory.Packages.props` (`PackageReference` без `Version`).
 
 **Фаза 0 — абстракция (ядро движка)**
-1. `src/Cheetah.FeatureManagement`: `FeatureContext`, `IFeatureManager`, `FeatureVariant`,
+1. ✅ `src/Cheetah.FeatureManagement`: `FeatureContext`, `IFeatureManager`, `FeatureVariant`,
    `IFeatureFilter`/`FeatureFilterContext`, `IFeatureDefinitionProvider`/`FeatureDefinition`,
-   `[FeatureGate]`/`RequireFeature`, движок оценки + встроенные фильтры. Юнит-тесты движка — здесь же.
-   Добавить в `Cheetah.slnx`.
+   `RequireFeature` (endpoint-filter), движок `FeatureManager` (стратегия «первое сработавшее» + deny
+   через `Negate`, стабильный percentage по SHA-256, веса вариантов) + 6 встроенных фильтров
+   (Percentage/Users/Tenants/Roles/TimeWindow/JsonLogic). `CrmFeatureManagementModule`. Тесты движка и
+   фильтров — `Cheetah.FeatureManagement.Tests` (16 зелёных). Добавлено в `Cheetah.slnx`.
 
 **Фаза 1 — контракты бизнес-модуля**
 2. `DomainEvents`: `FeatureFlagCreated/Changed/Toggled` (§5.2/§13).
