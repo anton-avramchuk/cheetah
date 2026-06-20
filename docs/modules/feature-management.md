@@ -784,10 +784,13 @@ services.AddFeatureManagement()                 // абстракция: IFeatur
 4. ✅ `Contracts`: абстрактные `FeatureFlagDtoBase`/`CreateFeatureFlagRequestBase`/`SetTargetingRequestBase`/`SetTenantOverrideRequestBase` + `TargetingRuleDto`/`FeatureVariantDto`/`FeatureEvaluationDto` + `FeatureDefinitionDescriptor` (§6). Все собираются, добавлены в `Cheetah.slnx`.
 
 **Фаза 2 — домен**
-5. `Domain`: `FeatureFlagBase` + child-сущности (`TargetingRuleBase`, `FeatureVariantDef`,
-   `TenantOverride`) + `InitializeCore`/мутаторы (§5.2).
-6. `Domain`: generic-спецификации (§5.4).
-7. `Domain.Tests`: инварианты + наследование — **до** Infrastructure.
+5. ✅ `Domain`: `FeatureFlagBase` (abstract) + child-сущности `TargetingRule`/`FeatureVariantDef`/
+   `TenantOverride` (**конкретные** — расширяемость таргетинга идёт через plugin-фильтры, не наследование
+   правила; так же `ActivityReminder` конкретен в реальном Activities) + `InitializeCore`/мутаторы
+   (`Enable`/`Disable`/`SetTargeting`/`SetVariants`/`SetTenantOverride`/`RegisterMetadata` —
+   идемпотентный upsert метаданных без сброса Enabled/таргетинга).
+6. ✅ `Domain`: generic-спецификации `FlagByKey`/`FlagsByOwnerService`/`ActiveFlags` (§5.4).
+7. ✅ `Domain.Tests`: инварианты + наследование (`TestFeatureFlag : FeatureFlagBase` с доп. полем) — 6 зелёных.
 
 **Фаза 3 — инфраструктура**
 8. `Infrastructure`: `FeatureFlagConfigurationBase<>` (+`ConfigureCustom`), `…DbContextBase<>`.
