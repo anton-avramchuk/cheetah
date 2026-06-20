@@ -6,6 +6,7 @@ using Cheetah.Core.EntityFramework.PostgreSql.Extensions;
 using Cheetah.Core.EntityFramework.Repositories;
 using Cheetah.FeatureManagement;
 using Cheetah.Modules.FeatureManagement.Domain.Entities;
+using Cheetah.Modules.FeatureManagement.Domain.Repositories;
 using Cheetah.Modules.FeatureManagement.Infrastructure.Persistence;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -29,7 +30,10 @@ public static class FeatureManagementInfrastructureServiceCollectionExtensions
         services.AddDatabaseMigrator<TContext>();
         services.Configure<CrmDbContextOptions>(options => { options.UseNpgsql<TContext>(); });
 
-        services.AddScoped<IRepository<TFlag, Guid>, EfRepository<TContext, TFlag, Guid>>();
+        // Child-aware репозиторий; оба интерфейса резолвятся в один экземпляр (один DbContext-scope).
+        services.AddScoped<FeatureFlagRepository<TContext, TFlag>>();
+        services.AddScoped<IFeatureFlagRepository<TFlag>>(sp => sp.GetRequiredService<FeatureFlagRepository<TContext, TFlag>>());
+        services.AddScoped<IRepository<TFlag, Guid>>(sp => sp.GetRequiredService<FeatureFlagRepository<TContext, TFlag>>());
 
         services.AddScoped<IFeatureDefinitionProvider, CachedFeatureDefinitionProvider<TFlag>>();
         services.AddScoped<FeatureCacheInvalidator>();

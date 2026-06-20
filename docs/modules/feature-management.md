@@ -802,10 +802,15 @@ services.AddFeatureManagement()                 // абстракция: IFeatur
     инвалидатор). Подписка инвалидатора на шину — Фаза 6 (шаг 17).
 
 **Фаза 4 — приложение**
-11. `Application`: `IFeatureFlagFactory`/`IFeatureFlagProjector`, generic команды/запросы + хендлеры (§7),
-    `EvaluateFeaturesQuery` (через `IFeatureManager`).
-12. `AddFeatureManagementApplication<>`.
-13. `Application.Tests`: идемпотентный sync, evaluate, инвалидация.
+11. ✅ `Application`: `IFeatureFlagFactory` (+`CreateFromDescriptor`)/`IFeatureFlagProjector`; команды
+    `CreateFeatureFlag`/`Enable`/`Disable`/`SetTargeting`/`SetTenantOverride`/`SyncFeatureRegistry`
+    (идемпотентный upsert метаданных, не сбрасывает Enabled/таргетинг) + запросы `GetFeatureFlagByKey`/
+    `ListFeatureFlags`/`EvaluateFeatures` (через `IFeatureManager`, дедуп ключей). Дочерне-осведомлённый
+    `IFeatureFlagRepository<TFlag>` (Domain) + реализация в Infrastructure — чтобы заменять правила без EF
+    в Application. `TargetingRuleMapper` (DTO↔домен, JSON-параметры).
+12. ✅ `AddFeatureManagementApplication<TFlag,TCreateRequest,TDto,TFactory,TProjector>`.
+13. ✅ `Application.Tests`: Enable→Toggled, SetTargeting→Changed, идемпотентный Sync (создание + сохранение
+    настроек), проекция, батч-Evaluate с дедупом — 5 зелёных.
 
 **Фаза 5 — API + (Default) + клиент**
 14. `Api`: `FeatureEndpointsBase<>` + `ApiModuleBase` (§9): админка + registry + evaluate.
