@@ -793,9 +793,13 @@ services.AddFeatureManagement()                 // абстракция: IFeatur
 7. ✅ `Domain.Tests`: инварианты + наследование (`TestFeatureFlag : FeatureFlagBase` с доп. полем) — 6 зелёных.
 
 **Фаза 3 — инфраструктура**
-8. `Infrastructure`: `FeatureFlagConfigurationBase<>` (+`ConfigureCustom`), `…DbContextBase<>`.
-9. `Infrastructure`: `CachedFeatureDefinitionProvider<>` (реализация порта, кэш-aside) + подписка-инвалидатор.
-10. `AddFeatureManagementInfrastructure<>` (`AddDbContext`, репозиторий, провайдер).
+8. ✅ `Infrastructure`: `FeatureFlagConfigurationBase<>` (+`ConfigureCustom`, дети через `_rules`/`_variants`/
+   `_overrides`, `jsonb`-параметры, уникальный индекс по `Key`) + child-конфиги + `FeatureManagementDbContextBase<>`.
+9. ✅ `Infrastructure`: `CachedFeatureDefinitionProvider<>` (реализация порта, кэш-aside через `ICacheService`
+   + `Include` детей + `FeatureDefinitionMapper` с разбором JSON и tenant-override) + `FeatureCacheInvalidator`
+   (обработчик `Changed`/`Toggled`). Константы — в `Shared` (`FeatureManagementConstants`).
+10. ✅ `AddFeatureManagementInfrastructure<TContext,TFlag>` (DbContext, мигратор, репозиторий, провайдер,
+    инвалидатор). Подписка инвалидатора на шину — Фаза 6 (шаг 17).
 
 **Фаза 4 — приложение**
 11. `Application`: `IFeatureFlagFactory`/`IFeatureFlagProjector`, generic команды/запросы + хендлеры (§7),
