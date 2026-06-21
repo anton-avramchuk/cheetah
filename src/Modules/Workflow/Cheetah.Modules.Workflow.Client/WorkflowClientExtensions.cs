@@ -72,6 +72,22 @@ public static class WorkflowClientExtensions
         return builder;
     }
 
+    /// <summary>Декларирует готовый список триггеров (удобно для адаптеров, экспонирующих свои дескрипторы).</summary>
+    public static IWorkflowClientBuilder RegisterTriggers(
+        this IWorkflowClientBuilder builder, IReadOnlyList<TriggerDescriptor> triggers)
+    {
+        builder.Services.AddSingleton(new WorkflowRegistrationContribution(triggers, Array.Empty<ActionDescriptor>()));
+        return builder;
+    }
+
+    /// <summary>Декларирует готовый список действий (удобно для адаптеров, экспонирующих свои дескрипторы).</summary>
+    public static IWorkflowClientBuilder RegisterActions(
+        this IWorkflowClientBuilder builder, IReadOnlyList<ActionDescriptor> actions)
+    {
+        builder.Services.AddSingleton(new WorkflowRegistrationContribution(Array.Empty<TriggerDescriptor>(), actions));
+        return builder;
+    }
+
     private sealed class Builder(IServiceCollection services) : IWorkflowClientBuilder
     {
         public IServiceCollection Services { get; } = services;

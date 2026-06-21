@@ -189,6 +189,7 @@
         <Project Path="src/Modules/Deals/Cheetah.Modules.Deals.Domain.Tests/Cheetah.Modules.Deals.Domain.Tests.csproj" />
         <Project Path="src/Modules/Deals/Cheetah.Modules.Deals.Application.Tests/Cheetah.Modules.Deals.Application.Tests.csproj" />
         <Project Path="src/Modules/Deals/Cheetah.Modules.Deals.Client.Tests/Cheetah.Modules.Deals.Client.Tests.csproj" />
+        <Project Path="src/Modules/Deals/Cheetah.Modules.Deals.Workflow/Cheetah.Modules.Deals.Workflow.csproj" />
     </Folder>
     <Folder Name="/Modules/CustomFields/">
         <Project Path="src/Modules/CustomFields/Cheetah.Modules.CustomFields.Api/Cheetah.Modules.CustomFields.Api.csproj" />
