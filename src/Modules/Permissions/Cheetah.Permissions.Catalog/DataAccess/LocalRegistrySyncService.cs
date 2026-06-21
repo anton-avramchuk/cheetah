@@ -1,12 +1,11 @@
 using Cheetah.Core.DataAccess.Abstractions;
-using Cheetah.Permissions.Catalog.DataAccess;
 using Cheetah.Permissions.Catalog.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace Cheetah.Permissions.Catalog.Application;
+namespace Cheetah.Permissions.Catalog.DataAccess;
 
 /// <summary>
 /// При старте: сканирует загруженные сборки на [Permission]-атрибуты (через PermissionRegistry),

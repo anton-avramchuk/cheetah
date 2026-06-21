@@ -20,7 +20,7 @@ public class GetUserByIdQueryHandlerTests
     public GetUserByIdQueryHandlerTests()
     {
         var store = new Mock<IUserStore<StubUser>>();
-        _userManagerMock = new Mock<UserManager<StubUser>>(store.Object, null, null, null, null, null, null, null, null);
+        _userManagerMock = new Mock<UserManager<StubUser>>(store.Object, null!, null!, null!, null!, null!, null!, null!, null!);
         _mapperMock = new Mock<IObjectMapper>();
         _handler = new StubGetUserByIdQueryHandler(_userManagerMock.Object, _mapperMock.Object);
     }

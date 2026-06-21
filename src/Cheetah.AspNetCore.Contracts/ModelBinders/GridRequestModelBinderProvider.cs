@@ -8,7 +8,7 @@ namespace Cheetah.AspNetCore.Contracts.ModelBinders
     /// </summary>
     public class GridRequestModelBinderProvider : IModelBinderProvider
     {
-        public IModelBinder GetBinder(ModelBinderProviderContext context)
+        public IModelBinder? GetBinder(ModelBinderProviderContext context)
         {
             if (context == null)
                 throw new ArgumentNullException(nameof(context));

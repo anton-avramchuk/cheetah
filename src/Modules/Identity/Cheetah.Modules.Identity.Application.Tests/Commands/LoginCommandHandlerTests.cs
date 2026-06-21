@@ -138,6 +138,6 @@ public class LoginCommandHandlerTests
     private static Mock<UserManager<StubUser>> CreateUserManagerMock()
     {
         var store = new Mock<IUserStore<StubUser>>();
-        return new Mock<UserManager<StubUser>>(store.Object, null, null, null, null, null, null, null, null);
+        return new Mock<UserManager<StubUser>>(store.Object, null!, null!, null!, null!, null!, null!, null!, null!);
     }
 }

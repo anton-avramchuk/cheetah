@@ -8,9 +8,9 @@ namespace Cheetah.AspNetCore.Contracts.ModelBinders
     /// <summary>
     /// Model binder для преобразования query string в GridRequest
     /// Поддерживает формат Kendo UI:
-    /// ?page=1&pageSize=10
-    /// &sort[0][field]=Name&sort[0][dir]=asc
-    /// &filter[logic]=and&filter[filters][0][field]=Name&filter[filters][0][operator]=contains&filter[filters][0][value]=test
+    /// ?page=1&amp;pageSize=10
+    /// &amp;sort[0][field]=Name&amp;sort[0][dir]=asc
+    /// &amp;filter[logic]=and&amp;filter[filters][0][field]=Name&amp;filter[filters][0][operator]=contains&amp;filter[filters][0][value]=test
     /// </summary>
     public class GridRequestModelBinder : IModelBinder
     {
@@ -49,8 +49,8 @@ namespace Cheetah.AspNetCore.Contracts.ModelBinders
         /// <summary>
         /// Парсит сортировку из query string
         /// Поддерживаемые форматы:
-        /// - sort[0][field]=Name&sort[0][dir]=asc (старый формат Kendo)
-        /// - sort[0].field=Name&sort[0].dir=asc (новый формат PrimeNG)
+        /// - sort[0][field]=Name&amp;sort[0][dir]=asc (старый формат Kendo)
+        /// - sort[0].field=Name&amp;sort[0].dir=asc (новый формат PrimeNG)
         /// </summary>
         private List<SortDescriptor> ParseSort(Microsoft.AspNetCore.Http.IQueryCollection queryString)
         {
@@ -78,7 +78,7 @@ namespace Cheetah.AspNetCore.Contracts.ModelBinders
                     return null;
                 })
                 .Where(x => x != null)
-                .GroupBy(x => x.Index)
+                .GroupBy(x => x!.Index)
                 .OrderBy(g => g.Key);
 
             foreach (var group in sortGroups)
@@ -87,6 +87,9 @@ namespace Cheetah.AspNetCore.Contracts.ModelBinders
 
                 foreach (var item in group)
                 {
+                    if (item is null)
+                        continue;
+
                     var value = queryString[item.Key].FirstOrDefault();
                     if (item.Property == "field")
                         descriptor.Field = value;
@@ -103,8 +106,8 @@ namespace Cheetah.AspNetCore.Contracts.ModelBinders
 
         /// <summary>
         /// Рекурсивно парсит фильтры из query string
-        /// Формат: filter[logic]=and&filter[filters][0][field]=Name&filter[filters][0][operator]=contains&filter[filters][0][value]=test
-        /// Поддерживает точечную нотацию: filter.field=Name&filter.operator=eq&filter.value=test
+        /// Формат: filter[logic]=and&amp;filter[filters][0][field]=Name&amp;filter[filters][0][operator]=contains&amp;filter[filters][0][value]=test
+        /// Поддерживает точечную нотацию: filter.field=Name&amp;filter.operator=eq&amp;filter.value=test
         /// </summary>
         private FilterDescriptor? ParseFilter(Microsoft.AspNetCore.Http.IQueryCollection queryString, string prefix)
         {
@@ -190,10 +193,10 @@ namespace Cheetah.AspNetCore.Contracts.ModelBinders
         /// <summary>
         /// Парсит значение из строки в соответствующий тип
         /// </summary>
-        private object ParseValue(string value)
+        private object ParseValue(string? value)
         {
             if (string.IsNullOrEmpty(value))
-                return value;
+                return value ?? string.Empty;
 
             // Попытка распарсить как число
             if (int.TryParse(value, out var intValue))

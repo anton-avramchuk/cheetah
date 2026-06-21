@@ -16,5 +16,3 @@ public static class ComparableExtensions
         return value.CompareTo(minInclusiveValue) >= 0 && value.CompareTo(maxInclusiveValue) <= 0;
     }
 }
-
-// <summary>

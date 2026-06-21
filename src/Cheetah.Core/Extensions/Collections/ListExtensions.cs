@@ -3,7 +3,7 @@ using Cheetah.Core.Extensions.Common;
 
 namespace Cheetah.Core.Extensions.Collections;
 
-// <summary>
+/// <summary>
 /// Extension methods for <see cref="IList{T}"/>.
 /// </summary>
 public static class ListExtensions

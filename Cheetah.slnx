@@ -269,6 +269,7 @@
         <Project Path="src/Modules/Customer/Cheetah.Modules.Customer.Application.Tests/Cheetah.Modules.Customer.Application.Tests.csproj" />
     </Folder>
     <Folder Name="/Modules/Workflow/">
+        <Project Path="src/Cheetah.Workflow/Cheetah.Workflow.csproj" />
         <Project Path="src/Modules/Workflow/Cheetah.Modules.Workflow.Api/Cheetah.Modules.Workflow.Api.csproj" />
         <Project Path="src/Modules/Workflow/Cheetah.Modules.Workflow.Application.Tests/Cheetah.Modules.Workflow.Application.Tests.csproj" />
         <Project Path="src/Modules/Workflow/Cheetah.Modules.Workflow.Application/Cheetah.Modules.Workflow.Application.csproj" />
@@ -292,10 +293,6 @@
         <File Path="pack.ps1" />
         <File Path="version.props" />
     </Folder>
-    <Folder Name="/src/">
-        <Project Path="src/Cheetah.Workflow/Cheetah.Workflow.csproj" />
-    </Folder>
-    <Folder Name="/src/Modules/" />
     <Folder Name="/Modules/SalesDocuments/">
         <Project Path="src/Modules/SalesDocuments/Cheetah.Modules.SalesDocuments.Api/Cheetah.Modules.SalesDocuments.Api.csproj" />
         <Project Path="src/Modules/SalesDocuments/Cheetah.Modules.SalesDocuments.Application.Tests/Cheetah.Modules.SalesDocuments.Application.Tests.csproj" />

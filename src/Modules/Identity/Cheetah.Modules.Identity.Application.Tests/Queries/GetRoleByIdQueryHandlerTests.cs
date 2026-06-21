@@ -20,7 +20,7 @@ public class GetRoleByIdQueryHandlerTests
     public GetRoleByIdQueryHandlerTests()
     {
         var store = new Mock<IRoleStore<StubRole>>();
-        _roleManagerMock = new Mock<RoleManager<StubRole>>(store.Object, null, null, null, null);
+        _roleManagerMock = new Mock<RoleManager<StubRole>>(store.Object, null!, null!, null!, null!);
         _mapperMock = new Mock<IObjectMapper>();
         _handler = new StubGetRoleByIdQueryHandler(_roleManagerMock.Object, _mapperMock.Object);
     }

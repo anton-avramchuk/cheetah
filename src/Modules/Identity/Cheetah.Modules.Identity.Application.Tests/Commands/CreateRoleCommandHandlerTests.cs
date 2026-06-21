@@ -21,7 +21,7 @@ public class CreateRoleCommandHandlerTests
     public CreateRoleCommandHandlerTests()
     {
         var store = new Mock<IRoleStore<StubRole>>();
-        _roleManagerMock = new Mock<RoleManager<StubRole>>(store.Object, null, null, null, null);
+        _roleManagerMock = new Mock<RoleManager<StubRole>>(store.Object, null!, null!, null!, null!);
         _handler = new StubCreateRoleCommandHandler(_roleManagerMock.Object);
     }
 

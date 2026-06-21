@@ -24,10 +24,10 @@ public class CreateUserCommandHandlerTests
     public CreateUserCommandHandlerTests()
     {
         var userStore = new Mock<IUserStore<StubUser>>();
-        _userManagerMock = new Mock<UserManager<StubUser>>(userStore.Object, null, null, null, null, null, null, null, null);
+        _userManagerMock = new Mock<UserManager<StubUser>>(userStore.Object, null!, null!, null!, null!, null!, null!, null!, null!);
 
         var roleStore = new Mock<IRoleStore<StubRole>>();
-        _roleManagerMock = new Mock<RoleManager<StubRole>>(roleStore.Object, null, null, null, null);
+        _roleManagerMock = new Mock<RoleManager<StubRole>>(roleStore.Object, null!, null!, null!, null!);
 
         _handler = new StubCreateUserCommandHandler(_userManagerMock.Object, _roleManagerMock.Object, new NullEventBus());
     }

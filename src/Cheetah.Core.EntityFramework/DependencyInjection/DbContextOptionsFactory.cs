@@ -79,7 +79,6 @@ public static class DbContextOptionsFactory
         IServiceProvider serviceProvider,
         string connectionStringName)
     {
-        // Use DefaultConnectionStringResolver.Resolve when we remove IConnectionStringResolver.Resolve
         var connectionStringResolver = serviceProvider.GetRequiredService<IConnectionStringResolver>();
         //        var currentTenant = serviceProvider.GetRequiredService<ICurrentTenant>();
 
@@ -92,7 +91,9 @@ public static class DbContextOptionsFactory
         //    }
         //}
 
-        return connectionStringResolver.ResolveAsync(connectionStringName).Result;
+        // EF создаёт DbContextOptions синхронно — используем синхронный контракт резолвера
+        // вместо блокировки .Result (см. IConnectionStringResolver.Resolve).
+        return connectionStringResolver.Resolve(connectionStringName);
     }
 
 }

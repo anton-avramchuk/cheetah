@@ -51,7 +51,6 @@ public partial class CheetahIdentityApiModule : CrmModule
             Results.Ok(new { publicKey = publicKeyProvider.PublicKeyBase64 }))
             .AllowAnonymous()
             .WithTags("Auth")
-            .WithName("GetPublicKey")
-            .WithOpenApi();
+            .WithName("GetPublicKey");
     }
 }

@@ -7,7 +7,7 @@ namespace Cheetah.Modules.Calendar.DomainEvents;
 /// (если есть) передаётся парой строк/Guid — DomainEvents не зависит от Shared.
 /// </summary>
 public record CalendarEventScheduledEvent(
-    Guid EventId,
+    Guid CalendarEventId,
     Guid CalendarId,
     string Title,
     DateTime StartUtc,
@@ -18,21 +18,21 @@ public record CalendarEventScheduledEvent(
 
 /// <summary>Событие перенесено (изменён период/таймзона).</summary>
 public record CalendarEventRescheduledEvent(
-    Guid EventId,
+    Guid CalendarEventId,
     DateTime StartUtc,
     DateTime EndUtc,
     string TimeZoneId) : EventBase;
 
 /// <summary>Реквизиты события изменены (заголовок/описание/локация).</summary>
 public record CalendarEventDetailsChangedEvent(
-    Guid EventId,
+    Guid CalendarEventId,
     string Title) : EventBase;
 
 /// <summary>Правило повторения установлено или изменено.</summary>
 public record CalendarEventRecurrenceChangedEvent(
-    Guid EventId,
+    Guid CalendarEventId,
     string? RRule) : EventBase;
 
 /// <summary>Событие отменено.</summary>
 public record CalendarEventCancelledEvent(
-    Guid EventId) : EventBase;
+    Guid CalendarEventId) : EventBase;

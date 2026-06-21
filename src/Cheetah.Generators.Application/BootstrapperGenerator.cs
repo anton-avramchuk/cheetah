@@ -342,7 +342,7 @@ public class BootstrapperGenerator : IIncrementalGenerator
         // Создаём диагностическое сообщение об ошибке
         var diagnostic = Diagnostic.Create(new DiagnosticDescriptor(
                 id: "BOOTSTRAPGEN001",
-                title: "Ошибка генерации Bootstrapper ",
+                title: "Ошибка генерации Bootstrapper",
                 messageFormat: message,
                 category: nameof(BootstrapperGenerator),
                 DiagnosticSeverity.Error,

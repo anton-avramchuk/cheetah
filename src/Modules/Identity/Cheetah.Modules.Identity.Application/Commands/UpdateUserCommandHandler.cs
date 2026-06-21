@@ -48,6 +48,9 @@ public abstract class UpdateUserCommandHandler<TUser, TRole>(
 
             if (command.RoleIds.Count > 0)
             {
+                // Identity намеренно построен на ASP.NET Core Identity (UserManager/RoleManager),
+                // а не на Cheetah Repository/Specification. RoleManager.Roles — это штатный API
+                // фреймворка, поэтому LINQ-проекция здесь идиоматична и не нарушает правило спецификаций.
                 var roleNames = await roleManager.Roles
                     .Where(r => command.RoleIds.Contains(r.Id))
                     .Select(r => r.Name!)

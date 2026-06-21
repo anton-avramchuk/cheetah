@@ -9,8 +9,7 @@ namespace Cheetah.RateLimit.Redis.Tests;
 
 public class RedisDistributedRateLimiterTests : IAsyncLifetime
 {
-    private readonly RedisContainer _container = new RedisBuilder()
-        .WithImage("redis:7-alpine")
+    private readonly RedisContainer _container = new RedisBuilder("redis:7-alpine")
         .Build();
 
     private RedisDistributedRateLimiter _sut = null!;

@@ -10,8 +10,7 @@ namespace __Prefix__.ModuleName.Api.Tests.Fixtures;
 
 public class ModuleNameApiFixture : WebApplicationFactory<Program>, IAsyncLifetime
 {
-    private readonly PostgreSqlContainer _dbContainer = new PostgreSqlBuilder()
-        .WithImage("postgres:16-alpine")
+    private readonly PostgreSqlContainer _dbContainer = new PostgreSqlBuilder("postgres:16-alpine")
         .WithDatabase("moduleschema_test")
         .WithUsername("test")
         .WithPassword("test")

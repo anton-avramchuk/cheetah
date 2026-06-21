@@ -19,7 +19,7 @@ public class DeleteRoleCommandHandlerTests
     public DeleteRoleCommandHandlerTests()
     {
         var store = new Mock<IRoleStore<StubRole>>();
-        _roleManagerMock = new Mock<RoleManager<StubRole>>(store.Object, null, null, null, null);
+        _roleManagerMock = new Mock<RoleManager<StubRole>>(store.Object, null!, null!, null!, null!);
         _handler = new StubDeleteRoleCommandHandler(_roleManagerMock.Object);
     }
 

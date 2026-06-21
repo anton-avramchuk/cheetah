@@ -50,7 +50,7 @@ public class HttpCustomFieldsClientTests
 
         handler.LastRequest!.Method.ShouldBe(HttpMethod.Post);
         handler.LastRequest!.RequestUri!.AbsolutePath.ShouldBe("/api/custom-fields/registry/sync");
-        handler.LastBody.ShouldContain("crm.deal");
+        handler.LastBody!.ShouldContain("crm.deal");
     }
 
     [Fact]

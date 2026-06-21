@@ -30,7 +30,7 @@ public class DbContextProvider<TDbContext> : IDbContextProvider<TDbContext>, ISe
 
     private string ResolveConnectionString(string connectionStringName)
     {
-        return _connectionStringResolver.ResolveAsync(connectionStringName).Result;
+        return _connectionStringResolver.Resolve(connectionStringName);
     }
 
     private async Task<string> ResolveConnectionStringAsync(string connectionStringName)

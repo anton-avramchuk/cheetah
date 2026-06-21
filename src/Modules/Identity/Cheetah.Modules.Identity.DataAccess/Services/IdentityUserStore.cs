@@ -57,7 +57,7 @@ public sealed class IdentityUserStore<TIdentityUser, TIdentityRole, TIdentityCon
     {
         cancellationToken.ThrowIfCancellationRequested();
         if (user == null) throw new ArgumentNullException(nameof(user));
-        return Task.FromResult(user.UserName);
+        return Task.FromResult<string?>(user.UserName);
     }
 
     public Task SetUserNameAsync(TIdentityUser user, string? userName, CancellationToken cancellationToken)
@@ -74,7 +74,7 @@ public sealed class IdentityUserStore<TIdentityUser, TIdentityRole, TIdentityCon
     {
         cancellationToken.ThrowIfCancellationRequested();
         if (user == null) throw new ArgumentNullException(nameof(user));
-        return Task.FromResult(user.NormalizedUserName);
+        return Task.FromResult<string?>(user.NormalizedUserName);
     }
 
     public Task SetNormalizedUserNameAsync(TIdentityUser user, string? normalizedName, CancellationToken cancellationToken)
@@ -159,7 +159,7 @@ public sealed class IdentityUserStore<TIdentityUser, TIdentityRole, TIdentityCon
     {
         cancellationToken.ThrowIfCancellationRequested();
         if (user == null) throw new ArgumentNullException(nameof(user));
-        return Task.FromResult(user.Email);
+        return Task.FromResult<string?>(user.Email);
     }
 
     public Task<bool> GetEmailConfirmedAsync(TIdentityUser user, CancellationToken cancellationToken)
@@ -192,7 +192,7 @@ public sealed class IdentityUserStore<TIdentityUser, TIdentityRole, TIdentityCon
     {
         if (user == null) throw new ArgumentNullException(nameof(user));
         cancellationToken.ThrowIfCancellationRequested();
-        return Task.FromResult(user.NormalizedEmail);
+        return Task.FromResult<string?>(user.NormalizedEmail);
     }
 
     public Task SetNormalizedEmailAsync(TIdentityUser user, string? normalizedEmail, CancellationToken cancellationToken)
@@ -367,7 +367,7 @@ public sealed class IdentityUserStore<TIdentityUser, TIdentityRole, TIdentityCon
     {
         if (user == null) throw new ArgumentNullException(nameof(user));
         cancellationToken.ThrowIfCancellationRequested();
-        return Task.FromResult(user.SecurityStamp);
+        return Task.FromResult<string?>(user.SecurityStamp);
     }
 
     public IQueryable<TIdentityUser> Users

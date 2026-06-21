@@ -10,6 +10,13 @@
 
     <!-- NuGet metadata for all Cheetah.* non-test projects -->
     <PropertyGroup Condition="$(MSBuildProjectName.StartsWith('Cheetah')) AND !$(MSBuildProjectName.EndsWith('.Tests'))">
+        <!-- Продакшн-код держим без предупреждений компилятора: любое CS-warning ломает сборку.
+             Тестовые проекты намеренно исключены. -->
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <!-- NuGet-аудит (уязвимости транзитивных пакетов) остаётся ВИДИМЫМ warning'ом, но не
+             фатальным: новый CVE не должен ронять сборку без изменений в коде. Сами уязвимости
+             отслеживаются и устраняются обновлением корневых пакетов (MongoDB.Driver, Microsoft.Data.Sqlite). -->
+        <WarningsNotAsErrors>NU1902;NU1903</WarningsNotAsErrors>
         <IsPackable>true</IsPackable>
         <PackageId>$(MSBuildProjectName)</PackageId>
         <Version>$(CheetahVersion)</Version>
@@ -21,7 +28,10 @@
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
         <RepositoryType>git</RepositoryType>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
-        <NoWarn>$(NoWarn);CS1591</NoWarn>
+        <!-- Неполнота xmldoc терпима и не ломает сборку: CS1591 (нет doc у члена) и
+             CS1573 (задокументирована часть параметров). Структурно битый xmldoc
+             (CS1570/CS1574/CS1734) НЕ подавляется — это реальные ошибки и остаётся фатальным. -->
+        <NoWarn>$(NoWarn);CS1591;CS1573</NoWarn>
     </PropertyGroup>
 
 </Project>

@@ -1,7 +1,7 @@
 namespace Cheetah.FileStorage;
 
 /// <summary>
-/// Абстракция файлового хранилища. Ключ (<paramref name="key"/>) — opaque-строка
+/// Абстракция файлового хранилища. Ключ (<c>key</c>) — opaque-строка
 /// с иерархическими сегментами через "/" (например "attachments/2026/05/uuid-name.pdf").
 /// Конкретные провайдеры (Local, S3, Azure Blob) реализуют эту абстракцию по-своему.
 /// </summary>

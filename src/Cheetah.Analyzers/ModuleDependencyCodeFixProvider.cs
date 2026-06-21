@@ -95,7 +95,7 @@ public class ModuleDependencyCodeFixProvider : CodeFixProvider
             return document;
 
         var compilation = semanticModel.Compilation;
-        var moduleType = FindTypeInCompilation(compilation, moduleTypeName);
+        var moduleType = FindTypeInCompilation(compilation, moduleTypeName!);
         if (moduleType is null)
             return document;
 
@@ -129,7 +129,7 @@ public class ModuleDependencyCodeFixProvider : CodeFixProvider
             if (string.IsNullOrEmpty(moduleTypeName))
                 continue;
 
-            var moduleType = FindTypeInCompilation(compilation, moduleTypeName);
+            var moduleType = FindTypeInCompilation(compilation, moduleTypeName!);
             if (moduleType is null)
                 continue;
 

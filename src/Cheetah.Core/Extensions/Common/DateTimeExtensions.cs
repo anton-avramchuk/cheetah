@@ -1,5 +1,6 @@
 namespace Cheetah.Core.Extensions.Common;
 
+/// <summary>
 /// Extension methods for the <see cref="DateTime"/>.
 /// </summary>
 public static class DateTimeExtensions

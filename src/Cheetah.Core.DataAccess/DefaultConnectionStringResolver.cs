@@ -16,7 +16,7 @@ public class DefaultConnectionStringResolver : IConnectionStringResolver
         Options = options.CurrentValue;
     }
 
-    [Obsolete("Use ResolveAsync method.")]
+    // Подлинно синхронная реализация (без блокировки Task) — горячий путь EF.
     public virtual string Resolve(string? connectionStringName = null)
     {
         return ResolveInternal(connectionStringName)!;

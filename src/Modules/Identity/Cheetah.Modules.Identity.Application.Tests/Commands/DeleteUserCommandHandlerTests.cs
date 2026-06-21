@@ -20,7 +20,7 @@ public class DeleteUserCommandHandlerTests
     public DeleteUserCommandHandlerTests()
     {
         var store = new Mock<IUserStore<StubUser>>();
-        _userManagerMock = new Mock<UserManager<StubUser>>(store.Object, null, null, null, null, null, null, null, null);
+        _userManagerMock = new Mock<UserManager<StubUser>>(store.Object, null!, null!, null!, null!, null!, null!, null!, null!);
         _handler = new StubDeleteUserCommandHandler(_userManagerMock.Object, new NullEventBus());
     }
 

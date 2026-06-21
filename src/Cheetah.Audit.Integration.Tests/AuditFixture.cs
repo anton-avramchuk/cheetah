@@ -12,15 +12,13 @@ namespace Cheetah.Audit.Integration.Tests;
 /// </summary>
 public class AuditFixture : IAsyncLifetime
 {
-    private readonly PostgreSqlContainer _postgres = new PostgreSqlBuilder()
-        .WithImage("postgres:16-alpine")
+    private readonly PostgreSqlContainer _postgres = new PostgreSqlBuilder("postgres:16-alpine")
         .WithDatabase("audit_test")
         .WithUsername("test")
         .WithPassword("test")
         .Build();
 
-    private readonly KafkaContainer _kafka = new KafkaBuilder()
-        .WithImage("confluentinc/cp-kafka:7.6.1")
+    private readonly KafkaContainer _kafka = new KafkaBuilder("confluentinc/cp-kafka:7.6.1")
         .Build();
 
     public string PostgresConnectionString => _postgres.GetConnectionString();

@@ -8,7 +8,6 @@ using Cheetah.Core.EntityFramework.Migrations;
 using Cheetah.Core.EntityFramework.PostgreSql;
 using Cheetah.Core.EntityFramework.PostgreSql.Extensions;
 using Cheetah.Core.Modularity;
-using Cheetah.Permissions.Catalog.Application;
 using Cheetah.Permissions.Catalog.DataAccess;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;

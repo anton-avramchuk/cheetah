@@ -161,7 +161,7 @@ public class DisplayControlsTests : BunitContext
         var bar = cut.Find(".progress-bar");
         bar.ClassList.ShouldContain("bg-success");
         bar.ClassList.ShouldContain("progress-bar-striped");
-        bar.GetAttribute("style").ShouldContain("width: 75%");
+        bar.GetAttribute("style")!.ShouldContain("width: 75%");
         bar.GetAttribute("aria-valuenow").ShouldBe("75");
     }
 

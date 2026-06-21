@@ -1,6 +1,6 @@
 namespace Cheetah.Core.Extensions.Collections;
 
-// <summary> 
+/// <summary>
 /// Extension methods for <see cref="IEnumerable{T}"/>.
 /// </summary>
 public static class EnumerableExtensions

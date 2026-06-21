@@ -77,7 +77,5 @@
     <PackageVersion Include="xunit" Version="2.9.3" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
     <PackageVersion Include="Yarp.ReverseProxy" Version="2.3.0" />
-    <PackageVersion Include="Aspire.Hosting.PostgreSQL" Version="13.1.1" />
-    <PackageVersion Include="Aspire.Hosting.Redis" Version="13.1.1" />
   </ItemGroup>
 </Project>

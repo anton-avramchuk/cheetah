@@ -26,7 +26,7 @@ public class MappingGenerator : IIncrementalGenerator
     private static readonly DiagnosticDescriptor MissingSourceTypeDescriptor = new(
         id: "CHMAP02",
         title: "Missing source type",
-        messageFormat: "[MapFrom] on '{0}' does not specify a valid source type.",
+        messageFormat: "[MapFrom] on '{0}' does not specify a valid source type",
         category: "Mapping",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true);

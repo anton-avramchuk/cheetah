@@ -335,11 +335,15 @@ public class EndpointRegistrationGenerator : IIncrementalGenerator
         var tQueryResult = typeArgs[2].ToDisplayString();
         var tResponse = typeArgs[3].ToDisplayString();
 
+        // QueryOrNotFoundEndpoint declares TQuery : IQuery<TQueryResult?>, so the dispatcher
+        // call must use the nullable result type to match the IQuery<T> constraint exactly.
+        var tQueryResultNullable = tQueryResult.EndsWith("?") ? tQueryResult : $"{tQueryResult}?";
+
         var parameters = $"[AsParameters] {tRequest} request, [FromServices] IDispatcher dispatcher, [FromServices] IObjectMapper mapper, CancellationToken cancellationToken";
         var body = new List<string>
         {
             $"var query = mapper.Map<{tQuery}>(request);",
-            $"var result = await dispatcher.QueryAsync<{tQuery}, {tQueryResult}>(query, cancellationToken);",
+            $"var result = await dispatcher.QueryAsync<{tQuery}, {tQueryResultNullable}>(query, cancellationToken);",
             "",
             "if (result == null)",
             "    return Results.NotFound();",

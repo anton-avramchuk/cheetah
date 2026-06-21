@@ -10,8 +10,7 @@ namespace Cheetah.DistributedLock.Postgres.Tests;
 
 public class PostgresDistributedLockProviderTests : IAsyncLifetime
 {
-    private readonly PostgreSqlContainer _container = new PostgreSqlBuilder()
-        .WithImage("postgres:16-alpine")
+    private readonly PostgreSqlContainer _container = new PostgreSqlBuilder("postgres:16-alpine")
         .WithDatabase("lock_test")
         .WithUsername("test")
         .WithPassword("test")

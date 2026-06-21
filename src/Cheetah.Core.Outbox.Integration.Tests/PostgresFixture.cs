@@ -9,8 +9,7 @@ namespace Cheetah.Core.Outbox.Integration.Tests;
 /// </summary>
 public class PostgresFixture : IAsyncLifetime
 {
-    private readonly PostgreSqlContainer _container = new PostgreSqlBuilder()
-        .WithImage("postgres:16-alpine")
+    private readonly PostgreSqlContainer _container = new PostgreSqlBuilder("postgres:16-alpine")
         .WithDatabase("outbox_test")
         .WithUsername("test")
         .WithPassword("test")

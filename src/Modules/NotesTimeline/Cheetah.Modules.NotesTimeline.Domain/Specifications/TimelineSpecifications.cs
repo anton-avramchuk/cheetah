@@ -5,7 +5,7 @@ using Cheetah.Modules.NotesTimeline.Domain.Entities;
 namespace Cheetah.Modules.NotesTimeline.Domain.Specifications;
 
 /// <summary>
-/// Строки ленты сущности с курсорной отсечкой (строки старше курсора <paramref name="before"/>) и
+/// Строки ленты сущности с курсорной отсечкой (строки старше курсора <c>before</c>) и
 /// опциональным фильтром по видам. Используется query-handler'ом вместо raw LINQ.
 /// </summary>
 public sealed class TimelineByEntitySpecification : Specification<TimelineEntry>

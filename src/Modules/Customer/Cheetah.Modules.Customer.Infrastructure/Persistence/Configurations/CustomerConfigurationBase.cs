@@ -27,13 +27,14 @@ public abstract class CustomerConfigurationBase<TCustomer> : IEntityTypeConfigur
             .HasMaxLength(CustomerConstants.MaxNameLength)
             .IsRequired();
 
-        // VO-конвертеры: для null конвертер не вызывается (nullable-колонки работают как есть).
+        // VO-конвертеры: для null конвертер не вызывается (nullable-колонки работают как есть),
+        // поэтому разыменование e!/p! здесь безопасно.
         builder.Property(x => x.Email)
-            .HasConversion(e => e.Value, v => Email.Create(v))
+            .HasConversion(e => e!.Value, v => Email.Create(v))
             .HasMaxLength(CustomerConstants.MaxEmailLength);
 
         builder.Property(x => x.Phone)
-            .HasConversion(p => p.Value, v => Phone.Create(v))
+            .HasConversion(p => p!.Value, v => Phone.Create(v))
             .HasMaxLength(CustomerConstants.MaxPhoneLength);
 
         builder.Property(x => x.Status)

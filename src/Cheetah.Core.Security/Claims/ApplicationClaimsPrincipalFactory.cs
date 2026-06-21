@@ -11,7 +11,7 @@ public class ApplicationClaimsPrincipalFactory(IServiceScopeFactory serviceScope
 {
     public IServiceScopeFactory ServiceScopeFactory { get; } = serviceScopeFactory ?? throw new ArgumentNullException(nameof(serviceScopeFactory));
 
-    public Task<ClaimsPrincipal> CreateAsync(ClaimsPrincipal existsClaimsPrincipal = null)
+    public Task<ClaimsPrincipal> CreateAsync(ClaimsPrincipal? existsClaimsPrincipal = null)
     {
         using (var scope = ServiceScopeFactory.CreateScope())
         {

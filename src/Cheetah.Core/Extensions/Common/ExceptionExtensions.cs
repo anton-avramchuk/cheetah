@@ -10,7 +10,7 @@ namespace Cheetah.Core.Extensions.Common;
 public static class ExceptionExtensions
 {
     /// <summary>
-    /// Uses <see cref="exception"/> method to re-throws exception
+    /// Uses <paramref name="exception"/> to re-throw the exception
     /// while preserving stack trace.
     /// </summary>
     /// <param name="exception">Exception to be re-thrown</param>

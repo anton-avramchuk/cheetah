@@ -29,7 +29,7 @@ public class MapsterObjectMapper : IObjectMapper
 
     public object Map(Type sourceType, Type destinationType, object source)
     {
-        return source.Adapt(sourceType, destinationType, _config);
+        return source.Adapt(sourceType, destinationType, _config)!;
     }
 
     public object Map(Type sourceType, Type destinationType, object source, object destination)

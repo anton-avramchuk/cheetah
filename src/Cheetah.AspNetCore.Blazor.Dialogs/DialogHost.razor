@@ -51,7 +51,7 @@
                                 var isOkDisabled = !isTop || dialog.IsBusy || (isSubmit && !dialog.FormContext.IsValid);
                                 <button class="dialog-btn @(cmd.IsPrimary ? "dialog-btn-primary" : "dialog-btn-secondary")"
                                         type="@(isSubmit ? "submit" : "button")"
-                                        @onclick="@(isSubmit ? null : () => ExecuteCommand(captured.dialog, captured.cmd))"
+                                        @onclick="@(isSubmit ? (Func<Task>)(() => Task.CompletedTask) : () => ExecuteCommand(captured.dialog, captured.cmd))"
                                         disabled="@isOkDisabled">
                                     @if (isSubmit && dialog.IsBusy)
                                     {

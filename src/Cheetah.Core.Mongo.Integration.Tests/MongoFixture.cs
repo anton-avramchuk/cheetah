@@ -24,8 +24,7 @@ public class MongoFixture : IAsyncLifetime
 {
     private const string DatabaseName = "cheetah_test";
 
-    private readonly MongoDbContainer _container = new MongoDbBuilder()
-        .WithImage("mongo:7")
+    private readonly MongoDbContainer _container = new MongoDbBuilder("mongo:7")
         .WithReplicaSet()
         .Build();
 

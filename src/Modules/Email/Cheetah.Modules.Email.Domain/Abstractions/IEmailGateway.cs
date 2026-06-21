@@ -23,7 +23,7 @@ public sealed record EmailSendResult(
 
 /// <summary>
 /// Порт к внешнему почтовому шлюзу (SMTP/SES/...). Реализация — в Infrastructure.
-/// <paramref name="idempotencyKey"/> = DispatchId: передаётся провайдеру, чтобы дедуплицировать
+/// <c>idempotencyKey</c> = DispatchId: передаётся провайдеру, чтобы дедуплицировать
 /// отправку на его стороне.
 /// </summary>
 public interface IEmailGateway
