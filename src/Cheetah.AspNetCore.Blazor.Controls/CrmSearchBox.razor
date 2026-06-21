@@ -1,0 +1,56 @@
+@namespace Cheetah.AspNetCore.Blazor.Controls
+
+<div class="mb-3 @Class">
+    @if (!string.IsNullOrEmpty(Label))
+    {
+        <label class="form-label">@Label</label>
+    }
+    <div class="input-group">
+        <span class="input-group-text">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+        </span>
+        <input type="search"
+               class="form-control"
+               value="@Value"
+               placeholder="@Placeholder"
+               disabled="@Disabled"
+               @oninput="OnInput"
+               @onkeydown="OnKeyDown" />
+        @if (!string.IsNullOrEmpty(Value))
+        {
+            <button type="button" class="btn btn-outline-secondary" @onclick="Clear" tabindex="-1">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public string? Value       { get; set; }
+    [Parameter] public string  Label       { get; set; } = string.Empty;
+    [Parameter] public string  Placeholder { get; set; } = "Поиск…";
+    [Parameter] public string  Class       { get; set; } = string.Empty;
+    [Parameter] public bool    Disabled    { get; set; }
+    [Parameter] public EventCallback<string?> ValueChanged { get; set; }
+    [Parameter] public EventCallback<string?> OnSearch    { get; set; }
+
+    private Task OnInput(ChangeEventArgs e) => ValueChanged.InvokeAsync(e.Value?.ToString());
+
+    private async Task OnKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+            await OnSearch.InvokeAsync(Value);
+    }
+
+    private async Task Clear()
+    {
+        await ValueChanged.InvokeAsync(null);
+        await OnSearch.InvokeAsync(null);
+    }
+}

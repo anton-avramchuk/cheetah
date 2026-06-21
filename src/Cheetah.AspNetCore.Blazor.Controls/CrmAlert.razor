@@ -1,0 +1,48 @@
+@namespace Cheetah.AspNetCore.Blazor.Controls
+
+@if (_visible)
+{
+    <div class="mb-3">
+        @if (!string.IsNullOrEmpty(Label))
+        {
+            <label class="form-label">@Label</label>
+        }
+        <div class="alert alert-@Variant @(Dismissible ? "alert-dismissible" : "") @Class" role="alert">
+            @if (!string.IsNullOrEmpty(Title))
+            {
+                <h6 class="alert-heading fw-semibold">@Title</h6>
+            }
+            @if (ChildContent is not null)
+            {
+                @ChildContent
+            }
+            else
+            {
+                @Message
+            }
+            @if (Dismissible)
+            {
+                <button type="button" class="btn-close" @onclick="Dismiss" aria-label="Close"></button>
+            }
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public string  Label       { get; set; } = string.Empty;
+    [Parameter] public string  Title       { get; set; } = string.Empty;
+    [Parameter] public string  Message     { get; set; } = string.Empty;
+    [Parameter] public string  Variant     { get; set; } = "info";
+    [Parameter] public string  Class       { get; set; } = string.Empty;
+    [Parameter] public bool    Dismissible { get; set; }
+    [Parameter] public EventCallback OnDismissed { get; set; }
+
+    private bool _visible = true;
+
+    private async Task Dismiss()
+    {
+        _visible = false;
+        await OnDismissed.InvokeAsync();
+    }
+}

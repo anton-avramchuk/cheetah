@@ -1,0 +1,17 @@
+@using Cheetah.AspNetCore.Blazor.Abstractions
+
+@if (Logo is ApplicationLogo.Icon icon)
+{
+    <i class="@icon.CssClass @IconClass"></i>
+}
+else if (Logo is ApplicationLogo.Image img)
+{
+    <img src="@img.Src" alt="@(img.Alt ?? FallbackAlt)" class="@ImageClass" />
+}
+
+@code {
+    [Parameter, EditorRequired] public ApplicationLogo Logo { get; set; } = null!;
+    [Parameter] public string? FallbackAlt { get; set; }
+    [Parameter] public string IconClass { get; set; } = "brand-icon";
+    [Parameter] public string ImageClass { get; set; } = "brand-image";
+}

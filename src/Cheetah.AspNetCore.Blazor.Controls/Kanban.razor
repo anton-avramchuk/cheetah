@@ -1,0 +1,87 @@
+@namespace Cheetah.AspNetCore.Blazor.Controls
+@typeparam TColumn
+@typeparam TCard
+
+<div class="crm-kanban @Class">
+    @foreach (var column in Columns)
+    {
+        var col = column;
+        var cards = CardsSelector(col).ToList();
+        <div class="crm-kanban-column" @ondragover:preventDefault="true" @ondrop="() => OnDropAsync(col)">
+            <div class="crm-kanban-column-head" style="@HeadStyle(col)">
+                @if (ColumnHeaderTemplate is not null)
+                {
+                    @ColumnHeaderTemplate(col)
+                }
+                <span class="crm-kanban-count">@cards.Count</span>
+            </div>
+            <div class="crm-kanban-column-body">
+                @foreach (var card in cards)
+                {
+                    var c = card;
+                    var canDrag = CanDragCard?.Invoke(c) ?? true;
+                    <div class="crm-kanban-card @(canDrag ? "" : "crm-kanban-card-locked")"
+                         draggable="@canDrag.ToString().ToLowerInvariant()"
+                         @ondragstart="() => OnDragStart(c, col)">
+                        @CardTemplate(c)
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    /// <summary>Колонки доски в нужном порядке.</summary>
+    [Parameter, EditorRequired] public IReadOnlyList<TColumn> Columns { get; set; } = [];
+
+    /// <summary>Как достать карточки колонки.</summary>
+    [Parameter, EditorRequired] public Func<TColumn, IEnumerable<TCard>> CardsSelector { get; set; } = _ => [];
+
+    /// <summary>Шаблон карточки.</summary>
+    [Parameter, EditorRequired] public RenderFragment<TCard> CardTemplate { get; set; } = default!;
+
+    /// <summary>Шаблон заголовка колонки (счётчик карточек контрол добавляет сам).</summary>
+    [Parameter] public RenderFragment<TColumn>? ColumnHeaderTemplate { get; set; }
+
+    /// <summary>Можно ли перетаскивать карточку (по умолчанию — да).</summary>
+    [Parameter] public Func<TCard, bool>? CanDragCard { get; set; }
+
+    /// <summary>Цвет акцента заголовка колонки (CSS-цвет), применяется инлайном. Опционально.</summary>
+    [Parameter] public Func<TColumn, string?>? ColumnAccent { get; set; }
+
+    /// <summary>Вызывается при отпускании карточки в другую колонку.</summary>
+    [Parameter] public EventCallback<KanbanDropArgs<TColumn, TCard>> OnCardDropped { get; set; }
+
+    /// <summary>Дополнительные css-классы корневого контейнера.</summary>
+    [Parameter] public string Class { get; set; } = string.Empty;
+
+    private TCard? _draggedCard;
+    private TColumn? _sourceColumn;
+
+    private void OnDragStart(TCard card, TColumn column)
+    {
+        if (CanDragCard?.Invoke(card) == false) return;
+        _draggedCard = card;
+        _sourceColumn = column;
+    }
+
+    private async Task OnDropAsync(TColumn target)
+    {
+        var card = _draggedCard;
+        var source = _sourceColumn;
+        _draggedCard = default;
+        _sourceColumn = default;
+
+        if (card is null || source is null) return;
+        if (EqualityComparer<TColumn>.Default.Equals(source, target)) return; // та же колонка — игнор
+
+        await OnCardDropped.InvokeAsync(new KanbanDropArgs<TColumn, TCard>(card, source, target));
+    }
+
+    private string HeadStyle(TColumn col)
+    {
+        var accent = ColumnAccent?.Invoke(col);
+        return string.IsNullOrEmpty(accent) ? string.Empty : $"border-bottom-color:{accent}";
+    }
+}

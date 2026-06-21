@@ -1,0 +1,169 @@
+@inject IDialogService DialogSvc
+@inject IDialogHost HostSvc
+@implements IDisposable
+
+@if (_stack.Count > 0)
+{
+    <div class="dialog-backdrop" @onclick="OnBackdropClick">
+        @for (int i = 0; i < _stack.Count; i++)
+        {
+            var dialog = _stack[i];
+            var isTop  = i == _stack.Count - 1;
+            var depth  = _stack.Count - 1 - i;
+
+            <div class="dialog-container @(isTop ? "" : "dialog-behind")"
+                 style="@GetContainerStyle(dialog, depth)"
+                 @onclick:stopPropagation>
+
+              <div class="dialog-panel" style="@GetPanelStyle(dialog)">
+
+                @if (!string.IsNullOrEmpty(dialog.Options.Title))
+                {
+                    <div class="dialog-header">
+                        <span class="dialog-title">@dialog.Options.Title</span>
+                    </div>
+                }
+
+                <CascadingValue Value="dialog.FormContext" IsFixed="false">
+                    <form class="dialog-form" @onsubmit="() => HandleFormSubmit(dialog)" @onsubmit:preventDefault>
+
+                        <div class="dialog-body">
+                            @if (dialog.Options.Message is { } message)
+                            {
+                                <p class="dialog-message">@message</p>
+                            }
+                            else if (dialog.Options.ContentType is { } contentType)
+                            {
+                                <DynamicComponent Type="@contentType" Parameters="@dialog.Options.ContentParameters" />
+                            }
+
+                            @if (dialog.Error is { } error)
+                            {
+                                <div class="dialog-error" role="alert">@error</div>
+                            }
+                        </div>
+
+                        <div class="dialog-footer">
+                            @foreach (var cmd in dialog.Options.Commands)
+                            {
+                                var captured = (dialog, cmd);
+                                var isSubmit  = cmd.IsPrimary && !cmd.IsCancel;
+                                var isOkDisabled = !isTop || dialog.IsBusy || (isSubmit && !dialog.FormContext.IsValid);
+                                <button class="dialog-btn @(cmd.IsPrimary ? "dialog-btn-primary" : "dialog-btn-secondary")"
+                                        type="@(isSubmit ? "submit" : "button")"
+                                        @onclick="@(isSubmit ? null : () => ExecuteCommand(captured.dialog, captured.cmd))"
+                                        disabled="@isOkDisabled">
+                                    @if (isSubmit && dialog.IsBusy)
+                                    {
+                                        <span class="dialog-spinner"></span>
+                                        <span>Сохранение…</span>
+                                    }
+                                    else
+                                    {
+                                        @cmd.Label
+                                    }
+                                </button>
+                            }
+                        </div>
+
+                    </form>
+                </CascadingValue>
+
+              </div>
+
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private List<ActiveDialog> _stack = new();
+
+    protected override void OnInitialized()
+    {
+        HostSvc.OnDialogChanged += OnDialogChanged;
+    }
+
+    private void OnDialogChanged(IReadOnlyList<ActiveDialog> stack)
+    {
+        foreach (var d in _stack)
+        {
+            d.FormContext.OnChanged -= Rerender;
+            d.OnStateChanged -= Rerender;
+        }
+
+        _stack = stack.ToList();
+
+        foreach (var d in _stack)
+        {
+            d.FormContext.OnChanged += Rerender;
+            d.OnStateChanged += Rerender;
+        }
+
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void Rerender() => InvokeAsync(StateHasChanged);
+
+    // The positioner centers the dialog and applies the stacked-depth offset.
+    // Centering lives here (not on the panel) so it never conflicts with the
+    // panel's entrance animation, which would otherwise override the transform
+    // mid-animation and make the dialog jump from a corner to the center.
+    private static string GetContainerStyle(ActiveDialog dialog, int depth)
+    {
+        var scale  = (1.0 - depth * 0.04).ToString("F2", System.Globalization.CultureInfo.InvariantCulture);
+        var offset = depth * 12;
+        return $"transform: translate(-50%, -50%) scale({scale}) translateY(-{offset}px)";
+    }
+
+    // The panel carries the visible box sizing; its entrance animation only
+    // touches scale/opacity, leaving centering to the positioner above.
+    private static string GetPanelStyle(ActiveDialog dialog)
+    {
+        var parts = new List<string>();
+        if (dialog.Options.Width  is { } w) parts.Add($"width: {w.ToCss()}");
+        if (dialog.Options.Height is { } h) parts.Add($"height: {h.ToCss()}");
+        return string.Join("; ", parts);
+    }
+
+    private async Task ExecuteCommand(ActiveDialog dialog, IDialogCommand cmd)
+    {
+        if (dialog.IsBusy)
+            return;
+
+        dialog.SetBusy(true);
+        try
+        {
+            await cmd.ExecuteAsync(new DialogContext(HostSvc, dialog));
+        }
+        finally
+        {
+            dialog.SetBusy(false);
+        }
+    }
+
+    private Task HandleFormSubmit(ActiveDialog dialog)
+    {
+        var primaryCmd = dialog.Options.Commands.FirstOrDefault(c => c.IsPrimary && !c.IsCancel);
+        if (primaryCmd is not null && dialog.FormContext.IsValid)
+            return ExecuteCommand(dialog, primaryCmd);
+        return Task.CompletedTask;
+    }
+
+    private Task OnBackdropClick()
+    {
+        var top = _stack.Count > 0 ? _stack[^1] : null;
+        var cancelCmd = top?.Options.Commands.FirstOrDefault(c => c.IsCancel);
+        return cancelCmd is not null ? ExecuteCommand(top!, cancelCmd) : Task.CompletedTask;
+    }
+
+    public void Dispose()
+    {
+        foreach (var d in _stack)
+        {
+            d.FormContext.OnChanged -= Rerender;
+            d.OnStateChanged -= Rerender;
+        }
+        HostSvc.OnDialogChanged -= OnDialogChanged;
+    }
+}

@@ -1,0 +1,79 @@
+@namespace Cheetah.AspNetCore.Blazor.Controls
+@implements IDisposable
+
+<div class="mb-3">
+    @if (!string.IsNullOrEmpty(Label))
+    {
+        <label class="form-label @(Required ? "crm-label-required" : "")">@Label</label>
+    }
+    <input type="text"
+           class="form-control @(ShowValidationError ? "is-invalid" : "") @Class"
+           value="@Value"
+           placeholder="@Placeholder"
+           disabled="@Disabled"
+           readonly="@ReadOnly"
+           maxlength="@(MaxLength > 0 ? MaxLength : null)"
+           @oninput="OnInput"
+           @onchange="OnChange"
+           @onfocusout="MarkTouched" />
+    @if (!string.IsNullOrEmpty(Error))
+    {
+        <div class="invalid-feedback">@Error</div>
+    }
+    else if (ShowValidationError)
+    {
+        <div class="invalid-feedback">Поле обязательно для заполнения</div>
+    }
+    @if (!string.IsNullOrEmpty(Hint) && !ShowError)
+    {
+        <div class="form-text">@Hint</div>
+    }
+</div>
+
+@code {
+    [CascadingParameter] public DialogFormContext? FormContext { get; set; }
+
+    [Parameter] public string?  Value       { get; set; }
+    [Parameter] public string   Label       { get; set; } = string.Empty;
+    [Parameter] public string   Placeholder { get; set; } = string.Empty;
+    [Parameter] public string?  Error       { get; set; }
+    [Parameter] public string   Hint        { get; set; } = string.Empty;
+    [Parameter] public string   Class       { get; set; } = string.Empty;
+    [Parameter] public bool     Disabled    { get; set; }
+    [Parameter] public bool     ReadOnly    { get; set; }
+    [Parameter] public bool     Required    { get; set; }
+    [Parameter] public int      MaxLength   { get; set; }
+    [Parameter] public EventCallback<string?> ValueChanged { get; set; }
+    [Parameter] public EventCallback<string?> OnBlur      { get; set; }
+
+    private readonly string _fieldId = Guid.NewGuid().ToString("N");
+    private bool _touched;
+
+    private bool RequiredInvalid    => Required && string.IsNullOrWhiteSpace(Value);
+    private bool ShowValidationError => RequiredInvalid && _touched;
+    private bool ShowError           => !string.IsNullOrEmpty(Error) || ShowValidationError;
+
+    protected override void OnInitialized()
+    {
+        if (Required && FormContext is not null)
+            FormContext.SetField(_fieldId, !string.IsNullOrWhiteSpace(Value));
+    }
+
+    private async Task OnInput(ChangeEventArgs e)
+    {
+        var value = e.Value?.ToString();
+        if (Required && FormContext is not null)
+            FormContext.SetField(_fieldId, !string.IsNullOrWhiteSpace(value));
+        await ValueChanged.InvokeAsync(value);
+    }
+
+    private async Task OnChange(ChangeEventArgs e)
+    {
+        _touched = true;
+        await OnBlur.InvokeAsync(e.Value?.ToString());
+    }
+
+    private void MarkTouched() => _touched = true;
+
+    public void Dispose() => FormContext?.UnregisterField(_fieldId);
+}

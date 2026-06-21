@@ -1,0 +1,28 @@
+@namespace Cheetah.AspNetCore.Blazor.Controls
+
+<div class="accordion-item">
+    <h2 class="accordion-header">
+        <button class="accordion-button @(_open ? "" : "collapsed")"
+                type="button"
+                @onclick="Toggle">
+            @Title
+        </button>
+    </h2>
+    <div class="accordion-collapse collapse @(_open ? "show" : "")">
+        <div class="accordion-body">
+            @ChildContent
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public string Title       { get; set; } = string.Empty;
+    [Parameter] public bool   DefaultOpen { get; set; }
+
+    private bool _open;
+
+    protected override void OnInitialized() => _open = DefaultOpen;
+
+    private void Toggle() => _open = !_open;
+}

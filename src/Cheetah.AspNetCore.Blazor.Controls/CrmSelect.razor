@@ -1,0 +1,82 @@
+@namespace Cheetah.AspNetCore.Blazor.Controls
+@typeparam TValue
+@implements IDisposable
+
+<div class="mb-3">
+    @if (!string.IsNullOrEmpty(Label))
+    {
+        <label class="form-label @(Required ? "crm-label-required" : "")">@Label</label>
+    }
+    <select class="form-select @(ShowValidationError ? "is-invalid" : "") @(HasExternalError ? "is-invalid" : "") @Class"
+            disabled="@Disabled"
+            @onchange="OnChange"
+            @onfocusout="MarkTouched">
+        @if (!string.IsNullOrEmpty(Placeholder))
+        {
+            <option value="" disabled selected="@(Value is null)">@Placeholder</option>
+        }
+        @foreach (var item in Items)
+        {
+            <option value="@GetKey(item)" selected="@IsSelected(item)">@GetLabel(item)</option>
+        }
+    </select>
+    @if (HasExternalError)
+    {
+        <div class="invalid-feedback">@Error</div>
+    }
+    else if (ShowValidationError)
+    {
+        <div class="invalid-feedback">Выберите значение</div>
+    }
+    @if (!string.IsNullOrEmpty(Hint) && !HasExternalError && !ShowValidationError)
+    {
+        <div class="form-text">@Hint</div>
+    }
+</div>
+
+@code {
+    [CascadingParameter] public DialogFormContext? FormContext { get; set; }
+
+    [Parameter] public TValue?             Value         { get; set; }
+    [Parameter] public IEnumerable<TValue> Items         { get; set; } = [];
+    [Parameter] public string              Label         { get; set; } = string.Empty;
+    [Parameter] public string              Placeholder   { get; set; } = string.Empty;
+    [Parameter] public string?             Error         { get; set; }
+    [Parameter] public string              Hint          { get; set; } = string.Empty;
+    [Parameter] public string              Class         { get; set; } = string.Empty;
+    [Parameter] public bool                Disabled      { get; set; }
+    [Parameter] public bool                Required      { get; set; }
+    [Parameter] public Func<TValue, string>   KeySelector   { get; set; } = v => v?.ToString() ?? "";
+    [Parameter] public Func<TValue, string>   LabelSelector { get; set; } = v => v?.ToString() ?? "";
+    [Parameter] public EventCallback<TValue?> ValueChanged  { get; set; }
+
+    private readonly string _fieldId = Guid.NewGuid().ToString("N");
+    private bool _touched;
+
+    private bool HasExternalError    => !string.IsNullOrEmpty(Error);
+    private bool ShowValidationError => Required && Value is null && _touched;
+
+    protected override void OnInitialized()
+    {
+        if (Required && FormContext is not null)
+            FormContext.SetField(_fieldId, Value is not null);
+    }
+
+    private string GetKey(TValue item)   => KeySelector(item);
+    private string GetLabel(TValue item) => LabelSelector(item);
+    private bool IsSelected(TValue item) => EqualityComparer<TValue>.Default.Equals(item, Value);
+
+    private async Task OnChange(ChangeEventArgs e)
+    {
+        _touched = true;
+        var key = e.Value?.ToString();
+        var match = Items.FirstOrDefault(i => GetKey(i) == key);
+        if (Required && FormContext is not null)
+            FormContext.SetField(_fieldId, match is not null);
+        await ValueChanged.InvokeAsync(match);
+    }
+
+    private void MarkTouched() => _touched = true;
+
+    public void Dispose() => FormContext?.UnregisterField(_fieldId);
+}

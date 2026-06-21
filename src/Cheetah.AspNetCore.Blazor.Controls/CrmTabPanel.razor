@@ -1,0 +1,19 @@
+@namespace Cheetah.AspNetCore.Blazor.Controls
+
+<div class="tab-pane fade @(Parent.IsActive(Key) ? "show active" : "")"
+     role="tabpanel">
+    @if (Parent.IsActive(Key))
+    {
+        @ChildContent
+    }
+</div>
+
+@code {
+    [CascadingParameter] public CrmTabs Parent { get; set; } = null!;
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public string Key      { get; set; } = string.Empty;
+    [Parameter] public string Title    { get; set; } = string.Empty;
+    [Parameter] public bool   Disabled { get; set; }
+
+    protected override void OnInitialized() => Parent.RegisterTab(Key, Title, Disabled);
+}

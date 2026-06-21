@@ -1,0 +1,100 @@
+.crm-pager {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 16px 0 4px;
+    flex-wrap: wrap;
+}
+
+.crm-pager-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    height: 32px;
+    padding: 0 6px;
+    border: 1px solid var(--border-color, #e5e7ee);
+    border-radius: var(--radius-sm, 6px);
+    background: #fff;
+    color: var(--text-primary, #1e293b);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+    user-select: none;
+}
+
+.crm-pager-btn:hover:not(:disabled) {
+    background: var(--hover-bg, rgba(99,102,241,0.06));
+    border-color: var(--accent-primary, #6366f1);
+    color: var(--accent-primary, #6366f1);
+}
+
+.crm-pager-btn:disabled {
+    opacity: 0.4;
+    cursor: default;
+}
+
+.crm-pager-btn--active {
+    background: var(--accent-primary, #6366f1);
+    border-color: var(--accent-primary, #6366f1);
+    color: #fff;
+}
+
+.crm-pager-btn--active:hover:not(:disabled) {
+    background: var(--accent-primary, #6366f1);
+    border-color: var(--accent-primary, #6366f1);
+    color: #fff;
+    opacity: 0.9;
+}
+
+.crm-pager-ellipsis {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    height: 32px;
+    color: var(--text-secondary, #64748b);
+    font-size: 13px;
+    user-select: none;
+}
+
+.crm-pager-nav {
+    color: var(--text-secondary, #64748b);
+}
+
+.crm-pager-total {
+    margin-left: 8px;
+    font-size: 13px;
+    color: var(--text-secondary, #64748b);
+}
+
+.crm-pager-size {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: 16px;
+    font-size: 13px;
+    color: var(--text-secondary, #64748b);
+}
+
+.crm-pager-size select {
+    height: 32px;
+    padding: 0 24px 0 8px;
+    border: 1px solid var(--border-color, #e5e7ee);
+    border-radius: var(--radius-sm, 6px);
+    background: #fff;
+    color: var(--text-primary, #1e293b);
+    font-size: 13px;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 6px center;
+}
+
+.crm-pager-size select:focus {
+    outline: none;
+    border-color: var(--accent-primary, #6366f1);
+}

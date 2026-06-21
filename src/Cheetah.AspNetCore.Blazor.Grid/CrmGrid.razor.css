@@ -1,0 +1,43 @@
+/* Базовый «grid-kit» (контейнер .crm-grid, .crm-grid-table, .crm-btn*, .crm-grid-actions)
+   вынесен в глобальный app.css и переиспользуется карточками. Здесь — только grid-специфика. */
+
+/* Toolbar */
+::deep .crm-grid-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    background: #fff;
+}
+
+::deep .crm-grid-title {
+    margin: 0;
+    font-size: 1.25rem;
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+/* Pager */
+::deep .crm-grid-pager {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background: #fff;
+    border-top: 1px solid var(--border-color);
+}
+
+::deep .crm-grid-pager-info {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+}
+
+/* Loading & Empty States */
+::deep .crm-grid-loading,
+::deep .crm-grid-empty {
+    text-align: center !important;
+    padding: 4rem 1.5rem !important;
+    color: var(--text-muted) !important;
+    font-size: 0.875rem;
+}

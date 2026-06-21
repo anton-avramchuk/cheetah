@@ -1,4 +1,14 @@
 <Solution>
+    <Folder Name="/Blazor/">
+        <Project Path="src/Cheetah.AspNetCore.Blazor.Abstractions/Cheetah.AspNetCore.Blazor.Abstractions.csproj" />
+        <Project Path="src/Cheetah.AspNetCore.Blazor.Toast/Cheetah.AspNetCore.Blazor.Toast.csproj" />
+        <Project Path="src/Cheetah.AspNetCore.Blazor.Dialogs/Cheetah.AspNetCore.Blazor.Dialogs.csproj" />
+        <Project Path="src/Cheetah.AspNetCore.Blazor.Theme/Cheetah.AspNetCore.Blazor.Theme.csproj" />
+        <Project Path="src/Cheetah.AspNetCore.Blazor.Navigation/Cheetah.AspNetCore.Blazor.Navigation.csproj" />
+        <Project Path="src/Cheetah.AspNetCore.Blazor.Controls/Cheetah.AspNetCore.Blazor.Controls.csproj" />
+        <Project Path="src/Cheetah.AspNetCore.Blazor.Grid/Cheetah.AspNetCore.Blazor.Grid.csproj" />
+        <Project Path="src/Cheetah.AspNetCore.Blazor.Layouts/Cheetah.AspNetCore.Blazor.Layouts.csproj" />
+    </Folder>
     <Folder Name="/CodeGen/">
         <Project Path="src/Cheetah.Analyzers.Tests/Cheetah.Analyzers.Tests.csproj" />
         <Project Path="src/Cheetah.Analyzers/Cheetah.Analyzers.csproj" />

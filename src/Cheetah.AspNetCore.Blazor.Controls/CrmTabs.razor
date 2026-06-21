@@ -1,0 +1,59 @@
+@namespace Cheetah.AspNetCore.Blazor.Controls
+
+<div class="mb-3 @Class">
+    @if (!string.IsNullOrEmpty(Label))
+    {
+        <label class="form-label">@Label</label>
+    }
+    <ul class="nav @NavClass mb-3" role="tablist">
+        @foreach (var tab in _tabs)
+        {
+            var t = tab;
+            <li class="nav-item" role="presentation">
+                <button class="nav-link @(t.Key == _active ? "active" : "") @(t.Disabled ? "disabled" : "")"
+                        role="tab"
+                        type="button"
+                        @onclick="() => Activate(t.Key)">
+                    @t.Title
+                </button>
+            </li>
+        }
+    </ul>
+    <CascadingValue Value="this" IsFixed="true">
+        <div class="tab-content">
+            @ChildContent
+        </div>
+    </CascadingValue>
+</div>
+
+@code {
+    internal record TabInfo(string Key, string Title, bool Disabled);
+
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public string Label { get; set; } = string.Empty;
+    [Parameter] public string Class { get; set; } = string.Empty;
+    [Parameter] public bool   Pills { get; set; }
+    [Parameter] public EventCallback<string> OnTabChanged { get; set; }
+
+    private string NavClass => Pills ? "nav-pills" : "nav-tabs";
+    private string _active = string.Empty;
+    private readonly List<TabInfo> _tabs = [];
+
+    internal void RegisterTab(string key, string title, bool disabled)
+    {
+        if (_tabs.All(t => t.Key != key))
+        {
+            _tabs.Add(new TabInfo(key, title, disabled));
+            if (_active == string.Empty) _active = key;
+            StateHasChanged();
+        }
+    }
+
+    internal bool IsActive(string key) => key == _active;
+
+    private Task Activate(string key)
+    {
+        _active = key;
+        return OnTabChanged.InvokeAsync(key);
+    }
+}

@@ -1,0 +1,69 @@
+@inject IToastService ToastSvc
+@inject IToastHost HostSvc
+@implements IDisposable
+
+<div class="toast-host">
+    @foreach (var toast in _toasts)
+    {
+        <div class="toast-item toast-@toast.Type.ToString().ToLower() @(_dismissing.Contains(toast.Id) ? "toast-dismissing" : "")"
+             @key="toast.Id">
+            <div class="toast-accent"></div>
+
+            <i class="@GetIcon(toast.Type) toast-icon"></i>
+
+            <div class="toast-body">
+                @if (toast.Title is { } title)
+                {
+                    <div class="toast-title">@title</div>
+                }
+                <div class="toast-message">@toast.Message</div>
+            </div>
+
+            <button class="toast-close" @onclick="() => DismissWithAnimation(toast.Id)">
+                <i class="bi bi-x"></i>
+            </button>
+
+            @if (toast.Duration > TimeSpan.Zero)
+            {
+                <div class="toast-progress"
+                     style="animation-duration: @(toast.Duration.TotalMilliseconds.ToString("F0", System.Globalization.CultureInfo.InvariantCulture))ms">
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    private List<ToastMessage> _toasts = new();
+    private HashSet<Guid> _dismissing = new();
+
+    protected override void OnInitialized()
+    {
+        HostSvc.OnToastsChanged += OnToastsChanged;
+    }
+
+    private void OnToastsChanged(IReadOnlyList<ToastMessage> toasts)
+    {
+        _toasts = toasts.ToList();
+        InvokeAsync(StateHasChanged);
+    }
+
+    private async Task DismissWithAnimation(Guid id)
+    {
+        _dismissing.Add(id);
+        StateHasChanged();
+        await Task.Delay(250);
+        _dismissing.Remove(id);
+        ToastSvc.Dismiss(id);
+    }
+
+    private static string GetIcon(ToastType type) => type switch
+    {
+        ToastType.Success => "bi bi-check-circle-fill",
+        ToastType.Warning => "bi bi-exclamation-triangle-fill",
+        ToastType.Error   => "bi bi-x-circle-fill",
+        _                 => "bi bi-info-circle-fill"
+    };
+
+    public void Dispose() => HostSvc.OnToastsChanged -= OnToastsChanged;
+}

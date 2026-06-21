@@ -1,0 +1,8 @@
+@using Cheetah.AspNetCore.Blazor.Abstractions
+
+<span class="brand-text">@Title.Name@if (Title.Accent is { } accent){<span class="@AccentClass">@accent</span>}</span>
+
+@code {
+    [Parameter, EditorRequired] public ApplicationTitle Title { get; set; } = null!;
+    [Parameter] public string AccentClass { get; set; } = "brand-accent";
+}

@@ -1,0 +1,146 @@
+/* ===== Sidebar Navigation ===== */
+.sidebar-nav {
+    padding: 12px 0;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ===== Section ===== */
+.nav-section {
+    padding: 0 12px;
+    margin-bottom: 8px;
+    display: flex;
+    flex-direction: column;
+}
+
+.nav-section-label {
+    font-size: 0.68rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    padding: 16px 12px 6px;
+    user-select: none;
+}
+
+/* ===== Nav Item (shared for links and group toggles) ===== */
+/* Use ::deep to penetrate into NavLink child component */
+::deep .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 0 12px;
+    height: 40px;
+    border: none;
+    background: transparent;
+    border-radius: 8px;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    font-weight: 500;
+    font-family: inherit;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    position: relative;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    box-sizing: border-box;
+}
+
+::deep .nav-item:hover {
+    background: var(--hover-bg);
+    color: var(--text-primary);
+    text-decoration: none;
+}
+
+::deep .nav-item.active {
+    background: var(--active-bg);
+    color: var(--accent-primary);
+    font-weight: 600;
+}
+
+::deep .nav-item.active .nav-icon {
+    color: var(--accent-primary);
+}
+
+/* ===== Nav Icon ===== */
+::deep .nav-icon {
+    font-size: 1.05rem;
+    width: 20px;
+    text-align: center;
+    flex-shrink: 0;
+    transition: color 0.18s ease;
+}
+
+::deep .nav-text {
+    flex: 1;
+    text-align: left;
+}
+
+/* ===== Group ===== */
+.nav-group {
+    display: flex;
+    flex-direction: column;
+}
+
+/* ===== Group Toggle ===== */
+::deep .nav-group-toggle {
+    text-align: left;
+}
+
+::deep .nav-chevron {
+    font-size: 0.7rem;
+    margin-left: auto;
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    color: var(--text-muted);
+    flex-shrink: 0;
+}
+
+.nav-group.expanded ::deep .nav-chevron {
+    transform: rotate(180deg);
+}
+
+/* ===== Group Children ===== */
+.nav-group-children {
+    display: flex;
+    flex-direction: column;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.25s ease;
+    opacity: 0;
+}
+
+.nav-group.expanded .nav-group-children {
+    max-height: 300px;
+    opacity: 1;
+}
+
+/* ===== Child Item ===== */
+::deep .nav-child {
+    padding-left: 24px !important;
+    gap: 10px !important;
+    height: 36px !important;
+    font-size: 0.835rem !important;
+}
+
+::deep .nav-child-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--border-color);
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+}
+
+::deep .nav-child:hover .nav-child-dot {
+    background: var(--text-secondary);
+    transform: scale(1.3);
+}
+
+::deep .nav-child.active .nav-child-dot {
+    background: var(--accent-primary);
+    box-shadow: 0 0 6px rgba(99, 102, 241, 0.4);
+}

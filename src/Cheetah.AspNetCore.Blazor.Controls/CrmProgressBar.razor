@@ -1,0 +1,39 @@
+@namespace Cheetah.AspNetCore.Blazor.Controls
+
+<div class="@Class">
+    @if (!string.IsNullOrEmpty(Label))
+    {
+        <div class="d-flex justify-content-between mb-1">
+            <small>@Label</small>
+            @if (ShowValue)
+            {
+                <small>@Value%</small>
+            }
+        </div>
+    }
+    <div class="progress" style="height: @HeightPx">
+        <div class="progress-bar @(Striped ? "progress-bar-striped" : "") @(Animated ? "progress-bar-animated" : "") bg-@Variant"
+             role="progressbar"
+             style="width: @Value%"
+             aria-valuenow="@Value"
+             aria-valuemin="0"
+             aria-valuemax="100">
+            @if (ShowLabel)
+            {
+                @($"{Value}%")
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public double Value     { get; set; }
+    [Parameter] public string Label     { get; set; } = string.Empty;
+    [Parameter] public string Variant   { get; set; } = "primary";
+    [Parameter] public string Class     { get; set; } = string.Empty;
+    [Parameter] public string HeightPx  { get; set; } = "8px";
+    [Parameter] public bool   Striped   { get; set; }
+    [Parameter] public bool   Animated  { get; set; }
+    [Parameter] public bool   ShowValue { get; set; }
+    [Parameter] public bool   ShowLabel { get; set; }
+}

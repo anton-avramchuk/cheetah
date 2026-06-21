@@ -1,0 +1,106 @@
+@using Microsoft.AspNetCore.Components.Authorization
+@using Cheetah.AspNetCore.Blazor.Abstractions
+@inherits LayoutComponentBase
+
+@inject IApplicationConfigurationProvider ConfigurationProvider;
+
+<div class="crm-layout">
+    <header class="crm-header">
+        <div class="header-left">
+            <button class="sidebar-toggle" @onclick="ToggleSidebar">
+                <i class="bi bi-list"></i>
+            </button>
+            <div class="header-brand">
+                <AppLogo Logo="ConfigurationProvider.Logo" FallbackAlt="ConfigurationProvider.Title.Name" />
+                <AppTitle Title="ConfigurationProvider.Title" />
+            </div>
+            @HeaderLeftExtra
+        </div>
+        <div class="header-center">
+            @if (HeaderCenter != null)
+            {
+                @HeaderCenter
+            }
+            else
+            {
+                <div class="header-search">
+                    <i class="bi bi-search search-icon"></i>
+                    <input type="text" placeholder="Поиск кандидатов, вакансий..." class="search-input" />
+                </div>
+            }
+        </div>
+        <div class="header-right">
+            @if (HeaderRight != null)
+            {
+                @HeaderRight
+            }
+            else
+            {
+                <button class="header-btn" title="Уведомления">
+                    <i class="bi bi-bell"></i>
+                    <span class="notification-badge">3</span>
+                </button>
+                <button class="header-btn" title="Настройки">
+                    <i class="bi bi-gear"></i>
+                </button>
+                <AuthorizeView>
+                    <Authorized>
+                        <div class="header-user">
+                            <div class="header-avatar">
+                                <span class="avatar-initials">@Initials(context.User.Identity?.Name)</span>
+                            </div>
+                            <span class="header-user-name">@context.User.Identity?.Name</span>
+                            <form method="post" action="/account/logout" data-enhance="false" class="logout-form">
+                                <button type="submit" class="header-btn" title="Выйти">
+                                    <i class="bi bi-box-arrow-right"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </Authorized>
+                </AuthorizeView>
+            }
+        </div>
+    </header>
+
+    <div class="crm-body">
+        <aside class="crm-sidebar @(SidebarCollapsed ? "collapsed" : "")">
+            <NavMenu />
+        </aside>
+
+        <main class="crm-content">
+            <article class="content-inner">
+                @(ChildContent ?? Body)
+            </article>
+        </main>
+    </div>
+</div>
+
+<DialogHost />
+<ToastHost />
+
+<div id="blazor-error-ui" data-nosnippet>
+    An unhandled error has occurred.
+    <a href="." class="reload">Reload</a>
+    <span class="dismiss">🗙</span>
+</div>
+
+@code {
+    [Parameter] public RenderFragment? HeaderLeftExtra { get; set; }
+    [Parameter] public RenderFragment? HeaderCenter { get; set; }
+    [Parameter] public RenderFragment? HeaderRight { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    private bool SidebarCollapsed { get; set; } = false;
+
+    private void ToggleSidebar()
+    {
+        SidebarCollapsed = !SidebarCollapsed;
+    }
+
+    private static string Initials(string? name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return "?";
+        return name.Trim()[..1].ToUpperInvariant();
+    }
+}

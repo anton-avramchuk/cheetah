@@ -1,0 +1,65 @@
+.crm-kanban {
+    display: flex;
+    gap: .75rem;
+    overflow-x: auto;
+    padding-bottom: .5rem;
+    align-items: flex-start;
+}
+
+.crm-kanban-column {
+    flex: 0 0 240px;
+    background: #f3f4f6;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 200px);
+}
+
+.crm-kanban-column-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .5rem;
+    padding: .6rem .75rem;
+    font-weight: 600;
+    font-size: .85rem;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    border-bottom: 3px solid #d1d5db;
+}
+
+.crm-kanban-count {
+    background: rgba(0, 0, 0, .08);
+    border-radius: 999px;
+    padding: 0 .5rem;
+    font-size: .75rem;
+    flex: 0 0 auto;
+}
+
+.crm-kanban-column-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: .5rem;
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+    min-height: 60px;
+}
+
+.crm-kanban-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: .55rem .65rem;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .05);
+    cursor: grab;
+}
+
+.crm-kanban-card:active {
+    cursor: grabbing;
+}
+
+.crm-kanban-card-locked {
+    opacity: .65;
+    cursor: default;
+}

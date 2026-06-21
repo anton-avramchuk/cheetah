@@ -1,0 +1,92 @@
+@namespace Cheetah.AspNetCore.Blazor.Grid
+
+<div class="crm-pager">
+
+    <button class="crm-pager-btn crm-pager-nav" disabled="@(Page <= 1 || Loading)" @onclick="PrevAsync">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"/>
+        </svg>
+    </button>
+
+    @foreach (var item in _pageItems)
+    {
+        if (item == Ellipsis)
+        {
+            <span class="crm-pager-ellipsis">…</span>
+        }
+        else
+        {
+            var p = item;
+            <button class="crm-pager-btn @(p == Page ? "crm-pager-btn--active" : "")"
+                    disabled="@Loading"
+                    @onclick="() => GoToAsync(p)">@p</button>
+        }
+    }
+
+    <button class="crm-pager-btn crm-pager-nav" disabled="@(Page >= TotalPages || Loading)" @onclick="NextAsync">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"/>
+        </svg>
+    </button>
+
+    <span class="crm-pager-total">Всего: @Total</span>
+
+    <span class="crm-pager-size">
+        Строк:
+        <select value="@PageSize" @onchange="OnSizeChanged" disabled="@Loading">
+            @foreach (var s in _pageSizes)
+            {
+                <option value="@s" selected="@(s == PageSize)">@s</option>
+            }
+        </select>
+    </span>
+
+</div>
+
+@code {
+    private const int Ellipsis = -1;
+    private static readonly int[] _pageSizes = [10, 20, 50, 100];
+
+    [Parameter, EditorRequired] public int  Page       { get; set; }
+    [Parameter, EditorRequired] public int  TotalPages { get; set; }
+    [Parameter, EditorRequired] public int  Total      { get; set; }
+    [Parameter, EditorRequired] public int  PageSize   { get; set; }
+    [Parameter]                 public bool Loading    { get; set; }
+    [Parameter, EditorRequired] public EventCallback<int> OnPageChange     { get; set; }
+    [Parameter, EditorRequired] public EventCallback<int> OnPageSizeChange { get; set; }
+
+    private IReadOnlyList<int> _pageItems = [];
+
+    protected override void OnParametersSet() => _pageItems = BuildPages();
+
+    private IReadOnlyList<int> BuildPages()
+    {
+        if (TotalPages <= 1) return [];
+        if (TotalPages <= 7) return Enumerable.Range(1, TotalPages).ToList();
+
+        var pages = new List<int> { 1 };
+
+        if (Page > 3)
+            pages.Add(Ellipsis);
+
+        for (var i = Math.Max(2, Page - 1); i <= Math.Min(TotalPages - 1, Page + 1); i++)
+            pages.Add(i);
+
+        if (Page < TotalPages - 2)
+            pages.Add(Ellipsis);
+
+        pages.Add(TotalPages);
+        return pages;
+    }
+
+    private Task PrevAsync()       => OnPageChange.InvokeAsync(Page - 1);
+    private Task NextAsync()       => OnPageChange.InvokeAsync(Page + 1);
+    private Task GoToAsync(int p)  => p != Page ? OnPageChange.InvokeAsync(p) : Task.CompletedTask;
+
+    private Task OnSizeChanged(ChangeEventArgs e)
+        => int.TryParse(e.Value?.ToString(), out var size) && size != PageSize
+            ? OnPageSizeChange.InvokeAsync(size)
+            : Task.CompletedTask;
+}

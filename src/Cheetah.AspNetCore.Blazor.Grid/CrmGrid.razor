@@ -1,0 +1,277 @@
+@typeparam TGridViewModel where TGridViewModel : class, IHasId
+@typeparam TDetailsViewModel where TDetailsViewModel : class, new()
+@typeparam TCreateViewModel where TCreateViewModel : class, new()
+
+@inject IDialogService DialogService
+@inject IToastService ToastService
+
+<div class="crm-grid">
+
+    <div class="crm-grid-toolbar">
+        @if (!string.IsNullOrEmpty(Title))
+        {
+            <h3 class="crm-grid-title">@Title</h3>
+        }
+        <button class="crm-btn crm-btn-primary" @onclick="OnCreateClickAsync">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            Создать
+        </button>
+    </div>
+
+    <table class="crm-grid-table">
+        <thead>
+            <tr>
+                @foreach (var col in _columns)
+                {
+                    <th>@col.Label</th>
+                }
+                <th class="crm-grid-actions-header"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (_loading)
+            {
+                <tr>
+                    <td colspan="@(_columns.Count + 1)" class="crm-grid-loading">Загрузка…</td>
+                </tr>
+            }
+            else if (_items.Count == 0)
+            {
+                <tr>
+                    <td colspan="@(_columns.Count + 1)" class="crm-grid-empty">Нет данных</td>
+                </tr>
+            }
+            else
+            {
+                @foreach (var row in _items)
+                {
+                    var capturedRow = row;
+                    <tr>
+                        @foreach (var col in _columns)
+                        {
+                            <td>@GetValue(capturedRow, col.PropertyName)</td>
+                        }
+                        <td class="crm-grid-actions">
+                            @RowActions?.Invoke(capturedRow)
+                            <button class="crm-btn crm-btn-icon crm-btn-edit" title="Редактировать"
+                                    @onclick="@(async () => await OnEditClickAsync(capturedRow.Id))">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                </svg>
+                            </button>
+                            <button class="crm-btn crm-btn-icon crm-btn-danger" title="Удалить"
+                                    @onclick="@(async () => await OnDeleteClickAsync(capturedRow.Id))">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="3 6 5 6 21 6"/>
+                                    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                                    <path d="M10 11v6M14 11v6"/>
+                                    <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+                                </svg>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+
+    <CrmPager Page="_page"
+              TotalPages="_totalPages"
+              Total="_total"
+              PageSize="_pageSize"
+              Loading="_loading"
+              OnPageChange="GoToPageAsync"
+              OnPageSizeChange="ChangePageSizeAsync" />
+
+</div>
+
+@code {
+    private sealed record ColumnInfo(string PropertyName, string Label, int Order);
+
+    [Parameter, EditorRequired] public ICrudService<TGridViewModel, TDetailsViewModel, TCreateViewModel> Service { get; set; } = null!;
+    [Parameter, EditorRequired] public Type EditFormType   { get; set; } = null!;
+    [Parameter, EditorRequired] public Type CreateFormType { get; set; } = null!;
+    [Parameter] public string Title    { get; set; } = string.Empty;
+    [Parameter] public int    PageSize { get; set; } = 20;
+
+    /// <summary>Optional extra per-row action buttons rendered before the built-in edit/delete buttons.</summary>
+    [Parameter] public RenderFragment<TGridViewModel>? RowActions { get; set; }
+
+    /// <summary>Optional factory for the model passed to the create dialog (e.g. to prefill fields). Defaults to <c>new()</c>.</summary>
+    [Parameter] public Func<TCreateViewModel>? CreateModelFactory { get; set; }
+
+    /// <summary>When true, opens the create dialog once after the first render (e.g. deep-link "create for X").</summary>
+    [Parameter] public bool AutoOpenCreate { get; set; }
+
+    /// <summary>Optional fixed width (px) for the create/edit dialogs. Default null = dialog's own sizing.</summary>
+    [Parameter] public int? DialogWidthPx { get; set; }
+
+    private bool _autoOpenHandled;
+
+    private DialogDimension? DialogWidth => DialogWidthPx is { } px ? new DialogDimension.Pixels(px) : null;
+
+    private List<TGridViewModel> _items = [];
+    private int  _total;
+    private int  _page     = 1;
+    private int  _pageSize;
+    private bool _loading;
+
+    private int _totalPages => _total == 0 ? 1 : (int)Math.Ceiling((double)_total / _pageSize);
+
+    private static readonly IReadOnlyList<ColumnInfo> _columns = BuildColumns();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _pageSize = PageSize;
+        await LoadAsync();
+    }
+
+    private static IReadOnlyList<ColumnInfo> BuildColumns()
+        => typeof(TGridViewModel)
+            .GetProperties()
+            .Select(p => (Prop: p, Attr: p.GetCustomAttribute<GridColumnAttribute>()))
+            .Where(x => x.Attr is { Show: true })
+            .OrderBy(x => x.Attr!.Order)
+            .Select(x => new ColumnInfo(x.Prop.Name, x.Attr!.Label, x.Attr!.Order))
+            .ToList();
+
+    private static object? GetValue(TGridViewModel item, string propertyName)
+        => typeof(TGridViewModel).GetProperty(propertyName)?.GetValue(item);
+
+    private async Task LoadAsync()
+    {
+        _loading = true;
+        StateHasChanged();
+
+        try
+        {
+            var result = await Service.GetGridAsync(new CrmPageRequest { Page = _page, PageSize = _pageSize });
+            _items = result.Data.ToList();
+            _total = result.Total;
+        }
+        catch (Exception ex)
+        {
+            _items = [];
+            _total = 0;
+            ToastService.Error($"Не удалось загрузить данные: {ex.Message}");
+        }
+        finally
+        {
+            _loading = false;
+            StateHasChanged();
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && AutoOpenCreate && !_autoOpenHandled)
+        {
+            _autoOpenHandled = true;
+            await OnCreateClickAsync();
+        }
+    }
+
+    private async Task OnCreateClickAsync()
+    {
+        var model = CreateModelFactory?.Invoke() ?? new TCreateViewModel();
+        var result = await DialogService.ShowAsync(new DialogOptions
+        {
+            Title             = "Создать",
+            ContentType       = CreateFormType,
+            ContentParameters = new Dictionary<string, object?> { ["Model"] = model },
+            Width             = DialogWidth,
+            Commands          = BuildSaveCommands(() => Service.CreateAsync(model))
+        });
+        if (result.IsOk)
+        {
+            _page = 1;
+            await LoadAsync();
+            ToastService.Success("Запись успешно создана");
+        }
+    }
+
+    private async Task OnEditClickAsync(Guid id)
+    {
+        TDetailsViewModel? model;
+        try
+        {
+            model = await Service.GetByIdAsync(id);
+        }
+        catch (Exception ex)
+        {
+            ToastService.Error($"Не удалось загрузить запись: {ex.Message}");
+            return;
+        }
+
+        if (model is null) return;
+
+        var result = await DialogService.ShowAsync(new DialogOptions
+        {
+            Title             = "Редактировать",
+            ContentType       = EditFormType,
+            ContentParameters = new Dictionary<string, object?> { ["Model"] = model },
+            Width             = DialogWidth,
+            Commands          = BuildSaveCommands(() => Service.UpdateAsync(id, model))
+        });
+        if (result.IsOk)
+        {
+            await LoadAsync();
+            ToastService.Success("Запись успешно обновлена");
+        }
+    }
+
+    // Saves inside the dialog so a failure keeps the form open with the user's input
+    // and surfaces the error inline; the dialog closes only on success.
+    private static IReadOnlyList<IDialogCommand> BuildSaveCommands(Func<Task> save) =>
+    [
+        new DialogCommand("ok", "Сохранить", IsPrimary: true, OnExecute: async ctx =>
+        {
+            ctx.ShowError(null);
+            try
+            {
+                await save();
+                await ctx.CloseAsync("ok");
+            }
+            catch (Exception ex)
+            {
+                ctx.ShowError(ex.Message);
+            }
+        }),
+        DialogCommands.Cancel
+    ];
+
+    private async Task OnDeleteClickAsync(Guid id)
+    {
+        var confirmed = await DialogService.ConfirmAsync("Удалить эту запись?", "Удаление");
+        if (!confirmed) return;
+
+        try
+        {
+            await Service.DeleteAsync(id);
+            if (_page > 1 && _items.Count == 1)
+                _page--;
+            await LoadAsync();
+            ToastService.Success("Запись успешно удалена");
+        }
+        catch (Exception ex)
+        {
+            ToastService.Error($"Не удалось удалить запись: {ex.Message}");
+        }
+    }
+
+    private async Task GoToPageAsync(int page)
+    {
+        _page = page;
+        await LoadAsync();
+    }
+
+    private async Task ChangePageSizeAsync(int size)
+    {
+        _pageSize = size;
+        _page = 1;
+        await LoadAsync();
+    }
+}

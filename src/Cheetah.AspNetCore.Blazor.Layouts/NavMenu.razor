@@ -1,0 +1,115 @@
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.Routing
+@using Cheetah.AspNetCore.Blazor.Navigation
+@using Cheetah.AspNetCore.Blazor.Navigation.Models
+@implements IDisposable
+@inject NavigationManager NavigationManager
+@inject INavigationMenuService NavigationMenuService
+@inject AuthenticationStateProvider AuthProvider
+@inject IMenuAccessEvaluator Access
+
+<nav class="sidebar-nav">
+    @foreach (var menuSection in _menu.Sections)
+    {
+        var visibleItems = menuSection.Items.Where(CanSee).ToList();
+        @if (visibleItems.Count > 0)
+        {
+            <div class="nav-section">
+                <div class="nav-section-label">@menuSection.Label</div>
+                @foreach (var item in visibleItems)
+                {
+                    @if (item.IsGroup)
+                    {
+                        <div class="nav-group @(IsGroupExpanded(item.Id) ? "expanded" : "")">
+                            <button class="nav-item nav-group-toggle" @onclick="() => ToggleGroup(item.Id)">
+                                @if (item.Icon != null)
+                                {
+                                    <i class="@item.Icon nav-icon"></i>
+                                }
+                                <span class="nav-text">@item.Label</span>
+                                <i class="bi bi-chevron-down nav-chevron"></i>
+                            </button>
+                            <div class="nav-group-children">
+                                @foreach (var child in item.Children.Where(CanSee))
+                                {
+                                    <NavLink class="nav-item nav-child" href="@child.Url">
+                                        <span class="nav-child-dot"></span>
+                                        <span class="nav-text">@child.Label</span>
+                                    </NavLink>
+                                }
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <NavLink class="nav-item" href="@item.Url"
+                                 Match="@(string.IsNullOrEmpty(item.Url) ? NavLinkMatch.All : NavLinkMatch.Prefix)">
+                            @if (item.Icon != null)
+                            {
+                                <i class="@item.Icon nav-icon"></i>
+                            }
+                            <span class="nav-text">@item.Label</span>
+                        </NavLink>
+                    }
+                }
+            </div>
+        }
+    }
+</nav>
+
+@code {
+    private Menu _menu = new(string.Empty);
+    private HashSet<string> _expandedGroups = new();
+    private ClaimsPrincipal _user = new(new ClaimsIdentity());
+
+    protected override async Task OnInitializedAsync()
+    {
+        _user = (await AuthProvider.GetAuthenticationStateAsync()).User;
+        _menu = await NavigationMenuService.GetMenuAsync(Constants.MainMenuId);
+        UpdateExpandedGroups(NavigationManager.Uri);
+        NavigationManager.LocationChanged += OnLocationChanged;
+    }
+
+    // Пункт виден, если нет требования либо у пользователя есть нужное разрешение.
+    // Для группы дополнительно требуется хотя бы один видимый дочерний пункт.
+    private bool CanSee(MenuItem item)
+    {
+        if (!Access.CanSee(_user, item.RequiredPermission))
+            return false;
+
+        if (item.IsGroup)
+            return item.Children.Any(CanSee);
+
+        return true;
+    }
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        UpdateExpandedGroups(e.Location);
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void UpdateExpandedGroups(string uri)
+    {
+        var rel = NavigationManager.ToBaseRelativePath(uri).ToLower();
+        foreach (var menuSection in _menu.Sections)
+        {
+            foreach (var item in menuSection.Items.Where(i => i.IsGroup))
+            {
+                if (item.Children.Any(c => rel.StartsWith((c.Url ?? string.Empty).TrimStart('/').ToLower())))
+                    _expandedGroups.Add(item.Id);
+            }
+        }
+    }
+
+    private bool IsGroupExpanded(string groupId) => _expandedGroups.Contains(groupId);
+
+    private void ToggleGroup(string groupId)
+    {
+        if (!_expandedGroups.Remove(groupId))
+            _expandedGroups.Add(groupId);
+    }
+
+    public void Dispose() => NavigationManager.LocationChanged -= OnLocationChanged;
+}

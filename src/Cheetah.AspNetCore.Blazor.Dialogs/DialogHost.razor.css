@@ -1,0 +1,149 @@
+.dialog-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 1000;
+    animation: backdrop-in 0.15s ease;
+}
+
+@keyframes backdrop-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* Positioner: only centers and applies stacked-depth transform. */
+.dialog-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    max-width: 90vw;
+    max-height: 90vh;
+    transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+/* Panel: the visible box. Its entrance animation only touches scale/opacity,
+   so it never fights the positioner's centering transform. */
+.dialog-panel {
+    background: var(--card-bg, #fff);
+    border-radius: 14px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+    min-width: 360px;
+    max-width: 90vw;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: dialog-in 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.dialog-behind {
+    filter: brightness(0.88);
+    pointer-events: none;
+}
+
+@keyframes dialog-in {
+    from { opacity: 0; transform: scale(0.92) translateY(8px); }
+    to   { opacity: 1; transform: none;                        }
+}
+
+.dialog-header {
+    padding: 20px 24px 0;
+}
+
+.dialog-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary, #111);
+}
+
+/* Форма заполняет панель и сама становится flex-колонкой: тело скроллится, футер с кнопками закреплён. */
+.dialog-form {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.dialog-body {
+    padding: 16px 24px;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+.dialog-message {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--text-secondary, #555);
+    line-height: 1.55;
+}
+
+.dialog-error {
+    margin-top: 14px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    background: var(--danger-bg, #fde8e8);
+    border: 1px solid var(--danger-border, #f5c2c2);
+    color: var(--danger-text, #b42318);
+    font-size: 0.85rem;
+    line-height: 1.45;
+}
+
+.dialog-footer {
+    padding: 12px 24px 20px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.dialog-btn {
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.15s ease, box-shadow 0.15s ease;
+}
+
+.dialog-btn:hover {
+    opacity: 0.88;
+}
+
+.dialog-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.dialog-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.dialog-spinner {
+    width: 14px;
+    height: 14px;
+    border: 2px solid currentColor;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: dialog-spin 0.6s linear infinite;
+}
+
+@keyframes dialog-spin {
+    to { transform: rotate(360deg); }
+}
+
+.dialog-btn-primary {
+    background: var(--accent-primary, #6366f1);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.35);
+}
+
+.dialog-btn-secondary {
+    background: var(--hover-bg, #f0f0f0);
+    color: var(--text-primary, #111);
+}

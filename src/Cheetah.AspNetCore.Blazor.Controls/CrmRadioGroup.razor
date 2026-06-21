@@ -1,0 +1,57 @@
+@namespace Cheetah.AspNetCore.Blazor.Controls
+@typeparam TValue
+
+<div class="mb-3">
+    @if (!string.IsNullOrEmpty(Label))
+    {
+        <label class="form-label @(Required ? "crm-label-required" : "")">@Label</label>
+    }
+    <div class="@(Inline ? "d-flex flex-wrap gap-3" : "")">
+        @foreach (var item in Items)
+        {
+            var key   = KeySelector(item);
+            var lbl   = LabelSelector(item);
+            var id    = $"{_name}-{key}";
+            var capt  = item;
+            <div class="form-check @(Inline ? "form-check-inline" : "")">
+                <input type="radio"
+                       class="form-check-input @Class"
+                       id="@id"
+                       name="@_name"
+                       value="@key"
+                       checked="@IsSelected(capt)"
+                       disabled="@Disabled"
+                       @onchange="() => OnSelect(capt)" />
+                <label class="form-check-label" for="@id">@lbl</label>
+            </div>
+        }
+    </div>
+    @if (!string.IsNullOrEmpty(Error))
+    {
+        <div class="text-danger small mt-1">@Error</div>
+    }
+    @if (!string.IsNullOrEmpty(Hint) && string.IsNullOrEmpty(Error))
+    {
+        <div class="form-text">@Hint</div>
+    }
+</div>
+
+@code {
+    [Parameter] public TValue?             Value         { get; set; }
+    [Parameter] public IEnumerable<TValue> Items         { get; set; } = [];
+    [Parameter] public string              Label         { get; set; } = string.Empty;
+    [Parameter] public string?             Error         { get; set; }
+    [Parameter] public string              Hint          { get; set; } = string.Empty;
+    [Parameter] public string              Class         { get; set; } = string.Empty;
+    [Parameter] public bool                Disabled      { get; set; }
+    [Parameter] public bool                Required      { get; set; }
+    [Parameter] public bool                Inline        { get; set; }
+    [Parameter] public Func<TValue, string>  KeySelector   { get; set; } = v => v?.ToString() ?? "";
+    [Parameter] public Func<TValue, string>  LabelSelector { get; set; } = v => v?.ToString() ?? "";
+    [Parameter] public EventCallback<TValue?> ValueChanged { get; set; }
+
+    private readonly string _name = $"rg-{Guid.NewGuid():N}";
+
+    private bool IsSelected(TValue item) => EqualityComparer<TValue>.Default.Equals(item, Value);
+    private Task OnSelect(TValue item)   => ValueChanged.InvokeAsync(item);
+}

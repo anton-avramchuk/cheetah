@@ -1,0 +1,48 @@
+@namespace Cheetah.AspNetCore.Blazor.Controls
+
+@if (Visible)
+{
+    @if (Overlay)
+    {
+        <div class="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-25">
+            <div class="@SpinnerClass" role="status">
+                <span class="visually-hidden">Загрузка…</span>
+            </div>
+            @if (!string.IsNullOrEmpty(Text))
+            {
+                <span class="text-white ms-2 small">@Text</span>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="mb-3">
+            @if (!string.IsNullOrEmpty(Label))
+            {
+                <label class="form-label d-block">@Label</label>
+            }
+            <div class="d-inline-flex align-items-center">
+                <div class="@SpinnerClass" role="status">
+                    <span class="visually-hidden">Загрузка…</span>
+                </div>
+                @if (!string.IsNullOrEmpty(Text))
+                {
+                    <span class="text-muted ms-2 small">@Text</span>
+                }
+            </div>
+        </div>
+    }
+}
+
+@code {
+    [Parameter] public bool   Visible { get; set; } = true;
+    [Parameter] public string Label   { get; set; } = string.Empty;
+    [Parameter] public string Size    { get; set; } = "md";
+    [Parameter] public string Variant { get; set; } = "primary";
+    [Parameter] public string Text    { get; set; } = string.Empty;
+    [Parameter] public bool   Overlay { get; set; }
+    [Parameter] public bool   Grow    { get; set; }
+
+    private string SpinnerClass =>
+        $"{(Grow ? "spinner-grow" : "spinner-border")} text-{Variant}{(Size == "sm" ? " spinner-border-sm" : "")}";
+}

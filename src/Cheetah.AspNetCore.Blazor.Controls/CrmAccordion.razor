@@ -1,0 +1,19 @@
+@namespace Cheetah.AspNetCore.Blazor.Controls
+
+<div class="mb-3">
+    @if (!string.IsNullOrEmpty(Label))
+    {
+        <label class="form-label">@Label</label>
+    }
+    <div class="accordion @Class" id="@_id">
+        @ChildContent
+    </div>
+</div>
+
+@code {
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public string Label { get; set; } = string.Empty;
+    [Parameter] public string Class { get; set; } = string.Empty;
+
+    internal readonly string _id = $"acc-{Guid.NewGuid():N}";
+}
