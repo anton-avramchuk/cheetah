@@ -8,6 +8,7 @@
         <Project Path="src/Cheetah.AspNetCore.Blazor.Controls/Cheetah.AspNetCore.Blazor.Controls.csproj" />
         <Project Path="src/Cheetah.AspNetCore.Blazor.Grid/Cheetah.AspNetCore.Blazor.Grid.csproj" />
         <Project Path="src/Cheetah.AspNetCore.Blazor.Layouts/Cheetah.AspNetCore.Blazor.Layouts.csproj" />
+        <Project Path="src/Cheetah.AspNetCore.Blazor.Tests/Cheetah.AspNetCore.Blazor.Tests.csproj" />
     </Folder>
     <Folder Name="/CodeGen/">
         <Project Path="src/Cheetah.Analyzers.Tests/Cheetah.Analyzers.Tests.csproj" />

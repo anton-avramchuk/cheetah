@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <IsPackable>false</IsPackable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="bunit" />
+        <PackageReference Include="coverlet.collector">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.Extensions.Options" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" />
+        <PackageReference Include="Moq" />
+        <PackageReference Include="Shouldly" />
+        <PackageReference Include="xunit" />
+        <PackageReference Include="xunit.runner.visualstudio" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Cheetah.AspNetCore.Blazor.Controls\Cheetah.AspNetCore.Blazor.Controls.csproj" />
+        <ProjectReference Include="..\Cheetah.AspNetCore.Blazor.Toast\Cheetah.AspNetCore.Blazor.Toast.csproj" />
+        <ProjectReference Include="..\Cheetah.AspNetCore.Blazor.Dialogs\Cheetah.AspNetCore.Blazor.Dialogs.csproj" />
+        <ProjectReference Include="..\Cheetah.AspNetCore.Blazor.Theme\Cheetah.AspNetCore.Blazor.Theme.csproj" />
+        <ProjectReference Include="..\Cheetah.AspNetCore.Blazor.Navigation\Cheetah.AspNetCore.Blazor.Navigation.csproj" />
+        <ProjectReference Include="..\Cheetah.AspNetCore.Blazor.Grid\Cheetah.AspNetCore.Blazor.Grid.csproj" />
+        <ProjectReference Include="..\Cheetah.Core.Domain\Cheetah.Core.Domain.csproj" />
+        <ProjectReference Include="..\Cheetah.Core.Grid\Cheetah.Core.Grid.csproj" />
+        <ProjectReference Include="..\Cheetah.Contracts\Cheetah.Contracts.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Using Include="Xunit" />
+        <Using Include="Shouldly" />
+    </ItemGroup>
+
+</Project>
