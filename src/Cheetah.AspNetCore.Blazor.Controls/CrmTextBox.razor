@@ -7,7 +7,7 @@
         <label class="form-label @(Required ? "crm-label-required" : "")">@Label</label>
     }
     <input type="text"
-           class="form-control @(ShowValidationError ? "is-invalid" : "") @Class"
+           class="form-control @(ShowError ? "is-invalid" : "") @Class"
            value="@Value"
            placeholder="@Placeholder"
            disabled="@Disabled"
