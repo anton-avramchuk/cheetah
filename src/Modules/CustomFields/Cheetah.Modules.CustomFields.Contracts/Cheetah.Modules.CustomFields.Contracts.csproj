@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\..\Cheetah.Contracts\Cheetah.Contracts.csproj" />
+        <ProjectReference Include="..\..\..\Cheetah.Core\Cheetah.Core.csproj" />
+        <ProjectReference Include="..\..\..\Cheetah.Validation\Cheetah.Validation.csproj" />
+        <ProjectReference Include="..\Cheetah.Modules.CustomFields.Shared\Cheetah.Modules.CustomFields.Shared.csproj" />
+    </ItemGroup>
+
+</Project>

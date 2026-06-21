@@ -190,6 +190,19 @@
         <Project Path="src/Modules/Deals/Cheetah.Modules.Deals.Application.Tests/Cheetah.Modules.Deals.Application.Tests.csproj" />
         <Project Path="src/Modules/Deals/Cheetah.Modules.Deals.Client.Tests/Cheetah.Modules.Deals.Client.Tests.csproj" />
     </Folder>
+    <Folder Name="/Modules/CustomFields/">
+        <Project Path="src/Modules/CustomFields/Cheetah.Modules.CustomFields.Api/Cheetah.Modules.CustomFields.Api.csproj" />
+        <Project Path="src/Modules/CustomFields/Cheetah.Modules.CustomFields.Application/Cheetah.Modules.CustomFields.Application.csproj" />
+        <Project Path="src/Modules/CustomFields/Cheetah.Modules.CustomFields.Client/Cheetah.Modules.CustomFields.Client.csproj" />
+        <Project Path="src/Modules/CustomFields/Cheetah.Modules.CustomFields.Contracts/Cheetah.Modules.CustomFields.Contracts.csproj" />
+        <Project Path="src/Modules/CustomFields/Cheetah.Modules.CustomFields.Domain/Cheetah.Modules.CustomFields.Domain.csproj" />
+        <Project Path="src/Modules/CustomFields/Cheetah.Modules.CustomFields.DomainEvents/Cheetah.Modules.CustomFields.DomainEvents.csproj" />
+        <Project Path="src/Modules/CustomFields/Cheetah.Modules.CustomFields.Infrastructure/Cheetah.Modules.CustomFields.Infrastructure.csproj" />
+        <Project Path="src/Modules/CustomFields/Cheetah.Modules.CustomFields.Shared/Cheetah.Modules.CustomFields.Shared.csproj" />
+        <Project Path="src/Modules/CustomFields/Cheetah.Modules.CustomFields.Domain.Tests/Cheetah.Modules.CustomFields.Domain.Tests.csproj" />
+        <Project Path="src/Modules/CustomFields/Cheetah.Modules.CustomFields.Application.Tests/Cheetah.Modules.CustomFields.Application.Tests.csproj" />
+        <Project Path="src/Modules/CustomFields/Cheetah.Modules.CustomFields.Client.Tests/Cheetah.Modules.CustomFields.Client.Tests.csproj" />
+    </Folder>
     <Folder Name="/Modules/Leads/">
         <Project Path="src/Modules/Leads/Cheetah.Modules.Leads.Api/Cheetah.Modules.Leads.Api.csproj" />
         <Project Path="src/Modules/Leads/Cheetah.Modules.Leads.Application.Tests/Cheetah.Modules.Leads.Application.Tests.csproj" />

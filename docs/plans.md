@@ -18,7 +18,7 @@
 | 4 | [Catalog (Products & Price Lists)](#4-catalog-каталог-товаров-и-прайс-листы) | 🟠 2 | Товары/услуги, цены, валюты | EF, Cache |
 | 5 | [Sales Documents (Quotes / Orders / Invoices)](#5-sales-documents-кп-заказы-счета) | 🟠 2 | КП, заказы, счета из позиций | FileStorage, StateMachine |
 | 6 | [Notes & Timeline](#6-notes--timeline-заметки-и-хронология) | 🟠 2 | Заметки, комментарии, лента событий | Audit, Events |
-| 7 | [Custom Fields](#7-custom-fields-кастомные-поля) | 🟡 3 | Доп. поля сущностей без миграций | Expressions.JsonLogic, Validation |
+| 7 | [Custom Fields](#7-custom-fields-кастомные-поля) ✅ *(MVP реализован)* | 🟡 3 | Доп. поля сущностей без миграций | Expressions.JsonLogic, Validation |
 | 8 | [Workflow / Automation](#8-workflow--automation-бизнес-процессы) | 🟡 3 | Триггеры и автодействия | StateMachine, Events, BackgroundTasks |
 | 9 | [Webhooks](#9-webhooks-исходящие-интеграции) | 🟡 3 | Доставка событий наружу | Outbox, RateLimit |
 | 10 | [Search](#10-search-сквозной-поиск) | 🟡 3 | Полнотекстовый поиск по сущностям | Events, проекции |
@@ -357,6 +357,12 @@ public record LeadDisqualifiedIntegrationEvent(Guid LeadId, string Reason) : Eve
 ---
 
 ## 7. Custom Fields (кастомные поля)
+
+> **✅ MVP реализован.** Код: `src/Modules/CustomFields/` (8 сборок + 3 теста, 20 зелёных); детальный
+> план с отметками — [`docs/modules/custom-fields.md`](modules/custom-fields.md). Уточнение относительно
+> эскиза: модуль сделан **конкретным** (`sealed`, как Deals) — расширяемость у Custom Fields на уровне
+> данных (JSONB + рантайм-определения), а не наследования типов; значения хранятся одним `jsonb`-набором
+> на сущность (не EAV); валидация — `Cheetah.Validation`, видимость — `Cheetah.Expressions.JsonLogic`.
 
 > **Tier 3 — расширяемость.** Для CRM критично: дать добавлять поля сущностям без миграций.
 
