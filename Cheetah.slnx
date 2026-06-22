@@ -9,6 +9,7 @@
         <Project Path="src/Cheetah.AspNetCore.Blazor.Grid/Cheetah.AspNetCore.Blazor.Grid.csproj" />
         <Project Path="src/Cheetah.AspNetCore.Blazor.Layouts/Cheetah.AspNetCore.Blazor.Layouts.csproj" />
         <Project Path="src/Cheetah.AspNetCore.Blazor.Auth/Cheetah.AspNetCore.Blazor.Auth.csproj" />
+        <Project Path="src/Cheetah.AspNetCore.Blazor.Auth.Redis/Cheetah.AspNetCore.Blazor.Auth.Redis.csproj" />
         <Project Path="src/Cheetah.AspNetCore.Blazor.Tests/Cheetah.AspNetCore.Blazor.Tests.csproj" />
     </Folder>
     <Folder Name="/CodeGen/">
