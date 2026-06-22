@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\..\Cheetah.Core\Cheetah.Core.csproj"/>
+        <ProjectReference Include="..\..\..\Cheetah.Mapping.Mapster\Cheetah.Mapping.Mapster.csproj"/>
+        <ProjectReference Include="..\Cheetah.Modules.Calendar.Application\Cheetah.Modules.Calendar.Application.csproj"/>
+        <ProjectReference Include="..\Cheetah.Modules.Calendar.Contracts\Cheetah.Modules.Calendar.Contracts.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\..\Cheetah.Generators.Module\Cheetah.Generators.Module.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer"/>
+    </ItemGroup>
+
+</Project>

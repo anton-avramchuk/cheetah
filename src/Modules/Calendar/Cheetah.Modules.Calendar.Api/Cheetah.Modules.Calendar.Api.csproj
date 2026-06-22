@@ -10,7 +10,6 @@
         <ProjectReference Include="..\..\..\Cheetah.Backend.Endpoints\Cheetah.Backend.Endpoints.csproj" />
         <ProjectReference Include="..\..\..\Cheetah.Core\Cheetah.Core.csproj" />
         <ProjectReference Include="..\..\..\Cheetah.Core.CQRS\Cheetah.Core.CQRS.csproj" />
-        <ProjectReference Include="..\..\..\Cheetah.Mapping.Mapster\Cheetah.Mapping.Mapster.csproj" />
         <ProjectReference Include="..\Cheetah.Modules.Calendar.Application\Cheetah.Modules.Calendar.Application.csproj" />
         <ProjectReference Include="..\Cheetah.Modules.Calendar.Contracts\Cheetah.Modules.Calendar.Contracts.csproj" />
     </ItemGroup>

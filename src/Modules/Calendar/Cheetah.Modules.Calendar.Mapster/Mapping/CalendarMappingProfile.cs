@@ -8,7 +8,7 @@ using Cheetah.Modules.Calendar.Application.Reminders;
 using Cheetah.Modules.Calendar.Contracts;
 using Mapster;
 
-namespace Cheetah.Modules.Calendar.Api.Mapping;
+namespace Cheetah.Modules.Calendar.Mapster.Mapping;
 
 /// <summary>
 /// Маппинг HTTP-реквестов в CQRS-команды/запросы. Имена полей реквестов и команд совпадают —
