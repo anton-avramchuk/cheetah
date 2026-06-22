@@ -6,7 +6,7 @@ using Cheetah.Modules.Catalog.Contracts;
 using Cheetah.Modules.Catalog.Domain.Entities;
 using Mapster;
 
-namespace Cheetah.Modules.Catalog.Api.Mapping;
+namespace Cheetah.Modules.Catalog.Mapster.Mapping;
 
 /// <summary>
 /// Mapster-маппинги каталога: Request → Command/Query и Entity → ViewModel (для ProjectTo в гриде и

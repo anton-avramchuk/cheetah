@@ -258,6 +258,7 @@
         <Project Path="src/Modules/Catalog/Cheetah.Modules.Catalog.Domain/Cheetah.Modules.Catalog.Domain.csproj" />
         <Project Path="src/Modules/Catalog/Cheetah.Modules.Catalog.DomainEvents/Cheetah.Modules.Catalog.DomainEvents.csproj" />
         <Project Path="src/Modules/Catalog/Cheetah.Modules.Catalog.Infrastructure/Cheetah.Modules.Catalog.Infrastructure.csproj" />
+        <Project Path="src/Modules/Catalog/Cheetah.Modules.Catalog.Mapster/Cheetah.Modules.Catalog.Mapster.csproj" />
         <Project Path="src/Modules/Catalog/Cheetah.Modules.Catalog.Shared/Cheetah.Modules.Catalog.Shared.csproj" />
     </Folder>
     <Folder Name="/Modules/Customer/">
