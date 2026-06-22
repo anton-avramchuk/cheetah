@@ -181,7 +181,7 @@
         {
             Title             = "Создать",
             ContentType       = CreateFormType,
-            ContentParameters = new Dictionary<string, object?> { ["Model"] = model },
+            ContentParameters = new Dictionary<string, object> { ["Model"] = model },
             Width             = DialogWidth,
             Commands          = BuildSaveCommands(() => Service.CreateAsync(model))
         });
@@ -212,7 +212,7 @@
         {
             Title             = "Редактировать",
             ContentType       = EditFormType,
-            ContentParameters = new Dictionary<string, object?> { ["Model"] = model },
+            ContentParameters = new Dictionary<string, object> { ["Model"] = model },
             Width             = DialogWidth,
             Commands          = BuildSaveCommands(() => Service.UpdateAsync(id, model))
         });
