@@ -276,8 +276,14 @@
     </Folder>
     <Folder Name="/Modules/Teams/">
         <Project Path="src/Modules/Teams/Cheetah.Modules.Teams.Api/Cheetah.Modules.Teams.Api.csproj" />
+        <Project Path="src/Modules/Teams/Cheetah.Modules.Teams.Application/Cheetah.Modules.Teams.Application.csproj" />
+        <Project Path="src/Modules/Teams/Cheetah.Modules.Teams.Application.Tests/Cheetah.Modules.Teams.Application.Tests.csproj" />
+        <Project Path="src/Modules/Teams/Cheetah.Modules.Teams.Contracts/Cheetah.Modules.Teams.Contracts.csproj" />
         <Project Path="src/Modules/Teams/Cheetah.Modules.Teams.Domain/Cheetah.Modules.Teams.Domain.csproj" />
+        <Project Path="src/Modules/Teams/Cheetah.Modules.Teams.Domain.Tests/Cheetah.Modules.Teams.Domain.Tests.csproj" />
+        <Project Path="src/Modules/Teams/Cheetah.Modules.Teams.DomainEvents/Cheetah.Modules.Teams.DomainEvents.csproj" />
         <Project Path="src/Modules/Teams/Cheetah.Modules.Teams.Infrastructure/Cheetah.Modules.Teams.Infrastructure.csproj" />
+        <Project Path="src/Modules/Teams/Cheetah.Modules.Teams.Mapster/Cheetah.Modules.Teams.Mapster.csproj" />
         <Project Path="src/Modules/Teams/Cheetah.Modules.Teams.Shared/Cheetah.Modules.Teams.Shared.csproj" />
     </Folder>
     <Folder Name="/Modules/Workflow/">
