@@ -5,7 +5,7 @@ using Cheetah.Modules.Deals.Application.Pipelines;
 using Cheetah.Modules.Deals.Contracts;
 using Mapster;
 
-namespace Cheetah.Modules.Deals.Api.Mapping;
+namespace Cheetah.Modules.Deals.Mapster.Mapping;
 
 /// <summary>
 /// Маппинг HTTP-реквестов в CQRS-команды/запросы. Имена полей реквестов и команд совпадают —

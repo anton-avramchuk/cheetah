@@ -199,6 +199,7 @@
         <Project Path="src/Modules/Deals/Cheetah.Modules.Deals.Domain/Cheetah.Modules.Deals.Domain.csproj" />
         <Project Path="src/Modules/Deals/Cheetah.Modules.Deals.DomainEvents/Cheetah.Modules.Deals.DomainEvents.csproj" />
         <Project Path="src/Modules/Deals/Cheetah.Modules.Deals.Infrastructure/Cheetah.Modules.Deals.Infrastructure.csproj" />
+        <Project Path="src/Modules/Deals/Cheetah.Modules.Deals.Mapster/Cheetah.Modules.Deals.Mapster.csproj" />
         <Project Path="src/Modules/Deals/Cheetah.Modules.Deals.Shared/Cheetah.Modules.Deals.Shared.csproj" />
         <Project Path="src/Modules/Deals/Cheetah.Modules.Deals.Domain.Tests/Cheetah.Modules.Deals.Domain.Tests.csproj" />
         <Project Path="src/Modules/Deals/Cheetah.Modules.Deals.Application.Tests/Cheetah.Modules.Deals.Application.Tests.csproj" />
