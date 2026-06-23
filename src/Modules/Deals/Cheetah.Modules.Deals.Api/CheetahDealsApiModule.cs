@@ -4,6 +4,7 @@ using Cheetah.Backend.Endpoints;
 using Cheetah.Core;
 using Cheetah.Core.CQRS;
 using Cheetah.Core.Modularity;
+using Cheetah.Mapping.Core;
 using Cheetah.Modules.Deals.Application;
 using Cheetah.Modules.Deals.Contracts;
 
@@ -19,6 +20,7 @@ namespace Cheetah.Modules.Deals.Api;
     typeof(CrmAspNetCoreModule),
     typeof(CrmAspNetCoreContractsModule),
     typeof(CrmBackendEndpointsModule),
+    typeof(CrmMappingCoreModule),
     typeof(CheetahDealsApplicationModule),
     typeof(CheetahDealsContractsModule))]
 public partial class CheetahDealsApiModule : CrmModule

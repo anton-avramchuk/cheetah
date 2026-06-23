@@ -4,6 +4,7 @@ using Cheetah.Backend.Endpoints;
 using Cheetah.Core;
 using Cheetah.Core.CQRS;
 using Cheetah.Core.Modularity;
+using Cheetah.Mapping.Core;
 using Cheetah.Modules.Calendar.Application;
 using Cheetah.Modules.Calendar.Contracts;
 
@@ -19,6 +20,7 @@ namespace Cheetah.Modules.Calendar.Api;
     typeof(CrmAspNetCoreModule),
     typeof(CrmAspNetCoreContractsModule),
     typeof(CrmBackendEndpointsModule),
+    typeof(CrmMappingCoreModule),
     typeof(CheetahCalendarApplicationModule),
     typeof(CheetahCalendarContractsModule))]
 public partial class CheetahCalendarApiModule : CrmModule
