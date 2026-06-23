@@ -7,11 +7,11 @@ using Cheetah.Backend.Jwt;
 using Cheetah.Backend.Rsa.Abstractions;
 using Cheetah.Core;
 using Cheetah.Core.Modularity;
-using Cheetah.Mapping.Mapster;
 using Cheetah.Modules.Identity.Api.Middleware;
 using Cheetah.Modules.Identity.Application;
 using Cheetah.Modules.Identity.Contracts;
 using Cheetah.Scalar;
+
 // optional dependency — see comment on [DependsOn]
 
 namespace Cheetah.Modules.Identity.Api;
@@ -24,7 +24,6 @@ namespace Cheetah.Modules.Identity.Api;
     typeof(CrmAspNetCoreModule),
     typeof(CrmAspNetCoreContractsModule),
     typeof(ScalarModule),
-    typeof(CrmMapsterModule),
     typeof(CrmBackendCQRSModule),
     typeof(CrmBackendEndpointsModule),
     typeof(CrmBackendJwtModule),

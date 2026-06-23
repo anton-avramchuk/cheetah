@@ -7,7 +7,7 @@ using Cheetah.Modules.Identity.Contracts.Requests;
 using Cheetah.Modules.Identity.Contracts.Response;
 using Mapster;
 
-namespace Cheetah.Modules.Identity.Api.Mapping;
+namespace Cheetah.Modules.Identity.Mapster.Mapping;
 
 [Export(LifetimeType.Singleton, typeof(IMapsterMappingProfile))]
 public class MappingProfile : IMapsterMappingProfile

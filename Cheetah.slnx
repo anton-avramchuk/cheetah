@@ -129,6 +129,7 @@
         <Project Path="src/Modules/Identity/Cheetah.Modules.Identity.Domain/Cheetah.Modules.Identity.Domain.csproj" />
         <Project Path="src/Modules/Identity/Cheetah.Modules.Identity.DomainEvents/Cheetah.Modules.Identity.DomainEvents.csproj" />
         <Project Path="src/Modules/Identity/Cheetah.Modules.Identity.Infrastructure/Cheetah.Modules.Identity.Infrastructure.csproj" />
+        <Project Path="src/Modules/Identity/Cheetah.Modules.Identity.Mapster/Cheetah.Modules.Identity.Mapster.csproj" />
     </Folder>
     <Folder Name="/Modules/Tags/">
         <Project Path="src/Modules/Tags/Cheetah.Modules.Tags.Api/Cheetah.Modules.Tags.Api.csproj" />
