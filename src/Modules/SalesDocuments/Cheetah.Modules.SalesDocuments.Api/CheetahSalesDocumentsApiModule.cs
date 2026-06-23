@@ -4,7 +4,6 @@ using Cheetah.Backend.Endpoints;
 using Cheetah.Core;
 using Cheetah.Core.CQRS;
 using Cheetah.Core.Modularity;
-using Cheetah.Mapping.Mapster;
 using Cheetah.Modules.SalesDocuments.Application;
 using Cheetah.Modules.SalesDocuments.Contracts;
 
@@ -20,7 +19,6 @@ namespace Cheetah.Modules.SalesDocuments.Api;
     typeof(CrmCQRSCoreModule),
     typeof(CrmAspNetCoreModule),
     typeof(CrmAspNetCoreContractsModule),
-    typeof(CrmMapsterModule),
     typeof(CrmBackendEndpointsModule),
     typeof(CheetahSalesDocumentsApplicationModule),
     typeof(CheetahSalesDocumentsContractsModule))]

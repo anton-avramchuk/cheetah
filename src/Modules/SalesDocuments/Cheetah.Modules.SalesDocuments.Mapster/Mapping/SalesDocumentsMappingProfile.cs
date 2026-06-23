@@ -4,7 +4,7 @@ using Cheetah.Modules.SalesDocuments.Application.Documents;
 using Cheetah.Modules.SalesDocuments.Contracts;
 using Mapster;
 
-namespace Cheetah.Modules.SalesDocuments.Api.Mapping;
+namespace Cheetah.Modules.SalesDocuments.Mapster.Mapping;
 
 /// <summary>
 /// Mapster-маппинги модуля документов: Request операций → конкретные команды. Маппинги расширяемого

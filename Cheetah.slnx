@@ -308,6 +308,7 @@
         <Project Path="src/Modules/SalesDocuments/Cheetah.Modules.SalesDocuments.Domain/Cheetah.Modules.SalesDocuments.Domain.csproj" />
         <Project Path="src/Modules/SalesDocuments/Cheetah.Modules.SalesDocuments.DomainEvents/Cheetah.Modules.SalesDocuments.DomainEvents.csproj" />
         <Project Path="src/Modules/SalesDocuments/Cheetah.Modules.SalesDocuments.Infrastructure/Cheetah.Modules.SalesDocuments.Infrastructure.csproj" />
+        <Project Path="src/Modules/SalesDocuments/Cheetah.Modules.SalesDocuments.Mapster/Cheetah.Modules.SalesDocuments.Mapster.csproj" />
         <Project Path="src/Modules/SalesDocuments/Cheetah.Modules.SalesDocuments.Shared/Cheetah.Modules.SalesDocuments.Shared.csproj" />
     </Folder>
     <Folder Name="/Modules/FeatureManagement/">

@@ -1,10 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+
     <ItemGroup>
       <ProjectReference Include="..\..\..\Cheetah.Core\Cheetah.Core.csproj" />
       <ProjectReference Include="..\..\..\Cheetah.Mapping.Mapster\Cheetah.Mapping.Mapster.csproj" />
-      <ProjectReference Include="..\Cheetah.Modules.Identity.Application\Cheetah.Modules.Identity.Application.csproj" />
-      <ProjectReference Include="..\Cheetah.Modules.Identity.Contracts\Cheetah.Modules.Identity.Contracts.csproj" />
+      <ProjectReference Include="..\Cheetah.Modules.SalesDocuments.Application\Cheetah.Modules.SalesDocuments.Application.csproj" />
+      <ProjectReference Include="..\Cheetah.Modules.SalesDocuments.Contracts\Cheetah.Modules.SalesDocuments.Contracts.csproj" />
     </ItemGroup>
 
     <ItemGroup>
