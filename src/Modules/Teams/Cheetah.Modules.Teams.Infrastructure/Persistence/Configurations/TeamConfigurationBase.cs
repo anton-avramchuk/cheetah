@@ -1,7 +1,6 @@
 using Cheetah.Modules.Teams.Domain.Entities;
 using Cheetah.Modules.Teams.Shared;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Cheetah.Modules.Teams.Infrastructure.Persistence.Configurations;
