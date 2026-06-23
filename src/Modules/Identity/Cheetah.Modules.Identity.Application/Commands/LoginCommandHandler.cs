@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Cheetah.Backend.Rsa.Abstractions;
 using Cheetah.Core.CQRS;
 using Cheetah.Modules.Identity.Application.Exceptions;
@@ -9,6 +10,7 @@ namespace Cheetah.Modules.Identity.Application.Commands;
 
 public abstract class LoginCommandHandler<TUser, TRole>(
     UserManager<TUser> userManager,
+    RoleManager<TRole> roleManager,
     ITokenGenerator tokenGenerator,
     IPasswordDecryptor passwordDecryptor)
     : ICommandHandler<LoginCommand, TokenResult>
@@ -32,6 +34,23 @@ public abstract class LoginCommandHandler<TUser, TRole>(
         var userName = user.UserName ?? throw new InvalidOperationException("User account is in an invalid state.");
         var email = user.Email ?? throw new InvalidOperationException("User account is in an invalid state.");
 
-        return tokenGenerator.GenerateToken(user.Id, userName, email, roles);
+        var userClaims = await userManager.GetClaimsAsync(user);
+        var rolesClaims = new List<Claim>();
+
+        foreach (var role in roles)
+        {
+            var dbRole = await roleManager.FindByNameAsync(role);
+            if (dbRole is null)
+                continue;
+
+            var roleClaims = await roleManager.GetClaimsAsync(dbRole);
+
+            rolesClaims.AddRange(roleClaims);
+        }
+
+        var claims = rolesClaims.Union(userClaims).ToList();
+
+
+        return tokenGenerator.GenerateToken(user.Id, userName, email, roles, claims);
     }
 }

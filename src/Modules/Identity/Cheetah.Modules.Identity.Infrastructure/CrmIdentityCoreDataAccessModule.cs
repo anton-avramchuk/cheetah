@@ -2,7 +2,7 @@ using Cheetah.Core.EntityFramework;
 using Cheetah.Modules.Identity.Domain;
 using Cheetah.Core.Modularity;
 
-namespace Cheetah.Modules.Identity.DataAccess;
+namespace Cheetah.Modules.Identity.Infrastructure;
 
 [DependsOn(typeof(Cheetah.Core.CoreModule), typeof(CrmEntityFrameworkModule), typeof(CheetahIdentityDomainModule))]
 [DependsOn(typeof(Cheetah.Core.Security.CrmCoreSecurityModule))]

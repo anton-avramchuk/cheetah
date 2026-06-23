@@ -1,6 +1,6 @@
 using Cheetah.Core.EntityFramework;
 
-namespace Cheetah.Modules.Identity.DataAccess.Context;
+namespace Cheetah.Modules.Identity.Infrastructure.Context;
 
 /// <summary>
 /// Marker interface for identity DbContext instances.

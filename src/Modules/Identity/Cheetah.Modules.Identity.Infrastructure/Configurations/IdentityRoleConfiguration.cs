@@ -3,7 +3,7 @@ using Cheetah.Modules.Identity.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Cheetah.Modules.Identity.DataAccess.Configurations;
+namespace Cheetah.Modules.Identity.Infrastructure.Configurations;
 
 public abstract class IdentityRoleConfigurationOptions<TIdentityRole>
     : AggregateRootConfigurationOptions<TIdentityRole, Guid>

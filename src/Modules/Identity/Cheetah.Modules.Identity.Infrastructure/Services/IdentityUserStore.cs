@@ -1,12 +1,12 @@
 using System.Globalization;
 using System.Security.Claims;
-using Cheetah.Modules.Identity.DataAccess.Context;
 using Cheetah.Modules.Identity.Domain;
+using Cheetah.Modules.Identity.Infrastructure.Context;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace Cheetah.Modules.Identity.DataAccess.Services;
+namespace Cheetah.Modules.Identity.Infrastructure.Services;
 
 public sealed class IdentityUserStore<TIdentityUser, TIdentityRole, TIdentityContext> :
         IUserStore<TIdentityUser>,

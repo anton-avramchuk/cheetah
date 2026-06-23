@@ -2,7 +2,7 @@ using Cheetah.Core.EntityFramework.Configuration;
 using Cheetah.Modules.Identity.Domain;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Cheetah.Modules.Identity.DataAccess.Configurations;
+namespace Cheetah.Modules.Identity.Infrastructure.Configurations;
 
 public abstract class IdentityUserClaimConfigurationOptions
     : EntityConfigurationOptions<IdentityUserClaim, Guid>

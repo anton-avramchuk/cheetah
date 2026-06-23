@@ -1,7 +1,7 @@
 using Cheetah.Backend.Rsa.Abstractions;
 using Cheetah.Core.CQRS;
 using Cheetah.Core.Grid;
-using Cheetah.Modules.Identity.DataAccess;
+using Cheetah.Modules.Identity.Infrastructure;
 using Cheetah.Core.Modularity;
 using Cheetah.Mapping.Core;
 using Cheetah.Modules.Identity.Application.Services;

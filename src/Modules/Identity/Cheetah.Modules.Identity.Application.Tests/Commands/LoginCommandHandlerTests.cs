@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Cheetah.Backend.Rsa.Abstractions;
 using Cheetah.Modules.Identity.Application.Commands;
 using Cheetah.Modules.Identity.Application.Exceptions;
@@ -5,15 +6,15 @@ using Cheetah.Modules.Identity.Application.Services;
 using Microsoft.AspNetCore.Identity;
 using Moq;
 using Shouldly;
-using Cheetah.Modules.Identity.Application.Tests;
 
 namespace Cheetah.Modules.Identity.Application.Tests.Commands;
 
 public sealed class StubLoginCommandHandler(
     UserManager<StubUser> userManager,
+    RoleManager<StubRole> roleManager,
     ITokenGenerator tokenGenerator,
     IPasswordDecryptor passwordDecryptor)
-    : LoginCommandHandler<StubUser, StubRole>(userManager, tokenGenerator, passwordDecryptor);
+    : LoginCommandHandler<StubUser, StubRole>(userManager, roleManager, tokenGenerator, passwordDecryptor);
 
 public class LoginCommandHandlerTests
 {
@@ -21,6 +22,7 @@ public class LoginCommandHandlerTests
     private readonly Mock<ITokenGenerator> _tokenGeneratorMock;
     private readonly Mock<IPasswordDecryptor> _passwordDecryptorMock;
     private readonly StubLoginCommandHandler _handler;
+    private readonly Mock<RoleManager<StubRole>> _roleManagerMock;
 
     public LoginCommandHandlerTests()
     {
@@ -28,9 +30,10 @@ public class LoginCommandHandlerTests
         _tokenGeneratorMock = new Mock<ITokenGenerator>();
         _passwordDecryptorMock = new Mock<IPasswordDecryptor>();
         _passwordDecryptorMock.Setup(d => d.Decrypt(It.IsAny<string>())).Returns<string>(s => s);
-
+        _roleManagerMock = CreateRoleManagerMock();
         _handler = new StubLoginCommandHandler(
             _userManagerMock.Object,
+            _roleManagerMock.Object,
             _tokenGeneratorMock.Object,
             _passwordDecryptorMock.Object);
     }
@@ -46,7 +49,8 @@ public class LoginCommandHandlerTests
         _userManagerMock.Setup(m => m.CheckPasswordAsync(user, "P@ssw0rd!")).ReturnsAsync(true);
         _userManagerMock.Setup(m => m.GetRolesAsync(user)).ReturnsAsync(["admin"]);
         _tokenGeneratorMock
-            .Setup(g => g.GenerateToken(user.Id, user.UserName!, user.Email!, It.IsAny<IEnumerable<string>>()))
+            .Setup(g => g.GenerateToken(user.Id, user.UserName!, user.Email!, It.IsAny<IEnumerable<string>>(),
+                It.IsAny<IEnumerable<Claim>>()))
             .Returns(new TokenResult("jwt.token", 3600));
 
         // Act
@@ -62,8 +66,8 @@ public class LoginCommandHandlerTests
     {
         _userManagerMock.Setup(m => m.FindByNameAsync("unknown")).ReturnsAsync((StubUser?)null);
 
-        await Should.ThrowAsync<InvalidCredentialsException>(
-            () => _handler.HandleAsync(new LoginCommand("unknown", "pass")).AsTask());
+        await Should.ThrowAsync<InvalidCredentialsException>(() =>
+            _handler.HandleAsync(new LoginCommand("unknown", "pass")).AsTask());
     }
 
     [Fact]
@@ -73,8 +77,8 @@ public class LoginCommandHandlerTests
         _userManagerMock.Setup(m => m.FindByNameAsync("johndoe")).ReturnsAsync(user);
         _userManagerMock.Setup(m => m.CheckPasswordAsync(user, "wrong")).ReturnsAsync(false);
 
-        await Should.ThrowAsync<InvalidCredentialsException>(
-            () => _handler.HandleAsync(new LoginCommand("johndoe", "wrong")).AsTask());
+        await Should.ThrowAsync<InvalidCredentialsException>(() =>
+            _handler.HandleAsync(new LoginCommand("johndoe", "wrong")).AsTask());
     }
 
     [Fact]
@@ -90,7 +94,8 @@ public class LoginCommandHandlerTests
         _userManagerMock.Setup(m => m.CheckPasswordAsync(user, plain)).ReturnsAsync(true);
         _userManagerMock.Setup(m => m.GetRolesAsync(user)).ReturnsAsync([]);
         _tokenGeneratorMock
-            .Setup(g => g.GenerateToken(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<IEnumerable<string>>()))
+            .Setup(g => g.GenerateToken(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(),
+                It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<Claim>>()))
             .Returns(new TokenResult("token", 3600));
 
         // Act
@@ -106,8 +111,8 @@ public class LoginCommandHandlerTests
     {
         _userManagerMock.Setup(m => m.FindByNameAsync(It.IsAny<string>())).ReturnsAsync((StubUser?)null);
 
-        await Should.ThrowAsync<InvalidCredentialsException>(
-            () => _handler.HandleAsync(new LoginCommand("unknown", "pass")).AsTask());
+        await Should.ThrowAsync<InvalidCredentialsException>(() =>
+            _handler.HandleAsync(new LoginCommand("unknown", "pass")).AsTask());
 
         _passwordDecryptorMock.Verify(d => d.Decrypt(It.IsAny<string>()), Times.Never);
         _userManagerMock.Verify(m => m.CheckPasswordAsync(It.IsAny<StubUser>(), It.IsAny<string>()), Times.Never);
@@ -124,7 +129,8 @@ public class LoginCommandHandlerTests
         _userManagerMock.Setup(m => m.CheckPasswordAsync(user, "pass")).ReturnsAsync(true);
         _userManagerMock.Setup(m => m.GetRolesAsync(user)).ReturnsAsync(roles);
         _tokenGeneratorMock
-            .Setup(g => g.GenerateToken(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<IEnumerable<string>>()))
+            .Setup(g => g.GenerateToken(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(),
+                It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<Claim>>()))
             .Returns(new TokenResult("token", 3600));
 
         // Act
@@ -132,12 +138,77 @@ public class LoginCommandHandlerTests
 
         // Assert
         _tokenGeneratorMock.Verify(g =>
-            g.GenerateToken(user.Id, user.UserName!, user.Email!, roles), Times.Once);
+            g.GenerateToken(user.Id, user.UserName!, user.Email!, roles, It.IsAny<IEnumerable<Claim>>()), Times.Once);
+    }
+
+
+    [Fact]
+    public async Task HandleAsync_ShouldPassClaimsToTokenGenerator()
+    {
+        // Arrange
+        var user = new StubUser("johndoe", "john@example.com");
+
+        var adminRole = new StubRole(Guid.NewGuid(), "admin");
+
+        var managerRole = new StubRole(Guid.NewGuid(), "manager");
+
+        var roles = new List<string> { "admin", "manager" };
+
+        var userClaims = new List<Claim>()
+        {
+            new("userClaim1Type", "userClaim1Value"),
+            new("userClaim2Type", "userClaim2Value"),
+        };
+
+        var adminRoleClaims = new List<Claim>()
+        {
+            new("adminRoleClaim1Type", "adminRoleClaim1Value"),
+            new("adminRoleClaim2Type", "adminRoleClaim2Value"),
+        };
+
+        var managerRoleClaims = new List<Claim>()
+        {
+            new("managerRoleClaim1Type", "managerRoleClaim1Value"),
+            new("managerRoleClaim2Type", "managerRoleClaim2Value"),
+        };
+
+        _userManagerMock.Setup(m => m.FindByNameAsync("johndoe")).ReturnsAsync(user);
+        _userManagerMock.Setup(m => m.CheckPasswordAsync(user, "pass")).ReturnsAsync(true);
+
+        _userManagerMock.Setup(m => m.GetRolesAsync(user)).ReturnsAsync(roles);
+
+
+        _roleManagerMock.Setup(x => x.FindByNameAsync("admin")).ReturnsAsync(adminRole);
+        _roleManagerMock.Setup(x => x.FindByNameAsync("manager")).ReturnsAsync(managerRole);
+
+        _roleManagerMock.Setup(x => x.GetClaimsAsync(adminRole)).ReturnsAsync(adminRoleClaims);
+        _roleManagerMock.Setup(x => x.GetClaimsAsync(managerRole)).ReturnsAsync(managerRoleClaims);
+
+        _userManagerMock.Setup(q => q.GetClaimsAsync(user)).ReturnsAsync(userClaims);
+
+        _tokenGeneratorMock
+            .Setup(g => g.GenerateToken(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(),
+                It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<Claim>>()))
+            .Returns(new TokenResult("token", 3600));
+
+        // Act
+        await _handler.HandleAsync(new LoginCommand("johndoe", "pass"));
+
+        // Assert
+        _tokenGeneratorMock.Verify(g =>
+            g.GenerateToken(user.Id, user.UserName!, user.Email!, roles,
+                adminRoleClaims.Union(managerRoleClaims).Union(userClaims)), Times.Once);
     }
 
     private static Mock<UserManager<StubUser>> CreateUserManagerMock()
     {
         var store = new Mock<IUserStore<StubUser>>();
         return new Mock<UserManager<StubUser>>(store.Object, null!, null!, null!, null!, null!, null!, null!, null!);
+    }
+
+    private static Mock<RoleManager<StubRole>> CreateRoleManagerMock()
+    {
+        var store = new Mock<IRoleStore<StubRole>>();
+        return new Mock<RoleManager<StubRole>>(store.Object, null!, null!, null!, null!, null!, null!, null!, null!);
     }
 }

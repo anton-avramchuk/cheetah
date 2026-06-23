@@ -126,9 +126,9 @@
         <Project Path="src/Modules/Identity/Cheetah.Modules.Identity.Application/Cheetah.Modules.Identity.Application.csproj" />
         <Project Path="src/Modules/Identity/Cheetah.Modules.Identity.Client/Cheetah.Modules.Identity.Client.csproj" />
         <Project Path="src/Modules/Identity/Cheetah.Modules.Identity.Contracts/Cheetah.Modules.Identity.Contracts.csproj" />
-        <Project Path="src/Modules/Identity/Cheetah.Modules.Identity.DataAccess/Cheetah.Modules.Identity.DataAccess.csproj" />
         <Project Path="src/Modules/Identity/Cheetah.Modules.Identity.Domain/Cheetah.Modules.Identity.Domain.csproj" />
         <Project Path="src/Modules/Identity/Cheetah.Modules.Identity.DomainEvents/Cheetah.Modules.Identity.DomainEvents.csproj" />
+        <Project Path="src/Modules/Identity/Cheetah.Modules.Identity.Infrastructure/Cheetah.Modules.Identity.Infrastructure.csproj" />
     </Folder>
     <Folder Name="/Modules/Tags/">
         <Project Path="src/Modules/Tags/Cheetah.Modules.Tags.Api/Cheetah.Modules.Tags.Api.csproj" />

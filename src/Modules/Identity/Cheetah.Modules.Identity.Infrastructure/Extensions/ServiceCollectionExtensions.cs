@@ -1,12 +1,12 @@
 using Cheetah.Core.EntityFramework.Extensions;
-using Cheetah.Modules.Identity.DataAccess.Context;
-using Cheetah.Modules.Identity.DataAccess.Services;
 using Cheetah.Modules.Identity.Domain;
+using Cheetah.Modules.Identity.Infrastructure.Context;
+using Cheetah.Modules.Identity.Infrastructure.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace Cheetah.Modules.Identity.DataAccess.Extensions;
+namespace Cheetah.Modules.Identity.Infrastructure.Extensions;
 
 public static class ServiceCollectionExtensions
 {

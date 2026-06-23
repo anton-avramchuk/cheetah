@@ -3,7 +3,7 @@ using Cheetah.Modules.Identity.Domain;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 
-namespace Cheetah.Modules.Identity.DataAccess.Services;
+namespace Cheetah.Modules.Identity.Infrastructure.Services;
 
 public class IdentityRoleManager<TIdentityRole>(
     IRoleStore<TIdentityRole> store,

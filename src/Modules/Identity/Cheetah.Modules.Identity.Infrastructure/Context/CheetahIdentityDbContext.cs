@@ -2,7 +2,7 @@ using Cheetah.Core.EntityFramework;
 using Cheetah.Modules.Identity.Domain;
 using Microsoft.EntityFrameworkCore;
 
-namespace Cheetah.Modules.Identity.DataAccess.Context;
+namespace Cheetah.Modules.Identity.Infrastructure.Context;
 
 public abstract class CheetahIdentityDbContext<TDbContext, TIdentityUser, TIdentityRole>(
     DbContextOptions<TDbContext> options) : CrmDbContext<TDbContext>(options), IIdentityDbContext

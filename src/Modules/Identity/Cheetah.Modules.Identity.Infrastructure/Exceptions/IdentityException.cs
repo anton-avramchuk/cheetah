@@ -1,7 +1,7 @@
 using Cheetah.Core.Exceptions;
 using Microsoft.AspNetCore.Identity;
 
-namespace Cheetah.Modules.Identity.DataAccess.Exceptions;
+namespace Cheetah.Modules.Identity.Infrastructure.Exceptions;
 
 public class IdentityException : CrmException
 {
