@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <OutputType>Library</OutputType>
+        <NoDefaultLaunchSettingsFile>true</NoDefaultLaunchSettingsFile>
+        <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\..\Cheetah.AspNetCore\Cheetah.AspNetCore.csproj"/>
+        <ProjectReference Include="..\..\..\Cheetah.Core\Cheetah.Core.csproj"/>
+        <ProjectReference Include="..\..\..\Cheetah.Core.CQRS\Cheetah.Core.CQRS.csproj"/>
+    </ItemGroup>
+
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\..\Cheetah.Generators.Module\Cheetah.Generators.Module.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer"/>
+        <ProjectReference Include="..\..\..\Cheetah.Generators.Endpoints\Cheetah.Generators.Endpoints.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer"/>
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <Folder Include="Endpoints\" />
+    </ItemGroup>
+
+</Project>

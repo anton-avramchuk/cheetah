@@ -5,15 +5,15 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\..\Cheetah.AspNetCore\Cheetah.AspNetCore.csproj" />
-        <ProjectReference Include="..\..\..\Cheetah.Core\Cheetah.Core.csproj" />
-        <ProjectReference Include="..\..\..\Cheetah.Core.CQRS\Cheetah.Core.CQRS.csproj" />
-        <ProjectReference Include="..\Cheetah.Modules.Activities.Application\Cheetah.Modules.Activities.Application.csproj" />
-        <ProjectReference Include="..\Cheetah.Modules.Activities.Contracts\Cheetah.Modules.Activities.Contracts.csproj" />
+        <ProjectReference Include="..\..\..\Cheetah.AspNetCore\Cheetah.AspNetCore.csproj"/>
+        <ProjectReference Include="..\..\..\Cheetah.Core\Cheetah.Core.csproj"/>
+        <ProjectReference Include="..\..\..\Cheetah.Core.CQRS\Cheetah.Core.CQRS.csproj"/>
+        <ProjectReference Include="..\Cheetah.Modules.Activities.Application\Cheetah.Modules.Activities.Application.csproj"/>
+        <ProjectReference Include="..\Cheetah.Modules.Activities.Contracts\Cheetah.Modules.Activities.Contracts.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+        <FrameworkReference Include="Microsoft.AspNetCore.App"/>
     </ItemGroup>
 
 </Project>

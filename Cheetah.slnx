@@ -274,6 +274,12 @@
         <Project Path="src/Modules/Customer/Cheetah.Modules.Customer.Domain.Tests/Cheetah.Modules.Customer.Domain.Tests.csproj" />
         <Project Path="src/Modules/Customer/Cheetah.Modules.Customer.Application.Tests/Cheetah.Modules.Customer.Application.Tests.csproj" />
     </Folder>
+    <Folder Name="/Modules/Teams/">
+        <Project Path="src/Modules/Teams/Cheetah.Modules.Teams.Api/Cheetah.Modules.Teams.Api.csproj" />
+        <Project Path="src/Modules/Teams/Cheetah.Modules.Teams.Domain/Cheetah.Modules.Teams.Domain.csproj" />
+        <Project Path="src/Modules/Teams/Cheetah.Modules.Teams.Infrastructure/Cheetah.Modules.Teams.Infrastructure.csproj" />
+        <Project Path="src/Modules/Teams/Cheetah.Modules.Teams.Shared/Cheetah.Modules.Teams.Shared.csproj" />
+    </Folder>
     <Folder Name="/Modules/Workflow/">
         <Project Path="src/Cheetah.Workflow/Cheetah.Workflow.csproj" />
         <Project Path="src/Modules/Workflow/Cheetah.Modules.Workflow.Api/Cheetah.Modules.Workflow.Api.csproj" />
