@@ -48,6 +48,7 @@ public class LoginCommandHandlerTests
         _userManagerMock.Setup(m => m.FindByNameAsync("johndoe")).ReturnsAsync(user);
         _userManagerMock.Setup(m => m.CheckPasswordAsync(user, "P@ssw0rd!")).ReturnsAsync(true);
         _userManagerMock.Setup(m => m.GetRolesAsync(user)).ReturnsAsync(["admin"]);
+        _userManagerMock.Setup(m => m.GetClaimsAsync(user)).ReturnsAsync([]);
         _tokenGeneratorMock
             .Setup(g => g.GenerateToken(user.Id, user.UserName!, user.Email!, It.IsAny<IEnumerable<string>>(),
                 It.IsAny<IEnumerable<Claim>>()))
@@ -93,6 +94,7 @@ public class LoginCommandHandlerTests
         _userManagerMock.Setup(m => m.FindByNameAsync("johndoe")).ReturnsAsync(user);
         _userManagerMock.Setup(m => m.CheckPasswordAsync(user, plain)).ReturnsAsync(true);
         _userManagerMock.Setup(m => m.GetRolesAsync(user)).ReturnsAsync([]);
+        _userManagerMock.Setup(m => m.GetClaimsAsync(user)).ReturnsAsync([]);
         _tokenGeneratorMock
             .Setup(g => g.GenerateToken(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(),
                 It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<Claim>>()))
@@ -128,6 +130,7 @@ public class LoginCommandHandlerTests
         _userManagerMock.Setup(m => m.FindByNameAsync("johndoe")).ReturnsAsync(user);
         _userManagerMock.Setup(m => m.CheckPasswordAsync(user, "pass")).ReturnsAsync(true);
         _userManagerMock.Setup(m => m.GetRolesAsync(user)).ReturnsAsync(roles);
+        _userManagerMock.Setup(m => m.GetClaimsAsync(user)).ReturnsAsync([]);
         _tokenGeneratorMock
             .Setup(g => g.GenerateToken(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(),
                 It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<Claim>>()))
@@ -208,7 +211,8 @@ public class LoginCommandHandlerTests
 
     private static Mock<RoleManager<StubRole>> CreateRoleManagerMock()
     {
+        // RoleManager<TRole> ctor: (store, roleValidators, keyNormalizer, errors, logger) — 5 args.
         var store = new Mock<IRoleStore<StubRole>>();
-        return new Mock<RoleManager<StubRole>>(store.Object, null!, null!, null!, null!, null!, null!, null!, null!);
+        return new Mock<RoleManager<StubRole>>(store.Object, null!, null!, null!, null!);
     }
 }
