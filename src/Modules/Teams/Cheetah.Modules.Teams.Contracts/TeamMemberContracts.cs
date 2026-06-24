@@ -16,20 +16,11 @@ public sealed record TeamMemberDto : ICrmResponse
     public DateTimeOffset? UpdatedAt { get; init; }
 }
 
-// ── Requests ───────────────────────────────────────────────────────────────────────────────────
-
-[ApiRoute(TeamsConstants.DefaultTeamMembersRoutePrefix, ApiMethod.Create, ServiceName = "TeamMembers")]
-public sealed record CreateTeamMemberRequest(string Name) : ICrmRequest;
-
-[ApiRoute(TeamsConstants.DefaultTeamMembersRoutePrefix + "/{id:guid}", ApiMethod.Update, ServiceName = "TeamMembers")]
-public sealed record UpdateTeamMemberRequest([FromRoute] Guid Id, string Name) : ICrmRequest;
+// ── Requests (только чтение — участники наполняются из Identity фоновым синком) ─────────────────
 
 [ApiRoute(TeamsConstants.DefaultTeamMembersRoutePrefix + "/{id:guid}", ApiMethod.GetOrNotFound,
     ResponseType = typeof(TeamMemberDto), ServiceName = "TeamMembers")]
 public sealed record GetTeamMemberByIdRequest([FromRoute] Guid Id) : ICrmRequest;
-
-[ApiRoute(TeamsConstants.DefaultTeamMembersRoutePrefix + "/{id:guid}", ApiMethod.Delete, ServiceName = "TeamMembers")]
-public sealed record DeleteTeamMemberRequest([FromRoute] Guid Id) : ICrmRequest;
 
 [ApiRoute(TeamsConstants.DefaultTeamMembersRoutePrefix, ApiMethod.GetGrid,
     ResponseType = typeof(TeamMemberDto), ServiceName = "TeamMembers")]

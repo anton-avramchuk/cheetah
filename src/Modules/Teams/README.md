@@ -68,7 +68,7 @@ services.AddTeamsApplication<Team, CreateTeamRequest, UpdateTeamRequest,
 | Метод | Маршрут | Назначение |
 |---|---|---|
 | POST/GET/GET{id}/PUT/DELETE | `api/team-roles` | CRUD + грид ролей |
-| POST/GET/GET{id}/PUT/DELETE | `api/team-members` | CRUD + грид участников |
+| GET/GET{id} | `api/team-members` | грид + деталь участников (только чтение — наполняются из Identity) |
 
 **Команды — абстрактные шаблоны** (команда расширяема) → закрывает наследник/хост:
 

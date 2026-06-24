@@ -26,11 +26,8 @@ public sealed class TeamsMappingProfile : IMapsterMappingProfile
         config.NewConfig<GetTeamRolesGridRequest, GetTeamRolesGridQuery>();
         config.NewConfig<TeamRole, TeamRoleDto>();           // ProjectTo: grid + GetById
 
-        // ── Members ────────────────────────────────────────────────────────────────────────────
-        config.NewConfig<CreateTeamMemberRequest, CreateTeamMemberCommand>();
-        config.NewConfig<UpdateTeamMemberRequest, UpdateTeamMemberCommand>();
+        // ── Members (только чтение — наполняются из Identity) ────────────────────────────────────
         config.NewConfig<GetTeamMemberByIdRequest, GetTeamMemberByIdQuery>();
-        config.NewConfig<DeleteTeamMemberRequest, DeleteTeamMemberCommand>();
         config.NewConfig<GetTeamMembersGridRequest, GetTeamMembersGridQuery>();
         config.NewConfig<TeamMember, TeamMemberDto>();        // ProjectTo: grid + GetById
     }

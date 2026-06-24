@@ -22,26 +22,5 @@ public class ReferenceEntitiesTests
         role.Name.ShouldBe("Manager");
     }
 
-    [Fact]
-    public void TeamMember_create_sets_name()
-    {
-        var member = TeamMember.Create("John");
-
-        member.Id.ShouldNotBe(Guid.Empty);
-        member.Name.ShouldBe("John");
-    }
-
-    [Fact]
-    public void TeamMember_rename_changes_name()
-    {
-        var member = TeamMember.Create("John");
-        member.Rename("Jane");
-        member.Name.ShouldBe("Jane");
-    }
-
-    [Theory]
-    [InlineData("")]
-    [InlineData("  ")]
-    public void TeamMember_blank_name_throws(string name)
-        => Should.Throw<ArgumentException>(() => TeamMember.Create(name));
+    // Участники (TeamMember) заводятся только из Identity — см. UserDirectorySyncTests.
 }

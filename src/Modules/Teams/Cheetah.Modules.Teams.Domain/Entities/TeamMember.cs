@@ -7,11 +7,9 @@ namespace Cheetah.Modules.Teams.Domain.Entities;
 /// Участник — справочник людей, которых можно включать в команды. Конкретный (не расширяемый)
 /// агрегат. По сути — локальная реплика пользователя из модуля Identity: идентификатор участника
 /// совпадает с идентификатором пользователя, а актуальность поддерживается фоновым bulk-синком.
-/// Чтобы не нагружать БД, изменения из Identity применяются ТОЛЬКО через <see cref="Apply"/> —
-/// по контентному хэшу (<see cref="UserDirectoryEntry.ComputeHash"/>), без построчного сравнения.
-/// <para>
-/// Допускается и ручное заведение участника, не связанного с Identity (<see cref="Create"/>).
-/// </para>
+/// Справочник целиком наполняется из Identity (<see cref="CreateFromDirectory"/>); ручного создания
+/// нет. Чтобы не нагружать БД, изменения применяются ТОЛЬКО через <see cref="Apply"/> — по контентному
+/// хэшу (<see cref="UserDirectoryEntry.ComputeHash"/>), без построчного сравнения.
 /// </summary>
 public sealed class TeamMember : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEntity
 {
@@ -25,21 +23,10 @@ public sealed class TeamMember : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedA
 
     private TeamMember() { } // EF
 
-    /// <summary>Ручное создание участника (не из Identity).</summary>
-    public static TeamMember Create(string name)
-    {
-        ArgumentException.ThrowIfNullOrWhiteSpace(name);
-
-        return new TeamMember
-        {
-            Id = Guid.NewGuid(),
-            Name = name.Trim()
-        };
-    }
-
     /// <summary>
     /// Создаёт участника-реплику из снимка пользователя Identity. Идентификатор участника совпадает
-    /// с идентификатором пользователя (отдельного поля-ссылки нет), хэш фиксируется сразу.
+    /// с идентификатором пользователя (отдельного поля-ссылки нет), хэш фиксируется сразу. Это
+    /// единственный способ завести участника — справочник целиком наполняется из Identity.
     /// </summary>
     public static TeamMember CreateFromDirectory(UserDirectoryEntry entry)
     {
@@ -65,11 +52,5 @@ public sealed class TeamMember : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedA
         Name = entry.UserName.Trim();
         SyncHash = hash;
         return true;
-    }
-
-    public void Rename(string name)
-    {
-        ArgumentException.ThrowIfNullOrWhiteSpace(name);
-        Name = name.Trim();
     }
 }

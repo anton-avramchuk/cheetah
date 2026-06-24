@@ -93,44 +93,23 @@ public class TeamRoleHandlerTests
     }
 }
 
+// Участники — read-only реплика Identity: только чтение (GetById/Grid).
 public class TeamMemberHandlerTests
 {
-    private readonly Mock<IRepository<TeamMember, Guid>> _repo = new();
     private readonly Mock<IGridRepository<TeamMember, Guid>> _grid = new();
 
     [Fact]
-    public async Task Create_adds_and_saves()
+    public async Task GetById_projects_via_grid_repository()
     {
-        var handler = new CreateTeamMemberCommandHandler(_repo.Object);
+        var id = Guid.NewGuid();
+        _grid.Setup(r => r.GetByIdAsync<TeamMemberDto>(id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new TeamMemberDto { Id = id, Name = "John" });
+        var handler = new GetTeamMemberByIdQueryHandler(_grid.Object);
 
-        var id = await handler.HandleAsync(new CreateTeamMemberCommand("John"));
+        var dto = await handler.HandleAsync(new GetTeamMemberByIdQuery(id));
 
-        id.ShouldNotBe(Guid.Empty);
-        _repo.Verify(r => r.Add(It.Is<TeamMember>(x => x.Name == "John")), Times.Once);
-    }
-
-    [Fact]
-    public async Task Update_changes_name()
-    {
-        var member = TeamMember.Create("Old");
-        _repo.Setup(r => r.GetByIdAsync(member.Id, It.IsAny<CancellationToken>())).ReturnsAsync(member);
-        var handler = new UpdateTeamMemberCommandHandler(_repo.Object);
-
-        await handler.HandleAsync(new UpdateTeamMemberCommand(member.Id, "New"));
-
-        member.Name.ShouldBe("New");
-        _repo.Verify(r => r.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
-    }
-
-    [Fact]
-    public async Task Delete_missing_throws()
-    {
-        _repo.Setup(r => r.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync((TeamMember?)null);
-        var handler = new DeleteTeamMemberCommandHandler(_repo.Object);
-
-        await Should.ThrowAsync<TeamsValidationException>(() =>
-            handler.HandleAsync(new DeleteTeamMemberCommand(Guid.NewGuid())).AsTask());
+        dto.ShouldNotBeNull();
+        dto!.Id.ShouldBe(id);
     }
 
     [Fact]
