@@ -37,7 +37,7 @@ Tests: Domain.Tests (16), Application.Tests (21)
 | Тип | Сборка | Роль |
 |---|---|---|
 | `TeamBase : AggregateRoot<Guid>` | Domain | агрегат команды со составом; `InitializeCore`, `Rename`, `Activate`/`Deactivate`, `AddMember`/`ChangeMemberRole`/`RemoveMember` |
-| `TeamMembership : Entity<Guid>` | Domain | членство (дитя команды): `MemberId`, `RoleId` |
+| `TeamMembership : Entity<Guid>` | Domain | членство (дитя команды): `MemberId`, `RoleId`; FK к `TeamMember` (cascade) и `TeamRole` (restrict) — без навигаций |
 | `TeamRole : AggregateRoot<Guid>` | Domain | справочник ролей (sealed): `Create`/`Rename` |
 | `TeamMember : AggregateRoot<Guid>` | Domain | справочник людей = реплика пользователей Identity (sealed): `Id` == id пользователя, `Name`, `SyncHash`; `CreateFromDirectory`/`Apply` (синк по хэшу) |
 | `IIdentityUserDirectory` / `UserDirectoryEntry` | Domain | порт к Identity + снимок пользователя с `ComputeHash()` |
@@ -97,9 +97,9 @@ services.AddTeamsApplication<Team, CreateTeamRequest, UpdateTeamRequest,
 `RunOnStartup`, `Interval` (по умолчанию 5 мин), `PruneRemoved` (по умолчанию `true`).
 
 > Bulk-синк по образцу модуля Tags (`UserDirectorySyncService`). Поддержку по доменным событиям
-> Identity (`UserNameChanged`/`UserDeleted`) можно добавить как follow-up. Пруннинг удаляет строку
-> `TeamMember`, но не чистит `TeamMembership`, ссылающиеся на удалённого участника (FK нет) — очистку
-> «осиротевших» членств можно добавить отдельным шагом.
+> Identity (`UserNameChanged`/`UserDeleted`) можно добавить как follow-up. При пруннинге удаление
+> `TeamMember` каскадно удаляет его `TeamMembership` (FK `MemberId` → `TeamMember`,
+> `ON DELETE CASCADE`) — осиротевших членств не остаётся.
 
 ## События
 

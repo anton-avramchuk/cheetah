@@ -43,6 +43,19 @@ public sealed class TeamMembershipConfiguration : IEntityTypeConfiguration<TeamM
         builder.HasKey(x => x.Id);
 
         builder.HasIndex(x => new { x.TeamId, x.MemberId }).IsUnique();
-        builder.HasIndex(x => x.MemberId);
+        // индексы по MemberId/RoleId EF создаёт по конвенции для FK ниже
+
+        // FK на участника и роль — без навигаций (агрегаты в коде остаются независимыми), но БД
+        // обеспечивает референсную целостность и каскад. Связь с командой задаётся в
+        // TeamConfigurationBase (HasMany(Members)). PostgreSQL допускает несколько каскадных путей.
+        builder.HasOne<TeamMember>()
+            .WithMany()
+            .HasForeignKey(x => x.MemberId)
+            .OnDelete(DeleteBehavior.Cascade); // удалили участника → его членства уходят автоматически
+
+        builder.HasOne<TeamRole>()
+            .WithMany()
+            .HasForeignKey(x => x.RoleId)
+            .OnDelete(DeleteBehavior.Restrict); // роль, занятую в командах, удалить нельзя
     }
 }
