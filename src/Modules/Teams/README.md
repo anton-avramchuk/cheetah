@@ -37,7 +37,7 @@ Tests: Domain.Tests (16), Application.Tests (21)
 | Тип | Сборка | Роль |
 |---|---|---|
 | `TeamBase : AggregateRoot<Guid>` | Domain | агрегат команды со составом; `InitializeCore`, `Rename`, `Activate`/`Deactivate`, `AddMember`/`ChangeMemberRole`/`RemoveMember` |
-| `TeamMembership : Entity<Guid>` | Domain | членство (дитя команды): `MemberId`, `RoleId`; FK к `TeamMember` (cascade) и `TeamRole` (restrict) — без навигаций |
+| `TeamMembership : Entity<Guid>` | Domain | членство (дитя команды): `MemberId`, `RoleId`; FK к `TeamMember` и `TeamRole` (обе cascade) — без навигаций |
 | `TeamRole : AggregateRoot<Guid>` | Domain | справочник ролей (sealed): `Create`/`Rename` |
 | `TeamMember : AggregateRoot<Guid>` | Domain | справочник людей = реплика пользователей Identity (sealed): `Id` == id пользователя, `Name`, `SyncHash`; `CreateFromDirectory`/`Apply` (синк по хэшу) |
 | `IIdentityUserDirectory` / `UserDirectoryEntry` | Domain | порт к Identity + снимок пользователя с `ComputeHash()` |

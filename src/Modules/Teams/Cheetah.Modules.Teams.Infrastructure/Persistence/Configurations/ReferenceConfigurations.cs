@@ -56,6 +56,6 @@ public sealed class TeamMembershipConfiguration : IEntityTypeConfiguration<TeamM
         builder.HasOne<TeamRole>()
             .WithMany()
             .HasForeignKey(x => x.RoleId)
-            .OnDelete(DeleteBehavior.Restrict); // роль, занятую в командах, удалить нельзя
+            .OnDelete(DeleteBehavior.Cascade); // удалили роль → членства с ней уходят автоматически
     }
 }
