@@ -1,6 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text;
 using Cheetah.Backend.Jwt.Abstractions;
 using Cheetah.Backend.Jwt.Options;
 using Cheetah.Core.DependencyInjection;
@@ -10,7 +9,8 @@ using Microsoft.IdentityModel.Tokens;
 namespace Cheetah.Backend.Jwt.Services;
 
 [Export(LifetimeType.Singleton, typeof(IJwtTokenGenerator))]
-public class JwtTokenGenerator(IOptions<JwtOptions> options) : IJwtTokenGenerator
+public class JwtTokenGenerator(IOptions<JwtOptions> options, IJwtSigningKeyProvider signingKeyProvider)
+    : IJwtTokenGenerator
 {
     private static readonly JwtSecurityTokenHandler _tokenHandler = new();
     private readonly JwtOptions _options = options.Value;
@@ -22,9 +22,6 @@ public class JwtTokenGenerator(IOptions<JwtOptions> options) : IJwtTokenGenerato
         IEnumerable<string> roles,
         IEnumerable<Claim>? additionalClaims = null)
     {
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.SecretKey));
-        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
         var claims = new List<Claim>
         {
             new(JwtRegisteredClaimNames.Sub, userId.ToString()),
@@ -38,16 +35,7 @@ public class JwtTokenGenerator(IOptions<JwtOptions> options) : IJwtTokenGenerato
         if (additionalClaims is not null)
             claims.AddRange(additionalClaims);
 
-        var expiresInSeconds = _options.ExpirationMinutes * 60;
-
-        var token = new JwtSecurityToken(
-            issuer: _options.Issuer,
-            audience: _options.Audience,
-            claims: claims,
-            expires: DateTime.UtcNow.AddSeconds(expiresInSeconds),
-            signingCredentials: credentials);
-
-        return new TokenGenerationResult(_tokenHandler.WriteToken(token), expiresInSeconds);
+        return BuildToken(claims, _options.ExpirationMinutes * 60);
     }
 
     public TokenGenerationResult GenerateServiceToken(
@@ -55,9 +43,6 @@ public class JwtTokenGenerator(IOptions<JwtOptions> options) : IJwtTokenGenerato
         IEnumerable<string> roles,
         IEnumerable<Claim>? additionalClaims = null)
     {
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.SecretKey));
-        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
         var claims = new List<Claim>
         {
             new(JwtRegisteredClaimNames.Sub, clientId),
@@ -71,7 +56,12 @@ public class JwtTokenGenerator(IOptions<JwtOptions> options) : IJwtTokenGenerato
         if (additionalClaims is not null)
             claims.AddRange(additionalClaims);
 
-        var expiresInSeconds = _options.ServiceTokenExpirationMinutes * 60;
+        return BuildToken(claims, _options.ServiceTokenExpirationMinutes * 60);
+    }
+
+    private TokenGenerationResult BuildToken(IEnumerable<Claim> claims, int expiresInSeconds)
+    {
+        var credentials = signingKeyProvider.GetSigningCredentials();
 
         var token = new JwtSecurityToken(
             issuer: _options.Issuer,

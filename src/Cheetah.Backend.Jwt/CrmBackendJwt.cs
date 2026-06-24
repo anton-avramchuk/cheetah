@@ -1,8 +1,9 @@
-using System.Text;
 using Cheetah.AspNetCore;
 using Cheetah.AspNetCore.Extensions;
 using Cheetah.Backend.Jwt.Options;
+using Cheetah.Backend.Jwt.Services;
 using Cheetah.Core;
+using Cheetah.Core.Extensions.DependencyInjection;
 using Cheetah.Core.Modularity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -26,6 +27,9 @@ public partial class CrmBackendJwtModule : CrmModule
             .BindConfiguration(JwtOptions.SectionName)
             .ValidateDataAnnotations()
             .ValidateOnStart();
+        context.Services.AddSingleton<IValidateOptions<JwtOptions>, JwtOptionsValidator>();
+
+        RegisterSigningKeyProvider(context.Services);
 
         context.Services
             .AddAuthentication(options =>
@@ -37,9 +41,10 @@ public partial class CrmBackendJwtModule : CrmModule
 
         context.Services
             .AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme)
-            .Configure<IOptions<JwtOptions>>((bearerOptions, jwtOptions) =>
+            .Configure<IOptions<JwtOptions>, IJwtSigningKeyProvider>((bearerOptions, jwtOptions, keyProvider) =>
             {
                 var opts = jwtOptions.Value;
+
                 bearerOptions.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
@@ -48,9 +53,20 @@ public partial class CrmBackendJwtModule : CrmModule
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = opts.Issuer,
                     ValidAudience = opts.Audience,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(opts.SecretKey)),
                     ClockSkew = TimeSpan.Zero,
                 };
+
+                if (!string.IsNullOrWhiteSpace(opts.MetadataAddress))
+                {
+                    // Микросервисный режим: ключи берутся из JWKS эмитента (подбор по kid).
+                    bearerOptions.MetadataAddress = opts.MetadataAddress;
+                    bearerOptions.RequireHttpsMetadata = opts.RequireHttpsMetadata;
+                }
+                else
+                {
+                    // Локальный режим: валидация ключом этого процесса (HMAC или публичный RSA).
+                    bearerOptions.TokenValidationParameters.IssuerSigningKey = keyProvider.GetValidationKey();
+                }
             });
 
         context.Services.AddAuthorization(options =>
@@ -59,6 +75,16 @@ public partial class CrmBackendJwtModule : CrmModule
                 .RequireAuthenticatedUser()
                 .Build();
         });
+    }
+
+    private static void RegisterSigningKeyProvider(IServiceCollection services)
+    {
+        var algorithm = services.GetConfiguration()[$"{JwtOptions.SectionName}:{nameof(JwtOptions.SigningAlgorithm)}"];
+
+        if (string.Equals(algorithm, JwtSigningAlgorithms.Rs256, StringComparison.OrdinalIgnoreCase))
+            services.AddSingleton<IJwtSigningKeyProvider, RsaJwtSigningKeyProvider>();
+        else
+            services.AddSingleton<IJwtSigningKeyProvider, HmacJwtSigningKeyProvider>();
     }
 
     public override void OnApplicationInitialization(ApplicationInitializationContext context)

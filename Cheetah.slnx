@@ -351,6 +351,7 @@
         <Project Path="src/Cheetah.Backend.Rsa.Tests/Cheetah.Backend.Rsa.Tests.csproj" />
         <Project Path="src/Cheetah.Backend.ServiceAuth.Tests/Cheetah.Backend.ServiceAuth.Tests.csproj" />
         <Project Path="src/Cheetah.Backend.UserAuth.Tests/Cheetah.Backend.UserAuth.Tests.csproj" />
+        <Project Path="src/Cheetah.Backend.Jwt.Tests/Cheetah.Backend.Jwt.Tests.csproj" />
         <Project Path="src/Cheetah.Backend.Events.InMemory.Tests/Cheetah.Backend.Events.InMemory.Tests.csproj" />
         <Project Path="src/Cheetah.Backend.Events.Redis.Tests/Cheetah.Backend.Events.Redis.Tests.csproj" />
         <Project Path="src/Cheetah.Core.Inbox.Tests/Cheetah.Core.Inbox.Tests.csproj" />

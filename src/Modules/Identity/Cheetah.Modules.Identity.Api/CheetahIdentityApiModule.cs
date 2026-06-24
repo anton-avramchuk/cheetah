@@ -4,6 +4,8 @@ using Cheetah.AspNetCore.Extensions;
 using Cheetah.Backend.CQRS;
 using Cheetah.Backend.Endpoints;
 using Cheetah.Backend.Jwt;
+using Cheetah.Backend.Jwt.Options;
+using Cheetah.Backend.Jwt.Services;
 using Cheetah.Backend.Rsa.Abstractions;
 using Cheetah.Core;
 using Cheetah.Core.CQRS;
@@ -17,6 +19,8 @@ using Cheetah.Modules.Identity.Contracts.Requests;
 using Cheetah.Modules.Identity.Contracts.Response;
 using Cheetah.Scalar;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Options;
 
 // optional dependency — see comment on [DependsOn]
 
@@ -66,6 +70,8 @@ public partial class CheetahIdentityApiModule : CrmModule
             .WithTags("Auth")
             .WithName("IssueServiceToken");
 
+        MapJwksEndpoints(context, routeBuilder);
+
         var publicKeyProvider = context.ServiceProvider.GetService<IRsaPublicKeyProvider>();
         if (publicKeyProvider is null)
             return;
@@ -75,5 +81,49 @@ public partial class CheetahIdentityApiModule : CrmModule
             .AllowAnonymous()
             .WithTags("Auth")
             .WithName("GetPublicKey");
+    }
+
+    // JWKS + OIDC discovery — публикуются только при асимметричной подписи (RS256),
+    // чтобы сервисы-валидаторы брали публичный ключ по сети (Jwt:MetadataAddress).
+    private static void MapJwksEndpoints(ApplicationInitializationContext context, IEndpointRouteBuilder routeBuilder)
+    {
+        var keyProvider = context.ServiceProvider.GetRequiredService<IJwtSigningKeyProvider>();
+        if (!keyProvider.IsAsymmetric)
+            return;
+
+        var issuer = context.ServiceProvider.GetRequiredService<IOptions<JwtOptions>>().Value.Issuer;
+
+        routeBuilder.MapGet("/.well-known/jwks.json", ([FromServices] IJwtSigningKeyProvider keys) =>
+        {
+            var jwks = keys.GetPublicWebKeys().Select(k => new
+            {
+                kty = k.Kty,
+                use = k.Use,
+                kid = k.Kid,
+                alg = k.Alg,
+                n = k.N,
+                e = k.E,
+            });
+            return Results.Json(new { keys = jwks });
+        })
+            .AllowAnonymous()
+            .WithTags("Auth")
+            .WithName("Jwks");
+
+        routeBuilder.MapGet("/.well-known/openid-configuration", (HttpRequest request) =>
+        {
+            var baseUrl = $"{request.Scheme}://{request.Host}{request.PathBase}";
+            return Results.Json(new
+            {
+                issuer,
+                jwks_uri = $"{baseUrl}/.well-known/jwks.json",
+                id_token_signing_alg_values_supported = new[] { JwtSigningAlgorithms.Rs256 },
+                response_types_supported = new[] { "token" },
+                subject_types_supported = new[] { "public" },
+            });
+        })
+            .AllowAnonymous()
+            .WithTags("Auth")
+            .WithName("OpenIdConfiguration");
     }
 }
