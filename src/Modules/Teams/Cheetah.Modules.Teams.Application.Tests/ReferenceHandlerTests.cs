@@ -16,6 +16,7 @@ namespace Cheetah.Modules.Teams.Application.Tests;
 public class TeamRoleHandlerTests
 {
     private readonly Mock<IRepository<TeamRole, Guid>> _repo = new();
+    private readonly Mock<IRepository<TeamMembership, Guid>> _memberships = new();
     private readonly Mock<IGridRepository<TeamRole, Guid>> _grid = new();
 
     [Fact]
@@ -60,10 +61,40 @@ public class TeamRoleHandlerTests
     {
         _repo.Setup(r => r.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((TeamRole?)null);
-        var handler = new DeleteTeamRoleCommandHandler(_repo.Object);
+        var handler = new DeleteTeamRoleCommandHandler(_repo.Object, _memberships.Object);
 
         await Should.ThrowAsync<TeamsValidationException>(() =>
             handler.HandleAsync(new DeleteTeamRoleCommand(Guid.NewGuid())).AsTask());
+    }
+
+    [Fact]
+    public async Task Delete_role_in_use_throws()
+    {
+        var role = TeamRole.Create("Lead");
+        _repo.Setup(r => r.GetByIdAsync(role.Id, It.IsAny<CancellationToken>())).ReturnsAsync(role);
+        _memberships.Setup(r => r.ExistsAsync(It.IsAny<ISpecification<TeamMembership>>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true); // роль используется
+        var handler = new DeleteTeamRoleCommandHandler(_repo.Object, _memberships.Object);
+
+        await Should.ThrowAsync<TeamsValidationException>(() =>
+            handler.HandleAsync(new DeleteTeamRoleCommand(role.Id)).AsTask());
+
+        _repo.Verify(r => r.Delete(It.IsAny<TeamRole>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task Delete_unused_role_removes_it()
+    {
+        var role = TeamRole.Create("Lead");
+        _repo.Setup(r => r.GetByIdAsync(role.Id, It.IsAny<CancellationToken>())).ReturnsAsync(role);
+        _memberships.Setup(r => r.ExistsAsync(It.IsAny<ISpecification<TeamMembership>>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(false); // роль не используется
+        var handler = new DeleteTeamRoleCommandHandler(_repo.Object, _memberships.Object);
+
+        await handler.HandleAsync(new DeleteTeamRoleCommand(role.Id));
+
+        _repo.Verify(r => r.Delete(role), Times.Once);
+        _repo.Verify(r => r.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]

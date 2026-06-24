@@ -14,3 +14,14 @@ public sealed class TeamRoleByNameSpecification : Specification<TeamRole>
     public override Expression<Func<TeamRole, bool>> ToExpression()
         => r => r.Name == _name;
 }
+
+/// <summary>Членства с указанной ролью (проверка «роль используется» перед удалением).</summary>
+public sealed class TeamMembershipByRoleSpecification : Specification<TeamMembership>
+{
+    private readonly Guid _roleId;
+
+    public TeamMembershipByRoleSpecification(Guid roleId) => _roleId = roleId;
+
+    public override Expression<Func<TeamMembership, bool>> ToExpression()
+        => m => m.RoleId == _roleId;
+}

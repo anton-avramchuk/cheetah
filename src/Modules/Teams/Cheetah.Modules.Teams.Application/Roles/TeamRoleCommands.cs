@@ -64,14 +64,23 @@ public sealed record DeleteTeamRoleCommand(Guid Id) : ICommand;
 public sealed class DeleteTeamRoleCommandHandler : ICommandHandler<DeleteTeamRoleCommand>
 {
     private readonly IRepository<TeamRole, Guid> _repository;
+    private readonly IRepository<TeamMembership, Guid> _membershipRepository;
 
-    public DeleteTeamRoleCommandHandler(IRepository<TeamRole, Guid> repository)
-        => _repository = repository;
+    public DeleteTeamRoleCommandHandler(
+        IRepository<TeamRole, Guid> repository, IRepository<TeamMembership, Guid> membershipRepository)
+    {
+        _repository = repository;
+        _membershipRepository = membershipRepository;
+    }
 
     public async ValueTask HandleAsync(DeleteTeamRoleCommand command, CancellationToken ct = default)
     {
         var role = await _repository.GetByIdAsync(command.Id, ct)
             ?? throw new TeamsValidationException($"Role '{command.Id}' not found");
+
+        // Запрет удаления используемой роли — даёт понятную 400 вместо тихого каскадного удаления членств.
+        if (await _membershipRepository.ExistsAsync(new TeamMembershipByRoleSpecification(command.Id), ct))
+            throw new TeamsValidationException($"Role '{command.Id}' is assigned to team members and cannot be deleted");
 
         _repository.Delete(role);
         await _repository.SaveChangesAsync(ct);

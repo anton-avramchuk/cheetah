@@ -34,6 +34,10 @@ public static class TeamsInfrastructureServiceCollectionExtensions
         AddGridRepository<TContext, TTeam>(services);
         AddGridRepository<TContext, TeamRole>(services);
         AddGridRepository<TContext, TeamMember>(services);
+
+        // Членства — дочерние сущности команды; отдельный репозиторий нужен для проверки
+        // «роль используется» перед её удалением (грид не требуется).
+        services.AddScoped<IRepository<TeamMembership, Guid>, EfRepository<TContext, TeamMembership, Guid>>();
         return services;
     }
 
