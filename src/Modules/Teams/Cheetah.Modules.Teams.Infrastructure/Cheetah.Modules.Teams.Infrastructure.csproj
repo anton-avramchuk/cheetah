@@ -17,6 +17,7 @@
         <ProjectReference Include="..\..\..\Cheetah.Mapping.Core\Cheetah.Mapping.Core.csproj"/>
         <ProjectReference Include="..\Cheetah.Modules.Teams.Domain\Cheetah.Modules.Teams.Domain.csproj" />
         <ProjectReference Include="..\Cheetah.Modules.Teams.Shared\Cheetah.Modules.Teams.Shared.csproj" />
+        <ProjectReference Include="..\..\Identity\Cheetah.Modules.Identity.Client\Cheetah.Modules.Identity.Client.csproj" />
     </ItemGroup>
 
     <ItemGroup>
@@ -26,6 +27,8 @@
     <ItemGroup>
         <PackageReference Include="Microsoft.EntityFrameworkCore"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Relational"/>
+        <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions"/>
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

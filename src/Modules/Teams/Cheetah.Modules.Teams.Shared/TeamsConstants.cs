@@ -11,6 +11,7 @@ public static class TeamsConstants
     public const string DatabaseConnectionStringName = "Teams";
 
     public const int MaxNameLength = 256;
+    public const int SyncHashLength = 64; // SHA-256 в hex
 
     public const string DefaultSchema = "teams";
     public const string DefaultTeamsTableName = "Teams";

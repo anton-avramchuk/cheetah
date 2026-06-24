@@ -1,23 +1,32 @@
 using Cheetah.Core.Domain;
+using Cheetah.Modules.Teams.Domain.Abstractions;
 
 namespace Cheetah.Modules.Teams.Domain.Entities;
 
 /// <summary>
 /// Участник — справочник людей, которых можно включать в команды. Конкретный (не расширяемый)
-/// агрегат: хранит отображаемое имя и опциональную ссылку на пользователя
-/// (<see cref="UserId"/>, модуль Identity). Состав конкретной команды — через
-/// <see cref="TeamMembership"/>. Аналог <c>ProductCategory</c> в Catalog.
+/// агрегат. По сути — локальная реплика пользователя из модуля Identity: идентификатор участника
+/// совпадает с идентификатором пользователя, а актуальность поддерживается фоновым bulk-синком.
+/// Чтобы не нагружать БД, изменения из Identity применяются ТОЛЬКО через <see cref="Apply"/> —
+/// по контентному хэшу (<see cref="UserDirectoryEntry.ComputeHash"/>), без построчного сравнения.
+/// <para>
+/// Допускается и ручное заведение участника, не связанного с Identity (<see cref="Create"/>).
+/// </para>
 /// </summary>
 public sealed class TeamMember : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEntity
 {
     public string Name { get; private set; } = null!;
     public Guid? UserId { get; private set; }
 
+    /// <summary>Хэш последнего применённого снимка из Identity — маркер актуальности реплики.</summary>
+    public string SyncHash { get; private set; } = string.Empty;
+
     public DateTimeOffset? CreatedAt { get; set; }
     public DateTimeOffset? UpdatedAt { get; set; }
 
     private TeamMember() { } // EF
 
+    /// <summary>Ручное создание участника (не из Identity).</summary>
     public static TeamMember Create(string name, Guid? userId = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(name);
@@ -28,6 +37,37 @@ public sealed class TeamMember : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedA
             Name = name.Trim(),
             UserId = userId
         };
+    }
+
+    /// <summary>
+    /// Создаёт участника-реплику из снимка пользователя Identity. Идентификатор берётся из снимка
+    /// (совпадает с пользователем), хэш фиксируется сразу.
+    /// </summary>
+    public static TeamMember CreateFromDirectory(UserDirectoryEntry entry)
+    {
+        if (entry.Id == Guid.Empty)
+            throw new ArgumentException("User id cannot be empty", nameof(entry));
+
+        var member = new TeamMember { Id = entry.Id, UserId = entry.Id };
+        member.Apply(entry);
+        return member;
+    }
+
+    /// <summary>
+    /// Применяет снимок из Identity, если содержимое изменилось (сравнение по хэшу). Возвращает true,
+    /// если реплика была обновлена — иначе вызывающий не трогает строку в БД.
+    /// </summary>
+    public bool Apply(UserDirectoryEntry entry)
+    {
+        var hash = entry.ComputeHash();
+        if (SyncHash == hash)
+            return false;
+
+        ArgumentException.ThrowIfNullOrWhiteSpace(entry.UserName);
+        Name = entry.UserName.Trim();
+        UserId = entry.Id;
+        SyncHash = hash;
+        return true;
     }
 
     public void Rename(string name)

@@ -23,7 +23,7 @@ Teams.DomainEvents   → Core.Events                          (TeamCreated/Updat
 Teams.Shared         → Core                                 (TeamsConstants: подключение, длины, схема/таблицы, префиксы маршрутов)
 Teams.Contracts      → Core + Contracts + Shared            (ABSTRACT TeamDtoBase/RequestBase + конкретные DTO ролей/участников)
 Teams.Domain         → DomainEvents + Specification         (abstract TeamBase; sealed TeamRole/TeamMember/TeamMembership; спеки)
-Teams.Infrastructure → Domain + EF + EF.PostgreSql + Grid   (abstract TeamsDbContextBase/TeamConfigurationBase, AddTeamsInfrastructure<>)
+Teams.Infrastructure → Domain + EF + EF.PostgreSql + Grid + Identity.Client   (abstract TeamsDbContextBase/TeamConfigurationBase, AddTeamsInfrastructure<>, фоновый синк участников из Identity)
 Teams.Application    → Domain + Contracts + CQRS + Events    (generic CQRS команды, [Export]-хендлеры ролей/участников, AddTeamsApplication<>)
 Teams.Api            → Application + Contracts + Backend.Endpoints   (декларативные эндпоинты)
 Teams.Mapster        → Application + Contracts + Mapping.Mapster     (TeamsMappingProfile — роли/участники)
@@ -39,7 +39,10 @@ Tests: Domain.Tests (16), Application.Tests (21)
 | `TeamBase : AggregateRoot<Guid>` | Domain | агрегат команды со составом; `InitializeCore`, `Rename`, `Activate`/`Deactivate`, `AddMember`/`ChangeMemberRole`/`RemoveMember` |
 | `TeamMembership : Entity<Guid>` | Domain | членство (дитя команды): `MemberId`, `RoleId` |
 | `TeamRole : AggregateRoot<Guid>` | Domain | справочник ролей (sealed): `Create`/`Rename` |
-| `TeamMember : AggregateRoot<Guid>` | Domain | справочник людей (sealed): `Name`, `UserId?` |
+| `TeamMember : AggregateRoot<Guid>` | Domain | справочник людей = реплика пользователей Identity (sealed): `Name`, `UserId?`, `SyncHash`; `CreateFromDirectory`/`Apply` (синк по хэшу) |
+| `IIdentityUserDirectory` / `UserDirectoryEntry` | Domain | порт к Identity + снимок пользователя с `ComputeHash()` |
+| `ITeamMemberDirectorySynchronizer` | Domain→App | оркестратор bulk-синка (апсёрт только изменившихся по хэшу) |
+| `TeamMemberDirectorySyncService` | Infrastructure | фоновый `BackgroundService`, периодически вызывает синхронизатор |
 | `ITeamFactory`/`ITeamProjector` | Application | `Create(...)`/`ToDto(...)` — замена `new`/Mapster для расширяемой команды |
 | generic CQRS команды | Application | Create/Update/Activate/Deactivate/Delete + AddMember/ChangeRole/RemoveMember + GetById/List/Grid |
 | `[Export]`-хендлеры ролей/участников | Application | полный CRUD + Grid |
@@ -79,6 +82,20 @@ services.AddTeamsApplication<Team, CreateTeamRequest, UpdateTeamRequest,
 | `AddTeamMemberEndpoint<TRequest,TCommand>` | CommandEndpoint | POST `api/teams/{id}/members` |
 | `ChangeTeamMemberRoleEndpoint<TRequest,TCommand>` | UpdateCommandEndpoint | PUT `api/teams/{id}/members/{memberId}` |
 | `RemoveTeamMemberEndpoint<TRequest,TCommand>` | DeleteCommandEndpoint | DELETE `api/teams/{id}/members/{memberId}` |
+
+## Синхронизация участников из Identity
+
+`TeamMember` — локальная реплика пользователя Identity (идентификаторы совпадают). Актуальность
+поддерживает фоновый `TeamMemberDirectorySyncService` (`BackgroundService`): периодически тянет всех
+пользователей через порт `IIdentityUserDirectory` (адаптер над `IIdentityUsersClient`, `[Export]`) и
+апсёртит в справочник. Чтобы **не нагружать БД**, у `TeamMember` есть `SyncHash` — SHA-256 синкаемого
+содержимого: запись обновляется только если хэш снимка изменился (`TeamMember.Apply`), неизменившиеся
+строки не пишутся вовсе. Набор синкаемых полей знает только `UserDirectoryEntry.ComputeHash()` —
+добавление поля не требует правок в синке. Настройки — `TeamMemberSyncOptions` (секция
+`Teams:MemberSync`): `Enabled`, `RunOnStartup`, `Interval` (по умолчанию 5 мин).
+
+> Bulk-синк по образцу модуля Tags (`UserDirectorySyncService`). Поддержку по доменным событиям
+> Identity (`UserNameChanged`/`UserDeleted`) можно добавить как follow-up.
 
 ## События
 

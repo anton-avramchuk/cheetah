@@ -19,7 +19,7 @@ public sealed class TeamRoleConfiguration : IEntityTypeConfiguration<TeamRole>
     }
 }
 
-/// <summary>Конкретная EF-конфигурация справочника участников.</summary>
+/// <summary>Конкретная EF-конфигурация справочника участников (реплика пользователей Identity).</summary>
 public sealed class TeamMemberConfiguration : IEntityTypeConfiguration<TeamMember>
 {
     public void Configure(EntityTypeBuilder<TeamMember> builder)
@@ -27,8 +27,10 @@ public sealed class TeamMemberConfiguration : IEntityTypeConfiguration<TeamMembe
         builder.ToTable(TeamsConstants.DefaultTeamMembersTableName, TeamsConstants.DefaultSchema);
         builder.Ignore(e => e.DomainEvents);
         builder.HasKey(x => x.Id);
+        builder.Property(x => x.Id).ValueGeneratedNever(); // id задаётся приложением/Identity
 
         builder.Property(x => x.Name).HasMaxLength(TeamsConstants.MaxNameLength).IsRequired();
+        builder.Property(x => x.SyncHash).HasMaxLength(TeamsConstants.SyncHashLength).IsRequired(); // SHA-256 hex
         builder.HasIndex(x => x.UserId);
     }
 }
