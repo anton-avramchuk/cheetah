@@ -129,6 +129,7 @@
         <Project Path="src/Modules/Identity/Cheetah.Modules.Identity.Domain/Cheetah.Modules.Identity.Domain.csproj" />
         <Project Path="src/Modules/Identity/Cheetah.Modules.Identity.DomainEvents/Cheetah.Modules.Identity.DomainEvents.csproj" />
         <Project Path="src/Modules/Identity/Cheetah.Modules.Identity.Infrastructure/Cheetah.Modules.Identity.Infrastructure.csproj" />
+        <Project Path="src/Modules/Identity/Cheetah.Modules.Identity.Mapping/Cheetah.Modules.Identity.Mapping.csproj" />
         <Project Path="src/Modules/Identity/Cheetah.Modules.Identity.Mapster/Cheetah.Modules.Identity.Mapster.csproj" />
     </Folder>
     <Folder Name="/Modules/Tags/">
@@ -185,6 +186,7 @@
         <Project Path="src/Modules/Calendar/Cheetah.Modules.Calendar.Domain/Cheetah.Modules.Calendar.Domain.csproj" />
         <Project Path="src/Modules/Calendar/Cheetah.Modules.Calendar.DomainEvents/Cheetah.Modules.Calendar.DomainEvents.csproj" />
         <Project Path="src/Modules/Calendar/Cheetah.Modules.Calendar.Infrastructure/Cheetah.Modules.Calendar.Infrastructure.csproj" />
+        <Project Path="src/Modules/Calendar/Cheetah.Modules.Calendar.Mapping/Cheetah.Modules.Calendar.Mapping.csproj" />
         <Project Path="src/Modules/Calendar/Cheetah.Modules.Calendar.Mapster/Cheetah.Modules.Calendar.Mapster.csproj" />
         <Project Path="src/Modules/Calendar/Cheetah.Modules.Calendar.Shared/Cheetah.Modules.Calendar.Shared.csproj" />
         <Project Path="src/Modules/Calendar/Cheetah.Modules.Calendar.Domain.Tests/Cheetah.Modules.Calendar.Domain.Tests.csproj" />
@@ -200,6 +202,7 @@
         <Project Path="src/Modules/Deals/Cheetah.Modules.Deals.Domain/Cheetah.Modules.Deals.Domain.csproj" />
         <Project Path="src/Modules/Deals/Cheetah.Modules.Deals.DomainEvents/Cheetah.Modules.Deals.DomainEvents.csproj" />
         <Project Path="src/Modules/Deals/Cheetah.Modules.Deals.Infrastructure/Cheetah.Modules.Deals.Infrastructure.csproj" />
+        <Project Path="src/Modules/Deals/Cheetah.Modules.Deals.Mapping/Cheetah.Modules.Deals.Mapping.csproj" />
         <Project Path="src/Modules/Deals/Cheetah.Modules.Deals.Mapster/Cheetah.Modules.Deals.Mapster.csproj" />
         <Project Path="src/Modules/Deals/Cheetah.Modules.Deals.Shared/Cheetah.Modules.Deals.Shared.csproj" />
         <Project Path="src/Modules/Deals/Cheetah.Modules.Deals.Domain.Tests/Cheetah.Modules.Deals.Domain.Tests.csproj" />
@@ -260,6 +263,7 @@
         <Project Path="src/Modules/Catalog/Cheetah.Modules.Catalog.Domain/Cheetah.Modules.Catalog.Domain.csproj" />
         <Project Path="src/Modules/Catalog/Cheetah.Modules.Catalog.DomainEvents/Cheetah.Modules.Catalog.DomainEvents.csproj" />
         <Project Path="src/Modules/Catalog/Cheetah.Modules.Catalog.Infrastructure/Cheetah.Modules.Catalog.Infrastructure.csproj" />
+        <Project Path="src/Modules/Catalog/Cheetah.Modules.Catalog.Mapping/Cheetah.Modules.Catalog.Mapping.csproj" />
         <Project Path="src/Modules/Catalog/Cheetah.Modules.Catalog.Mapster/Cheetah.Modules.Catalog.Mapster.csproj" />
         <Project Path="src/Modules/Catalog/Cheetah.Modules.Catalog.Shared/Cheetah.Modules.Catalog.Shared.csproj" />
     </Folder>
@@ -283,6 +287,7 @@
         <Project Path="src/Modules/Teams/Cheetah.Modules.Teams.Domain.Tests/Cheetah.Modules.Teams.Domain.Tests.csproj" />
         <Project Path="src/Modules/Teams/Cheetah.Modules.Teams.DomainEvents/Cheetah.Modules.Teams.DomainEvents.csproj" />
         <Project Path="src/Modules/Teams/Cheetah.Modules.Teams.Infrastructure/Cheetah.Modules.Teams.Infrastructure.csproj" />
+        <Project Path="src/Modules/Teams/Cheetah.Modules.Teams.Mapping/Cheetah.Modules.Teams.Mapping.csproj" />
         <Project Path="src/Modules/Teams/Cheetah.Modules.Teams.Mapster/Cheetah.Modules.Teams.Mapster.csproj" />
         <Project Path="src/Modules/Teams/Cheetah.Modules.Teams.Shared/Cheetah.Modules.Teams.Shared.csproj" />
     </Folder>
@@ -320,6 +325,7 @@
         <Project Path="src/Modules/SalesDocuments/Cheetah.Modules.SalesDocuments.Domain/Cheetah.Modules.SalesDocuments.Domain.csproj" />
         <Project Path="src/Modules/SalesDocuments/Cheetah.Modules.SalesDocuments.DomainEvents/Cheetah.Modules.SalesDocuments.DomainEvents.csproj" />
         <Project Path="src/Modules/SalesDocuments/Cheetah.Modules.SalesDocuments.Infrastructure/Cheetah.Modules.SalesDocuments.Infrastructure.csproj" />
+        <Project Path="src/Modules/SalesDocuments/Cheetah.Modules.SalesDocuments.Mapping/Cheetah.Modules.SalesDocuments.Mapping.csproj" />
         <Project Path="src/Modules/SalesDocuments/Cheetah.Modules.SalesDocuments.Mapster/Cheetah.Modules.SalesDocuments.Mapster.csproj" />
         <Project Path="src/Modules/SalesDocuments/Cheetah.Modules.SalesDocuments.Shared/Cheetah.Modules.SalesDocuments.Shared.csproj" />
     </Folder>

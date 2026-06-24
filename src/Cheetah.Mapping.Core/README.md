@@ -7,10 +7,20 @@
 | Тип | Назначение |
 |-----|------------|
 | `IObjectMapper` | `Map<TDest>(source)`, `Map<TSrc,TDest>(...)`, in-place `Map(src, dest)`, нетипизированные перегрузки, `ProjectTo<TDest>(IQueryable)` |
-| `[MapFrom(sourceType)]` | Класс-назначение маппится из указанного source-типа |
+| `[MapFrom(sourceType)]` | Класс-назначение маппится из указанного source-типа (маркер на типе-приёмнике) |
 | `[MapProperty(sourcePropertyName)]` | Сопоставление свойства с иным именем источника |
 | `[MapIgnore]` | Исключить свойство из маппинга |
+| `[GenerateMapper(sourceType, destinationType)]` | Декларация пары source→dest вне типов-участников: на классе-реестре или на уровне сборки (`[assembly: ...]`) |
+| `[MapMember(destinationType, destMember, sourceMember)]` | Переименование члена для `[GenerateMapper]`, объявленное в реестре (не на типах-участниках); привязка к маппингу по типу-приёмнику |
+| `[MapNested(destinationType, destMember)]` | Член-приёмник собирается как вложенный объект (тот же источник → тип члена); тоже объявляется в реестре |
+| `[MapConstant(destinationType, destMember, value)]` | Член-приёмник получает константное значение (источник игнорируется), напр. `TokenType = "Bearer"` |
 | `CrmMappingCoreModule` | Core-модуль |
+
+### `[MapFrom]` vs `[GenerateMapper]`
+
+`[MapFrom]` висит **на типе-приёмнике**, и генератор кладёт маппер в его сборку — значит приёмник обязан ссылаться на source-тип. Это нормально, когда приёмнику и так позволено знать источник (например, маппинг внутри одной «верхней» сборки), но **нарушает слои для пары Contracts ↔ Domain**: повесив `[MapFrom(typeof(Domain.X))]` на DTO в Contracts, вы тянете в Contracts ссылку на Domain.
+
+`[GenerateMapper]` решает это: маркер размещается в **выделенной маппинг-сборке** (по образцу `*.Mapster`), которая ссылается на обе стороны. Сгенерированные мапперы оседают там, а Contracts/Domain остаются чистыми. См. пилот `Cheetah.Modules.Identity.Mapping`.
 
 ## Использование
 

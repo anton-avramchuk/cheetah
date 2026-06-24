@@ -7,3 +7,4 @@ Rule ID | Category | Severity | Notes
 --------|----------|----------|--------------------------------------------
 CHMAP01 | Mapping  | Error    | MappingGenerator, unmapped property
 CHMAP02 | Mapping  | Error    | MappingGenerator, missing source type
+CHMAP03 | Mapping  | Error    | MappingGenerator, missing mapper types

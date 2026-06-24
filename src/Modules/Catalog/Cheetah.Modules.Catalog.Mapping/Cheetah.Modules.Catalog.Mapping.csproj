@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\Cheetah.Core\Cheetah.Core.csproj" />
+      <ProjectReference Include="..\..\..\Cheetah.Mapping.Core\Cheetah.Mapping.Core.csproj" />
+      <ProjectReference Include="..\Cheetah.Modules.Catalog.Application\Cheetah.Modules.Catalog.Application.csproj" />
+      <ProjectReference Include="..\Cheetah.Modules.Catalog.Contracts\Cheetah.Modules.Catalog.Contracts.csproj" />
+      <ProjectReference Include="..\Cheetah.Modules.Catalog.Domain\Cheetah.Modules.Catalog.Domain.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\..\Cheetah.Mapping.Generators\Cheetah.Mapping.Generators.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
+    </ItemGroup>
+
+</Project>
