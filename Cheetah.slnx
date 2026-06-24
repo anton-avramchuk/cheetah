@@ -345,6 +345,11 @@
         <Project Path="src/Modules/FeatureManagement/Cheetah.Modules.FeatureManagement.Infrastructure/Cheetah.Modules.FeatureManagement.Infrastructure.csproj" />
         <Project Path="src/Modules/FeatureManagement/Cheetah.Modules.FeatureManagement.Shared/Cheetah.Modules.FeatureManagement.Shared.csproj" />
     </Folder>
+    <Folder Name="/src/" />
+    <Folder Name="/src/Modules/" />
+    <Folder Name="/src/Modules/Identity/">
+        <Project Path="src/Modules/Identity/Cheetah.Modules.Identity.Client.Tests/Cheetah.Modules.Identity.Client.Tests.csproj" />
+    </Folder>
 
     <Folder Name="/Tests/">
         <Project Path="src/Cheetah.FeatureManagement.Tests/Cheetah.FeatureManagement.Tests.csproj" />

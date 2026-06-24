@@ -1,3 +1,4 @@
+using Cheetah.Backend.ServiceAuth;
 using Cheetah.Core;
 using Cheetah.Core.Extensions.DependencyInjection;
 using Cheetah.Core.Modularity;
@@ -33,8 +34,15 @@ internal sealed class IdentityClientOptionsValidator : IValidateOptions<Identity
 /// <summary>
 /// Подключает HTTP-клиент к Identity API (<see cref="IIdentityUsersClient"/>).
 /// Биндит секцию <c>Identity:Client</c>; валидирует обязательные опции на старте (ValidateOnStart).
+/// <para>
+/// Это server-to-server клиент: вызовы идут без контекста пользователя (например, фоновый синк
+/// участников в Teams/Tags). Поэтому на него навешивается <see cref="ServiceTokenHandler"/> —
+/// каждый исходящий запрос несёт сервисный токен (machine-to-machine, схема client_credentials)
+/// в заголовке <c>Authorization: Bearer</c>. Хост обязан настроить секцию <c>ServiceAuth</c>
+/// (см. <see cref="CrmBackendServiceAuthModule"/>).
+/// </para>
 /// </summary>
-[DependsOn(typeof(CoreModule), typeof(CheetahIdentityContractsModule))]
+[DependsOn(typeof(CoreModule), typeof(CheetahIdentityContractsModule), typeof(CrmBackendServiceAuthModule))]
 public partial class CheetahIdentityClientModule : CrmModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)
@@ -52,6 +60,7 @@ public partial class CheetahIdentityClientModule : CrmModule
             var opts = sp.GetRequiredService<IOptions<IdentityClientOptions>>().Value;
             client.BaseAddress = new Uri(opts.BaseUrl.TrimEnd('/') + "/");
             client.Timeout = opts.Timeout;
-        });
+        })
+        .AddHttpMessageHandler<ServiceTokenHandler>(); // фоновые S2S-вызовы → сервисный токен в Authorization
     }
 }
