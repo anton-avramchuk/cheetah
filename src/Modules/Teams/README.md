@@ -39,7 +39,7 @@ Tests: Domain.Tests (16), Application.Tests (21)
 | `TeamBase : AggregateRoot<Guid>` | Domain | агрегат команды со составом; `InitializeCore`, `Rename`, `Activate`/`Deactivate`, `AddMember`/`ChangeMemberRole`/`RemoveMember` |
 | `TeamMembership : Entity<Guid>` | Domain | членство (дитя команды): `MemberId`, `RoleId` |
 | `TeamRole : AggregateRoot<Guid>` | Domain | справочник ролей (sealed): `Create`/`Rename` |
-| `TeamMember : AggregateRoot<Guid>` | Domain | справочник людей = реплика пользователей Identity (sealed): `Name`, `UserId?`, `SyncHash`; `CreateFromDirectory`/`Apply` (синк по хэшу) |
+| `TeamMember : AggregateRoot<Guid>` | Domain | справочник людей = реплика пользователей Identity (sealed): `Id` == id пользователя, `Name`, `SyncHash`; `CreateFromDirectory`/`Apply` (синк по хэшу) |
 | `IIdentityUserDirectory` / `UserDirectoryEntry` | Domain | порт к Identity + снимок пользователя с `ComputeHash()` |
 | `ITeamMemberDirectorySynchronizer` | Domain→App | оркестратор bulk-синка (апсёрт только изменившихся по хэшу) |
 | `TeamMemberDirectorySyncService` | Infrastructure | фоновый `BackgroundService`, периодически вызывает синхронизатор |

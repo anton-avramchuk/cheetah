@@ -14,14 +14,3 @@ public sealed class TeamRoleByNameSpecification : Specification<TeamRole>
     public override Expression<Func<TeamRole, bool>> ToExpression()
         => r => r.Name == _name;
 }
-
-/// <summary>Участник по ссылке на пользователя Identity (поиск уже заведённого участника).</summary>
-public sealed class TeamMemberByUserSpecification : Specification<TeamMember>
-{
-    private readonly Guid _userId;
-
-    public TeamMemberByUserSpecification(Guid userId) => _userId = userId;
-
-    public override Expression<Func<TeamMember, bool>> ToExpression()
-        => m => m.UserId == _userId;
-}

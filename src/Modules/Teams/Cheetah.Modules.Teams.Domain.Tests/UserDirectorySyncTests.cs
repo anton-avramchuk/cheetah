@@ -32,8 +32,7 @@ public class UserDirectorySyncTests
 
         var member = TeamMember.CreateFromDirectory(entry);
 
-        member.Id.ShouldBe(entry.Id);     // идентификаторы совпадают с Identity
-        member.UserId.ShouldBe(entry.Id);
+        member.Id.ShouldBe(entry.Id);     // идентификатор участника == идентификатор пользователя Identity
         member.Name.ShouldBe("johndoe");
         member.SyncHash.ShouldBe(entry.ComputeHash());
     }

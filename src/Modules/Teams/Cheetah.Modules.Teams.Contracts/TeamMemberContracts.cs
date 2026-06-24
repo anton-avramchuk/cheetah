@@ -12,7 +12,6 @@ public sealed record TeamMemberDto : ICrmResponse
 {
     public Guid Id { get; init; }
     public string Name { get; init; } = null!;
-    public Guid? UserId { get; init; }
     public DateTimeOffset? CreatedAt { get; init; }
     public DateTimeOffset? UpdatedAt { get; init; }
 }
@@ -20,10 +19,10 @@ public sealed record TeamMemberDto : ICrmResponse
 // ── Requests ───────────────────────────────────────────────────────────────────────────────────
 
 [ApiRoute(TeamsConstants.DefaultTeamMembersRoutePrefix, ApiMethod.Create, ServiceName = "TeamMembers")]
-public sealed record CreateTeamMemberRequest(string Name, Guid? UserId = null) : ICrmRequest;
+public sealed record CreateTeamMemberRequest(string Name) : ICrmRequest;
 
 [ApiRoute(TeamsConstants.DefaultTeamMembersRoutePrefix + "/{id:guid}", ApiMethod.Update, ServiceName = "TeamMembers")]
-public sealed record UpdateTeamMemberRequest([FromRoute] Guid Id, string Name, Guid? UserId = null) : ICrmRequest;
+public sealed record UpdateTeamMemberRequest([FromRoute] Guid Id, string Name) : ICrmRequest;
 
 [ApiRoute(TeamsConstants.DefaultTeamMembersRoutePrefix + "/{id:guid}", ApiMethod.GetOrNotFound,
     ResponseType = typeof(TeamMemberDto), ServiceName = "TeamMembers")]

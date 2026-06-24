@@ -31,7 +31,6 @@ public sealed class TeamMemberConfiguration : IEntityTypeConfiguration<TeamMembe
 
         builder.Property(x => x.Name).HasMaxLength(TeamsConstants.MaxNameLength).IsRequired();
         builder.Property(x => x.SyncHash).HasMaxLength(TeamsConstants.SyncHashLength).IsRequired(); // SHA-256 hex
-        builder.HasIndex(x => x.UserId);
     }
 }
 

@@ -102,26 +102,24 @@ public class TeamMemberHandlerTests
     public async Task Create_adds_and_saves()
     {
         var handler = new CreateTeamMemberCommandHandler(_repo.Object);
-        var userId = Guid.NewGuid();
 
-        var id = await handler.HandleAsync(new CreateTeamMemberCommand("John", userId));
+        var id = await handler.HandleAsync(new CreateTeamMemberCommand("John"));
 
         id.ShouldNotBe(Guid.Empty);
-        _repo.Verify(r => r.Add(It.Is<TeamMember>(x => x.Name == "John" && x.UserId == userId)), Times.Once);
+        _repo.Verify(r => r.Add(It.Is<TeamMember>(x => x.Name == "John")), Times.Once);
     }
 
     [Fact]
-    public async Task Update_changes_name_and_user()
+    public async Task Update_changes_name()
     {
         var member = TeamMember.Create("Old");
         _repo.Setup(r => r.GetByIdAsync(member.Id, It.IsAny<CancellationToken>())).ReturnsAsync(member);
         var handler = new UpdateTeamMemberCommandHandler(_repo.Object);
-        var userId = Guid.NewGuid();
 
-        await handler.HandleAsync(new UpdateTeamMemberCommand(member.Id, "New", userId));
+        await handler.HandleAsync(new UpdateTeamMemberCommand(member.Id, "New"));
 
         member.Name.ShouldBe("New");
-        member.UserId.ShouldBe(userId);
+        _repo.Verify(r => r.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]

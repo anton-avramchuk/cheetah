@@ -16,7 +16,6 @@ namespace Cheetah.Modules.Teams.Domain.Entities;
 public sealed class TeamMember : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEntity
 {
     public string Name { get; private set; } = null!;
-    public Guid? UserId { get; private set; }
 
     /// <summary>Хэш последнего применённого снимка из Identity — маркер актуальности реплики.</summary>
     public string SyncHash { get; private set; } = string.Empty;
@@ -27,28 +26,27 @@ public sealed class TeamMember : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedA
     private TeamMember() { } // EF
 
     /// <summary>Ручное создание участника (не из Identity).</summary>
-    public static TeamMember Create(string name, Guid? userId = null)
+    public static TeamMember Create(string name)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(name);
 
         return new TeamMember
         {
             Id = Guid.NewGuid(),
-            Name = name.Trim(),
-            UserId = userId
+            Name = name.Trim()
         };
     }
 
     /// <summary>
-    /// Создаёт участника-реплику из снимка пользователя Identity. Идентификатор берётся из снимка
-    /// (совпадает с пользователем), хэш фиксируется сразу.
+    /// Создаёт участника-реплику из снимка пользователя Identity. Идентификатор участника совпадает
+    /// с идентификатором пользователя (отдельного поля-ссылки нет), хэш фиксируется сразу.
     /// </summary>
     public static TeamMember CreateFromDirectory(UserDirectoryEntry entry)
     {
         if (entry.Id == Guid.Empty)
             throw new ArgumentException("User id cannot be empty", nameof(entry));
 
-        var member = new TeamMember { Id = entry.Id, UserId = entry.Id };
+        var member = new TeamMember { Id = entry.Id };
         member.Apply(entry);
         return member;
     }
@@ -65,7 +63,6 @@ public sealed class TeamMember : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedA
 
         ArgumentException.ThrowIfNullOrWhiteSpace(entry.UserName);
         Name = entry.UserName.Trim();
-        UserId = entry.Id;
         SyncHash = hash;
         return true;
     }
@@ -75,6 +72,4 @@ public sealed class TeamMember : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedA
         ArgumentException.ThrowIfNullOrWhiteSpace(name);
         Name = name.Trim();
     }
-
-    public void LinkUser(Guid? userId) => UserId = userId;
 }

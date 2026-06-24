@@ -23,24 +23,20 @@ public class ReferenceEntitiesTests
     }
 
     [Fact]
-    public void TeamMember_create_with_user_link()
+    public void TeamMember_create_sets_name()
     {
-        var userId = Guid.NewGuid();
-        var member = TeamMember.Create("John", userId);
+        var member = TeamMember.Create("John");
 
+        member.Id.ShouldNotBe(Guid.Empty);
         member.Name.ShouldBe("John");
-        member.UserId.ShouldBe(userId);
     }
 
     [Fact]
-    public void TeamMember_link_user_updates_reference()
+    public void TeamMember_rename_changes_name()
     {
         var member = TeamMember.Create("John");
-        member.UserId.ShouldBeNull();
-
-        var userId = Guid.NewGuid();
-        member.LinkUser(userId);
-        member.UserId.ShouldBe(userId);
+        member.Rename("Jane");
+        member.Name.ShouldBe("Jane");
     }
 
     [Theory]
