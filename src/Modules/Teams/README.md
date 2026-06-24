@@ -91,11 +91,15 @@ services.AddTeamsApplication<Team, CreateTeamRequest, UpdateTeamRequest,
 апсёртит в справочник. Чтобы **не нагружать БД**, у `TeamMember` есть `SyncHash` — SHA-256 синкаемого
 содержимого: запись обновляется только если хэш снимка изменился (`TeamMember.Apply`), неизменившиеся
 строки не пишутся вовсе. Набор синкаемых полей знает только `UserDirectoryEntry.ComputeHash()` —
-добавление поля не требует правок в синке. Настройки — `TeamMemberSyncOptions` (секция
-`Teams:MemberSync`): `Enabled`, `RunOnStartup`, `Interval` (по умолчанию 5 мин).
+добавление поля не требует правок в синке. Исчезнувшие из Identity участники **удаляются** (пруннинг);
+при этом пустой ответ источника пруннинг не запускает — защита от массового удаления при
+недоступности Identity. Настройки — `TeamMemberSyncOptions` (секция `Teams:MemberSync`): `Enabled`,
+`RunOnStartup`, `Interval` (по умолчанию 5 мин), `PruneRemoved` (по умолчанию `true`).
 
 > Bulk-синк по образцу модуля Tags (`UserDirectorySyncService`). Поддержку по доменным событиям
-> Identity (`UserNameChanged`/`UserDeleted`) можно добавить как follow-up.
+> Identity (`UserNameChanged`/`UserDeleted`) можно добавить как follow-up. Пруннинг удаляет строку
+> `TeamMember`, но не чистит `TeamMembership`, ссылающиеся на удалённого участника (FK нет) — очистку
+> «осиротевших» членств можно добавить отдельным шагом.
 
 ## События
 

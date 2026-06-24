@@ -67,4 +67,47 @@ public class TeamMemberDirectorySyncTests
         _repo.Verify(r => r.Add(It.IsAny<TeamMember>()), Times.Never);
         _repo.Verify(r => r.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
+
+    [Fact]
+    public async Task Removed_users_are_pruned()
+    {
+        var kept = TeamMember.CreateFromDirectory(new UserDirectoryEntry(Guid.NewGuid(), "alice"));
+        var gone = TeamMember.CreateFromDirectory(new UserDirectoryEntry(Guid.NewGuid(), "bob"));
+        SetupExisting(kept, gone);
+        SetupDirectory(new UserDirectoryEntry(kept.Id, "alice")); // bob исчез из Identity
+
+        var changed = await Sut.SyncAsync();
+
+        changed.ShouldBe(1);
+        _repo.Verify(r => r.Delete(gone), Times.Once);
+        _repo.Verify(r => r.Delete(kept), Times.Never);
+        _repo.Verify(r => r.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task Empty_directory_does_not_prune()
+    {
+        var existing = TeamMember.CreateFromDirectory(new UserDirectoryEntry(Guid.NewGuid(), "alice"));
+        SetupExisting(existing);
+        SetupDirectory(); // источник пуст (напр. Identity недоступен) → ничего не удаляем
+
+        var changed = await Sut.SyncAsync();
+
+        changed.ShouldBe(0);
+        _repo.Verify(r => r.Delete(It.IsAny<TeamMember>()), Times.Never);
+        _repo.Verify(r => r.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task Prune_disabled_keeps_removed_users()
+    {
+        var gone = TeamMember.CreateFromDirectory(new UserDirectoryEntry(Guid.NewGuid(), "bob"));
+        SetupExisting(gone);
+        SetupDirectory(new UserDirectoryEntry(Guid.NewGuid(), "alice"));
+
+        var changed = await Sut.SyncAsync(pruneRemoved: false);
+
+        _repo.Verify(r => r.Delete(It.IsAny<TeamMember>()), Times.Never);
+        changed.ShouldBe(1); // только добавление alice
+    }
 }

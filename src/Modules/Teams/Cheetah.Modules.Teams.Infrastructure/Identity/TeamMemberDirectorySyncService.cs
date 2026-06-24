@@ -51,7 +51,7 @@ public sealed class TeamMemberDirectorySyncService : BackgroundService
             using var scope = _scopeFactory.CreateScope();
             var synchronizer = scope.ServiceProvider.GetRequiredService<ITeamMemberDirectorySynchronizer>();
 
-            var changed = await synchronizer.SyncAsync(ct);
+            var changed = await synchronizer.SyncAsync(_options.PruneRemoved, ct);
 
             if (changed > 0)
                 _logger.LogInformation("Team member directory synced from Identity: {Changed} upserted", changed);

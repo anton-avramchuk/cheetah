@@ -14,6 +14,10 @@ public sealed class TeamMemberSyncOptions
     /// <summary>Запускать первый синк сразу при старте (не дожидаясь интервала).</summary>
     public bool RunOnStartup { get; set; } = true;
 
+    /// <summary>Удалять из реплики участников, исчезнувших из Identity. Пустой ответ источника
+    /// пруннинг не запускает (защита от массового удаления при недоступности Identity).</summary>
+    public bool PruneRemoved { get; set; } = true;
+
     /// <summary>Период полного синка. По умолчанию — раз в 5 минут.</summary>
     public TimeSpan Interval { get; set; } = TimeSpan.FromMinutes(5);
 }

@@ -24,7 +24,7 @@ public sealed class TeamMemberDirectorySynchronizer : ITeamMemberDirectorySynchr
         _repository = repository;
     }
 
-    public async ValueTask<int> SyncAsync(CancellationToken ct = default)
+    public async ValueTask<int> SyncAsync(bool pruneRemoved = true, CancellationToken ct = default)
     {
         var entries = await _directory.GetAllAsync(ct);
         var existing = (await _repository.GetAllAsync(null, ct)).ToDictionary(m => m.Id);
@@ -44,6 +44,21 @@ public sealed class TeamMemberDirectorySynchronizer : ITeamMemberDirectorySynchr
             {
                 _repository.Add(TeamMember.CreateFromDirectory(entry));
                 changed++;
+            }
+        }
+
+        // Пруннинг исчезнувших из Identity. Защита от массового удаления: если источник вернул пустой
+        // список (например, Identity недоступен), реплику не чистим.
+        if (pruneRemoved && entries.Count > 0)
+        {
+            var directoryIds = entries.Select(e => e.Id).ToHashSet();
+            foreach (var member in existing.Values)
+            {
+                if (!directoryIds.Contains(member.Id))
+                {
+                    _repository.Delete(member);
+                    changed++;
+                }
             }
         }
 

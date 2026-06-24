@@ -39,10 +39,11 @@ public interface IIdentityUserDirectory
 /// <summary>
 /// Оркестратор полного синка реплики участников из Identity (тянет снимки через
 /// <see cref="IIdentityUserDirectory"/> и апсёртит их в справочник, обновляя только изменившиеся по
-/// хэшу записи). Реализуется в Application; вызывается фоновым сервисом Infrastructure. Возвращает
-/// число фактически изменённых записей.
+/// хэшу записи; при <c>pruneRemoved</c> — удаляет исчезнувших из Identity). Реализуется в
+/// Application; вызывается фоновым сервисом Infrastructure. Возвращает число фактически затронутых
+/// записей (добавления + обновления + удаления).
 /// </summary>
 public interface ITeamMemberDirectorySynchronizer
 {
-    ValueTask<int> SyncAsync(CancellationToken ct = default);
+    ValueTask<int> SyncAsync(bool pruneRemoved = true, CancellationToken ct = default);
 }
