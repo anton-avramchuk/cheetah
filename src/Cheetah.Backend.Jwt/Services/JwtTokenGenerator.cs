@@ -49,4 +49,37 @@ public class JwtTokenGenerator(IOptions<JwtOptions> options) : IJwtTokenGenerato
 
         return new TokenGenerationResult(_tokenHandler.WriteToken(token), expiresInSeconds);
     }
+
+    public TokenGenerationResult GenerateServiceToken(
+        string clientId,
+        IEnumerable<string> roles,
+        IEnumerable<Claim>? additionalClaims = null)
+    {
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.SecretKey));
+        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+        var claims = new List<Claim>
+        {
+            new(JwtRegisteredClaimNames.Sub, clientId),
+            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new("client_id", clientId),
+            new("token_type", "service"),
+        };
+
+        claims.AddRange(roles.Select(role => new Claim("role", role)));
+
+        if (additionalClaims is not null)
+            claims.AddRange(additionalClaims);
+
+        var expiresInSeconds = _options.ServiceTokenExpirationMinutes * 60;
+
+        var token = new JwtSecurityToken(
+            issuer: _options.Issuer,
+            audience: _options.Audience,
+            claims: claims,
+            expires: DateTime.UtcNow.AddSeconds(expiresInSeconds),
+            signingCredentials: credentials);
+
+        return new TokenGenerationResult(_tokenHandler.WriteToken(token), expiresInSeconds);
+    }
 }

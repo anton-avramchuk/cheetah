@@ -16,4 +16,10 @@ public class JwtOptions
     public string Audience { get; set; } = string.Empty;
 
     public int ExpirationMinutes { get; set; } = 60;
+
+    /// <summary>
+    /// Время жизни сервисного (machine-to-machine) токена. Намеренно короткое —
+    /// сервис обновляет токен по мере истечения.
+    /// </summary>
+    public int ServiceTokenExpirationMinutes { get; set; } = 10;
 }

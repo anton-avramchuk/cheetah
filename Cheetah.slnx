@@ -106,6 +106,7 @@
         <Project Path="src/Cheetah.Backend.Jwt.Abstractions/Cheetah.Backend.Jwt.Abstractions.csproj" />
         <Project Path="src/Cheetah.Backend.Rsa/Cheetah.Backend.Rsa.csproj" />
         <Project Path="src/Cheetah.Backend.Rsa.Abstractions/Cheetah.Backend.Rsa.Abstractions.csproj" />
+        <Project Path="src/Cheetah.Backend.ServiceAuth/Cheetah.Backend.ServiceAuth.csproj" />
         <Project Path="src/Cheetah.Backend.Redis/Cheetah.Backend.Redis.csproj" />
         <Project Path="src/Cheetah.Backend.ReverseProxy/Cheetah.Backend.ReverseProxy.csproj" />
         <Project Path="src/Cheetah.BackgroundTasks/Cheetah.BackgroundTasks.csproj" />
@@ -347,6 +348,7 @@
     <Folder Name="/Tests/">
         <Project Path="src/Cheetah.FeatureManagement.Tests/Cheetah.FeatureManagement.Tests.csproj" />
         <Project Path="src/Cheetah.Backend.Rsa.Tests/Cheetah.Backend.Rsa.Tests.csproj" />
+        <Project Path="src/Cheetah.Backend.ServiceAuth.Tests/Cheetah.Backend.ServiceAuth.Tests.csproj" />
         <Project Path="src/Cheetah.Backend.Events.InMemory.Tests/Cheetah.Backend.Events.InMemory.Tests.csproj" />
         <Project Path="src/Cheetah.Backend.Events.Redis.Tests/Cheetah.Backend.Events.Redis.Tests.csproj" />
         <Project Path="src/Cheetah.Core.Inbox.Tests/Cheetah.Core.Inbox.Tests.csproj" />

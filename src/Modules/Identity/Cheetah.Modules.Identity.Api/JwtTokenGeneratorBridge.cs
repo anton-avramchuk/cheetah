@@ -15,4 +15,10 @@ internal sealed class JwtTokenGeneratorBridge(IJwtTokenGenerator inner) : IToken
         var result = inner.GenerateToken(userId, userName, email, roles, claims);
         return new TokenResult(result.Token, result.ExpiresInSeconds);
     }
+
+    public TokenResult GenerateServiceToken(string clientId, IEnumerable<string> roles)
+    {
+        var result = inner.GenerateServiceToken(clientId, roles);
+        return new TokenResult(result.Token, result.ExpiresInSeconds);
+    }
 }

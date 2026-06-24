@@ -1,3 +1,4 @@
+using Cheetah.Backend.ServiceAuth;
 using Cheetah.Core;
 using Cheetah.Core.Extensions.DependencyInjection;
 using Cheetah.Core.Modularity;
@@ -33,7 +34,7 @@ internal sealed class DealsClientOptionsValidator : IValidateOptions<DealsClient
 /// Подключает HTTP-клиент к Deals.Api. Биндит секцию <c>Deals:Client</c>; валидирует обязательные
 /// опции на старте (ValidateOnStart).
 /// </summary>
-[DependsOn(typeof(CoreModule), typeof(Contracts.CheetahDealsContractsModule))]
+[DependsOn(typeof(CoreModule), typeof(Contracts.CheetahDealsContractsModule), typeof(CrmBackendServiceAuthModule))]
 public partial class CheetahDealsClientModule : CrmModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)
@@ -51,6 +52,7 @@ public partial class CheetahDealsClientModule : CrmModule
             var opts = sp.GetRequiredService<IOptions<DealsClientOptions>>().Value;
             client.BaseAddress = new Uri(opts.BaseUrl.TrimEnd('/') + "/");
             client.Timeout = opts.Timeout;
-        });
+        })
+        .AddHttpMessageHandler<ServiceTokenHandler>(); // подставляет Bearer сервисного токена
     }
 }

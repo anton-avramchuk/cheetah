@@ -6,11 +6,17 @@ using Cheetah.Backend.Endpoints;
 using Cheetah.Backend.Jwt;
 using Cheetah.Backend.Rsa.Abstractions;
 using Cheetah.Core;
+using Cheetah.Core.CQRS;
 using Cheetah.Core.Modularity;
 using Cheetah.Modules.Identity.Api.Middleware;
+using Cheetah.Modules.Identity.Api.ServiceClients;
 using Cheetah.Modules.Identity.Application;
+using Cheetah.Modules.Identity.Application.Commands;
 using Cheetah.Modules.Identity.Contracts;
+using Cheetah.Modules.Identity.Contracts.Requests;
+using Cheetah.Modules.Identity.Contracts.Response;
 using Cheetah.Scalar;
+using Microsoft.AspNetCore.Mvc;
 
 // optional dependency — see comment on [DependsOn]
 
@@ -36,15 +42,33 @@ public partial class CheetahIdentityApiModule : CrmModule
     {
         RegisterServices(context.Services);
         context.Services.AddExceptionHandler<InvalidCredentialsExceptionHandler>();
+
+        context.Services
+            .AddOptions<ServiceClientsOptions>()
+            .BindConfiguration(ServiceClientsOptions.SectionName);
     }
 
     public override void OnApplicationInitialization(ApplicationInitializationContext context)
     {
+        var routeBuilder = context.GetRouteBuilder();
+
+        // Сервисный токен (machine-to-machine), схема client_credentials.
+        routeBuilder.MapPost("api/auth/service-token", async (
+            [FromBody] ServiceTokenRequest request,
+            [FromServices] IDispatcher dispatcher,
+            CancellationToken ct) =>
+        {
+            var command = new IssueServiceTokenCommand(request.ClientId, request.ClientSecret);
+            var result = await dispatcher.SendAsync<IssueServiceTokenCommand, TokenResult>(command, ct);
+            return Results.Ok(new TokenViewModel(result.Token, "Bearer", result.ExpiresInSeconds));
+        })
+            .AllowAnonymous()
+            .WithTags("Auth")
+            .WithName("IssueServiceToken");
+
         var publicKeyProvider = context.ServiceProvider.GetService<IRsaPublicKeyProvider>();
         if (publicKeyProvider is null)
             return;
-
-        var routeBuilder = context.GetRouteBuilder();
 
         routeBuilder.MapGet("api/auth/public-key", () =>
             Results.Ok(new { publicKey = publicKeyProvider.PublicKeyBase64 }))
