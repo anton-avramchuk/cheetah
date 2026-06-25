@@ -1,5 +1,5 @@
 <Project>
     <PropertyGroup>
-        <CheetahVersion>1.0.20</CheetahVersion>
+        <CheetahVersion>1.0.21</CheetahVersion>
     </PropertyGroup>
 </Project>
