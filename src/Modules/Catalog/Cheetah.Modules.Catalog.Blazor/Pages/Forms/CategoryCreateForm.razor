@@ -1,0 +1,12 @@
+@namespace Cheetah.Modules.Catalog.Blazor.Pages.Forms
+
+<CrmTextBox Label="Название" @bind-Value="Model.Name" Required="true" MaxLength="200" />
+
+<div class="mb-3">
+    <label class="form-label">Порядок</label>
+    <input type="number" class="form-control" @bind="Model.Order" />
+</div>
+
+@code {
+    [Parameter, EditorRequired] public CategoryCreateViewModel Model { get; set; } = null!;
+}

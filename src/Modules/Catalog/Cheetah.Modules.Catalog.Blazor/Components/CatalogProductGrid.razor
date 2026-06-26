@@ -1,0 +1,36 @@
+@namespace Cheetah.Modules.Catalog.Blazor.Components
+@typeparam TGridViewModel where TGridViewModel : class, IHasId
+@typeparam TDetailsViewModel where TDetailsViewModel : class, new()
+@typeparam TCreateViewModel where TCreateViewModel : class, new()
+
+@*
+    Generic-шаблон грида товаров. Catalog — абстрактный модуль (товар расширяется наследником ProductBase),
+    поэтому конкретной routable-страницы товаров здесь нет. Конкретное приложение объявляет свои
+    grid/details/create ViewModel'и и формы, реализует ICrudService<...> и размещает этот компонент на
+    своей странице:
+
+        @@page "/catalog/products"
+        <CatalogProductGrid TGridViewModel="AppProductGridVm"
+                            TDetailsViewModel="AppProductDetailsVm"
+                            TCreateViewModel="AppProductCreateVm"
+                            Service="Service"
+                            EditFormType="typeof(AppProductEditForm)"
+                            CreateFormType="typeof(AppProductCreateForm)" />
+*@
+
+<CrmGrid TGridViewModel="TGridViewModel"
+         TDetailsViewModel="TDetailsViewModel"
+         TCreateViewModel="TCreateViewModel"
+         Title="@Title"
+         Service="Service"
+         EditFormType="EditFormType"
+         CreateFormType="CreateFormType" />
+
+@code {
+    [Parameter, EditorRequired]
+    public ICrudService<TGridViewModel, TDetailsViewModel, TCreateViewModel> Service { get; set; } = null!;
+
+    [Parameter, EditorRequired] public Type EditFormType { get; set; } = null!;
+    [Parameter, EditorRequired] public Type CreateFormType { get; set; } = null!;
+    [Parameter] public string Title { get; set; } = "Товары";
+}

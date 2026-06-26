@@ -1,0 +1,18 @@
+@namespace Cheetah.Modules.Catalog.Blazor.Pages.Forms
+
+<CrmTextBox Label="Название" @bind-Value="Model.Name" Required="true" MaxLength="200" />
+<CrmTextBox Label="Валюта" @bind-Value="Model.Currency" Required="true" MaxLength="3" Hint="ISO-код, например RUB" />
+<CrmSwitch Label="По умолчанию" @bind-Value="Model.IsDefault" />
+
+<div class="mb-3">
+    <label class="form-label">Действует с</label>
+    <input type="date" class="form-control" @bind="Model.ValidFrom" />
+</div>
+<div class="mb-3">
+    <label class="form-label">Действует по</label>
+    <input type="date" class="form-control" @bind="Model.ValidTo" />
+</div>
+
+@code {
+    [Parameter, EditorRequired] public PriceListCreateViewModel Model { get; set; } = null!;
+}

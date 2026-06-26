@@ -1,0 +1,15 @@
+@page "/catalog/price-lists"
+@layout MainLayout
+
+<CrmGrid TGridViewModel="PriceListGridViewModel"
+         TDetailsViewModel="PriceListDetailsViewModel"
+         TCreateViewModel="PriceListCreateViewModel"
+         Title="Прайс-листы"
+         Service="Service"
+         EditFormType="typeof(PriceListEditForm)"
+         CreateFormType="typeof(PriceListCreateForm)" />
+
+@code {
+    [Inject]
+    public ICrudService<PriceListGridViewModel, PriceListDetailsViewModel, PriceListCreateViewModel> Service { get; set; } = null!;
+}

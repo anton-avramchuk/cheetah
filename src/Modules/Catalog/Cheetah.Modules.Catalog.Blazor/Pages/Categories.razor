@@ -1,0 +1,15 @@
+@page "/catalog/categories"
+@layout MainLayout
+
+<CrmGrid TGridViewModel="CategoryGridViewModel"
+         TDetailsViewModel="CategoryDetailsViewModel"
+         TCreateViewModel="CategoryCreateViewModel"
+         Title="Категории"
+         Service="Service"
+         EditFormType="typeof(CategoryEditForm)"
+         CreateFormType="typeof(CategoryCreateForm)" />
+
+@code {
+    [Inject]
+    public ICrudService<CategoryGridViewModel, CategoryDetailsViewModel, CategoryCreateViewModel> Service { get; set; } = null!;
+}

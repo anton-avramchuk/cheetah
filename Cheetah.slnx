@@ -260,6 +260,7 @@
         <Project Path="src/Modules/Catalog/Cheetah.Modules.Catalog.Api/Cheetah.Modules.Catalog.Api.csproj" />
         <Project Path="src/Modules/Catalog/Cheetah.Modules.Catalog.Application.Tests/Cheetah.Modules.Catalog.Application.Tests.csproj" />
         <Project Path="src/Modules/Catalog/Cheetah.Modules.Catalog.Application/Cheetah.Modules.Catalog.Application.csproj" />
+        <Project Path="src/Modules/Catalog/Cheetah.Modules.Catalog.Blazor/Cheetah.Modules.Catalog.Blazor.csproj" />
         <Project Path="src/Modules/Catalog/Cheetah.Modules.Catalog.Contracts/Cheetah.Modules.Catalog.Contracts.csproj" />
         <Project Path="src/Modules/Catalog/Cheetah.Modules.Catalog.Domain.Tests/Cheetah.Modules.Catalog.Domain.Tests.csproj" />
         <Project Path="src/Modules/Catalog/Cheetah.Modules.Catalog.Domain/Cheetah.Modules.Catalog.Domain.csproj" />
