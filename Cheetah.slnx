@@ -321,8 +321,6 @@
         <File Path="global.json" />
         <File Path="install-templates.ps1" />
         <File Path="nuget.config" />
-        <File Path="pack.ps1" />
-        <File Path="version.props" />
     </Folder>
     <Folder Name="/Modules/SalesDocuments/">
         <Project Path="src/Modules/SalesDocuments/Cheetah.Modules.SalesDocuments.Blazor/Cheetah.Modules.SalesDocuments.Blazor.csproj" />

@@ -1,11 +1,11 @@
 <Project>
 
-    <Import Project="version.props" />
-
     <PropertyGroup>
         <TargetFramework>net10.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <!-- Версия фреймворка. В publish-workflow перебивается из тега через /p:CheetahVersion. -->
+        <CheetahVersion Condition="'$(CheetahVersion)' == ''">1.0.22</CheetahVersion>
     </PropertyGroup>
 
     <!-- NuGet metadata for all Cheetah.* non-test projects -->
