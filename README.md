@@ -91,8 +91,6 @@ dotnet test Cheetah.slnx
 
 Пакеты `Cheetah.*` публикуются в **GitHub Packages** (workflow [`publish-nuget.yml`](.github/workflows/publish-nuget.yml) срабатывает на тег `v*`). Потребителю требуется токен с правом `read:packages`.
 
-Локальная упаковка: [`pack.ps1`](pack.ps1).
-
 ---
 
 ## 🧩 Создание нового модуля
