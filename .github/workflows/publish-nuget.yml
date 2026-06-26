@@ -1,5 +1,6 @@
 # Публикация NuGet-пакетов Cheetah.* в GitHub Packages.
-# Запускается ТОЛЬКО при пуше тега вида v1.0.22.
+# Запускается ТОЛЬКО при пуше тега вида v1.0.22 И только если тег указывает
+# на коммит из ветки dev (теги с других веток публикацию не запускают).
 # Версия пакета берётся из version.props (CheetahVersion).
 
 name: Publish NuGet (GitHub Packages)
@@ -9,7 +10,30 @@ on:
     tags: [ "v*" ]
 
 jobs:
+  # Страж: тег сам по себе не привязан к ветке, поэтому проверяем, что помеченный
+  # коммит входит в origin/dev. Если нет — публикация пропускается.
+  guard:
+    runs-on: ubuntu-latest
+    outputs:
+      on_dev: ${{ steps.check.outputs.on_dev }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # нужна полная история и ветки, чтобы проверить принадлежность тега
+
+      - name: Verify tag is on dev
+        id: check
+        run: |
+          if git branch -r --contains "${{ github.sha }}" | grep -qE 'origin/dev$'; then
+            echo "on_dev=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice::Тег не указывает на коммит из ветки dev — публикация пропущена."
+            echo "on_dev=false" >> "$GITHUB_OUTPUT"
+          fi
+
   publish:
+    needs: guard
+    if: needs.guard.outputs.on_dev == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: read
