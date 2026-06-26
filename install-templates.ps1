@@ -1,10 +1,10 @@
 $ScriptDir = $PSScriptRoot
 $TemplatesDir = Join-Path $ScriptDir "templates"
 
+# Шаблоны пересобираются заново. Первый — solution-шаблон Blazor BFF + Aspire
+# с модулями-микросервисами (см. план). Добавляй сюда по мере готовности.
 $templates = @(
-    "cheetah-monolith",
-    "cheetah-module",
-    "cheetah-module-lib"
+    # "cheetah-bff"
 )
 
 Write-Host "Installing Cheetah templates..." -ForegroundColor Cyan

@@ -1,8 +1,0 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
-    <ItemGroup>
-        <ProjectReference Include="..\__Prefix__.ModuleName.Application\__Prefix__.ModuleName.Application.csproj" />
-        <ProjectReference Include="..\__Prefix__.ModuleName.Contracts\__Prefix__.ModuleName.Contracts.csproj" />
-    </ItemGroup>
-
-</Project>
