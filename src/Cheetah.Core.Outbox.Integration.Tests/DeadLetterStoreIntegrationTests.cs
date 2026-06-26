@@ -35,7 +35,7 @@ public class DeadLetterStoreIntegrationTests
         db.OutboxMessages.Any(x => x.Id == source.Id).ShouldBeFalse();
         var dead = db.DeadLetterMessages.Single(x => x.Id == source.Id);
         dead.RetryCount.ShouldBe(11);
-        dead.LastError.ShouldContain("permanent failure");
+        dead.LastError!.ShouldContain("permanent failure");
         dead.Payload.ShouldBe(source.Payload);
     }
 

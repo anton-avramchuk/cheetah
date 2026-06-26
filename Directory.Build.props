@@ -16,10 +16,7 @@
         <!-- NuGet-аудит (уязвимости транзитивных пакетов) остаётся ВИДИМЫМ warning'ом, но не
              фатальным: новый CVE не должен ронять сборку без изменений в коде. Сами уязвимости
              отслеживаются и устраняются обновлением корневых пакетов (MongoDB.Driver, Microsoft.Data.Sqlite). -->
-        <!-- NU5104 (стабильный пакет ссылается на prerelease-зависимость) остаётся видимым warning'ом,
-             но не валит pack: Microsoft.OpenApi.Readers 2.0.0 под .NET 10 пока существует только как
-             preview — снимем подавление, когда выйдет стабильная версия. -->
-        <WarningsNotAsErrors>NU1902;NU1903;NU5104</WarningsNotAsErrors>
+        <WarningsNotAsErrors>NU1902;NU1903</WarningsNotAsErrors>
         <IsPackable>true</IsPackable>
         <PackageId>$(MSBuildProjectName)</PackageId>
         <Version>$(CheetahVersion)</Version>

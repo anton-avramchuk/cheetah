@@ -26,7 +26,7 @@ public class ExceptionExtensionsTests
         capturedException.ShouldNotBeNull();
         var act = () => capturedException!.ReThrow();
 
-        Should.Throw<InvalidOperationException>(act).StackTrace.ShouldContain(nameof(ThrowException));
+        Should.Throw<InvalidOperationException>(act).StackTrace!.ShouldContain(nameof(ThrowException));
     }
 
     [Fact]

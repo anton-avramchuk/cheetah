@@ -23,7 +23,7 @@ public class HttpWorkflowCatalogClientTests
         handler.LastRequest!.Method.ShouldBe(HttpMethod.Post);
         handler.LastRequest.RequestUri!.AbsolutePath.ShouldBe("/api/automation/registry/sync");
         handler.LastBody!.ShouldContain("DealWonIntegrationEvent");
-        handler.LastBody.ShouldContain("CreateActivity");
+        handler.LastBody!.ShouldContain("CreateActivity");
     }
 
     [Fact]

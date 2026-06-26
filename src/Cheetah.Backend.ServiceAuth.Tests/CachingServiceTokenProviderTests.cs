@@ -83,8 +83,8 @@ public class CachingServiceTokenProviderTests
 
         await provider.GetTokenAsync();
 
-        handler.LastBody.ShouldContain("svc-deals");
-        handler.LastBody.ShouldContain("s3cr3t");
+        handler.LastBody!.ShouldContain("svc-deals");
+        handler.LastBody!.ShouldContain("s3cr3t");
     }
 
     [Fact]

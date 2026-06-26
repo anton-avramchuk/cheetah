@@ -50,8 +50,8 @@ public class KafkaAuditPublisherIntegrationTests
         var expectedTopic = $"{topicPrefix}{nameof(AuditEntryRecordedEvent)}";
         var received = await ConsumeOneAsync(_fx.KafkaBootstrapServers, expectedTopic, TimeSpan.FromSeconds(15));
         received.ShouldNotBeNull();
-        received!.Value.ShouldContain("ItEntity");
-        received.Value.ShouldContain("ent-1");
+        received!.Message.Value.ShouldContain("ItEntity");
+        received.Message.Value.ShouldContain("ent-1");
 
         await Task.Delay(500);
         await using (var verify = _fx.CreateDbContext(null))

@@ -23,7 +23,7 @@ public class HttpFeatureCatalogClientTests
 
         handler.LastRequest!.Method.ShouldBe(HttpMethod.Post);
         handler.LastRequest.RequestUri!.AbsolutePath.ShouldBe("/api/features/registry/sync");
-        handler.LastBody.ShouldContain("deals.kanban-v2");
+        handler.LastBody!.ShouldContain("deals.kanban-v2");
     }
 
     [Fact]

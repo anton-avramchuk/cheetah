@@ -51,7 +51,7 @@ public class IssueServiceTokenCommandHandlerTests
         result.Token.ShouldBe("svc.token");
         result.ExpiresInSeconds.ShouldBe(600);
         generator.LastClientId.ShouldBe("svc-deals");
-        generator.LastRoles.ShouldContain("ServiceAccount");
+        generator.LastRoles!.ShouldContain("ServiceAccount");
     }
 
     [Fact]

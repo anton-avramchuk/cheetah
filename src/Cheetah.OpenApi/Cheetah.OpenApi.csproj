@@ -12,7 +12,6 @@
 
     <ItemGroup>
       <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
-      <PackageReference Include="Microsoft.OpenApi.Readers" />
     </ItemGroup>
 
     <ItemGroup>
