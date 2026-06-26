@@ -1,0 +1,45 @@
+# Публикация NuGet-пакетов Cheetah.* в GitHub Packages.
+# Запускается при пуше тега вида v1.0.22 либо вручную (workflow_dispatch).
+# Версия пакета берётся из version.props (CheetahVersion).
+
+name: Publish NuGet (GitHub Packages)
+
+on:
+  push:
+    tags: [ "v*" ]
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write   # нужно для пуша в GitHub Packages через GITHUB_TOKEN
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      # Билдим и пакуем как в pack.ps1: сборка штампует версию из version.props,
+      # pack переиспользует выходные файлы (--no-restore), чтобы dll и nupkg совпадали.
+      - name: Build
+        run: dotnet build Cheetah.slnx --configuration Release --no-restore
+
+      - name: Pack
+        run: dotnet pack Cheetah.slnx --configuration Release --no-restore --output artifacts
+
+      # Пушим все собранные Cheetah.*-пакеты. --skip-duplicate: повторный запуск на той же
+      # версии не падает, а просто пропускает уже опубликованные пакеты.
+      - name: Push to GitHub Packages
+        run: >
+          dotnet nuget push "artifacts/Cheetah.*.nupkg"
+          --api-key "${{ secrets.GITHUB_TOKEN }}"
+          --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
+          --skip-duplicate
