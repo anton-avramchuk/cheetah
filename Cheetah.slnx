@@ -123,6 +123,7 @@
         <Project Path="src/Modules/Permissions/Cheetah.Permissions.Tests/Cheetah.Permissions.Tests.csproj" />
     </Folder>
     <Folder Name="/Modules/Identity/">
+        <Project Path="src/Modules/Identity/Cheetah.Modules.Identity.Blazor/Cheetah.Modules.Identity.Blazor.csproj" />
         <Project Path="src/Modules/Identity/Cheetah.Modules.Identity.Application.Tests/Cheetah.Modules.Identity.Application.Tests.csproj" />
         <Project Path="src/Modules/Identity/Cheetah.Modules.Identity.Api/Cheetah.Modules.Identity.Api.csproj" />
         <Project Path="src/Modules/Identity/Cheetah.Modules.Identity.Application/Cheetah.Modules.Identity.Application.csproj" />
@@ -145,6 +146,7 @@
         <Project Path="src/Modules/Tags/Cheetah.Modules.Tags.Shared/Cheetah.Modules.Tags.Shared.csproj" />
     </Folder>
     <Folder Name="/Modules/Activities/">
+        <Project Path="src/Modules/Activities/Cheetah.Modules.Activities.Blazor/Cheetah.Modules.Activities.Blazor.csproj" />
         <Project Path="src/Modules/Activities/Cheetah.Modules.Activities.Api/Cheetah.Modules.Activities.Api.csproj" />
         <Project Path="src/Modules/Activities/Cheetah.Modules.Activities.Application.Tests/Cheetah.Modules.Activities.Application.Tests.csproj" />
         <Project Path="src/Modules/Activities/Cheetah.Modules.Activities.Application/Cheetah.Modules.Activities.Application.csproj" />
@@ -156,6 +158,7 @@
         <Project Path="src/Modules/Activities/Cheetah.Modules.Activities.Shared/Cheetah.Modules.Activities.Shared.csproj" />
     </Folder>
     <Folder Name="/Modules/Booking/">
+        <Project Path="src/Modules/Booking/Cheetah.Modules.Booking.Blazor/Cheetah.Modules.Booking.Blazor.csproj" />
         <Project Path="src/Modules/Booking/Cheetah.Modules.Booking.Api/Cheetah.Modules.Booking.Api.csproj" />
         <Project Path="src/Modules/Booking/Cheetah.Modules.Booking.Application.Tests/Cheetah.Modules.Booking.Application.Tests.csproj" />
         <Project Path="src/Modules/Booking/Cheetah.Modules.Booking.Application/Cheetah.Modules.Booking.Application.csproj" />
@@ -170,6 +173,7 @@
         <Project Path="src/Modules/Booking/Cheetah.Modules.Booking.Shared/Cheetah.Modules.Booking.Shared.csproj" />
     </Folder>
     <Folder Name="/Modules/NotesTimeline/">
+        <Project Path="src/Modules/NotesTimeline/Cheetah.Modules.NotesTimeline.Blazor/Cheetah.Modules.NotesTimeline.Blazor.csproj" />
         <Project Path="src/Modules/NotesTimeline/Cheetah.Modules.NotesTimeline.Api/Cheetah.Modules.NotesTimeline.Api.csproj" />
         <Project Path="src/Modules/NotesTimeline/Cheetah.Modules.NotesTimeline.Application.Tests/Cheetah.Modules.NotesTimeline.Application.Tests.csproj" />
         <Project Path="src/Modules/NotesTimeline/Cheetah.Modules.NotesTimeline.Application/Cheetah.Modules.NotesTimeline.Application.csproj" />
@@ -181,6 +185,7 @@
         <Project Path="src/Modules/NotesTimeline/Cheetah.Modules.NotesTimeline.Shared/Cheetah.Modules.NotesTimeline.Shared.csproj" />
     </Folder>
     <Folder Name="/Modules/Calendar/">
+        <Project Path="src/Modules/Calendar/Cheetah.Modules.Calendar.Blazor/Cheetah.Modules.Calendar.Blazor.csproj" />
         <Project Path="src/Modules/Calendar/Cheetah.Modules.Calendar.Api/Cheetah.Modules.Calendar.Api.csproj" />
         <Project Path="src/Modules/Calendar/Cheetah.Modules.Calendar.Application/Cheetah.Modules.Calendar.Application.csproj" />
         <Project Path="src/Modules/Calendar/Cheetah.Modules.Calendar.Client/Cheetah.Modules.Calendar.Client.csproj" />
@@ -197,6 +202,7 @@
         <Project Path="src/Modules/Calendar/Cheetah.Modules.Calendar.Client.Tests/Cheetah.Modules.Calendar.Client.Tests.csproj" />
     </Folder>
     <Folder Name="/Modules/Deals/">
+        <Project Path="src/Modules/Deals/Cheetah.Modules.Deals.Blazor/Cheetah.Modules.Deals.Blazor.csproj" />
         <Project Path="src/Modules/Deals/Cheetah.Modules.Deals.Api/Cheetah.Modules.Deals.Api.csproj" />
         <Project Path="src/Modules/Deals/Cheetah.Modules.Deals.Application/Cheetah.Modules.Deals.Application.csproj" />
         <Project Path="src/Modules/Deals/Cheetah.Modules.Deals.Client/Cheetah.Modules.Deals.Client.csproj" />
@@ -226,6 +232,7 @@
         <Project Path="src/Modules/CustomFields/Cheetah.Modules.CustomFields.Client.Tests/Cheetah.Modules.CustomFields.Client.Tests.csproj" />
     </Folder>
     <Folder Name="/Modules/Leads/">
+        <Project Path="src/Modules/Leads/Cheetah.Modules.Leads.Blazor/Cheetah.Modules.Leads.Blazor.csproj" />
         <Project Path="src/Modules/Leads/Cheetah.Modules.Leads.Api/Cheetah.Modules.Leads.Api.csproj" />
         <Project Path="src/Modules/Leads/Cheetah.Modules.Leads.Application.Tests/Cheetah.Modules.Leads.Application.Tests.csproj" />
         <Project Path="src/Modules/Leads/Cheetah.Modules.Leads.Application/Cheetah.Modules.Leads.Application.csproj" />
@@ -282,6 +289,7 @@
         <Project Path="src/Modules/Customer/Cheetah.Modules.Customer.Application.Tests/Cheetah.Modules.Customer.Application.Tests.csproj" />
     </Folder>
     <Folder Name="/Modules/Teams/">
+        <Project Path="src/Modules/Teams/Cheetah.Modules.Teams.Blazor/Cheetah.Modules.Teams.Blazor.csproj" />
         <Project Path="src/Modules/Teams/Cheetah.Modules.Teams.Api/Cheetah.Modules.Teams.Api.csproj" />
         <Project Path="src/Modules/Teams/Cheetah.Modules.Teams.Application/Cheetah.Modules.Teams.Application.csproj" />
         <Project Path="src/Modules/Teams/Cheetah.Modules.Teams.Application.Tests/Cheetah.Modules.Teams.Application.Tests.csproj" />
@@ -320,6 +328,7 @@
         <File Path="version.props" />
     </Folder>
     <Folder Name="/Modules/SalesDocuments/">
+        <Project Path="src/Modules/SalesDocuments/Cheetah.Modules.SalesDocuments.Blazor/Cheetah.Modules.SalesDocuments.Blazor.csproj" />
         <Project Path="src/Modules/SalesDocuments/Cheetah.Modules.SalesDocuments.Api/Cheetah.Modules.SalesDocuments.Api.csproj" />
         <Project Path="src/Modules/SalesDocuments/Cheetah.Modules.SalesDocuments.Application.Tests/Cheetah.Modules.SalesDocuments.Application.Tests.csproj" />
         <Project Path="src/Modules/SalesDocuments/Cheetah.Modules.SalesDocuments.Application/Cheetah.Modules.SalesDocuments.Application.csproj" />

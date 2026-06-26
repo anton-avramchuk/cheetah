@@ -1,0 +1,32 @@
+@namespace Cheetah.Modules.Teams.Blazor.Components
+@typeparam TGridViewModel where TGridViewModel : class, IHasId
+@typeparam TDetailsViewModel where TDetailsViewModel : class, new()
+@typeparam TCreateViewModel where TCreateViewModel : class, new()
+
+@*
+    Generic-шаблон грида команд. Team — расширяемый агрегат (наследник TeamBase), конкретного типа в
+    модуле нет, поэтому routable-страницы команд здесь нет. Конкретное приложение объявляет свои
+    grid/details/create ViewModel'и и формы, реализует ICrudService<...> и размещает компонент на странице:
+
+        @@page "/teams"
+        <TeamGrid TGridViewModel="AppTeamGridVm" TDetailsViewModel="AppTeamDetailsVm"
+                  TCreateViewModel="AppTeamCreateVm" Service="Service"
+                  EditFormType="typeof(AppTeamEditForm)" CreateFormType="typeof(AppTeamCreateForm)" />
+*@
+
+<CrmGrid TGridViewModel="TGridViewModel"
+         TDetailsViewModel="TDetailsViewModel"
+         TCreateViewModel="TCreateViewModel"
+         Title="@Title"
+         Service="Service"
+         EditFormType="EditFormType"
+         CreateFormType="CreateFormType" />
+
+@code {
+    [Parameter, EditorRequired]
+    public ICrudService<TGridViewModel, TDetailsViewModel, TCreateViewModel> Service { get; set; } = null!;
+
+    [Parameter, EditorRequired] public Type EditFormType { get; set; } = null!;
+    [Parameter, EditorRequired] public Type CreateFormType { get; set; } = null!;
+    [Parameter] public string Title { get; set; } = "Команды";
+}

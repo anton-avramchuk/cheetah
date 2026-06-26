@@ -1,0 +1,34 @@
+@namespace Cheetah.Modules.Identity.Blazor.Components
+@typeparam TGridViewModel where TGridViewModel : class, IHasId
+@typeparam TDetailsViewModel where TDetailsViewModel : class, new()
+@typeparam TCreateViewModel where TCreateViewModel : class, new()
+
+@*
+    Generic-шаблон грида сущности Identity (пользователи/роли). Identity абстрактен — конкретный тип
+    пользователя/роли поставляет приложение (наследники IdentityUser/IdentityRole), поэтому routable-страниц
+    здесь нет. Приложение объявляет ViewModel'и и формы, реализует ICrudService<...> и размещает компонент
+    на своей странице:
+
+        @@page "/identity/users"
+        <EntityGrid TGridViewModel="AppUserGridVm" TDetailsViewModel="AppUserDetailsVm"
+                    TCreateViewModel="AppUserCreateVm" Service="Service"
+                    EditFormType="typeof(AppUserEditForm)" CreateFormType="typeof(AppUserCreateForm)"
+                    Title="Пользователи" />
+*@
+
+<CrmGrid TGridViewModel="TGridViewModel"
+         TDetailsViewModel="TDetailsViewModel"
+         TCreateViewModel="TCreateViewModel"
+         Title="@Title"
+         Service="Service"
+         EditFormType="EditFormType"
+         CreateFormType="CreateFormType" />
+
+@code {
+    [Parameter, EditorRequired]
+    public ICrudService<TGridViewModel, TDetailsViewModel, TCreateViewModel> Service { get; set; } = null!;
+
+    [Parameter, EditorRequired] public Type EditFormType { get; set; } = null!;
+    [Parameter, EditorRequired] public Type CreateFormType { get; set; } = null!;
+    [Parameter] public string Title { get; set; } = string.Empty;
+}

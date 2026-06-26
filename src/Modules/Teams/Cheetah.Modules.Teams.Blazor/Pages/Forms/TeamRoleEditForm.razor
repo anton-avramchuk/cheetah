@@ -1,0 +1,7 @@
+@namespace Cheetah.Modules.Teams.Blazor.Pages.Forms
+
+<CrmTextBox Label="Название" @bind-Value="Model.Name" Required="true" MaxLength="200" />
+
+@code {
+    [Parameter, EditorRequired] public TeamRoleDetailsViewModel Model { get; set; } = null!;
+}

@@ -1,0 +1,26 @@
+@namespace Cheetah.Modules.Activities.Blazor.Components
+@typeparam TGridViewModel where TGridViewModel : class, IHasId
+@typeparam TDetailsViewModel where TDetailsViewModel : class, new()
+@typeparam TCreateViewModel where TCreateViewModel : class, new()
+
+@*
+    Generic-шаблон грида задач/активностей. Activities абстрактен (наследник ActivityBase) — конкретные
+    ViewModel'и, формы и ICrudService<...> поставляет приложение, размещая компонент на странице /activities.
+*@
+
+<CrmGrid TGridViewModel="TGridViewModel"
+         TDetailsViewModel="TDetailsViewModel"
+         TCreateViewModel="TCreateViewModel"
+         Title="@Title"
+         Service="Service"
+         EditFormType="EditFormType"
+         CreateFormType="CreateFormType" />
+
+@code {
+    [Parameter, EditorRequired]
+    public ICrudService<TGridViewModel, TDetailsViewModel, TCreateViewModel> Service { get; set; } = null!;
+
+    [Parameter, EditorRequired] public Type EditFormType { get; set; } = null!;
+    [Parameter, EditorRequired] public Type CreateFormType { get; set; } = null!;
+    [Parameter] public string Title { get; set; } = "Задачи";
+}

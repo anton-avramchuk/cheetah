@@ -1,0 +1,15 @@
+@page "/teams/roles"
+@layout MainLayout
+
+<CrmGrid TGridViewModel="TeamRoleGridViewModel"
+         TDetailsViewModel="TeamRoleDetailsViewModel"
+         TCreateViewModel="TeamRoleCreateViewModel"
+         Title="Роли команд"
+         Service="Service"
+         EditFormType="typeof(TeamRoleEditForm)"
+         CreateFormType="typeof(TeamRoleCreateForm)" />
+
+@code {
+    [Inject]
+    public ICrudService<TeamRoleGridViewModel, TeamRoleDetailsViewModel, TeamRoleCreateViewModel> Service { get; set; } = null!;
+}

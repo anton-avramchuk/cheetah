@@ -1,0 +1,32 @@
+@namespace Cheetah.Modules.SalesDocuments.Blazor.Components
+@typeparam TGridViewModel where TGridViewModel : class, IHasId
+@typeparam TDetailsViewModel where TDetailsViewModel : class, new()
+@typeparam TCreateViewModel where TCreateViewModel : class, new()
+
+@*
+    Generic-шаблон грида документов продаж (КП/заказы/счета). SalesDocuments абстрактен (наследник
+    SalesDocumentBase), конкретного типа в модуле нет — приложение объявляет ViewModel'и и формы,
+    реализует ICrudService<...> и размещает компонент на странице:
+
+        @@page "/sales-documents"
+        <DocumentGrid TGridViewModel="AppDocGridVm" TDetailsViewModel="AppDocDetailsVm"
+                      TCreateViewModel="AppDocCreateVm" Service="Service"
+                      EditFormType="typeof(AppDocEditForm)" CreateFormType="typeof(AppDocCreateForm)" />
+*@
+
+<CrmGrid TGridViewModel="TGridViewModel"
+         TDetailsViewModel="TDetailsViewModel"
+         TCreateViewModel="TCreateViewModel"
+         Title="@Title"
+         Service="Service"
+         EditFormType="EditFormType"
+         CreateFormType="CreateFormType" />
+
+@code {
+    [Parameter, EditorRequired]
+    public ICrudService<TGridViewModel, TDetailsViewModel, TCreateViewModel> Service { get; set; } = null!;
+
+    [Parameter, EditorRequired] public Type EditFormType { get; set; } = null!;
+    [Parameter, EditorRequired] public Type CreateFormType { get; set; } = null!;
+    [Parameter] public string Title { get; set; } = "Документы";
+}
