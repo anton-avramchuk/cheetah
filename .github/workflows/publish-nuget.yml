@@ -1,5 +1,5 @@
 # Публикация NuGet-пакетов Cheetah.* в GitHub Packages.
-# Запускается при пуше тега вида v1.0.22 либо вручную (workflow_dispatch).
+# Запускается ТОЛЬКО при пуше тега вида v1.0.22.
 # Версия пакета берётся из version.props (CheetahVersion).
 
 name: Publish NuGet (GitHub Packages)
@@ -7,7 +7,6 @@ name: Publish NuGet (GitHub Packages)
 on:
   push:
     tags: [ "v*" ]
-  workflow_dispatch:
 
 jobs:
   publish:
