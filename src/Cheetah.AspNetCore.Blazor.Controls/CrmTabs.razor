@@ -35,6 +35,15 @@
     [Parameter] public bool   Pills { get; set; }
     [Parameter] public EventCallback<string> OnTabChanged { get; set; }
 
+    /// <summary>
+    /// Default lazy-initialization mode for child panels. When <c>true</c>, a panel's
+    /// content is created on first activation and then kept alive (hidden via CSS),
+    /// so it initializes only once. When <c>false</c> (default), content is rendered
+    /// only while the panel is active and is destroyed on every switch.
+    /// Individual <see cref="CrmTabPanel"/>s can override this via their own Lazy parameter.
+    /// </summary>
+    [Parameter] public bool Lazy { get; set; }
+
     private string NavClass => Pills ? "nav-pills" : "nav-tabs";
     private string _active = string.Empty;
     private readonly List<TabInfo> _tabs = [];

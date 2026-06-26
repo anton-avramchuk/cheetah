@@ -1,8 +1,8 @@
 @namespace Cheetah.AspNetCore.Blazor.Controls
 
-<div class="tab-pane fade @(Parent.IsActive(Key) ? "show active" : "")"
+<div class="tab-pane fade @(IsActive ? "show active" : "")"
      role="tabpanel">
-    @if (Parent.IsActive(Key))
+    @if (ShouldRenderContent)
     {
         @ChildContent
     }
@@ -15,5 +15,27 @@
     [Parameter] public string Title    { get; set; } = string.Empty;
     [Parameter] public bool   Disabled { get; set; }
 
+    /// <summary>
+    /// Deferred (lazy) initialization. When <c>true</c>, the content is not created until
+    /// the tab is activated for the first time, and is then kept alive (hidden via CSS) so
+    /// it initializes only once. When <c>false</c>, content is rendered only while the tab
+    /// is active and is destroyed on every switch. When <c>null</c> (default), falls back to
+    /// the owning <see cref="CrmTabs.Lazy"/> value.
+    /// </summary>
+    [Parameter] public bool? Lazy { get; set; }
+
+    private bool _hasBeenActivated;
+
+    private bool IsActive => Parent.IsActive(Key);
+
+    private bool LazyEffective => Lazy ?? Parent.Lazy;
+
+    private bool ShouldRenderContent => LazyEffective ? _hasBeenActivated : IsActive;
+
     protected override void OnInitialized() => Parent.RegisterTab(Key, Title, Disabled);
+
+    protected override void OnParametersSet()
+    {
+        if (IsActive) _hasBeenActivated = true;
+    }
 }
