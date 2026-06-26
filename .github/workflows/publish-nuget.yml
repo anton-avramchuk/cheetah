@@ -1,8 +1,7 @@
 # Публикация NuGet-пакетов Cheetah.* в GitHub Packages.
 # Запускается ТОЛЬКО при пуше тега вида v1.0.23 И только если тег указывает
 # на коммит из ветки dev (теги с других веток публикацию не запускают).
-# Версия пакета берётся ИЗ ТЕГА: v1.0.23 -> 1.0.23 (override version.props
-# через /p:CheetahVersion).
+# Версия пакета берётся ИЗ ТЕГА: v1.0.23 -> 1.0.23 (через /p:Version).
 
 name: Publish NuGet (GitHub Packages)
 
@@ -60,13 +59,13 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore
 
-      # Билдим и пакуем как в pack.ps1: и build, и pack получают одну версию через
-      # /p:CheetahVersion, чтобы AssemblyVersion в dll совпадала с версией пакета.
+      # И build, и pack получают одну версию через /p:Version, чтобы AssemblyVersion
+      # в dll совпадала с версией пакета.
       - name: Build
-        run: dotnet build Cheetah.slnx --configuration Release --no-restore /p:CheetahVersion=${{ steps.ver.outputs.version }}
+        run: dotnet build Cheetah.slnx --configuration Release --no-restore /p:Version=${{ steps.ver.outputs.version }}
 
       - name: Pack
-        run: dotnet pack Cheetah.slnx --configuration Release --no-restore --output artifacts /p:CheetahVersion=${{ steps.ver.outputs.version }}
+        run: dotnet pack Cheetah.slnx --configuration Release --no-restore --output artifacts /p:Version=${{ steps.ver.outputs.version }}
 
       # Пушим все собранные Cheetah.*-пакеты. --skip-duplicate: повторный запуск на той же
       # версии не падает, а просто пропускает уже опубликованные пакеты.

@@ -4,8 +4,6 @@
         <TargetFramework>net10.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <!-- Версия фреймворка. В publish-workflow перебивается из тега через /p:CheetahVersion. -->
-        <CheetahVersion Condition="'$(CheetahVersion)' == ''">1.0.22</CheetahVersion>
     </PropertyGroup>
 
     <!-- NuGet metadata for all Cheetah.* non-test projects -->
@@ -19,7 +17,8 @@
         <WarningsNotAsErrors>NU1902;NU1903</WarningsNotAsErrors>
         <IsPackable>true</IsPackable>
         <PackageId>$(MSBuildProjectName)</PackageId>
-        <Version>$(CheetahVersion)</Version>
+        <!-- Версия пакета задаётся при публикации из тега (/p:Version в publish-workflow).
+             Локальные сборки используют MSBuild-дефолт 1.0.0. -->
         <Authors>Cheetah CRM Team</Authors>
         <Company>Cheetah CRM</Company>
         <Product>Cheetah CRM Framework</Product>

@@ -85,7 +85,7 @@ dotnet test Cheetah.slnx
 
 - **Central Package Management** через [`Directory.Packages.props`](Directory.Packages.props) в корне.
 - В `.csproj` пишите `<PackageReference Include="..." />` **без** атрибута `Version`.
-- Версия фреймворка — свойство `CheetahVersion` в [`Directory.Build.props`](Directory.Build.props); при публикации перебивается из тега (`/p:CheetahVersion`).
+- Версия пакетов задаётся при публикации из git-тега (`/p:Version` в [`publish-nuget.yml`](.github/workflows/publish-nuget.yml)); локальные сборки используют MSBuild-дефолт `1.0.0`.
 
 ### Публикация NuGet
 
