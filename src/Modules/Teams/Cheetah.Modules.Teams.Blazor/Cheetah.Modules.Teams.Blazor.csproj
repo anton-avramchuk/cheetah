@@ -11,7 +11,6 @@
     <ItemGroup>
         <ProjectReference Include="..\..\..\Cheetah.Core\Cheetah.Core.csproj" />
         <ProjectReference Include="..\..\..\Cheetah.AspNetCore.Blazor.Grid\Cheetah.AspNetCore.Blazor.Grid.csproj" />
-        <ProjectReference Include="..\..\..\Cheetah.AspNetCore.Blazor.Navigation\Cheetah.AspNetCore.Blazor.Navigation.csproj" />
         <ProjectReference Include="..\..\..\Cheetah.AspNetCore.Blazor.Layouts\Cheetah.AspNetCore.Blazor.Layouts.csproj" />
         <ProjectReference Include="..\..\..\Cheetah.AspNetCore.Blazor.Controls\Cheetah.AspNetCore.Blazor.Controls.csproj" />
         <ProjectReference Include="..\Cheetah.Modules.Teams.Domain\Cheetah.Modules.Teams.Domain.csproj" />

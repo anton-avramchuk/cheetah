@@ -1,5 +1,4 @@
 using Cheetah.AspNetCore.Blazor.Grid;
-using Cheetah.AspNetCore.Blazor.Navigation;
 using Cheetah.Core;
 using Cheetah.Core.Modularity;
 
@@ -7,12 +6,11 @@ namespace Cheetah.Modules.SalesDocuments.Blazor;
 
 /// <summary>
 /// Blazor Server BFF UI-слой модуля SalesDocuments: generic-шаблон грида документов (КП/заказы/счета —
-/// закрывается приложением, т.к. модуль абстрактен по <c>SalesDocumentBase</c>) и пункты меню.
-/// Contributor меню регистрируется генератором по <c>[Export]</c>.
+/// закрывается приложением, т.к. модуль абстрактен по <c>SalesDocumentBase</c>). Меню формирует
+/// приложение, не модуль.
 /// </summary>
 [DependsOn(typeof(CoreModule))]
 [DependsOn(typeof(CrmBlazorGridModule))]
-[DependsOn(typeof(CrmBlazorNavigationModule))]
 public partial class CheetahSalesDocumentsBlazorModule : CrmModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)

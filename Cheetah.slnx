@@ -158,7 +158,6 @@
         <Project Path="src/Modules/Activities/Cheetah.Modules.Activities.Shared/Cheetah.Modules.Activities.Shared.csproj" />
     </Folder>
     <Folder Name="/Modules/Booking/">
-        <Project Path="src/Modules/Booking/Cheetah.Modules.Booking.Blazor/Cheetah.Modules.Booking.Blazor.csproj" />
         <Project Path="src/Modules/Booking/Cheetah.Modules.Booking.Api/Cheetah.Modules.Booking.Api.csproj" />
         <Project Path="src/Modules/Booking/Cheetah.Modules.Booking.Application.Tests/Cheetah.Modules.Booking.Application.Tests.csproj" />
         <Project Path="src/Modules/Booking/Cheetah.Modules.Booking.Application/Cheetah.Modules.Booking.Application.csproj" />
@@ -173,7 +172,6 @@
         <Project Path="src/Modules/Booking/Cheetah.Modules.Booking.Shared/Cheetah.Modules.Booking.Shared.csproj" />
     </Folder>
     <Folder Name="/Modules/NotesTimeline/">
-        <Project Path="src/Modules/NotesTimeline/Cheetah.Modules.NotesTimeline.Blazor/Cheetah.Modules.NotesTimeline.Blazor.csproj" />
         <Project Path="src/Modules/NotesTimeline/Cheetah.Modules.NotesTimeline.Api/Cheetah.Modules.NotesTimeline.Api.csproj" />
         <Project Path="src/Modules/NotesTimeline/Cheetah.Modules.NotesTimeline.Application.Tests/Cheetah.Modules.NotesTimeline.Application.Tests.csproj" />
         <Project Path="src/Modules/NotesTimeline/Cheetah.Modules.NotesTimeline.Application/Cheetah.Modules.NotesTimeline.Application.csproj" />
@@ -185,7 +183,6 @@
         <Project Path="src/Modules/NotesTimeline/Cheetah.Modules.NotesTimeline.Shared/Cheetah.Modules.NotesTimeline.Shared.csproj" />
     </Folder>
     <Folder Name="/Modules/Calendar/">
-        <Project Path="src/Modules/Calendar/Cheetah.Modules.Calendar.Blazor/Cheetah.Modules.Calendar.Blazor.csproj" />
         <Project Path="src/Modules/Calendar/Cheetah.Modules.Calendar.Api/Cheetah.Modules.Calendar.Api.csproj" />
         <Project Path="src/Modules/Calendar/Cheetah.Modules.Calendar.Application/Cheetah.Modules.Calendar.Application.csproj" />
         <Project Path="src/Modules/Calendar/Cheetah.Modules.Calendar.Client/Cheetah.Modules.Calendar.Client.csproj" />

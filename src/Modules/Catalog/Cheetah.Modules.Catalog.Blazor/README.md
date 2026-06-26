@@ -12,11 +12,15 @@ Blazor Server BFF UI-слой модуля **Catalog**: страницы, фор
 | Формы | `Pages/Forms/*Form.razor` | Create/Edit формы для диалогов (`CrmTextBox`, `CrmSwitch`) |
 | ViewModel'и | `ViewModels/*.cs` | Grid (`IHasId` + `[GridColumn]`), Details, Create |
 | CRUD | `Services/*CrudService.cs` | `BaseCrudService<TEntity,…>` поверх `IGridRepository<TEntity>`; create/update — доменные фабрики |
-| Меню | `Navigation/CatalogMenuContributor.cs` | Секция «Каталог» (`IMenuContributor`) |
 | Товары | `Components/CatalogProductGrid.razor` | Generic-шаблон (см. ниже) |
 
-CRUD-сервисы и contributor меню регистрируются генератором по `[Export]` — вручную в DI ничего добавлять
-не нужно (вызов `RegisterServices` в `CheetahCatalogBlazorModule`).
+CRUD-сервисы регистрируются генератором по `[Export]` — вручную в DI ничего добавлять не нужно (вызов
+`RegisterServices` в `CheetahCatalogBlazorModule`).
+
+> **Меню формирует приложение, не модуль.** Базовые модули не содержат `IMenuContributor` — состав и порядок
+> разделов меню знает только конечное приложение (какие модули оно включает и как их группирует). Приложение
+> объявляет свои `IMenuContributor` с пунктами на маршруты страниц (`catalog/categories`, `catalog/price-lists`,
+> `catalog/products`).
 
 ## Категории и прайс-листы vs товары
 
@@ -60,6 +64,6 @@ CRUD-сервисы и contributor меню регистрируются ген�
 
 ## Зависимости
 
-`Cheetah.Core`, `Cheetah.AspNetCore.Blazor.Grid` / `.Navigation` / `.Layouts` / `.Controls`,
+`Cheetah.Core`, `Cheetah.AspNetCore.Blazor.Grid` / `.Layouts` / `.Controls`,
 `Cheetah.Modules.Catalog.Domain`. Модуль: `[DependsOn]` на `CoreModule`, `CrmBlazorGridModule`,
-`CrmBlazorNavigationModule`, `CrmBlazorLayoutsModule`, `CrmBlazorControlsModule`, `CheetahCatalogDomainModule`.
+`CrmBlazorLayoutsModule`, `CrmBlazorControlsModule`, `CheetahCatalogDomainModule`.
