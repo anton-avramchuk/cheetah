@@ -18,7 +18,7 @@ jobs:
     outputs:
       on_dev: ${{ steps.check.outputs.on_dev }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0   # нужна полная история и ветки, чтобы проверить принадлежность тега
 
@@ -41,7 +41,7 @@ jobs:
       packages: write   # нужно для пуша в GitHub Packages через GITHUB_TOKEN
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
