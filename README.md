@@ -66,23 +66,10 @@ src/
 ### Требования
 
 - [.NET SDK 10.0.100+](https://dotnet.microsoft.com/) (см. [`global.json`](global.json))
-- Docker / Docker Compose
-- PostgreSQL 17 и Redis 7 (поднимаются через compose)
 
-### Запуск через Docker Compose
+Хранилища данных, кэш и шина событий подключаются через провайдеры (EF Core: PostgreSQL/MS SQL/MySQL/SQLite, Dapper, MongoDB; события: Redis/Kafka) — конкретные СУБД и брокер выбирает приложение. Настройте строки подключения и `JWT_SECRET_KEY` (не короче 32 символов) — за основу можно взять [`.env.example`](.env.example).
 
-```bash
-# 1. Подготовьте переменные окружения
-cp .env.example .env
-# отредактируйте .env: JWT_SECRET_KEY должен быть не короче 32 символов
-
-# 2. Поднимите инфраструктуру и сервисы
-docker compose up --build
-```
-
-После старта API доступно через reverse-proxy на `http://localhost:5555`.
-
-### Локальная сборка
+### Сборка и тесты
 
 ```bash
 dotnet restore
