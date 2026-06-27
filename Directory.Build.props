@@ -13,8 +13,10 @@
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <!-- NuGet-аудит (уязвимости транзитивных пакетов) остаётся ВИДИМЫМ warning'ом, но не
              фатальным: новый CVE не должен ронять сборку без изменений в коде. Сами уязвимости
-             отслеживаются и устраняются обновлением корневых пакетов (MongoDB.Driver, Microsoft.Data.Sqlite). -->
-        <WarningsNotAsErrors>NU1902;NU1903</WarningsNotAsErrors>
+             отслеживаются и устраняются обновлением корневых пакетов (MongoDB.Driver, Microsoft.Data.Sqlite).
+             NU1900 — недоступность самого фида аудита (нет сети до nuget.org): тоже не фатально,
+             иначе оффлайн-сборка падает без единого изменения в коде. -->
+        <WarningsNotAsErrors>NU1900;NU1902;NU1903</WarningsNotAsErrors>
         <IsPackable>true</IsPackable>
         <PackageId>$(MSBuildProjectName)</PackageId>
         <!-- Версия пакета задаётся при публикации из тега (/p:Version в publish-workflow).
