@@ -4,8 +4,8 @@ using Cheetah.Contracts.Requests;
 
 namespace Cheetah.Modules.Identity.Contracts.Requests;
 
-[ApiRoute("api/roles/{id:guid}", ApiMethod.Update, ServiceName = "Roles")]
-public record UpdateRoleRequest(
+/// <summary>Базовый запрос обновления роли (расширяется хостом).</summary>
+public abstract record UpdateRoleRequest(
     [FromRoute] Guid Id,
     [property: Required(AllowEmptyStrings = false)]
     string Name) : ICrmRequest;

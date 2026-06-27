@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Cheetah.Modules.Identity.Application.Commands;
 
-public abstract class LoginCommandHandler<TUser, TRole>(
+public sealed class LoginCommandHandler<TUser, TRole>(
     UserManager<TUser> userManager,
     RoleManager<TRole> roleManager,
     ITokenGenerator tokenGenerator,

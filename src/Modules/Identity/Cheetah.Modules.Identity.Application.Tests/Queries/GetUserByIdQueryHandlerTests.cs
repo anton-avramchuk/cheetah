@@ -8,21 +8,18 @@ using Shouldly;
 
 namespace Cheetah.Modules.Identity.Application.Tests.Queries;
 
-public sealed class StubGetUserByIdQueryHandler(UserManager<StubUser> userManager, IObjectMapper mapper)
-    : GetUserByIdQueryHandler<StubUser, StubRole>(userManager, mapper);
-
 public class GetUserByIdQueryHandlerTests
 {
     private readonly Mock<UserManager<StubUser>> _userManagerMock;
     private readonly Mock<IObjectMapper> _mapperMock;
-    private readonly StubGetUserByIdQueryHandler _handler;
+    private readonly GetUserByIdQueryHandler<StubUser, StubRole, UserDetailModel> _handler;
 
     public GetUserByIdQueryHandlerTests()
     {
         var store = new Mock<IUserStore<StubUser>>();
         _userManagerMock = new Mock<UserManager<StubUser>>(store.Object, null!, null!, null!, null!, null!, null!, null!, null!);
         _mapperMock = new Mock<IObjectMapper>();
-        _handler = new StubGetUserByIdQueryHandler(_userManagerMock.Object, _mapperMock.Object);
+        _handler = new GetUserByIdQueryHandler<StubUser, StubRole, UserDetailModel>(_userManagerMock.Object, _mapperMock.Object);
     }
 
     [Fact]
@@ -38,7 +35,7 @@ public class GetUserByIdQueryHandlerTests
             .Returns(new[] { expectedModel }.AsAsyncQueryable());
 
         // Act
-        var result = await _handler.HandleAsync(new GetUserByIdQuery(userId));
+        var result = await _handler.HandleAsync(new GetUserByIdQuery<UserDetailModel>(userId));
 
         // Assert
         result.ShouldNotBeNull();
@@ -57,7 +54,7 @@ public class GetUserByIdQueryHandlerTests
             .Returns(Array.Empty<UserDetailModel>().AsAsyncQueryable());
 
         // Act
-        var result = await _handler.HandleAsync(new GetUserByIdQuery(userId));
+        var result = await _handler.HandleAsync(new GetUserByIdQuery<UserDetailModel>(userId));
 
         // Assert
         result.ShouldBeNull();
@@ -75,7 +72,7 @@ public class GetUserByIdQueryHandlerTests
             .Returns(Array.Empty<UserDetailModel>().AsAsyncQueryable());
 
         // Act
-        await _handler.HandleAsync(new GetUserByIdQuery(userId));
+        await _handler.HandleAsync(new GetUserByIdQuery<UserDetailModel>(userId));
 
         // Assert
         _mapperMock.Verify(m => m.ProjectTo<UserDetailModel>(It.IsAny<IQueryable>()), Times.Once);

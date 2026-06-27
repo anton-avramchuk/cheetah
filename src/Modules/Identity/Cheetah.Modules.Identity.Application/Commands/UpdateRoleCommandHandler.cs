@@ -1,26 +1,29 @@
 using Cheetah.Core.CQRS;
 using Cheetah.Core.Domain.Exceptions;
+using Cheetah.Modules.Identity.Application.Abstractions;
 using Cheetah.Modules.Identity.Infrastructure.Exceptions;
 using Cheetah.Modules.Identity.Domain;
 using Microsoft.AspNetCore.Identity;
 
 namespace Cheetah.Modules.Identity.Application.Commands;
 
-public abstract class UpdateRoleCommandHandler<TRole>(RoleManager<TRole> roleManager)
-    : ICommandHandler<UpdateRoleCommand>
+/// <summary>
+/// Обобщённый хендлер обновления роли. Применение изменений поставляет хост через
+/// <see cref="IUpdateRoleApplier{TRole,TCommand}"/>.
+/// </summary>
+public sealed class UpdateRoleCommandHandler<TRole, TCommand>(
+    RoleManager<TRole> roleManager,
+    IUpdateRoleApplier<TRole, TCommand> applier)
+    : ICommandHandler<TCommand>
+    where TCommand : UpdateRoleCommand
     where TRole : IdentityRole
 {
-    protected virtual void ApplyChanges(TRole role, UpdateRoleCommand command)
-    {
-        role.ChangeName(command.Name);
-    }
-
-    public async ValueTask HandleAsync(UpdateRoleCommand command, CancellationToken ct = default)
+    public async ValueTask HandleAsync(TCommand command, CancellationToken ct = default)
     {
         var role = await roleManager.FindByIdAsync(command.Id.ToString())
                    ?? throw EntityNotFoundException.For<TRole>(command.Id);
 
-        ApplyChanges(role, command);
+        applier.Apply(role, command);
         var result = await roleManager.UpdateAsync(role);
 
         if (!result.Succeeded)

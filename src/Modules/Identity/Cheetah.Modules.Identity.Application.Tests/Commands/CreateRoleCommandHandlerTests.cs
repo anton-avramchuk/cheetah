@@ -1,3 +1,4 @@
+using Cheetah.Modules.Identity.Application.Abstractions;
 using Cheetah.Modules.Identity.Application.Commands;
 using Cheetah.Modules.Identity.Infrastructure.Exceptions;
 using Microsoft.AspNetCore.Identity;
@@ -6,29 +7,25 @@ using Shouldly;
 
 namespace Cheetah.Modules.Identity.Application.Tests.Commands;
 
-public sealed class StubCreateRoleCommandHandler(RoleManager<StubRole> roleManager)
-    : CreateRoleCommandHandler<StubRole>(roleManager)
-{
-    protected override StubRole CreateRole(CreateRoleCommand command) => new(Guid.NewGuid(), command.Name);
-}
-
 public class CreateRoleCommandHandlerTests
 {
     private readonly Mock<RoleManager<StubRole>> _roleManagerMock;
-    private readonly StubCreateRoleCommandHandler _handler;
+    private readonly CreateRoleCommandHandler<StubRole, StubCreateRoleCommand> _handler;
 
     public CreateRoleCommandHandlerTests()
     {
         var store = new Mock<IRoleStore<StubRole>>();
         _roleManagerMock = new Mock<RoleManager<StubRole>>(store.Object, null!, null!, null!, null!);
-        _handler = new StubCreateRoleCommandHandler(_roleManagerMock.Object);
+        _handler = new CreateRoleCommandHandler<StubRole, StubCreateRoleCommand>(
+            _roleManagerMock.Object,
+            new DelegateCreateRoleFactory<StubRole, StubCreateRoleCommand>(c => new StubRole(Guid.NewGuid(), c.Name)));
     }
 
     [Fact]
     public async Task HandleAsync_WithValidName_ShouldCreateRoleAndReturnId()
     {
         // Arrange
-        var command = new CreateRoleCommand("admin");
+        var command = new StubCreateRoleCommand("admin");
         _roleManagerMock.Setup(m => m.CreateAsync(It.IsAny<StubRole>())).ReturnsAsync(IdentityResult.Success);
 
         // Act
@@ -45,7 +42,7 @@ public class CreateRoleCommandHandlerTests
     [InlineData("   ")]
     public async Task HandleAsync_WithInvalidName_ShouldThrowArgumentException(string? name)
     {
-        var command = new CreateRoleCommand(name!);
+        var command = new StubCreateRoleCommand(name!);
 
         await Should.ThrowAsync<ArgumentException>(() => _handler.HandleAsync(command).AsTask());
     }
@@ -54,7 +51,7 @@ public class CreateRoleCommandHandlerTests
     public async Task HandleAsync_WhenCreateFails_ShouldThrowIdentityException()
     {
         // Arrange
-        var command = new CreateRoleCommand("admin");
+        var command = new StubCreateRoleCommand("admin");
         var failed = IdentityResult.Failed(new IdentityError { Code = "Duplicate", Description = "Already exists" });
         _roleManagerMock.Setup(m => m.CreateAsync(It.IsAny<StubRole>())).ReturnsAsync(failed);
 
@@ -66,7 +63,7 @@ public class CreateRoleCommandHandlerTests
     public async Task HandleAsync_ShouldReturnRoleIdFromCreatedRole()
     {
         // Arrange
-        var command = new CreateRoleCommand("manager");
+        var command = new StubCreateRoleCommand("manager");
         Guid capturedId = Guid.Empty;
 
         _roleManagerMock

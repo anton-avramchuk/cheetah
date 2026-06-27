@@ -9,19 +9,12 @@ using Shouldly;
 
 namespace Cheetah.Modules.Identity.Application.Tests.Commands;
 
-public sealed class StubLoginCommandHandler(
-    UserManager<StubUser> userManager,
-    RoleManager<StubRole> roleManager,
-    ITokenGenerator tokenGenerator,
-    IPasswordDecryptor passwordDecryptor)
-    : LoginCommandHandler<StubUser, StubRole>(userManager, roleManager, tokenGenerator, passwordDecryptor);
-
 public class LoginCommandHandlerTests
 {
     private readonly Mock<UserManager<StubUser>> _userManagerMock;
     private readonly Mock<ITokenGenerator> _tokenGeneratorMock;
     private readonly Mock<IPasswordDecryptor> _passwordDecryptorMock;
-    private readonly StubLoginCommandHandler _handler;
+    private readonly LoginCommandHandler<StubUser, StubRole> _handler;
     private readonly Mock<RoleManager<StubRole>> _roleManagerMock;
 
     public LoginCommandHandlerTests()
@@ -31,7 +24,7 @@ public class LoginCommandHandlerTests
         _passwordDecryptorMock = new Mock<IPasswordDecryptor>();
         _passwordDecryptorMock.Setup(d => d.Decrypt(It.IsAny<string>())).Returns<string>(s => s);
         _roleManagerMock = CreateRoleManagerMock();
-        _handler = new StubLoginCommandHandler(
+        _handler = new LoginCommandHandler<StubUser, StubRole>(
             _userManagerMock.Object,
             _roleManagerMock.Object,
             _tokenGeneratorMock.Object,

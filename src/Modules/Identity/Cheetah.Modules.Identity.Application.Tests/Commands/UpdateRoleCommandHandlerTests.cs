@@ -1,4 +1,5 @@
 using Cheetah.Core.Domain.Exceptions;
+using Cheetah.Modules.Identity.Application.Abstractions;
 using Cheetah.Modules.Identity.Application.Commands;
 using Cheetah.Modules.Identity.Infrastructure.Exceptions;
 using Microsoft.AspNetCore.Identity;
@@ -7,19 +8,17 @@ using Shouldly;
 
 namespace Cheetah.Modules.Identity.Application.Tests.Commands;
 
-public sealed class StubUpdateRoleCommandHandler(RoleManager<StubRole> roleManager)
-    : UpdateRoleCommandHandler<StubRole>(roleManager);
-
 public class UpdateRoleCommandHandlerTests
 {
     private readonly Mock<RoleManager<StubRole>> _roleManagerMock;
-    private readonly StubUpdateRoleCommandHandler _handler;
+    private readonly UpdateRoleCommandHandler<StubRole, StubUpdateRoleCommand> _handler;
 
     public UpdateRoleCommandHandlerTests()
     {
         var store = new Mock<IRoleStore<StubRole>>();
         _roleManagerMock = new Mock<RoleManager<StubRole>>(store.Object, null!, null!, null!, null!);
-        _handler = new StubUpdateRoleCommandHandler(_roleManagerMock.Object);
+        _handler = new UpdateRoleCommandHandler<StubRole, StubUpdateRoleCommand>(
+            _roleManagerMock.Object, new DelegateUpdateRoleApplier<StubRole, StubUpdateRoleCommand>());
     }
 
     [Fact]
@@ -28,7 +27,7 @@ public class UpdateRoleCommandHandlerTests
         // Arrange
         var roleId = Guid.NewGuid();
         var role = new StubRole(roleId, "old-name");
-        var command = new UpdateRoleCommand(roleId, "new-name");
+        var command = new StubUpdateRoleCommand(roleId, "new-name");
 
         _roleManagerMock.Setup(m => m.FindByIdAsync(roleId.ToString())).ReturnsAsync(role);
         _roleManagerMock.Setup(m => m.UpdateAsync(role)).ReturnsAsync(IdentityResult.Success);
@@ -50,7 +49,7 @@ public class UpdateRoleCommandHandlerTests
 
         // Act & Assert
         await Should.ThrowAsync<EntityNotFoundException>(
-            () => _handler.HandleAsync(new UpdateRoleCommand(roleId, "new-name")).AsTask());
+            () => _handler.HandleAsync(new StubUpdateRoleCommand(roleId, "new-name")).AsTask());
     }
 
     [Fact]
@@ -66,7 +65,7 @@ public class UpdateRoleCommandHandlerTests
 
         // Act & Assert
         await Should.ThrowAsync<IdentityException>(
-            () => _handler.HandleAsync(new UpdateRoleCommand(roleId, "new-name")).AsTask());
+            () => _handler.HandleAsync(new StubUpdateRoleCommand(roleId, "new-name")).AsTask());
     }
 
     [Fact]
@@ -78,7 +77,7 @@ public class UpdateRoleCommandHandlerTests
 
         // Act
         await Should.ThrowAsync<EntityNotFoundException>(
-            () => _handler.HandleAsync(new UpdateRoleCommand(roleId, "new-name")).AsTask());
+            () => _handler.HandleAsync(new StubUpdateRoleCommand(roleId, "new-name")).AsTask());
 
         // Assert
         _roleManagerMock.Verify(m => m.UpdateAsync(It.IsAny<StubRole>()), Times.Never);

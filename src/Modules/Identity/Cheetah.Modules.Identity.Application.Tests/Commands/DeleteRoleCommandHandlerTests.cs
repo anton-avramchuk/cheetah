@@ -7,19 +7,16 @@ using Shouldly;
 
 namespace Cheetah.Modules.Identity.Application.Tests.Commands;
 
-public sealed class StubDeleteRoleCommandHandler(RoleManager<StubRole> roleManager)
-    : DeleteRoleCommandHandler<StubRole>(roleManager);
-
 public class DeleteRoleCommandHandlerTests
 {
     private readonly Mock<RoleManager<StubRole>> _roleManagerMock;
-    private readonly StubDeleteRoleCommandHandler _handler;
+    private readonly DeleteRoleCommandHandler<StubRole> _handler;
 
     public DeleteRoleCommandHandlerTests()
     {
         var store = new Mock<IRoleStore<StubRole>>();
         _roleManagerMock = new Mock<RoleManager<StubRole>>(store.Object, null!, null!, null!, null!);
-        _handler = new StubDeleteRoleCommandHandler(_roleManagerMock.Object);
+        _handler = new DeleteRoleCommandHandler<StubRole>(_roleManagerMock.Object);
     }
 
     [Fact]

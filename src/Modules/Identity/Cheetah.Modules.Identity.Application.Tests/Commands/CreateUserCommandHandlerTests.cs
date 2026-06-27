@@ -1,4 +1,4 @@
-using Cheetah.Core.Events;
+using Cheetah.Modules.Identity.Application.Abstractions;
 using Cheetah.Modules.Identity.Application.Commands;
 using Cheetah.Modules.Identity.Infrastructure.Exceptions;
 using Microsoft.AspNetCore.Identity;
@@ -7,18 +7,11 @@ using Shouldly;
 
 namespace Cheetah.Modules.Identity.Application.Tests.Commands;
 
-public sealed class StubCreateUserCommandHandler(
-    UserManager<StubUser> userManager, RoleManager<StubRole> roleManager, IEventBus eventBus)
-    : CreateUserCommandHandler<StubUser, StubRole>(userManager, roleManager, eventBus)
-{
-    protected override StubUser CreateUser(CreateUserCommand command) => new(command.UserName, command.Email);
-}
-
 public class CreateUserCommandHandlerTests
 {
     private readonly Mock<UserManager<StubUser>> _userManagerMock;
     private readonly Mock<RoleManager<StubRole>> _roleManagerMock;
-    private readonly StubCreateUserCommandHandler _handler;
+    private readonly CreateUserCommandHandler<StubUser, StubRole, StubCreateUserCommand> _handler;
 
     public CreateUserCommandHandlerTests()
     {
@@ -28,14 +21,16 @@ public class CreateUserCommandHandlerTests
         var roleStore = new Mock<IRoleStore<StubRole>>();
         _roleManagerMock = new Mock<RoleManager<StubRole>>(roleStore.Object, null!, null!, null!, null!);
 
-        _handler = new StubCreateUserCommandHandler(_userManagerMock.Object, _roleManagerMock.Object, new NullEventBus());
+        _handler = new CreateUserCommandHandler<StubUser, StubRole, StubCreateUserCommand>(
+            _userManagerMock.Object, _roleManagerMock.Object, new NullEventBus(),
+            new DelegateCreateUserFactory<StubUser, StubCreateUserCommand>(c => new StubUser(c.UserName, c.Email)));
     }
 
     [Fact]
     public async Task HandleAsync_WithValidCommand_ShouldCreateUserAndReturnId()
     {
         // Arrange
-        var command = new CreateUserCommand("johndoe", "john@example.com", "P@ssw0rd!");
+        var command = new StubCreateUserCommand("johndoe", "john@example.com", "P@ssw0rd!");
         _userManagerMock.Setup(m => m.CreateAsync(It.IsAny<StubUser>(), command.Password)).ReturnsAsync(IdentityResult.Success);
 
         // Act
@@ -56,7 +51,7 @@ public class CreateUserCommandHandlerTests
     public async Task HandleAsync_WithInvalidUserNameOrEmail_ShouldThrowArgumentException(
         string? userName, string? email)
     {
-        var command = new CreateUserCommand(userName!, email!, "P@ssw0rd!");
+        var command = new StubCreateUserCommand(userName!, email!, "P@ssw0rd!");
 
         await Should.ThrowAsync<ArgumentException>(() => _handler.HandleAsync(command).AsTask());
     }
@@ -65,7 +60,7 @@ public class CreateUserCommandHandlerTests
     public async Task HandleAsync_WhenCreateFails_ShouldThrowIdentityException()
     {
         // Arrange
-        var command = new CreateUserCommand("johndoe", "john@example.com", "P@ssw0rd!");
+        var command = new StubCreateUserCommand("johndoe", "john@example.com", "P@ssw0rd!");
         var failed = IdentityResult.Failed(new IdentityError { Code = "Weak", Description = "Password too weak" });
         _userManagerMock.Setup(m => m.CreateAsync(It.IsAny<StubUser>(), It.IsAny<string>())).ReturnsAsync(failed);
 
@@ -77,7 +72,7 @@ public class CreateUserCommandHandlerTests
     public async Task HandleAsync_WithoutRoleIds_ShouldNotCallAddToRoles()
     {
         // Arrange
-        var command = new CreateUserCommand("johndoe", "john@example.com", "P@ssw0rd!");
+        var command = new StubCreateUserCommand("johndoe", "john@example.com", "P@ssw0rd!");
         _userManagerMock.Setup(m => m.CreateAsync(It.IsAny<StubUser>(), command.Password)).ReturnsAsync(IdentityResult.Success);
 
         // Act
@@ -93,7 +88,7 @@ public class CreateUserCommandHandlerTests
         // Arrange
         var roleId = Guid.NewGuid();
         var role = new StubRole(roleId, "admin");
-        var command = new CreateUserCommand("johndoe", "john@example.com", "P@ssw0rd!", [roleId]);
+        var command = new StubCreateUserCommand("johndoe", "john@example.com", "P@ssw0rd!", [roleId]);
 
         _userManagerMock.Setup(m => m.CreateAsync(It.IsAny<StubUser>(), command.Password)).ReturnsAsync(IdentityResult.Success);
         _userManagerMock.Setup(m => m.AddToRolesAsync(It.IsAny<StubUser>(), It.IsAny<IEnumerable<string>>())).ReturnsAsync(IdentityResult.Success);
@@ -115,7 +110,7 @@ public class CreateUserCommandHandlerTests
         // Arrange
         var roleId = Guid.NewGuid();
         var role = new StubRole(roleId, "admin");
-        var command = new CreateUserCommand("johndoe", "john@example.com", "P@ssw0rd!", [roleId]);
+        var command = new StubCreateUserCommand("johndoe", "john@example.com", "P@ssw0rd!", [roleId]);
         var failed = IdentityResult.Failed(new IdentityError { Code = "Error", Description = "Role assignment failed" });
 
         _userManagerMock.Setup(m => m.CreateAsync(It.IsAny<StubUser>(), command.Password)).ReturnsAsync(IdentityResult.Success);

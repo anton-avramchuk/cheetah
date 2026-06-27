@@ -7,7 +7,7 @@ using Cheetah.Modules.Identity.Domain;
 
 namespace Cheetah.Modules.Identity.Application.Queries;
 
-public abstract class GetUsersGridQueryHandler<TUser, TRole, TUserModel>(IGridRepository<TUser> repository)
+public sealed class GetUsersGridQueryHandler<TUser, TRole, TUserModel>(IGridRepository<TUser> repository)
     : IQueryHandler<GetUsersGridQuery<TUserModel>, GridResult<TUserModel>>
     where TRole : IdentityRole
     where TUser : IdentityUser<TRole>

@@ -8,21 +8,18 @@ using Shouldly;
 
 namespace Cheetah.Modules.Identity.Application.Tests.Queries;
 
-public sealed class StubGetRoleByIdQueryHandler(RoleManager<StubRole> roleManager, IObjectMapper mapper)
-    : GetRoleByIdQueryHandler<StubRole>(roleManager, mapper);
-
 public class GetRoleByIdQueryHandlerTests
 {
     private readonly Mock<RoleManager<StubRole>> _roleManagerMock;
     private readonly Mock<IObjectMapper> _mapperMock;
-    private readonly StubGetRoleByIdQueryHandler _handler;
+    private readonly GetRoleByIdQueryHandler<StubRole, RoleModel> _handler;
 
     public GetRoleByIdQueryHandlerTests()
     {
         var store = new Mock<IRoleStore<StubRole>>();
         _roleManagerMock = new Mock<RoleManager<StubRole>>(store.Object, null!, null!, null!, null!);
         _mapperMock = new Mock<IObjectMapper>();
-        _handler = new StubGetRoleByIdQueryHandler(_roleManagerMock.Object, _mapperMock.Object);
+        _handler = new GetRoleByIdQueryHandler<StubRole, RoleModel>(_roleManagerMock.Object, _mapperMock.Object);
     }
 
     [Fact]
@@ -38,7 +35,7 @@ public class GetRoleByIdQueryHandlerTests
             .Returns(new[] { expectedModel }.AsAsyncQueryable());
 
         // Act
-        var result = await _handler.HandleAsync(new GetRoleByIdQuery(roleId));
+        var result = await _handler.HandleAsync(new GetRoleByIdQuery<RoleModel>(roleId));
 
         // Assert
         result.ShouldNotBeNull();
@@ -57,7 +54,7 @@ public class GetRoleByIdQueryHandlerTests
             .Returns(Array.Empty<RoleModel>().AsAsyncQueryable());
 
         // Act
-        var result = await _handler.HandleAsync(new GetRoleByIdQuery(roleId));
+        var result = await _handler.HandleAsync(new GetRoleByIdQuery<RoleModel>(roleId));
 
         // Assert
         result.ShouldBeNull();
@@ -75,7 +72,7 @@ public class GetRoleByIdQueryHandlerTests
             .Returns(Array.Empty<RoleModel>().AsAsyncQueryable());
 
         // Act
-        await _handler.HandleAsync(new GetRoleByIdQuery(roleId));
+        await _handler.HandleAsync(new GetRoleByIdQuery<RoleModel>(roleId));
 
         // Assert
         _mapperMock.Verify(m => m.ProjectTo<RoleModel>(It.IsAny<IQueryable>()), Times.Once);

@@ -17,6 +17,9 @@ using MsOptions = Microsoft.Extensions.Options.Options;
 
 namespace Cheetah.Modules.Identity.Client.Tests;
 
+/// <summary>Конкретная grid-ViewModel хоста (базовая абстрактна).</summary>
+public sealed record TestUserGridVm(Guid Id, string UserName, string Email) : UserGridViewModel(Id, UserName, Email);
+
 /// <summary>
 /// Сквозной тест на сценарий «фоновая джоба Teams тянет пользователей из Identity»:
 /// вызов идёт без контекста пользователя, поэтому <see cref="CheetahIdentityClientModule"/> навешивает
@@ -67,8 +70,8 @@ public sealed class IdentityServiceTokenIntegrationTests
             if (!TryValidate(auth.Parameter!, issuerKeyProvider.GetValidationKey()))
                 return new HttpResponseMessage(HttpStatusCode.Unauthorized);
 
-            var users = new GridResult<UserGridViewModel>(
-                new[] { new UserGridViewModel(Guid.NewGuid(), "alice", "alice@cheetah.io") }, total: 1);
+            var users = new GridResult<TestUserGridVm>(
+                new[] { new TestUserGridVm(Guid.NewGuid(), "alice", "alice@cheetah.io") }, total: 1);
             return JsonResponse(users);
         });
 
@@ -127,7 +130,7 @@ public sealed class IdentityServiceTokenIntegrationTests
             var auth = req.Headers.Authorization;
             if (auth is null || !TryValidate(auth.Parameter!, issuerKeyProvider.GetValidationKey()))
                 return new HttpResponseMessage(HttpStatusCode.Unauthorized);
-            return JsonResponse(new GridResult<UserGridViewModel>(Array.Empty<UserGridViewModel>(), 0));
+            return JsonResponse(new GridResult<TestUserGridVm>(Array.Empty<TestUserGridVm>(), 0));
         });
 
         var sp = BuildConsumer(tokenEndpoint, identityApi);

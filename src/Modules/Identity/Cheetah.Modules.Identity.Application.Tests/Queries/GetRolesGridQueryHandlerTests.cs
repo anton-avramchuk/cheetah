@@ -9,18 +9,15 @@ using Shouldly;
 
 namespace Cheetah.Modules.Identity.Application.Tests.Queries;
 
-public sealed class StubGetRolesGridQueryHandler(IGridRepository<StubRole> repository)
-    : GetRolesGridQueryHandler<StubRole, RoleModel>(repository);
-
 public class GetRolesGridQueryHandlerTests
 {
     private readonly Mock<IGridRepository<StubRole>> _repositoryMock;
-    private readonly StubGetRolesGridQueryHandler _handler;
+    private readonly GetRolesGridQueryHandler<StubRole, RoleModel> _handler;
 
     public GetRolesGridQueryHandlerTests()
     {
         _repositoryMock = new Mock<IGridRepository<StubRole>>();
-        _handler = new StubGetRolesGridQueryHandler(_repositoryMock.Object);
+        _handler = new GetRolesGridQueryHandler<StubRole, RoleModel>(_repositoryMock.Object);
     }
 
     [Fact]

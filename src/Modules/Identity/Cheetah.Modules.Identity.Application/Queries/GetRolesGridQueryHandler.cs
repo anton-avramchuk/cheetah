@@ -7,7 +7,7 @@ using Cheetah.Modules.Identity.Domain;
 
 namespace Cheetah.Modules.Identity.Application.Queries;
 
-public abstract class GetRolesGridQueryHandler<TRole, TRoleModel>(IGridRepository<TRole> repository)
+public sealed class GetRolesGridQueryHandler<TRole, TRoleModel>(IGridRepository<TRole> repository)
     : IQueryHandler<GetRolesGridQuery<TRoleModel>, GridResult<TRoleModel>>
     where TRole : IdentityRole
     where TRoleModel : RoleModel

@@ -3,4 +3,5 @@ using Cheetah.Modules.Identity.Application.Models;
 
 namespace Cheetah.Modules.Identity.Application.Queries;
 
-public record GetUserByIdQuery(Guid Id) : IQuery<UserDetailModel?>;
+public record GetUserByIdQuery<TUserDetailModel>(Guid Id) : IQuery<TUserDetailModel?>
+    where TUserDetailModel : UserDetailModel;

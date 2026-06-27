@@ -7,15 +7,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Cheetah.Modules.Identity.Application.Queries;
 
-public abstract class GetUserByIdQueryHandler<TUser, TRole>(UserManager<TUser> userManager, IObjectMapper mapper)
-    : IQueryHandler<GetUserByIdQuery, UserDetailModel?>
+public sealed class GetUserByIdQueryHandler<TUser, TRole, TUserDetailModel>(UserManager<TUser> userManager, IObjectMapper mapper)
+    : IQueryHandler<GetUserByIdQuery<TUserDetailModel>, TUserDetailModel?>
     where TRole : IdentityRole
     where TUser : IdentityUser<TRole>
+    where TUserDetailModel : UserDetailModel
 {
-    public async ValueTask<UserDetailModel?> HandleAsync(GetUserByIdQuery query, CancellationToken ct = default)
+    public async ValueTask<TUserDetailModel?> HandleAsync(GetUserByIdQuery<TUserDetailModel> query, CancellationToken ct = default)
     {
         return await mapper
-            .ProjectTo<UserDetailModel>(userManager.Users.AsNoTracking().Where(u => u.Id == query.Id))
+            .ProjectTo<TUserDetailModel>(userManager.Users.AsNoTracking().Where(u => u.Id == query.Id))
             .FirstOrDefaultAsync(ct);
     }
 }

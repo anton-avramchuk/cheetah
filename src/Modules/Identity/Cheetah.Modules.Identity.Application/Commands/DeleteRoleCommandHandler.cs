@@ -6,7 +6,8 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Cheetah.Modules.Identity.Application.Commands;
 
-public abstract class DeleteRoleCommandHandler<TRole>(RoleManager<TRole> roleManager)
+/// <summary>Удаление роли. Команда не расширяется хостом; хендлер обобщён по TRole.</summary>
+public sealed class DeleteRoleCommandHandler<TRole>(RoleManager<TRole> roleManager)
     : ICommandHandler<DeleteRoleCommand>
     where TRole : IdentityRole
 {

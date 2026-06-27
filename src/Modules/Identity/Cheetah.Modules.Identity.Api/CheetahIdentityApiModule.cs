@@ -10,7 +10,9 @@ using Cheetah.Backend.Rsa.Abstractions;
 using Cheetah.Core;
 using Cheetah.Core.CQRS;
 using Cheetah.Core.Modularity;
+using Cheetah.Mapping.Core;
 using Cheetah.Modules.Identity.Api.Middleware;
+using Cheetah.Modules.Identity.Api.Registration;
 using Cheetah.Modules.Identity.Api.ServiceClients;
 using Cheetah.Modules.Identity.Application;
 using Cheetah.Modules.Identity.Application.Commands;
@@ -55,6 +57,25 @@ public partial class CheetahIdentityApiModule : CrmModule
     public override void OnApplicationInitialization(ApplicationInitializationContext context)
     {
         var routeBuilder = context.GetRouteBuilder();
+
+        // Эндпоинты Users/Roles регистрируются замыканиями, захваченными AddCrmIdentity(...).
+        foreach (var registrar in context.ServiceProvider.GetServices<IIdentityEndpointRegistrar>())
+            registrar.Map(routeBuilder);
+
+        // Логин: типы фиксированы (LoginRequest/LoginCommand/TokenViewModel), маппинг по конвенции.
+        routeBuilder.MapPost("api/auth/login", async (
+            [FromBody] LoginRequest request,
+            [FromServices] IDispatcher dispatcher,
+            [FromServices] IObjectMapper mapper,
+            CancellationToken ct) =>
+        {
+            var command = mapper.Map<LoginCommand>(request);
+            var result = await dispatcher.SendAsync<LoginCommand, TokenResult>(command, ct);
+            return Results.Ok(mapper.Map<TokenViewModel>(result));
+        })
+            .AllowAnonymous()
+            .WithTags("Auth")
+            .WithName("Login");
 
         // Сервисный токен (machine-to-machine), схема client_credentials.
         routeBuilder.MapPost("api/auth/service-token", async (

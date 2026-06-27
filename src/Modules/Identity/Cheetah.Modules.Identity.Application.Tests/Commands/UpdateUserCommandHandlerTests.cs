@@ -1,5 +1,5 @@
 using Cheetah.Core.Domain.Exceptions;
-using Cheetah.Core.Events;
+using Cheetah.Modules.Identity.Application.Abstractions;
 using Cheetah.Modules.Identity.Application.Commands;
 using Cheetah.Modules.Identity.Infrastructure.Exceptions;
 using Microsoft.AspNetCore.Identity;
@@ -8,15 +8,11 @@ using Shouldly;
 
 namespace Cheetah.Modules.Identity.Application.Tests.Commands;
 
-public sealed class StubUpdateUserCommandHandler(
-    UserManager<StubUser> userManager, RoleManager<StubRole> roleManager, IEventBus eventBus)
-    : UpdateUserCommandHandler<StubUser, StubRole>(userManager, roleManager, eventBus);
-
 public class UpdateUserCommandHandlerTests
 {
     private readonly Mock<UserManager<StubUser>> _userManagerMock;
     private readonly Mock<RoleManager<StubRole>> _roleManagerMock;
-    private readonly StubUpdateUserCommandHandler _handler;
+    private readonly UpdateUserCommandHandler<StubUser, StubRole, StubUpdateUserCommand> _handler;
 
     public UpdateUserCommandHandlerTests()
     {
@@ -26,7 +22,9 @@ public class UpdateUserCommandHandlerTests
         var roleStore = new Mock<IRoleStore<StubRole>>();
         _roleManagerMock = new Mock<RoleManager<StubRole>>(roleStore.Object, null!, null!, null!, null!);
 
-        _handler = new StubUpdateUserCommandHandler(_userManagerMock.Object, _roleManagerMock.Object, new NullEventBus());
+        _handler = new UpdateUserCommandHandler<StubUser, StubRole, StubUpdateUserCommand>(
+            _userManagerMock.Object, _roleManagerMock.Object, new NullEventBus(),
+            new DelegateUpdateUserApplier<StubUser, StubRole, StubUpdateUserCommand>());
     }
 
     [Fact]
@@ -35,7 +33,7 @@ public class UpdateUserCommandHandlerTests
         // Arrange
         var userId = Guid.NewGuid();
         var user = new StubUser("oldname", "old@example.com");
-        var command = new UpdateUserCommand(userId, "newname", "new@example.com");
+        var command = new StubUpdateUserCommand(userId, "newname", "new@example.com");
 
         _userManagerMock.Setup(m => m.FindByIdAsync(userId.ToString())).ReturnsAsync(user);
         _userManagerMock.Setup(m => m.UpdateAsync(user)).ReturnsAsync(IdentityResult.Success);
@@ -57,7 +55,7 @@ public class UpdateUserCommandHandlerTests
         var userId = Guid.NewGuid();
         var user = new StubUser("oldname", "old@example.com");
         var originalStamp = user.SecurityStamp;
-        var command = new UpdateUserCommand(userId, "newname", "new@example.com");
+        var command = new StubUpdateUserCommand(userId, "newname", "new@example.com");
 
         _userManagerMock.Setup(m => m.FindByIdAsync(userId.ToString())).ReturnsAsync(user);
         _userManagerMock.Setup(m => m.UpdateAsync(user)).ReturnsAsync(IdentityResult.Success);
@@ -79,7 +77,7 @@ public class UpdateUserCommandHandlerTests
 
         // Act & Assert
         await Should.ThrowAsync<EntityNotFoundException>(
-            () => _handler.HandleAsync(new UpdateUserCommand(userId, "name", "email@example.com")).AsTask());
+            () => _handler.HandleAsync(new StubUpdateUserCommand(userId, "name", "email@example.com")).AsTask());
     }
 
     [Fact]
@@ -95,7 +93,7 @@ public class UpdateUserCommandHandlerTests
 
         // Act & Assert
         await Should.ThrowAsync<IdentityException>(
-            () => _handler.HandleAsync(new UpdateUserCommand(userId, "newname", "new@example.com")).AsTask());
+            () => _handler.HandleAsync(new StubUpdateUserCommand(userId, "newname", "new@example.com")).AsTask());
     }
 
     [Fact]
@@ -104,7 +102,7 @@ public class UpdateUserCommandHandlerTests
         // Arrange
         var userId = Guid.NewGuid();
         var user = new StubUser("johndoe", "john@example.com");
-        var command = new UpdateUserCommand(userId, "johndoe", "john@example.com", RoleIds: null);
+        var command = new StubUpdateUserCommand(userId, "johndoe", "john@example.com", RoleIds: null);
 
         _userManagerMock.Setup(m => m.FindByIdAsync(userId.ToString())).ReturnsAsync(user);
         _userManagerMock.Setup(m => m.UpdateAsync(user)).ReturnsAsync(IdentityResult.Success);
@@ -124,7 +122,7 @@ public class UpdateUserCommandHandlerTests
         // Arrange
         var userId = Guid.NewGuid();
         var user = new StubUser("johndoe", "john@example.com");
-        var command = new UpdateUserCommand(userId, "johndoe", "john@example.com", RoleIds: new List<Guid>());
+        var command = new StubUpdateUserCommand(userId, "johndoe", "john@example.com", RoleIds: new List<Guid>());
 
         _userManagerMock.Setup(m => m.FindByIdAsync(userId.ToString())).ReturnsAsync(user);
         _userManagerMock.Setup(m => m.UpdateAsync(user)).ReturnsAsync(IdentityResult.Success);
@@ -147,7 +145,7 @@ public class UpdateUserCommandHandlerTests
         var user = new StubUser("johndoe", "john@example.com");
         var roleId = Guid.NewGuid();
         var role = new StubRole(roleId, "manager");
-        var command = new UpdateUserCommand(userId, "johndoe", "john@example.com", RoleIds: [roleId]);
+        var command = new StubUpdateUserCommand(userId, "johndoe", "john@example.com", RoleIds: [roleId]);
 
         _userManagerMock.Setup(m => m.FindByIdAsync(userId.ToString())).ReturnsAsync(user);
         _userManagerMock.Setup(m => m.UpdateAsync(user)).ReturnsAsync(IdentityResult.Success);

@@ -1,19 +1,15 @@
 using System.Net.Http.Json;
 using Cheetah.Contracts.Responses;
-using Cheetah.Modules.Identity.Contracts.Response;
 
 namespace Cheetah.Modules.Identity.Client;
 
-public sealed class HttpIdentityUsersClient : IIdentityUsersClient
+public sealed class HttpIdentityUsersClient(HttpClient http) : IIdentityUsersClient
 {
-    private readonly HttpClient _http;
-
-    public HttpIdentityUsersClient(HttpClient http) => _http = http;
-
-    public async ValueTask<IReadOnlyList<UserGridViewModel>> GetUsersAsync(CancellationToken ct = default)
+    public async ValueTask<IReadOnlyList<IdentityUserSummary>> GetUsersAsync(CancellationToken ct = default)
     {
-        // PageSize=0 => Identity отдаёт все записи одним ответом
-        var result = await _http.GetFromJsonAsync<GridResult<UserGridViewModel>>("api/users?Page=1&PageSize=0", ct);
-        return result?.Data?.ToArray() ?? Array.Empty<UserGridViewModel>();
+        // PageSize=0 => Identity отдаёт все записи одним ответом. Десериализуем в конкретный
+        // снимок: расширенные поля grid-ViewModel хоста при этом отбрасываются.
+        var result = await http.GetFromJsonAsync<GridResult<IdentityUserSummary>>("api/users?Page=1&PageSize=0", ct);
+        return result?.Data?.ToArray() ?? Array.Empty<IdentityUserSummary>();
     }
 }

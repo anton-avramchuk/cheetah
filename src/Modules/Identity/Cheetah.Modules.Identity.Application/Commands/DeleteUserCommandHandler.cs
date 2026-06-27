@@ -8,7 +8,11 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Cheetah.Modules.Identity.Application.Commands;
 
-public abstract class DeleteUserCommandHandler<TUser, TRole>(UserManager<TUser> userManager, IEventBus eventBus)
+/// <summary>
+/// Удаление пользователя. Команда не расширяется хостом (несёт только Id),
+/// поэтому хендлер обобщён лишь по доменным типам и регистрируется builder-ом.
+/// </summary>
+public sealed class DeleteUserCommandHandler<TUser, TRole>(UserManager<TUser> userManager, IEventBus eventBus)
     : ICommandHandler<DeleteUserCommand>
     where TRole : IdentityRole
     where TUser : IdentityUser<TRole>

@@ -1,11 +1,14 @@
 using System.ComponentModel.DataAnnotations;
-using Cheetah.Contracts.Attributes;
 using Cheetah.Contracts.Requests;
 
 namespace Cheetah.Modules.Identity.Contracts.Requests;
 
-[ApiRoute("api/users", ApiMethod.Create, ServiceName = "Users")]
-public record CreateUserRequest(
+/// <summary>
+/// Базовый запрос создания пользователя. Реальное приложение наследует этот тип
+/// конкретным record-ом (можно добавить поля) и подключает через
+/// <c>AddCrmIdentity(...).WithUsers&lt;...&gt;()</c>.
+/// </summary>
+public abstract record CreateUserRequest(
     [property: Required(AllowEmptyStrings = false)]
     string UserName,
     [property: Required(AllowEmptyStrings = false)]

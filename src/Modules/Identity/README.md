@@ -1,170 +1,130 @@
-# Cheetah Module Template
+# Cheetah.Modules.Identity.* — базовый модуль аутентификации/пользователей
 
-Шаблон для создания нового модуля Cheetah CRM с полной структурой проектов.
+> **Тип:** base/template (каркас), а не готовый микросервис.
+> Модуль поставляет **абстрактные расширяемые контракты + доменные сущности + обобщённые
+> CQRS-хендлеры и эндпоинты**. Реальное приложение наследует типы своими классами (можно
+> добавить поля) и подключает всё одним вызовом `AddCrmIdentity<…>().WithUsers<…>().WithRoles<…>()`.
 
-## Установка
+## Идея расширяемости
 
-```bash
-dotnet new install <путь-к-templates/cheetah-module>
-```
-
-## Использование
-
-```bash
-dotnet new cheetah-module -n <ИмяМодуля> [опции]
-```
-
-### Параметры
-
-| Параметр | Описание | По умолчанию | Пример |
-|----------|----------|--------------|--------|
-| `-n, --name` | Имя модуля (PascalCase) | *обязательный* | `Orders`, `Products` |
-| `--prefix` | Префикс namespace | `Crm` | `Cheetah.Admin.Modules` |
-| `--entity` | Имя сущности (PascalCase) | `Entity` | `Order`, `Product` |
-| `-o, --output` | Путь для генерации | текущая папка | `src/Modules/Orders` |
-
-> **Рекомендация:** Всегда указывайте `--entity` для осмысленного именования сущности.
-> Схема БД автоматически генерируется из имени модуля в lowercase (`Orders` → `orders`).
-
-### Примеры
-
-**Простой модуль с префиксом Crm:**
-```bash
-dotnet new cheetah-module -n Products --entity Product -o src/Modules/Products
-```
-
-**Модуль для Admin API:**
-```bash
-dotnet new cheetah-module -n Orders --prefix Cheetah.Admin.Modules --entity Order -o src/Modules/Admin/Orders
-```
-
-## Генерируемая структура
-
-Шаблон создает 11 проектов:
+Identity — базовый модуль. Почти весь вертикальный срез абстрактный/дженерик, хост подставляет
+свои конкретные типы. Расширение идёт по двум осям:
 
 ```
-{Prefix}.{Identity}/
-├── {Prefix}.{Identity}.DomainEvents/     # События домена
-├── {Prefix}.{Identity}.Domain/           # Сущности, интерфейсы репозиториев
-├── {Prefix}.{Identity}.Contracts/        # DTO, Requests, ViewModels
-├── {Prefix}.{Identity}.DataAccess/       # DbContext, конфигурации EF Core, репозитории
-├── {Prefix}.{Identity}.Application/      # Commands, Queries, Handlers (CQRS)
-├── {Prefix}.{Identity}.ApiClient/        # HTTP клиент для интеграции
-├── {Prefix}.{Identity}.Api/              # Minimal API endpoints
-├── {Prefix}.{Identity}.Domain.Tests/     # Unit тесты Domain
-├── {Prefix}.{Identity}.Application.Tests/# Unit тесты Application
-├── {Prefix}.{Identity}.ApiClient.Tests/  # Unit тесты ApiClient
-└── {Prefix}.{Identity}.Api.Tests/        # Integration тесты API
+запись:  TCreateRequest → TCreateCommand → createUser(cmd) → TUser (доменная сущность)
+         TUpdateRequest → TUpdateCommand → applyUserChanges(user, cmd)
+чтение:  TUser → TUserModel/TUserDetailModel → TUserGridVm/TUserDetailVm
 ```
 
-## После генерации
+Абстрактны: `CreateUserRequest`/`UpdateUserRequest`/`CreateRoleRequest`/`UpdateRoleRequest`,
+`UserGridViewModel`/`UserDetailViewModel`/`RoleGridViewModel`/`RoleViewModel`, команды
+Create/Update, доменные `IdentityUser<TRole>`/`IdentityRole`, `CheetahIdentityDbContext<…>`.
+Конкретны (хост не расширяет): запросы GetById/Grid/Delete и команды Delete.
 
-### 1. Добавить проекты в solution
+## Сборки
 
-```bash
-dotnet sln Cheetah.slnx add src/Modules/{Identity}/**/*.csproj
+```
+Identity.DomainEvents   → Core.Events                         (UserCreated/NameChanged/Deleted)
+Identity.Contracts      → Core + Contracts                    (ABSTRACT Request/ViewModel + конкретные Get/Delete/Login/Token)
+Identity.Domain         → DomainEvents                        (abstract IdentityUser<TRole>/IdentityRole + claims)
+Identity.Infrastructure → Domain + EF + EF.PostgreSql         (abstract CheetahIdentityDbContext<…>, UserManager/RoleManager/Store, AddIdentityContext<…>)
+Identity.Application    → Domain + Contracts + CQRS + Events   (abstract команды; sealed generic хендлеры + стратегии-делегаты)
+Identity.Api            → Application + Contracts + Backend.* + AspNetCore   (AddCrmIdentity builder, дженерик-регистратор эндпоинтов, JWT/JWKS, service-token)
+Identity.Mapster        → Application + Contracts + Mapping.Mapster          (профиль только для auth; остальное — по конвенции)
+Identity.Mapping        → Application + Contracts                            (генерируемые мапперы только для auth)
+Identity.Client         → Contracts + Backend.ServiceAuth                    (S2S IIdentityUsersClient + IdentityUserSummary)
+Identity.Blazor         → AspNetCore.Blazor.*                                (UI-срез)
+Tests: Application.Tests (57), Client.Tests (2)
 ```
 
-### 2. Настроить connection string
+## Подключение в хосте: `AddCrmIdentity`
 
-В `appsettings.json` хост-приложения добавить:
-
-```json
-{
-  "ConnectionStrings": {
-    "{Identity}": "Host=localhost;Database=cheetah;Username=postgres;Password=postgres"
-  }
-}
-```
-
-### 3. Создать миграцию
-
-```bash
-dotnet ef migrations add Initial -p src/Modules/{Identity}/{Prefix}.{Identity}.DataAccess -s src/Hosts/Cheetah.Admin.Api
-```
-
-### 4. Подключить модуль к хосту
-
-В bootstrapper модуле хоста добавить зависимость:
+`AddCrmIdentity` (сборка `Identity.Api`, namespace `Cheetah.Modules.Identity.Api.Registration`) —
+единая точка входа. Регистрирует Identity-инфраструктуру (`AddIdentityContext`), обобщённые
+CQRS-хендлеры под типы хоста, стратегии сборки сущностей и **замыкания регистрации эндпоинтов**.
+Сами маршруты регистрируются модулем `CheetahIdentityApiModule` в `OnApplicationInitialization`.
 
 ```csharp
-[DependsOn(typeof({Identity}BootstrapperModule))]
-public partial class AdminApiBootstrapperModule : CrmModule
+using Cheetah.Modules.Identity.Api.Registration;
+
+services.AddCrmIdentity<AppUser, AppRole, AppIdentityDbContext>(o =>
+        {
+            o.Password.RequiredLength = 8;
+            // ... любые IdentityOptions
+        })
+    .WithUsers<
+        AppCreateUserRequest, AppCreateUserCommand,
+        AppUpdateUserRequest, AppUpdateUserCommand,
+        AppUserModel, AppUserDetailModel,
+        AppUserGridViewModel, AppUserDetailViewModel>(
+        createUser:        cmd => AppUser.Create(cmd.UserName, cmd.Email, cmd.Department),
+        applyUserChanges: (user, cmd) => user.SetDepartment(cmd.Department)) // опционально
+    .WithRoles<
+        AppCreateRoleRequest, AppCreateRoleCommand,
+        AppUpdateRoleRequest, AppUpdateRoleCommand,
+        AppRoleModel,
+        AppRoleGridViewModel, AppRoleViewModel>(
+        createRole: cmd => AppRole.Create(cmd.Name));
 ```
 
-## Структура сгенерированного кода
+### Сигнатуры
 
-### Domain Layer
+```csharp
+CrmIdentityBuilder<TUser,TRole,TDbContext> AddCrmIdentity<TUser,TRole,TDbContext>(
+    this IServiceCollection services, Action<IdentityOptions>? configureIdentity = null)
+    where TDbContext : CheetahIdentityDbContext<TDbContext,TUser,TRole>
+    where TRole : IdentityRole
+    where TUser : IdentityUser<TRole>;
 
-- **{Entity}.cs** - Агрегат с factory method `Create()` и методом `Update()`
-- **I{Entity}Repository.cs** - Интерфейс репозитория
+// .WithUsers<TCreateRequest,TCreateCommand,TUpdateRequest,TUpdateCommand,
+//            TUserModel,TUserDetailModel,TUserGridVm,TUserDetailVm>(
+//     Func<TCreateCommand,TUser> createUser,
+//     Action<TUser,TUpdateCommand>? applyUserChanges = null)
 
-### DataAccess Layer
+// .WithRoles<TCreateRequest,TCreateCommand,TUpdateRequest,TUpdateCommand,
+//            TRoleModel,TRoleGridVm,TRoleVm>(
+//     Func<TCreateCommand,TRole> createRole,
+//     Action<TRole,TUpdateCommand>? applyRoleChanges = null)
+```
 
-- **{Identity}DbContext.cs** - DbContext с конфигурацией
-- **{Entity}Configuration.cs** - EF Core конфигурация сущности
-- **{Entity}Repository.cs** - Реализация репозитория
+> `applyUserChanges`/`applyRoleChanges` — для **дополнительных** полей. Базовые
+> (UserName/Email/security stamp, Name) применяются всегда стратегией по умолчанию.
 
-### Contracts Layer
+## Что пишет хост
 
-- **{Entity}ViewModel.cs** - DTO для API ответов
-- **Create{Entity}Request.cs** - Запрос на создание
-- **Update{Entity}Request.cs** - Запрос на обновление
-- **Get{Entity}ByIdRequest.cs** - Запрос по ID
-- **GetAll{Entities}Request.cs** - Запрос списка
-- **Delete{Entity}Request.cs** - Запрос на удаление
+1. Доменные `AppUser : IdentityUser<AppRole>`, `AppRole : IdentityRole` (публичные фабрики/методы).
+2. `AppIdentityDbContext : CheetahIdentityDbContext<AppIdentityDbContext, AppUser, AppRole>` + EF-конфигурации сущностей.
+3. Конкретные record-ы: `App*Request` (наследуют абстрактные Create/Update), `App*Command`, `App*Model`, `App*ViewModel` (наследуют абстрактные VM) — с нужными доп. полями.
+4. Провайдер БД (`UseNpgsql` + строка подключения) и миграции — как у всех модулей, builder в это не лезет.
+5. Один вызов `AddCrmIdentity<…>().WithUsers<…>().WithRoles<…>()` + `[DependsOn(typeof(CheetahIdentityApiModule))]` у модуля хоста.
 
-### Application Layer
+Хендлеры, маппинги (по конвенции Mapster), эндпоинты и логин/JWT — уже в Identity, дописывать не нужно.
 
-- **{Entity}Model.cs** - Модель приложения
-- **Commands/** - CreateCommand, UpdateCommand, DeleteCommand + Handlers
-- **Queries/** - GetByIdQuery, GetAllQuery + Handlers
+## HTTP-эндпоинты
 
-### Api Layer
+| Метод | Маршрут | Назначение |
+|---|---|---|
+| POST | `/api/users` `/api/roles` | создать (201 + Location на GetById) |
+| PUT | `/api/users/{id}` `/api/roles/{id}` | обновить (204) |
+| DELETE | `/api/users/{id}` `/api/roles/{id}` | удалить (204) |
+| GET | `/api/users/{id}` `/api/roles/{id}` | по id (200/404) |
+| GET | `/api/users` `/api/roles` | грид (пагинация/сортировка/фильтр) |
+| POST | `/api/auth/login` | логин → JWT |
+| POST | `/api/auth/service-token` | сервисный токен (client_credentials) |
+| GET | `/.well-known/jwks.json`, `/.well-known/openid-configuration` | при RS256 |
+| GET | `/api/auth/public-key` | при подключённом `CrmBackendRsaModule` |
 
-- **Endpoints/** - CRUD endpoints (Create, GetAll, GetById, Update, Delete)
-- **Mapping/MappingProfile.cs** - Mapster профиль маппинга
-- **Constants.cs** - Константы роутов
+## Server-to-server клиент
 
-### ApiClient Layer
+`Identity.Client` даёт `IIdentityUsersClient.GetUsersAsync()` → `IReadOnlyList<IdentityUserSummary>`
+(конкретный transport-DTO `Id/UserName/Email`; расширенные поля grid-ViewModel хоста при
+десериализации отбрасываются — потребителям не нужно знать тип хоста). Подключается модулем
+`CheetahIdentityClientModule` (нужна секция `Identity:Client` и настроенный `ServiceAuth`).
+Используется, например, фоновыми синками Teams/Tags.
 
-- **I{Identity}Service.cs** - Интерфейс HTTP клиента
-- **{Identity}Service.cs** - Реализация HTTP клиента
-
-## API Endpoints
-
-| Method | Route | Описание |
-|--------|-------|----------|
-| POST | /api/{schema} | Создать сущность |
-| GET | /api/{schema} | Получить все сущности |
-| GET | /api/{schema}/{id} | Получить по ID |
-| PUT | /api/{schema}/{id} | Обновить сущность |
-| DELETE | /api/{schema}/{id} | Удалить сущность |
-
-## Тестирование
+## Тесты
 
 ```bash
-# Запуск всех тестов модуля
-dotnet test src/Modules/{Identity}/
-
-# Только unit тесты
-dotnet test src/Modules/{Identity}/{Prefix}.{Identity}.Domain.Tests/
-dotnet test src/Modules/{Identity}/{Prefix}.{Identity}.Application.Tests/
-
-# Integration тесты (требуют Docker для PostgreSQL)
-dotnet test src/Modules/{Identity}/{Prefix}.{Identity}.Api.Tests/
-```
-
-## Зависимости между проектами
-
-```
-DomainEvents (no deps)
-       ↓
-    Domain ← DataAccess
-       ↓         ↓
-  Contracts      ↓
-       ↓         ↓
- Application ←───┘
-       ↓
-      Api ← ApiClient
+dotnet test src/Modules/Identity/Cheetah.Modules.Identity.Application.Tests
+dotnet test src/Modules/Identity/Cheetah.Modules.Identity.Client.Tests
 ```

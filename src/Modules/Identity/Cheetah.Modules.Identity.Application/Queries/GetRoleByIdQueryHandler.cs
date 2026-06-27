@@ -7,14 +7,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Cheetah.Modules.Identity.Application.Queries;
 
-public abstract class GetRoleByIdQueryHandler<TRole>(RoleManager<TRole> roleManager, IObjectMapper mapper)
-    : IQueryHandler<GetRoleByIdQuery, RoleModel?>
+public sealed class GetRoleByIdQueryHandler<TRole, TRoleModel>(RoleManager<TRole> roleManager, IObjectMapper mapper)
+    : IQueryHandler<GetRoleByIdQuery<TRoleModel>, TRoleModel?>
     where TRole : IdentityRole
+    where TRoleModel : RoleModel
 {
-    public async ValueTask<RoleModel?> HandleAsync(GetRoleByIdQuery query, CancellationToken ct = default)
+    public async ValueTask<TRoleModel?> HandleAsync(GetRoleByIdQuery<TRoleModel> query, CancellationToken ct = default)
     {
         return await mapper
-            .ProjectTo<RoleModel>(roleManager.Roles.AsNoTracking().Where(r => r.Id == query.Id))
+            .ProjectTo<TRoleModel>(roleManager.Roles.AsNoTracking().Where(r => r.Id == query.Id))
             .FirstOrDefaultAsync(ct);
     }
 }

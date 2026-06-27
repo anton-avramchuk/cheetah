@@ -1,5 +1,6 @@
 using Cheetah.Core.CQRS;
 using Cheetah.Core.Events;
+using Cheetah.Modules.Identity.Application.Abstractions;
 using Cheetah.Modules.Identity.Infrastructure.Exceptions;
 using Cheetah.Modules.Identity.Domain;
 using Cheetah.Modules.Identity.DomainEvents;
@@ -8,19 +9,24 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Cheetah.Modules.Identity.Application.Commands;
 
-public abstract class CreateUserCommandHandler<TUser, TRole>(
+/// <summary>
+/// Обобщённый хендлер создания пользователя. Конкретику (сборку доменной сущности из
+/// команды) поставляет хост через <see cref="ICreateUserFactory{TUser,TCommand}"/>.
+/// Регистрируется builder-ом под конкретный тип команды хоста.
+/// </summary>
+public sealed class CreateUserCommandHandler<TUser, TRole, TCommand>(
     UserManager<TUser> userManager,
     RoleManager<TRole> roleManager,
-    IEventBus eventBus)
-    : ICommandHandler<CreateUserCommand, Guid>
+    IEventBus eventBus,
+    ICreateUserFactory<TUser, TCommand> factory)
+    : ICommandHandler<TCommand, Guid>
+    where TCommand : CreateUserCommand
     where TRole : IdentityRole
     where TUser : IdentityUser<TRole>
 {
-    protected abstract TUser CreateUser(CreateUserCommand command);
-
-    public async ValueTask<Guid> HandleAsync(CreateUserCommand command, CancellationToken ct = default)
+    public async ValueTask<Guid> HandleAsync(TCommand command, CancellationToken ct = default)
     {
-        var user = CreateUser(command);
+        var user = factory.Create(command);
         var result = await userManager.CreateAsync(user, command.Password);
 
         if (!result.Succeeded)
