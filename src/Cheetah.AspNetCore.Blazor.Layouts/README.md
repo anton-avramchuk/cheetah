@@ -9,6 +9,10 @@
 - **`MainLayout`** (`LayoutComponentBase`) — шапка (лого + заголовок из `IApplicationConfigurationProvider`),
   сворачиваемый сайдбар с `NavMenu`, область контента. Монтирует хосты `DialogHost` и `ToastHost`.
   Слоты: `HeaderLeftExtra`, `HeaderCenter` (по умолчанию — строка поиска).
+- **`CenterLayout`** (`LayoutComponentBase`) — минималистичный layout без шапки и сайдбара: рендерит контент
+  по центру экрана (по горизонтали и вертикали) в колонке шириной до 440px, фон из `--content-bg`.
+  Для страниц входа/регистрации/простых сообщений. Слот `ChildContent` (по умолчанию — `Body`).
+  Монтирует хосты `DialogHost` и `ToastHost`.
 - **`NavMenu`** — рендер бокового меню: берёт `Menu` через `INavigationMenuService.GetMenuAsync(Constants.MainMenuId)`,
   рисует секции, пункты, раскрывающиеся группы.
 - **`AppLogo` / `AppTitle`** — рендер `ApplicationLogo`/`ApplicationTitle` из `Abstractions`.
