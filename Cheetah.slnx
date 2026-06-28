@@ -125,6 +125,7 @@
     <Folder Name="/Modules/Identity/">
         <Project Path="src/Modules/Identity/Cheetah.Modules.Identity.Blazor/Cheetah.Modules.Identity.Blazor.csproj" />
         <Project Path="src/Modules/Identity/Cheetah.Modules.Identity.Application.Tests/Cheetah.Modules.Identity.Application.Tests.csproj" />
+        <File Path="src/Modules/Identity/README.md" />
         <Project Path="src/Modules/Identity/Cheetah.Modules.Identity.Api/Cheetah.Modules.Identity.Api.csproj" />
         <Project Path="src/Modules/Identity/Cheetah.Modules.Identity.Application/Cheetah.Modules.Identity.Application.csproj" />
         <Project Path="src/Modules/Identity/Cheetah.Modules.Identity.Client/Cheetah.Modules.Identity.Client.csproj" />
