@@ -19,7 +19,10 @@ Generic CRUD-грид для Blazor-хоста (BFF): компонент `CrmGri
   (`GetGrid`/`GetById`/`Delete` готовы; `Create`/`Update` — абстрактные, вызывают доменные фабрики).
 - **`[GridColumn(label, show = true, order = 0)]`** — разметка колонок на свойствах `TGrid`.
 - **`IHasId`** (`Guid Id`) — `TGrid` обязан реализовать (для edit/delete по строке).
-- **`CrmPageRequest`** (`Page`, `PageSize`) / **`CrmGridResult<T>`** (`Data`, `Total`) — DTO пагинации UI.
+- **`CrmPageRequest`** (`Page`, `PageSize`, `Sort`, `Filter`) / **`CrmGridResult<T>`** (`Data`, `Total`) — DTO пагинации UI.
+  `Sort` (`List<SortDescriptor>`) и `Filter` (`FilterDescriptor?`) — те же дескрипторы, что и серверный
+  `GridRequest` (`Cheetah.Contracts.Requests`); `BaseCrudService` прокидывает их в репозиторий без перекладки.
+  Имена полей в фильтре/сортировке берутся из ViewModel-грида (репозиторий разворачивает их по проекции Mapster).
 - **Скоупинг видимости**: `DataScope(Guid UserId, bool CanViewAll)`, шов `IDataScopeAccessor.ResolveAsync(...)`
   (реализуется приложением/Identity) и `IGridRepository<T>.GetScopedGridAsync<TEntity,TViewModel>(..., params ownerFields)`
   — если у пользователя нет права «видеть всё», добавляет фильтр `owner == userId` (несколько полей по OR).

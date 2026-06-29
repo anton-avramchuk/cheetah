@@ -24,7 +24,9 @@ public abstract class
         var result = await Repository.GetGridAsync<TGridViewModel>(new GridRequest
         {
             Page = request.Page,
-            PageSize = request.PageSize
+            PageSize = request.PageSize,
+            Sort = request.Sort,
+            Filter = request.Filter
         }, ct);
 
         return new CrmGridResult<TGridViewModel>()

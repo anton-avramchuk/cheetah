@@ -40,6 +40,30 @@ public class BaseCrudServiceTests
     }
 
     [Fact]
+    public async Task GetGridAsync_ForwardsSortAndFilter()
+    {
+        var repo = new Mock<IGridRepository<FakeEntity>>();
+        GridRequest? captured = null;
+        repo.Setup(r => r.GetGridAsync<FakeGridViewModel>(It.IsAny<GridRequest>(), It.IsAny<CancellationToken>()))
+            .Callback<GridRequest, CancellationToken>((g, _) => captured = g)
+            .ReturnsAsync(new GridResult<FakeGridViewModel>([], total: 0));
+
+        var sut = new TestCrudService(repo.Object);
+
+        var request = new CrmPageRequest
+        {
+            Sort = [new SortDescriptor { Field = "Name", Dir = "desc" }],
+            Filter = new FilterDescriptor { Field = "Name", Operator = "contains", Value = "a" }
+        };
+
+        await sut.GetGridAsync(request);
+
+        captured.ShouldNotBeNull();
+        captured!.Sort.ShouldBe(request.Sort);
+        captured.Filter.ShouldBe(request.Filter);
+    }
+
+    [Fact]
     public async Task GetByIdAsync_DelegatesToRepository()
     {
         var id = Guid.NewGuid();
