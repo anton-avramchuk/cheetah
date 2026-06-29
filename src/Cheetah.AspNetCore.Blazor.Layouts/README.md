@@ -14,7 +14,8 @@
   Для страниц входа/регистрации/простых сообщений. Слот `ChildContent` (по умолчанию — `Body`).
   Монтирует хосты `DialogHost` и `ToastHost`.
 - **`NavMenu`** — рендер бокового меню: берёт `Menu` через `INavigationMenuService.GetMenuAsync(Constants.MainMenuId)`,
-  рисует секции, пункты, раскрывающиеся группы.
+  рисует секции, пункты, раскрывающиеся группы. Активный пункт подсвечивается по самому специфичному совпадению
+  URL (`MenuActiveResolver`): деталь сущности `/teams/{id}` подсвечивает `/teams`, а не `/teams/roles`.
 - **`AppLogo` / `AppTitle`** — рендер `ApplicationLogo`/`ApplicationTitle` из `Abstractions`.
 - **`NotFoundPage`** — страница 404 (используется через `UseStatusCodePagesWithReExecute("/not-found", ...)`).
 - **`ReconnectModal`** (+ `ReconnectModal.razor.js`) — UI восстановления соединения Blazor Server.

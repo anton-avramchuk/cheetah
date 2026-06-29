@@ -33,24 +33,27 @@
                             <div class="nav-group-children">
                                 @foreach (var child in item.Children.Where(CanSee))
                                 {
-                                    <NavLink class="nav-item nav-child" href="@child.Url">
+                                    <a class="nav-item nav-child @(IsActive(child) ? "active" : null)"
+                                       href="@child.Url"
+                                       aria-current="@(IsActive(child) ? "page" : null)">
                                         <span class="nav-child-dot"></span>
                                         <span class="nav-text">@child.Label</span>
-                                    </NavLink>
+                                    </a>
                                 }
                             </div>
                         </div>
                     }
                     else
                     {
-                        <NavLink class="nav-item" href="@item.Url"
-                                 Match="@(string.IsNullOrEmpty(item.Url) ? NavLinkMatch.All : NavLinkMatch.Prefix)">
+                        <a class="nav-item @(IsActive(item) ? "active" : null)"
+                           href="@item.Url"
+                           aria-current="@(IsActive(item) ? "page" : null)">
                             @if (item.Icon != null)
                             {
                                 <i class="@item.Icon nav-icon"></i>
                             }
                             <span class="nav-text">@item.Label</span>
-                        </NavLink>
+                        </a>
                     }
                 }
             </div>
@@ -63,10 +66,14 @@
     private HashSet<string> _expandedGroups = new();
     private ClaimsPrincipal _user = new(new ClaimsIdentity());
 
+    // Нормализованный URL активного пункта (самое специфичное совпадение для текущего пути).
+    private string? _activeUrl;
+
     protected override async Task OnInitializedAsync()
     {
         _user = (await AuthProvider.GetAuthenticationStateAsync()).User;
         _menu = await NavigationMenuService.GetMenuAsync(Constants.MainMenuId);
+        UpdateActive(NavigationManager.Uri);
         UpdateExpandedGroups(NavigationManager.Uri);
         NavigationManager.LocationChanged += OnLocationChanged;
     }
@@ -86,9 +93,34 @@
 
     private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
     {
+        UpdateActive(e.Location);
         UpdateExpandedGroups(e.Location);
         InvokeAsync(StateHasChanged);
     }
+
+    // Активный пункт = самый специфичный (длинный) совпавший URL среди всех ссылок меню.
+    private void UpdateActive(string uri)
+        => _activeUrl = MenuActiveResolver.Resolve(AllLinkUrls(), NavigationManager.ToBaseRelativePath(uri));
+
+    private IEnumerable<string?> AllLinkUrls()
+    {
+        foreach (var section in _menu.Sections)
+            foreach (var item in section.Items)
+            {
+                if (item.IsGroup)
+                {
+                    foreach (var child in item.Children)
+                        yield return child.Url;
+                }
+                else
+                {
+                    yield return item.Url;
+                }
+            }
+    }
+
+    private bool IsActive(MenuItem item)
+        => _activeUrl is not null && MenuActiveResolver.Normalize(item.Url) == _activeUrl;
 
     private void UpdateExpandedGroups(string uri)
     {
