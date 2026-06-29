@@ -13,6 +13,7 @@
         <ProjectReference Include="..\Cheetah.Modules.Teams.Domain\Cheetah.Modules.Teams.Domain.csproj" />
         <ProjectReference Include="..\Cheetah.Modules.Teams.Contracts\Cheetah.Modules.Teams.Contracts.csproj" />
         <ProjectReference Include="..\Cheetah.Modules.Teams.DomainEvents\Cheetah.Modules.Teams.DomainEvents.csproj" />
+        <ProjectReference Include="..\..\Identity\Cheetah.Modules.Identity.DomainEvents\Cheetah.Modules.Identity.DomainEvents.csproj" />
         <ProjectReference Include="..\..\..\Cheetah.Generators.Module\Cheetah.Generators.Module.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
     </ItemGroup>
 
