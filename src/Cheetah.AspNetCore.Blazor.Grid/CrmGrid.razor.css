@@ -25,6 +25,29 @@
     gap: 0.5rem;
 }
 
+/* Сортируемый заголовок */
+::deep th.crm-grid-sortable {
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+}
+
+::deep th.crm-grid-sortable:hover {
+    color: var(--accent-primary, #6366f1);
+}
+
+::deep .crm-grid-sort-arrow {
+    margin-left: 0.35rem;
+    vertical-align: middle;
+    color: var(--accent-primary, #6366f1);
+    transition: transform 0.15s ease;
+}
+
+/* По умолчанию шеврон смотрит вверх (asc); для desc — переворачиваем */
+::deep .crm-grid-sort-arrow-desc {
+    transform: rotate(180deg);
+}
+
 /* Кликабельная строка (задан OnRowClick) */
 ::deep .crm-grid-row-clickable {
     cursor: pointer;

@@ -10,14 +10,17 @@ Generic CRUD-грид для Blazor-хоста (BFF): компонент `CrmGri
 
 - **`CrmGrid<TGrid, TDetails, TCreate>`** (Razor-компонент) — таблица, тулбар «Создать», кнопки edit/delete,
   диалоги (через `IDialogService`), тосты (через `IToastService`), пагинация (`CrmPager`). Колонки строит
-  рефлексией по `[GridColumn]` на `TGrid`. Создание/редактирование работают **в диалоге** (по умолчанию) либо
+  рефлексией по `[GridColumn]` на `TGrid`. **Сортировка по клику на заголовок** (цикл: нет → asc → desc → нет;
+  одна колонка за раз) — отправляется на сервер через `CrmPageRequest.Sort`. Создание/редактирование работают
+  **в диалоге** (по умолчанию) либо
   **переходом на страницу** (`CreateUrl`/`EditUrl`); наружу отдаются события `OnCreated`/`OnUpdated`/`OnDeleted`
   с `Id` затронутой записи.
 - **`ICrudService<TGrid, TDetails, TCreate>`** — контракт прикладного CRUD: `GetGridAsync`, `GetByIdAsync`,
   `CreateAsync` (возвращает `Guid` созданной записи), `UpdateAsync`, `DeleteAsync`.
 - **`BaseCrudService<TEntity, TGrid, TDetails, TCreate>`** — базовая реализация над `IGridRepository<TEntity>`
   (`GetGrid`/`GetById`/`Delete` готовы; `Create`/`Update` — абстрактные, вызывают доменные фабрики).
-- **`[GridColumn(label, show = true, order = 0)]`** — разметка колонок на свойствах `TGrid`.
+- **`[GridColumn(label, show = true, order = 0, sortable = true)]`** — разметка колонок на свойствах `TGrid`.
+  `sortable = false` отключает сортировку по конкретной колонке.
 - **`IHasId`** (`Guid Id`) — `TGrid` обязан реализовать (для edit/delete по строке).
 - **`CrmPageRequest`** (`Page`, `PageSize`, `Sort`, `Filter`) / **`CrmGridResult<T>`** (`Data`, `Total`) — DTO пагинации UI.
   `Sort` (`List<SortDescriptor>`) и `Filter` (`FilterDescriptor?`) — те же дескрипторы, что и серверный
@@ -40,6 +43,7 @@ Generic CRUD-грид для Blazor-хоста (BFF): компонент `CrmGri
 | `CreateModelFactory` | `Func<TCreate>?` | Фабрика модели для формы создания |
 | `AutoOpenCreate` | `bool` | Сразу открыть диалог создания (игнорируется при `CreateUrl`) |
 | `DialogWidthPx` | `int?` | Ширина диалогов create/edit |
+| `Sortable` | `bool` | Сортировка по клику на заголовок (по умолч. `true`); пер-колонку отключается `[GridColumn(sortable: false)]` |
 | `ShowCreate` / `ShowEdit` / `ShowDelete` | `bool` | Показ кнопок (по умолч. `true`); если ни одной строковой кнопки и нет `RowActions` — колонка действий скрывается |
 | `CreateButtonLabel` | `string` | Подпись кнопки создания |
 | `CreateDialogTitle` / `EditDialogTitle` | `string` | Заголовки диалогов |

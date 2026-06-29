@@ -32,7 +32,26 @@
             <tr>
                 @foreach (var col in _columns)
                 {
-                    <th>@col.Label</th>
+                    var c = col;
+                    @if (CanSort(c))
+                    {
+                        <th class="crm-grid-sortable @(_sortField == c.PropertyName ? "crm-grid-sorted" : null)"
+                            @onclick="@(() => ToggleSortAsync(c.PropertyName))">
+                            <span class="crm-grid-th-label">@c.Label</span>
+                            @if (_sortField == c.PropertyName)
+                            {
+                                <svg class="crm-grid-sort-arrow @(_sortDir == "desc" ? "crm-grid-sort-arrow-desc" : null)"
+                                     xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
+                                     fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="18 15 12 9 6 15"/>
+                                </svg>
+                            }
+                        </th>
+                    }
+                    else
+                    {
+                        <th>@c.Label</th>
+                    }
                 }
                 @if (ShowActionsColumn)
                 {
@@ -109,7 +128,7 @@
 </div>
 
 @code {
-    private sealed record ColumnInfo(string PropertyName, string Label, int Order);
+    private sealed record ColumnInfo(string PropertyName, string Label, int Order, bool Sortable);
 
     [Parameter, EditorRequired] public ICrudService<TGridViewModel, TDetailsViewModel, TCreateViewModel> Service { get; set; } = null!;
     [Parameter] public Type? EditFormType   { get; set; }
@@ -154,7 +173,16 @@
     /// <summary>Optional row-click handler (e.g. open a details page). Action buttons stop propagation.</summary>
     [Parameter] public EventCallback<TGridViewModel> OnRowClick { get; set; }
 
+    /// <summary>Enables click-to-sort on column headers (per-column опт-аут — <see cref="GridColumnAttribute.Sortable"/>). Default true.</summary>
+    [Parameter] public bool Sortable { get; set; } = true;
+
     private bool _autoOpenHandled;
+
+    // Single-column sort state; null = без сортировки (серверный дефолт).
+    private string? _sortField;
+    private string? _sortDir;
+
+    private bool CanSort(ColumnInfo col) => Sortable && col.Sortable;
 
     private DialogDimension? DialogWidth => DialogWidthPx is { } px ? new DialogDimension.Pixels(px) : null;
 
@@ -183,7 +211,7 @@
             .Select(p => (Prop: p, Attr: p.GetCustomAttribute<GridColumnAttribute>()))
             .Where(x => x.Attr is { Show: true })
             .OrderBy(x => x.Attr!.Order)
-            .Select(x => new ColumnInfo(x.Prop.Name, x.Attr!.Label, x.Attr!.Order))
+            .Select(x => new ColumnInfo(x.Prop.Name, x.Attr!.Label, x.Attr!.Order, x.Attr!.Sortable))
             .ToList();
 
     private static object? GetValue(TGridViewModel item, string propertyName)
@@ -199,7 +227,11 @@
 
         try
         {
-            var result = await Service.GetGridAsync(new CrmPageRequest { Page = _page, PageSize = _pageSize });
+            var request = new CrmPageRequest { Page = _page, PageSize = _pageSize };
+            if (_sortField is not null && _sortDir is not null)
+                request.Sort = [new SortDescriptor { Field = _sortField, Dir = _sortDir }];
+
+            var result = await Service.GetGridAsync(request);
             _items = result.Data.ToList();
             _total = result.Total;
         }
@@ -329,6 +361,28 @@
         {
             ToastService.Error($"Не удалось удалить запись: {ex.Message}");
         }
+    }
+
+    // Цикл сортировки по клику на заголовок: нет → asc → desc → нет.
+    private async Task ToggleSortAsync(string field)
+    {
+        if (_sortField != field)
+        {
+            _sortField = field;
+            _sortDir = "asc";
+        }
+        else if (_sortDir == "asc")
+        {
+            _sortDir = "desc";
+        }
+        else
+        {
+            _sortField = null;
+            _sortDir = null;
+        }
+
+        _page = 1;
+        await LoadAsync();
     }
 
     private async Task GoToPageAsync(int page)

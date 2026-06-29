@@ -12,7 +12,7 @@ public sealed class FakeEntity : Entity<Guid>
 public sealed class FakeGridViewModel : IHasId
 {
     public Guid Id { get; set; }
-    public string Name { get; set; } = string.Empty;
+    [GridColumn("Имя", order: 0)] public string Name { get; set; } = string.Empty;
 }
 
 public sealed class FakeDetailsViewModel

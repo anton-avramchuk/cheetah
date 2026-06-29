@@ -148,6 +148,35 @@ public class CrmGridTests : BunitContext
         cut.FindAll(".crm-btn-danger").Count.ShouldBe(0);
     }
 
+    // ---- Сортировка по заголовкам -----------------------------------------
+
+    [Fact]
+    public void ClickHeader_CyclesSort_AscDescOff()
+    {
+        _service.Items.Add(new FakeGridViewModel { Id = Guid.NewGuid(), Name = "a" });
+        var cut = RenderGrid(p => { });
+
+        cut.Find("th.crm-grid-sortable").Click();
+        _service.LastRequest!.Sort.Single().Field.ShouldBe("Name");
+        _service.LastRequest.Sort.Single().Dir.ShouldBe("asc");
+
+        cut.Find("th.crm-grid-sortable").Click();
+        _service.LastRequest!.Sort.Single().Dir.ShouldBe("desc");
+
+        cut.Find("th.crm-grid-sortable").Click();
+        _service.LastRequest!.Sort.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void Sortable_False_DisablesHeaderSorting()
+    {
+        _service.Items.Add(new FakeGridViewModel { Id = Guid.NewGuid(), Name = "a" });
+
+        var cut = RenderGrid(p => p.Add(g => g.Sortable, false));
+
+        cut.FindAll("th.crm-grid-sortable").Count.ShouldBe(0);
+    }
+
     // ---- Фейки -------------------------------------------------------------
 
     private sealed class FakeCrudService : ICrudService<FakeGridViewModel, FakeDetailsViewModel, FakeCreateViewModel>
@@ -156,9 +185,13 @@ public class CrmGridTests : BunitContext
         public Guid CreateReturns = Guid.NewGuid();
         public int CreateCalls, DeleteCalls;
         public Guid? LastUpdatedId, LastDeletedId;
+        public CrmPageRequest? LastRequest;
 
         public Task<CrmGridResult<FakeGridViewModel>> GetGridAsync(CrmPageRequest request, CancellationToken ct = default)
-            => Task.FromResult(new CrmGridResult<FakeGridViewModel> { Data = Items, Total = Items.Count });
+        {
+            LastRequest = request;
+            return Task.FromResult(new CrmGridResult<FakeGridViewModel> { Data = Items, Total = Items.Count });
+        }
 
         public Task<FakeDetailsViewModel?> GetByIdAsync(Guid id, CancellationToken ct = default)
             => Task.FromResult<FakeDetailsViewModel?>(new FakeDetailsViewModel());
