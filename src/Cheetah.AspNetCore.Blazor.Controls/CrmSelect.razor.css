@@ -5,18 +5,46 @@
 /* Свёрнутый вид: выглядит как обычный form-select, но рендерит произвольный контент */
 .crm-select__toggle {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.35rem;
     width: 100%;
+    min-height: calc(1.5em + 0.75rem + 2px);
+    height: auto;
     cursor: pointer;
 }
 
-.crm-select__toggle:disabled {
+.crm-select__toggle.disabled {
+    background-color: var(--bs-secondary-bg, #e9ecef);
+    pointer-events: none;
     cursor: not-allowed;
 }
 
 .crm-select__placeholder {
     color: var(--bs-secondary-color, #6c757d);
+}
+
+/* Чип выбранного значения в множественном режиме */
+.crm-select__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.1rem 0.5rem;
+    background: color-mix(in srgb, var(--accent-primary, #6366f1) 12%, transparent);
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    line-height: 1.4;
+}
+
+.crm-select__chip-remove {
+    cursor: pointer;
+    font-weight: 700;
+    line-height: 1;
+    opacity: 0.6;
+}
+
+.crm-select__chip-remove:hover {
+    opacity: 1;
 }
 
 /* Прозрачный слой-перехватчик кликов вне меню → закрытие без JS-interop */

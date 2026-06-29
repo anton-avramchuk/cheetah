@@ -9,28 +9,46 @@
     }
 
     <div class="crm-select @(_open ? "crm-select--open" : "")">
-        <button type="button"
-                class="form-select text-start crm-select__toggle @(IsInvalid ? "is-invalid" : "") @Class"
-                disabled="@Disabled"
-                aria-haspopup="listbox"
-                aria-expanded="@_open"
-                @onclick="Toggle"
-                @onkeydown="OnToggleKeyDown"
-                @onfocusout="MarkTouched">
-            @if (HasSelection)
-            {
-                @RenderSelected(Value!)
-            }
-            else
+        <div class="form-select text-start crm-select__toggle @(Disabled ? "disabled" : "") @(IsInvalid ? "is-invalid" : "") @Class"
+             role="button"
+             tabindex="@(Disabled ? -1 : 0)"
+             aria-haspopup="listbox"
+             aria-expanded="@_open"
+             aria-disabled="@Disabled"
+             @onclick="Toggle"
+             @onkeydown="OnToggleKeyDown"
+             @onfocusout="MarkTouched">
+            @if (!HasSelection)
             {
                 <span class="crm-select__placeholder">@Placeholder</span>
             }
-        </button>
+            else if (Multiple)
+            {
+                @foreach (var item in SelectedValues)
+                {
+                    <span class="crm-select__chip">
+                        @RenderSelected(item)
+                        @if (!Disabled)
+                        {
+                            <span class="crm-select__chip-remove"
+                                  role="button"
+                                  aria-label="Удалить"
+                                  @onclick:stopPropagation="true"
+                                  @onclick="() => Toggle(item)">×</span>
+                        }
+                    </span>
+                }
+            }
+            else
+            {
+                @RenderSelected(Value!)
+            }
+        </div>
 
         @if (_open)
         {
             <div class="crm-select__backdrop" @onclick="Close"></div>
-            <ul class="crm-select__menu" role="listbox">
+            <ul class="crm-select__menu" role="listbox" aria-multiselectable="@Multiple">
                 @foreach (var item in Items)
                 {
                     var selected = IsSelected(item);
@@ -84,24 +102,31 @@
     [Parameter] public Func<TValue, string>   LabelSelector { get; set; } = v => v?.ToString() ?? "";
     [Parameter] public EventCallback<TValue?> ValueChanged  { get; set; }
 
+    /// <summary>Множественный выбор. В этом режиме значение — <see cref="Values"/>/<see cref="ValuesChanged"/>, а <see cref="Value"/> не используется.</summary>
+    [Parameter] public bool Multiple { get; set; }
+    /// <summary>Выбранные значения в режиме <see cref="Multiple"/> (поддерживает <c>@bind-Values</c>).</summary>
+    [Parameter] public IReadOnlyCollection<TValue> Values { get; set; } = [];
+    [Parameter] public EventCallback<IReadOnlyCollection<TValue>> ValuesChanged { get; set; }
+
     /// <summary>Шаблон элемента списка. Если не задан — выводится <see cref="LabelSelector"/>.</summary>
     [Parameter] public RenderFragment<TValue>? ItemTemplate { get; set; }
-    /// <summary>Шаблон выбранного значения в свёрнутом виде. Если не задан — используется <see cref="ItemTemplate"/>, иначе <see cref="LabelSelector"/>.</summary>
+    /// <summary>Шаблон выбранного значения (в свёрнутом виде / в чипе). Если не задан — используется <see cref="ItemTemplate"/>, иначе <see cref="LabelSelector"/>.</summary>
     [Parameter] public RenderFragment<TValue>? SelectedTemplate { get; set; }
 
     private readonly string _fieldId = Guid.NewGuid().ToString("N");
     private bool _touched;
     private bool _open;
 
-    private bool HasSelection       => Value is not null;
-    private bool HasExternalError   => !string.IsNullOrEmpty(Error);
-    private bool ShowValidationError => Required && Value is null && _touched;
-    private bool IsInvalid          => HasExternalError || ShowValidationError;
+    private IReadOnlyCollection<TValue> SelectedValues => Values ?? [];
+    private bool HasSelection        => Multiple ? SelectedValues.Count > 0 : Value is not null;
+    private bool HasExternalError    => !string.IsNullOrEmpty(Error);
+    private bool ShowValidationError => Required && !HasSelection && _touched;
+    private bool IsInvalid           => HasExternalError || ShowValidationError;
 
     protected override void OnInitialized()
     {
         if (Required && FormContext is not null)
-            FormContext.SetField(_fieldId, Value is not null);
+            FormContext.SetField(_fieldId, HasSelection);
     }
 
     private RenderFragment RenderItem(TValue item) => ItemTemplate is not null
@@ -113,7 +138,11 @@
             ? tpl(item)
             : builder => builder.AddContent(0, LabelSelector(item));
 
-    private bool IsSelected(TValue item) => EqualityComparer<TValue>.Default.Equals(item, Value);
+    private static bool Equal(TValue a, TValue b) => EqualityComparer<TValue>.Default.Equals(a, b);
+
+    private bool IsSelected(TValue item) => Multiple
+        ? SelectedValues.Any(v => Equal(v, item))
+        : Equal(item, Value!);
 
     private void Toggle()
     {
@@ -128,13 +157,29 @@
         MarkTouched();
     }
 
-    private async Task Select(TValue item)
+    private Task Select(TValue item) => Multiple ? Toggle(item) : SelectSingle(item);
+
+    private async Task SelectSingle(TValue item)
     {
         _open = false;
         _touched = true;
-        if (Required && FormContext is not null)
-            FormContext.SetField(_fieldId, item is not null);
+        UpdateFormField(item is not null);
         await ValueChanged.InvokeAsync(item);
+    }
+
+    /// <summary>Переключает элемент в множественном выборе (меню остаётся открытым).</summary>
+    private async Task Toggle(TValue item)
+    {
+        _touched = true;
+        var list = SelectedValues.ToList();
+        var idx = list.FindIndex(v => Equal(v, item));
+        if (idx >= 0)
+            list.RemoveAt(idx);
+        else
+            list.Add(item);
+
+        UpdateFormField(list.Count > 0);
+        await ValuesChanged.InvokeAsync(list);
     }
 
     private void OnToggleKeyDown(KeyboardEventArgs e)
@@ -148,6 +193,12 @@
                 _open = true;
                 break;
         }
+    }
+
+    private void UpdateFormField(bool hasValue)
+    {
+        if (Required && FormContext is not null)
+            FormContext.SetField(_fieldId, hasValue);
     }
 
     private void MarkTouched() => _touched = true;

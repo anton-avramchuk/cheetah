@@ -142,16 +142,28 @@
         <span>@c.Name</span>
     </ItemTemplate>
 </CrmSelect>
+
+<!-- Множественный выбор: чипы выбранных значений -->
+<CrmSelect TValue="Tag"
+           Multiple
+           Label="Теги"
+           Items="@allTags"
+           LabelSelector="t => t.Name"
+           Placeholder="— выберите —"
+           @bind-Values="model.Tags" />
 ```
 
 | Параметр | Тип | Описание |
 |---|---|---|
+| `Value` | `TValue?` | Выбранное значение, одиночный режим (`@bind-Value`) |
 | `Items` | `IEnumerable<TValue>` | Коллекция элементов |
 | `KeySelector` | `Func<TValue, string>` | Ключ элемента (для сравнения значений) |
 | `LabelSelector` | `Func<TValue, string>` | Текст элемента (fallback, если нет `ItemTemplate`) |
 | `Placeholder` | `string` | Текст, когда ничего не выбрано |
+| `Multiple` | `bool` | Множественный выбор: меню не закрывается по клику, выбранные показываются чипами |
+| `Values` | `IReadOnlyCollection<TValue>` | Выбранные значения в режиме `Multiple` (`@bind-Values`) |
 | `ItemTemplate` | `RenderFragment<TValue>` | Шаблон элемента списка; без него выводится `LabelSelector` |
-| `SelectedTemplate` | `RenderFragment<TValue>` | Шаблон выбранного значения в свёрнутом виде; без него — `ItemTemplate`, затем `LabelSelector` |
+| `SelectedTemplate` | `RenderFragment<TValue>` | Шаблон выбранного значения (в свёрнутом виде / в чипе); без него — `ItemTemplate`, затем `LabelSelector` |
 
 ---
 
