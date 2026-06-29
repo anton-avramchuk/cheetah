@@ -65,20 +65,23 @@ public class ChoiceControlsTests : BunitContext
     // ---- CrmSelect ----------------------------------------------------------
 
     [Fact]
-    public void Select_RendersOptionsAndPlaceholder()
+    public void Select_RendersPlaceholder_AndOptionsWhenOpen()
     {
         var cut = Render<CrmSelect<string>>(p => p
             .Add(s => s.Items, new[] { "a", "b", "c" })
             .Add(s => s.Placeholder, "— выбор —"));
 
-        var options = cut.FindAll("option");
-        // placeholder + 3 items
-        options.Count.ShouldBe(4);
-        cut.Markup.ShouldContain("— выбор —");
+        // placeholder в свёрнутом виде, меню закрыто → опций нет
+        cut.Find(".crm-select__placeholder").TextContent.ShouldContain("— выбор —");
+        cut.FindAll(".crm-select__option").Count.ShouldBe(0);
+
+        // открыли меню → 3 опции
+        cut.Find(".crm-select__toggle").Click();
+        cut.FindAll(".crm-select__option").Count.ShouldBe(3);
     }
 
     [Fact]
-    public void Select_Change_RaisesValueChangedWithMatchedItem()
+    public void Select_Click_RaisesValueChangedWithMatchedItem()
     {
         string? captured = null;
         var cut = Render<CrmSelect<string>>(p => p
@@ -86,7 +89,8 @@ public class ChoiceControlsTests : BunitContext
             .Add(s => s.Value, "a")
             .Add(s => s.ValueChanged, (string? v) => captured = v));
 
-        cut.Find("select").Change("b");
+        cut.Find(".crm-select__toggle").Click();
+        cut.FindAll(".crm-select__option")[1].Click();
 
         captured.ShouldBe("b");
     }
@@ -98,8 +102,37 @@ public class ChoiceControlsTests : BunitContext
             .Add(s => s.Items, new[] { "a" })
             .Add(s => s.Error, "выберите"));
 
-        cut.Find("select").ClassList.ShouldContain("is-invalid");
+        cut.Find(".crm-select__toggle").ClassList.ShouldContain("is-invalid");
         cut.Find(".invalid-feedback").TextContent.ShouldBe("выберите");
+    }
+
+    [Fact]
+    public void Select_ItemTemplate_RendersCustomMarkup()
+    {
+        var cut = Render<CrmSelect<string>>(p => p
+            .Add(s => s.Items, new[] { "a" })
+            .Add(s => s.ItemTemplate, item => builder => builder.AddMarkupContent(0, $"<span class=\"flag\">{item}</span>")));
+
+        cut.Find(".crm-select__toggle").Click();
+        cut.Find(".crm-select__option .flag").TextContent.ShouldBe("a");
+    }
+
+    [Fact]
+    public void Select_Multiple_TogglesValues_AndKeepsMenuOpen()
+    {
+        IReadOnlyCollection<string>? captured = null;
+        var cut = Render<CrmSelect<string>>(p => p
+            .Add(s => s.Multiple, true)
+            .Add(s => s.Items, new[] { "a", "b", "c" })
+            .Add(s => s.Values, new[] { "a" })
+            .Add(s => s.ValuesChanged, (IReadOnlyCollection<string> v) => captured = v));
+
+        cut.Find(".crm-select__toggle").Click();
+        cut.FindAll(".crm-select__option")[1].Click(); // выбрать "b"
+
+        captured.ShouldBe(new[] { "a", "b" });
+        // меню остаётся открытым в множественном режиме
+        cut.FindAll(".crm-select__option").Count.ShouldBe(3);
     }
 
     // ---- CrmRadioGroup ------------------------------------------------------

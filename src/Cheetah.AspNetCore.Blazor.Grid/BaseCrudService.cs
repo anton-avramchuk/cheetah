@@ -39,7 +39,7 @@ public abstract class
         return await Repository.GetByIdAsync<TDetailsViewModel>(id, ct);
     }
 
-    public abstract Task CreateAsync(TCreateViewModel model, CancellationToken ct = default);
+    public abstract Task<Guid> CreateAsync(TCreateViewModel model, CancellationToken ct = default);
 
     public abstract Task UpdateAsync(Guid id, TDetailsViewModel model, CancellationToken ct = default);
 

@@ -14,11 +14,12 @@ namespace Cheetah.Modules.Catalog.Blazor.Services;
 public sealed class PriceListCrudService(IGridRepository<PriceList> repository)
     : BaseCrudService<PriceList, PriceListGridViewModel, PriceListDetailsViewModel, PriceListCreateViewModel>(repository)
 {
-    public override async Task CreateAsync(PriceListCreateViewModel model, CancellationToken ct = default)
+    public override async Task<Guid> CreateAsync(PriceListCreateViewModel model, CancellationToken ct = default)
     {
         var priceList = PriceList.Create(model.Name, model.Currency, model.IsDefault, model.ValidFrom, model.ValidTo);
         Repository.Add(priceList);
         await Repository.SaveChangesAsync(ct);
+        return priceList.Id;
     }
 
     public override async Task UpdateAsync(Guid id, PriceListDetailsViewModel model, CancellationToken ct = default)

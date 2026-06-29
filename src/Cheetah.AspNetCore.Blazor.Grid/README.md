@@ -10,9 +10,11 @@ Generic CRUD-грид для Blazor-хоста (BFF): компонент `CrmGri
 
 - **`CrmGrid<TGrid, TDetails, TCreate>`** (Razor-компонент) — таблица, тулбар «Создать», кнопки edit/delete,
   диалоги (через `IDialogService`), тосты (через `IToastService`), пагинация (`CrmPager`). Колонки строит
-  рефлексией по `[GridColumn]` на `TGrid`.
+  рефлексией по `[GridColumn]` на `TGrid`. Создание/редактирование работают **в диалоге** (по умолчанию) либо
+  **переходом на страницу** (`CreateUrl`/`EditUrl`); наружу отдаются события `OnCreated`/`OnUpdated`/`OnDeleted`
+  с `Id` затронутой записи.
 - **`ICrudService<TGrid, TDetails, TCreate>`** — контракт прикладного CRUD: `GetGridAsync`, `GetByIdAsync`,
-  `CreateAsync`, `UpdateAsync`, `DeleteAsync`.
+  `CreateAsync` (возвращает `Guid` созданной записи), `UpdateAsync`, `DeleteAsync`.
 - **`BaseCrudService<TEntity, TGrid, TDetails, TCreate>`** — базовая реализация над `IGridRepository<TEntity>`
   (`GetGrid`/`GetById`/`Delete` готовы; `Create`/`Update` — абстрактные, вызывают доменные фабрики).
 - **`[GridColumn(label, show = true, order = 0)]`** — разметка колонок на свойствах `TGrid`.
@@ -26,14 +28,44 @@ Generic CRUD-грид для Blazor-хоста (BFF): компонент `CrmGri
 
 | Параметр | Тип | Описание |
 |---|---|---|
+| `Service` | `ICrudService<…>` | CRUD-сервис (обязателен) |
+| `EditFormType` / `CreateFormType` | `Type?` | Формы для диалогов; не нужны в режиме перехода на страницу |
 | `Title` | `string` | Заголовок над таблицей |
 | `PageSize` | `int` | Размер страницы (по умолч. 20) |
 | `RowActions` | `RenderFragment<TGrid>?` | Доп. кнопки в строке (слева от edit/delete) |
+| `ToolbarActions` | `RenderFragment?` | Доп. контент тулбара (справа от «Создать») |
 | `CreateModelFactory` | `Func<TCreate>?` | Фабрика модели для формы создания |
-| `AutoOpenCreate` | `bool` | Сразу открыть диалог создания |
+| `AutoOpenCreate` | `bool` | Сразу открыть диалог создания (игнорируется при `CreateUrl`) |
 | `DialogWidthPx` | `int?` | Ширина диалогов create/edit |
+| `ShowCreate` / `ShowEdit` / `ShowDelete` | `bool` | Показ кнопок (по умолч. `true`); если ни одной строковой кнопки и нет `RowActions` — колонка действий скрывается |
+| `CreateButtonLabel` | `string` | Подпись кнопки создания |
+| `CreateDialogTitle` / `EditDialogTitle` | `string` | Заголовки диалогов |
+| `CreateUrl` | `string?` | Если задан — «Создать» переходит по URL вместо диалога |
+| `EditUrl` | `Func<Guid,string>?` | Если задан — edit переходит на `EditUrl(id)` вместо диалога |
+| `OnCreated` / `OnUpdated` / `OnDeleted` | `EventCallback<Guid>` | События наружу с `Id` затронутой записи |
+| `OnRowClick` | `EventCallback<TGrid>` | Клик по строке (кнопки действий не всплывают) |
+
+Метод `RefreshAsync()` (через `@ref`) перезагружает текущую страницу после внешних изменений.
 
 `TGrid : class, IHasId`, `TDetails : class, new()`, `TCreate : class, new()`.
+
+### Создание/редактирование на отдельной странице
+
+```razor
+@* Диалог по умолчанию; здесь — переход на страницы, событие создания наружу *@
+<CrmGrid TGridViewModel="SkillGridViewModel"
+         TDetailsViewModel="SkillDetailsViewModel"
+         TCreateViewModel="SkillCreateViewModel"
+         Title="Навыки"
+         CreateUrl="/skills/new"
+         EditUrl="@(id => $"/skills/{id}")"
+         OnCreated="OnSkillCreated" />
+
+@code {
+    // например: открыть карточку только что созданной записи
+    private void OnSkillCreated(Guid id) => Nav.NavigateTo($"/skills/{id}");
+}
+```
 
 ## Как добавить грид сущности
 
@@ -51,8 +83,8 @@ public class SkillGridViewModel : IHasId
 public class SkillCrudService(IGridRepository<Skill> repo)
     : BaseCrudService<Skill, SkillGridViewModel, SkillDetailsViewModel, SkillCreateViewModel>(repo)
 {
-    public override async Task CreateAsync(SkillCreateViewModel m, CancellationToken ct)
-    { repo.Add(Skill.Create(m.Name)); await repo.SaveChangesAsync(ct); }
+    public override async Task<Guid> CreateAsync(SkillCreateViewModel m, CancellationToken ct)
+    { var s = Skill.Create(m.Name); repo.Add(s); await repo.SaveChangesAsync(ct); return s.Id; }
 
     public override async Task UpdateAsync(Guid id, SkillDetailsViewModel m, CancellationToken ct)
     { /* GetById → domain Update → SaveChanges */ }

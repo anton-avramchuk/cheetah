@@ -4,6 +4,7 @@
 
 @inject IDialogService DialogService
 @inject IToastService ToastService
+@inject NavigationManager Navigation
 
 <div class="crm-grid">
 
@@ -12,12 +13,18 @@
         {
             <h3 class="crm-grid-title">@Title</h3>
         }
-        <button class="crm-btn crm-btn-primary" @onclick="OnCreateClickAsync">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-            </svg>
-            Создать
-        </button>
+        <div class="crm-grid-toolbar-actions">
+            @if (ShowCreate)
+            {
+                <button class="crm-btn crm-btn-primary" @onclick="OnCreateClickAsync">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                    </svg>
+                    @CreateButtonLabel
+                </button>
+            }
+            @ToolbarActions
+        </div>
     </div>
 
     <table class="crm-grid-table">
@@ -27,20 +34,23 @@
                 {
                     <th>@col.Label</th>
                 }
-                <th class="crm-grid-actions-header"></th>
+                @if (ShowActionsColumn)
+                {
+                    <th class="crm-grid-actions-header"></th>
+                }
             </tr>
         </thead>
         <tbody>
             @if (_loading)
             {
                 <tr>
-                    <td colspan="@(_columns.Count + 1)" class="crm-grid-loading">Загрузка…</td>
+                    <td colspan="@ColumnSpan" class="crm-grid-loading">Загрузка…</td>
                 </tr>
             }
             else if (_items.Count == 0)
             {
                 <tr>
-                    <td colspan="@(_columns.Count + 1)" class="crm-grid-empty">Нет данных</td>
+                    <td colspan="@ColumnSpan" class="crm-grid-empty">Нет данных</td>
                 </tr>
             }
             else
@@ -48,30 +58,40 @@
                 @foreach (var row in _items)
                 {
                     var capturedRow = row;
-                    <tr>
+                    <tr class="@(OnRowClick.HasDelegate ? "crm-grid-row-clickable" : null)"
+                        @onclick="@(() => OnRowClick.InvokeAsync(capturedRow))">
                         @foreach (var col in _columns)
                         {
                             <td>@GetValue(capturedRow, col.PropertyName)</td>
                         }
-                        <td class="crm-grid-actions">
-                            @RowActions?.Invoke(capturedRow)
-                            <button class="crm-btn crm-btn-icon crm-btn-edit" title="Редактировать"
-                                    @onclick="@(async () => await OnEditClickAsync(capturedRow.Id))">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                                </svg>
-                            </button>
-                            <button class="crm-btn crm-btn-icon crm-btn-danger" title="Удалить"
-                                    @onclick="@(async () => await OnDeleteClickAsync(capturedRow.Id))">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <polyline points="3 6 5 6 21 6"/>
-                                    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
-                                    <path d="M10 11v6M14 11v6"/>
-                                    <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
-                                </svg>
-                            </button>
-                        </td>
+                        @if (ShowActionsColumn)
+                        {
+                            <td class="crm-grid-actions" @onclick:stopPropagation="true">
+                                @RowActions?.Invoke(capturedRow)
+                                @if (ShowEdit)
+                                {
+                                    <button class="crm-btn crm-btn-icon crm-btn-edit" title="Редактировать"
+                                            @onclick="@(async () => await OnEditClickAsync(capturedRow.Id))">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                        </svg>
+                                    </button>
+                                }
+                                @if (ShowDelete)
+                                {
+                                    <button class="crm-btn crm-btn-icon crm-btn-danger" title="Удалить"
+                                            @onclick="@(async () => await OnDeleteClickAsync(capturedRow.Id))">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <polyline points="3 6 5 6 21 6"/>
+                                            <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                                            <path d="M10 11v6M14 11v6"/>
+                                            <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+                                        </svg>
+                                    </button>
+                                }
+                            </td>
+                        }
                     </tr>
                 }
             }
@@ -92,26 +112,54 @@
     private sealed record ColumnInfo(string PropertyName, string Label, int Order);
 
     [Parameter, EditorRequired] public ICrudService<TGridViewModel, TDetailsViewModel, TCreateViewModel> Service { get; set; } = null!;
-    [Parameter, EditorRequired] public Type EditFormType   { get; set; } = null!;
-    [Parameter, EditorRequired] public Type CreateFormType { get; set; } = null!;
+    [Parameter] public Type? EditFormType   { get; set; }
+    [Parameter] public Type? CreateFormType { get; set; }
     [Parameter] public string Title    { get; set; } = string.Empty;
     [Parameter] public int    PageSize { get; set; } = 20;
 
     /// <summary>Optional extra per-row action buttons rendered before the built-in edit/delete buttons.</summary>
     [Parameter] public RenderFragment<TGridViewModel>? RowActions { get; set; }
 
+    /// <summary>Optional extra toolbar content rendered after the "Create" button.</summary>
+    [Parameter] public RenderFragment? ToolbarActions { get; set; }
+
     /// <summary>Optional factory for the model passed to the create dialog (e.g. to prefill fields). Defaults to <c>new()</c>.</summary>
     [Parameter] public Func<TCreateViewModel>? CreateModelFactory { get; set; }
 
-    /// <summary>When true, opens the create dialog once after the first render (e.g. deep-link "create for X").</summary>
+    /// <summary>When true, opens the create dialog once after the first render (e.g. deep-link "create for X"). Ignored when <see cref="CreateUrl"/> is set.</summary>
     [Parameter] public bool AutoOpenCreate { get; set; }
 
     /// <summary>Optional fixed width (px) for the create/edit dialogs. Default null = dialog's own sizing.</summary>
     [Parameter] public int? DialogWidthPx { get; set; }
 
+    // --- Toolbar / actions visibility ---
+    [Parameter] public bool ShowCreate { get; set; } = true;
+    [Parameter] public bool ShowEdit   { get; set; } = true;
+    [Parameter] public bool ShowDelete { get; set; } = true;
+    [Parameter] public string CreateButtonLabel { get; set; } = "Создать";
+    [Parameter] public string CreateDialogTitle { get; set; } = "Создать";
+    [Parameter] public string EditDialogTitle   { get; set; } = "Редактировать";
+
+    // --- Navigate to a page instead of opening a dialog ---
+    /// <summary>If set, the "Create" button navigates to this URL instead of opening the create dialog.</summary>
+    [Parameter] public string? CreateUrl { get; set; }
+    /// <summary>If set, the edit button navigates to <c>EditUrl(id)</c> instead of opening the edit dialog.</summary>
+    [Parameter] public Func<Guid, string>? EditUrl { get; set; }
+
+    // --- Outward lifecycle callbacks (carry the affected row id) ---
+    [Parameter] public EventCallback<Guid> OnCreated { get; set; }
+    [Parameter] public EventCallback<Guid> OnUpdated { get; set; }
+    [Parameter] public EventCallback<Guid> OnDeleted { get; set; }
+
+    /// <summary>Optional row-click handler (e.g. open a details page). Action buttons stop propagation.</summary>
+    [Parameter] public EventCallback<TGridViewModel> OnRowClick { get; set; }
+
     private bool _autoOpenHandled;
 
     private DialogDimension? DialogWidth => DialogWidthPx is { } px ? new DialogDimension.Pixels(px) : null;
+
+    private bool ShowActionsColumn => ShowEdit || ShowDelete || RowActions is not null;
+    private int  ColumnSpan        => _columns.Count + (ShowActionsColumn ? 1 : 0);
 
     private List<TGridViewModel> _items = [];
     private int  _total;
@@ -141,6 +189,9 @@
     private static object? GetValue(TGridViewModel item, string propertyName)
         => typeof(TGridViewModel).GetProperty(propertyName)?.GetValue(item);
 
+    /// <summary>Reloads the current page from the service. Useful via <c>@ref</c> after external changes.</summary>
+    public Task RefreshAsync() => LoadAsync();
+
     private async Task LoadAsync()
     {
         _loading = true;
@@ -167,7 +218,7 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender && AutoOpenCreate && !_autoOpenHandled)
+        if (firstRender && AutoOpenCreate && CreateUrl is null && !_autoOpenHandled)
         {
             _autoOpenHandled = true;
             await OnCreateClickAsync();
@@ -176,25 +227,41 @@
 
     private async Task OnCreateClickAsync()
     {
+        // Page mode: navigate instead of opening the dialog.
+        if (CreateUrl is not null)
+        {
+            Navigation.NavigateTo(CreateUrl);
+            return;
+        }
+
         var model = CreateModelFactory?.Invoke() ?? new TCreateViewModel();
+        var createdId = Guid.Empty;
         var result = await DialogService.ShowAsync(new DialogOptions
         {
-            Title             = "Создать",
+            Title             = CreateDialogTitle,
             ContentType       = CreateFormType,
             ContentParameters = new Dictionary<string, object> { ["Model"] = model },
             Width             = DialogWidth,
-            Commands          = BuildSaveCommands(() => Service.CreateAsync(model))
+            Commands          = BuildSaveCommands(async () => createdId = await Service.CreateAsync(model))
         });
         if (result.IsOk)
         {
             _page = 1;
             await LoadAsync();
             ToastService.Success("Запись успешно создана");
+            await OnCreated.InvokeAsync(createdId);
         }
     }
 
     private async Task OnEditClickAsync(Guid id)
     {
+        // Page mode: navigate instead of opening the dialog.
+        if (EditUrl is not null)
+        {
+            Navigation.NavigateTo(EditUrl(id));
+            return;
+        }
+
         TDetailsViewModel? model;
         try
         {
@@ -210,7 +277,7 @@
 
         var result = await DialogService.ShowAsync(new DialogOptions
         {
-            Title             = "Редактировать",
+            Title             = EditDialogTitle,
             ContentType       = EditFormType,
             ContentParameters = new Dictionary<string, object> { ["Model"] = model },
             Width             = DialogWidth,
@@ -220,6 +287,7 @@
         {
             await LoadAsync();
             ToastService.Success("Запись успешно обновлена");
+            await OnUpdated.InvokeAsync(id);
         }
     }
 
@@ -255,6 +323,7 @@
                 _page--;
             await LoadAsync();
             ToastService.Success("Запись успешно удалена");
+            await OnDeleted.InvokeAsync(id);
         }
         catch (Exception ex)
         {

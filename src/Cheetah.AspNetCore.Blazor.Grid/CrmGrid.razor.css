@@ -18,6 +18,22 @@
     font-weight: 600;
 }
 
+/* Группа кнопок справа в тулбаре (Создать + произвольные ToolbarActions) */
+::deep .crm-grid-toolbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Кликабельная строка (задан OnRowClick) */
+::deep .crm-grid-row-clickable {
+    cursor: pointer;
+}
+
+::deep .crm-grid-row-clickable:hover {
+    background: var(--bg-hover, rgba(0, 0, 0, 0.03));
+}
+
 /* Pager */
 ::deep .crm-grid-pager {
     display: flex;

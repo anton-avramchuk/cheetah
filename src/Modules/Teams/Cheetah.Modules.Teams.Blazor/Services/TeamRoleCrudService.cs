@@ -14,10 +14,12 @@ namespace Cheetah.Modules.Teams.Blazor.Services;
 public sealed class TeamRoleCrudService(IGridRepository<TeamRole> repository)
     : BaseCrudService<TeamRole, TeamRoleGridViewModel, TeamRoleDetailsViewModel, TeamRoleCreateViewModel>(repository)
 {
-    public override async Task CreateAsync(TeamRoleCreateViewModel model, CancellationToken ct = default)
+    public override async Task<Guid> CreateAsync(TeamRoleCreateViewModel model, CancellationToken ct = default)
     {
-        Repository.Add(TeamRole.Create(model.Name));
+        var role = TeamRole.Create(model.Name);
+        Repository.Add(role);
         await Repository.SaveChangesAsync(ct);
+        return role.Id;
     }
 
     public override async Task UpdateAsync(Guid id, TeamRoleDetailsViewModel model, CancellationToken ct = default)

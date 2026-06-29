@@ -15,11 +15,12 @@ namespace Cheetah.Modules.Catalog.Blazor.Services;
 public sealed class CategoryCrudService(IGridRepository<ProductCategory> repository)
     : BaseCrudService<ProductCategory, CategoryGridViewModel, CategoryDetailsViewModel, CategoryCreateViewModel>(repository)
 {
-    public override async Task CreateAsync(CategoryCreateViewModel model, CancellationToken ct = default)
+    public override async Task<Guid> CreateAsync(CategoryCreateViewModel model, CancellationToken ct = default)
     {
         var category = ProductCategory.Create(model.Name, parent: null, model.Order);
         Repository.Add(category);
         await Repository.SaveChangesAsync(ct);
+        return category.Id;
     }
 
     public override async Task UpdateAsync(Guid id, CategoryDetailsViewModel model, CancellationToken ct = default)

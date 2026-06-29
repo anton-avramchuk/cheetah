@@ -11,8 +11,8 @@ public class BaseCrudServiceTests
     private sealed class TestCrudService(IGridRepository<FakeEntity> repo)
         : BaseCrudService<FakeEntity, FakeGridViewModel, FakeDetailsViewModel, FakeCreateViewModel>(repo)
     {
-        public override Task CreateAsync(FakeCreateViewModel model, CancellationToken ct = default)
-            => Task.CompletedTask;
+        public override Task<Guid> CreateAsync(FakeCreateViewModel model, CancellationToken ct = default)
+            => Task.FromResult(Guid.NewGuid());
 
         public override Task UpdateAsync(Guid id, FakeDetailsViewModel model, CancellationToken ct = default)
             => Task.CompletedTask;
