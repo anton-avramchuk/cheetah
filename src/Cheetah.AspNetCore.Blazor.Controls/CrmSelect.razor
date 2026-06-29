@@ -118,7 +118,10 @@
     private bool _open;
 
     private IReadOnlyCollection<TValue> SelectedValues => Values ?? [];
-    private bool HasSelection        => Multiple ? SelectedValues.Count > 0 : Value is not null;
+    // Для value-типов (Guid, int, enum) Value никогда не null — «не выбрано» = значение по умолчанию.
+    private bool HasSelection        => Multiple
+        ? SelectedValues.Count > 0
+        : Value is not null && !EqualityComparer<TValue>.Default.Equals(Value, default!);
     private bool HasExternalError    => !string.IsNullOrEmpty(Error);
     private bool ShowValidationError => Required && !HasSelection && _touched;
     private bool IsInvalid           => HasExternalError || ShowValidationError;

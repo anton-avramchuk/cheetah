@@ -96,6 +96,17 @@ public class ChoiceControlsTests : BunitContext
     }
 
     [Fact]
+    public void Select_ValueType_DefaultValue_ShowsPlaceholder()
+    {
+        var cut = Render<CrmSelect<Guid>>(p => p
+            .Add(s => s.Items, new[] { Guid.NewGuid(), Guid.NewGuid() })
+            .Add(s => s.Placeholder, "— выбор —"));
+
+        // Value по умолчанию = Guid.Empty (value-тип, не null) → плейсхолдер, а не дефолтный гуид.
+        cut.Find(".crm-select__placeholder").TextContent.ShouldContain("— выбор —");
+    }
+
+    [Fact]
     public void Select_WithError_ShowsInvalid()
     {
         var cut = Render<CrmSelect<string>>(p => p
