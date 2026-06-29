@@ -117,24 +117,41 @@
 
 ### CrmSelect\<TValue\>
 
-Выпадающий список с обобщённым типом элементов.
+Выпадающий список с обобщённым типом элементов. Кастомный дропдаун (не нативный `<select>`),
+поэтому элементы могут содержать произвольную разметку через `ItemTemplate` — например флаг + имя.
+Закрывается по клику вне списка и по `Escape`; открывается с клавиатуры (`Enter`/`Space`/`↓`).
 
 ```razor
+<!-- Простой вариант: текст через LabelSelector -->
 <CrmSelect TValue="SkillCategory"
            Label="Категория"
            Items="@categories"
-           KeySelector="c => c.Id.ToString()"
            LabelSelector="c => c.Name"
            Placeholder="— выберите —"
            @bind-Value="model.Category" />
+
+<!-- С шаблоном элемента: флаг + название -->
+<CrmSelect TValue="Country"
+           Label="Страна"
+           Items="@countries"
+           LabelSelector="c => c.Name"
+           Placeholder="— выберите —"
+           @bind-Value="model.Country">
+    <ItemTemplate Context="c">
+        <img src="@c.FlagUrl" width="20" alt="" />
+        <span>@c.Name</span>
+    </ItemTemplate>
+</CrmSelect>
 ```
 
 | Параметр | Тип | Описание |
 |---|---|---|
 | `Items` | `IEnumerable<TValue>` | Коллекция элементов |
-| `KeySelector` | `Func<TValue, string>` | Ключ (value атрибута option) |
-| `LabelSelector` | `Func<TValue, string>` | Текст элемента |
-| `Placeholder` | `string` | Пустой первый элемент |
+| `KeySelector` | `Func<TValue, string>` | Ключ элемента (для сравнения значений) |
+| `LabelSelector` | `Func<TValue, string>` | Текст элемента (fallback, если нет `ItemTemplate`) |
+| `Placeholder` | `string` | Текст, когда ничего не выбрано |
+| `ItemTemplate` | `RenderFragment<TValue>` | Шаблон элемента списка; без него выводится `LabelSelector` |
+| `SelectedTemplate` | `RenderFragment<TValue>` | Шаблон выбранного значения в свёрнутом виде; без него — `ItemTemplate`, затем `LabelSelector` |
 
 ---
 

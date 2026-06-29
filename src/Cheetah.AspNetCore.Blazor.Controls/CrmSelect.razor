@@ -7,26 +7,60 @@
     {
         <label class="form-label @(Required ? "crm-label-required" : "")">@Label</label>
     }
-    <select class="form-select @(ShowValidationError ? "is-invalid" : "") @(HasExternalError ? "is-invalid" : "") @Class"
-            disabled="@Disabled"
-            @onchange="OnChange"
-            @onfocusout="MarkTouched">
-        @if (!string.IsNullOrEmpty(Placeholder))
+
+    <div class="crm-select @(_open ? "crm-select--open" : "")">
+        <button type="button"
+                class="form-select text-start crm-select__toggle @(IsInvalid ? "is-invalid" : "") @Class"
+                disabled="@Disabled"
+                aria-haspopup="listbox"
+                aria-expanded="@_open"
+                @onclick="Toggle"
+                @onkeydown="OnToggleKeyDown"
+                @onfocusout="MarkTouched">
+            @if (HasSelection)
+            {
+                @RenderSelected(Value!)
+            }
+            else
+            {
+                <span class="crm-select__placeholder">@Placeholder</span>
+            }
+        </button>
+
+        @if (_open)
         {
-            <option value="" disabled selected="@(Value is null)">@Placeholder</option>
+            <div class="crm-select__backdrop" @onclick="Close"></div>
+            <ul class="crm-select__menu" role="listbox">
+                @foreach (var item in Items)
+                {
+                    var selected = IsSelected(item);
+                    <li role="option" aria-selected="@selected">
+                        <button type="button"
+                                class="crm-select__option @(selected ? "crm-select__option--selected" : "")"
+                                @onclick="() => Select(item)">
+                            @RenderItem(item)
+                            @if (selected)
+                            {
+                                <svg class="crm-select__check" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                                     stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="20 6 9 17 4 12"/>
+                                </svg>
+                            }
+                        </button>
+                    </li>
+                }
+            </ul>
         }
-        @foreach (var item in Items)
-        {
-            <option value="@GetKey(item)" selected="@IsSelected(item)">@GetLabel(item)</option>
-        }
-    </select>
+    </div>
+
     @if (HasExternalError)
     {
-        <div class="invalid-feedback">@Error</div>
+        <div class="invalid-feedback d-block">@Error</div>
     }
     else if (ShowValidationError)
     {
-        <div class="invalid-feedback">Выберите значение</div>
+        <div class="invalid-feedback d-block">Выберите значение</div>
     }
     @if (!string.IsNullOrEmpty(Hint) && !HasExternalError && !ShowValidationError)
     {
@@ -50,11 +84,19 @@
     [Parameter] public Func<TValue, string>   LabelSelector { get; set; } = v => v?.ToString() ?? "";
     [Parameter] public EventCallback<TValue?> ValueChanged  { get; set; }
 
+    /// <summary>Шаблон элемента списка. Если не задан — выводится <see cref="LabelSelector"/>.</summary>
+    [Parameter] public RenderFragment<TValue>? ItemTemplate { get; set; }
+    /// <summary>Шаблон выбранного значения в свёрнутом виде. Если не задан — используется <see cref="ItemTemplate"/>, иначе <see cref="LabelSelector"/>.</summary>
+    [Parameter] public RenderFragment<TValue>? SelectedTemplate { get; set; }
+
     private readonly string _fieldId = Guid.NewGuid().ToString("N");
     private bool _touched;
+    private bool _open;
 
-    private bool HasExternalError    => !string.IsNullOrEmpty(Error);
+    private bool HasSelection       => Value is not null;
+    private bool HasExternalError   => !string.IsNullOrEmpty(Error);
     private bool ShowValidationError => Required && Value is null && _touched;
+    private bool IsInvalid          => HasExternalError || ShowValidationError;
 
     protected override void OnInitialized()
     {
@@ -62,18 +104,50 @@
             FormContext.SetField(_fieldId, Value is not null);
     }
 
-    private string GetKey(TValue item)   => KeySelector(item);
-    private string GetLabel(TValue item) => LabelSelector(item);
+    private RenderFragment RenderItem(TValue item) => ItemTemplate is not null
+        ? ItemTemplate(item)
+        : builder => builder.AddContent(0, LabelSelector(item));
+
+    private RenderFragment RenderSelected(TValue item) =>
+        (SelectedTemplate ?? ItemTemplate) is { } tpl
+            ? tpl(item)
+            : builder => builder.AddContent(0, LabelSelector(item));
+
     private bool IsSelected(TValue item) => EqualityComparer<TValue>.Default.Equals(item, Value);
 
-    private async Task OnChange(ChangeEventArgs e)
+    private void Toggle()
     {
+        if (Disabled) return;
+        _open = !_open;
+        if (!_open) MarkTouched();
+    }
+
+    private void Close()
+    {
+        _open = false;
+        MarkTouched();
+    }
+
+    private async Task Select(TValue item)
+    {
+        _open = false;
         _touched = true;
-        var key = e.Value?.ToString();
-        var match = Items.FirstOrDefault(i => GetKey(i) == key);
         if (Required && FormContext is not null)
-            FormContext.SetField(_fieldId, match is not null);
-        await ValueChanged.InvokeAsync(match);
+            FormContext.SetField(_fieldId, item is not null);
+        await ValueChanged.InvokeAsync(item);
+    }
+
+    private void OnToggleKeyDown(KeyboardEventArgs e)
+    {
+        switch (e.Key)
+        {
+            case "Escape":
+                _open = false;
+                break;
+            case "Enter" or " " or "ArrowDown" when !_open:
+                _open = true;
+                break;
+        }
     }
 
     private void MarkTouched() => _touched = true;

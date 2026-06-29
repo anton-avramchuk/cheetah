@@ -1,0 +1,76 @@
+.crm-select {
+    position: relative;
+}
+
+/* Свёрнутый вид: выглядит как обычный form-select, но рендерит произвольный контент */
+.crm-select__toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    cursor: pointer;
+}
+
+.crm-select__toggle:disabled {
+    cursor: not-allowed;
+}
+
+.crm-select__placeholder {
+    color: var(--bs-secondary-color, #6c757d);
+}
+
+/* Прозрачный слой-перехватчик кликов вне меню → закрытие без JS-interop */
+.crm-select__backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1050;
+}
+
+.crm-select__menu {
+    position: absolute;
+    z-index: 1060;
+    top: calc(100% + 0.25rem);
+    left: 0;
+    right: 0;
+    margin: 0;
+    padding: 0.25rem;
+    list-style: none;
+    max-height: 16rem;
+    overflow-y: auto;
+    background: var(--bs-body-bg, #fff);
+    border: 1px solid var(--bs-border-color, #dee2e6);
+    border-radius: 0.5rem;
+    box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.15);
+}
+
+.crm-select__option {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.45rem 0.6rem;
+    border: 0;
+    border-radius: 0.375rem;
+    background: transparent;
+    text-align: left;
+    color: var(--bs-body-color, #212529);
+    cursor: pointer;
+}
+
+.crm-select__option:hover,
+.crm-select__option:focus-visible {
+    background: color-mix(in srgb, var(--accent-primary, #6366f1) 12%, transparent);
+    outline: none;
+}
+
+.crm-select__option--selected {
+    color: var(--accent-primary, #6366f1);
+    font-weight: 500;
+}
+
+/* Галочка прижата к правому краю */
+.crm-select__check {
+    margin-left: auto;
+    flex-shrink: 0;
+    color: var(--accent-primary, #6366f1);
+}
