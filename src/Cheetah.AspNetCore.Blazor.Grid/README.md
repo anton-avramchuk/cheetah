@@ -44,6 +44,7 @@ Generic CRUD-грид для Blazor-хоста (BFF): компонент `CrmGri
 | `AutoOpenCreate` | `bool` | Сразу открыть диалог создания (игнорируется при `CreateUrl`) |
 | `DialogWidthPx` | `int?` | Ширина диалогов create/edit |
 | `Sortable` | `bool` | Сортировка по клику на заголовок (по умолч. `true`); пер-колонку отключается `[GridColumn(sortable: false)]` |
+| `DefaultFilter` | `FilterDescriptor?` | Базовый фильтр, применяемый к каждому запросу (скоуп по родителю/статусу); при смене значения грид перезагружается с 1-й страницы |
 | `ShowCreate` / `ShowEdit` / `ShowDelete` | `bool` | Показ кнопок (по умолч. `true`); если ни одной строковой кнопки и нет `RowActions` — колонка действий скрывается |
 | `CreateButtonLabel` | `string` | Подпись кнопки создания |
 | `CreateDialogTitle` / `EditDialogTitle` | `string` | Заголовки диалогов |

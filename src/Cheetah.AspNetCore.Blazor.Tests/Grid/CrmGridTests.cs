@@ -1,4 +1,5 @@
 using Bunit;
+using Cheetah.Contracts.Requests;
 using Cheetah.AspNetCore.Blazor.Dialogs;
 using Cheetah.AspNetCore.Blazor.Grid;
 using Cheetah.AspNetCore.Blazor.Toast;
@@ -175,6 +176,32 @@ public class CrmGridTests : BunitContext
         var cut = RenderGrid(p => p.Add(g => g.Sortable, false));
 
         cut.FindAll("th.crm-grid-sortable").Count.ShouldBe(0);
+    }
+
+    // ---- Дефолтный фильтр --------------------------------------------------
+
+    [Fact]
+    public void DefaultFilter_IsSentWithEveryRequest()
+    {
+        var filter = new FilterDescriptor { Field = "Name", Operator = "eq", Value = "a" };
+
+        RenderGrid(p => p.Add(g => g.DefaultFilter, filter));
+
+        _service.LastRequest!.Filter.ShouldBe(filter);
+    }
+
+    [Fact]
+    public void ChangingDefaultFilter_ReloadsFromFirstPage()
+    {
+        var first = new FilterDescriptor { Field = "Name", Operator = "eq", Value = "a" };
+        var cut = RenderGrid(p => p.Add(g => g.DefaultFilter, first));
+        _service.LastRequest!.Filter.ShouldBe(first);
+
+        var second = new FilterDescriptor { Field = "Name", Operator = "eq", Value = "b" };
+        cut.Render(p => p.Add(g => g.DefaultFilter, second));
+
+        _service.LastRequest!.Filter.ShouldBe(second);
+        _service.LastRequest.Page.ShouldBe(1);
     }
 
     // ---- Фейки -------------------------------------------------------------

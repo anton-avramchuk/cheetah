@@ -176,7 +176,16 @@
     /// <summary>Enables click-to-sort on column headers (per-column опт-аут — <see cref="GridColumnAttribute.Sortable"/>). Default true.</summary>
     [Parameter] public bool Sortable { get; set; } = true;
 
+    /// <summary>
+    /// Базовый фильтр, применяемый к каждому запросу грида (например скоуп по родителю/статусу).
+    /// Поля берутся из ViewModel-грида (как в <see cref="CrmPageRequest.Filter"/>). При изменении значения
+    /// грид перезагружается с первой страницы.
+    /// </summary>
+    [Parameter] public FilterDescriptor? DefaultFilter { get; set; }
+
     private bool _autoOpenHandled;
+    private bool _initialized;
+    private FilterDescriptor? _lastFilter;
 
     // Single-column sort state; null = без сортировки (серверный дефолт).
     private string? _sortField;
@@ -199,10 +208,22 @@
 
     private static readonly IReadOnlyList<ColumnInfo> _columns = BuildColumns();
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
-        _pageSize = PageSize;
-        await LoadAsync();
+        if (!_initialized)
+        {
+            _initialized = true;
+            _pageSize = PageSize;
+            _lastFilter = DefaultFilter;
+            await LoadAsync();
+        }
+        else if (!ReferenceEquals(_lastFilter, DefaultFilter))
+        {
+            // Сменился базовый фильтр (родитель подал новый дескриптор) → перезагрузка с первой страницы.
+            _lastFilter = DefaultFilter;
+            _page = 1;
+            await LoadAsync();
+        }
     }
 
     private static IReadOnlyList<ColumnInfo> BuildColumns()
@@ -227,7 +248,7 @@
 
         try
         {
-            var request = new CrmPageRequest { Page = _page, PageSize = _pageSize };
+            var request = new CrmPageRequest { Page = _page, PageSize = _pageSize, Filter = DefaultFilter };
             if (_sortField is not null && _sortDir is not null)
                 request.Sort = [new SortDescriptor { Field = _sortField, Dir = _sortDir }];
 

@@ -2,6 +2,7 @@
 @typeparam TGridViewModel where TGridViewModel : class, IHasId
 @typeparam TDetailsViewModel where TDetailsViewModel : class, new()
 @typeparam TCreateViewModel where TCreateViewModel : class, new()
+@using Cheetah.Contracts.Requests
 
 @*
     Generic-шаблон грида документов продаж (КП/заказы/счета). SalesDocuments абстрактен (наследник
@@ -22,6 +23,8 @@
          PageSize="PageSize"
          EditFormType="EditFormType"
          CreateFormType="CreateFormType"
+         Sortable="Sortable"
+         DefaultFilter="DefaultFilter"
          RowActions="RowActions"
          ToolbarActions="ToolbarActions"
          CreateModelFactory="CreateModelFactory"
@@ -54,6 +57,9 @@
     [Parameter] public Func<TCreateViewModel>?         CreateModelFactory { get; set; }
     [Parameter] public bool                            AutoOpenCreate     { get; set; }
     [Parameter] public int?                            DialogWidthPx      { get; set; }
+
+    [Parameter] public bool               Sortable      { get; set; } = true;
+    [Parameter] public FilterDescriptor?  DefaultFilter { get; set; }
 
     [Parameter] public bool   ShowCreate        { get; set; } = true;
     [Parameter] public bool   ShowEdit          { get; set; } = true;
