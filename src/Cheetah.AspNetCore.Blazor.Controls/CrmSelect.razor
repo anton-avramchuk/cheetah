@@ -1,6 +1,7 @@
 @namespace Cheetah.AspNetCore.Blazor.Controls
 @typeparam TValue
 @implements IDisposable
+@inject IJSRuntime JS
 
 <div class="mb-3">
     @if (!string.IsNullOrEmpty(Label))
@@ -10,6 +11,7 @@
 
     <div class="crm-select @(_open ? "crm-select--open" : "")">
         <div class="form-select text-start crm-select__toggle @(Disabled ? "disabled" : "") @(IsInvalid ? "is-invalid" : "") @Class"
+             @ref="_toggleRef"
              role="button"
              tabindex="@(Disabled ? -1 : 0)"
              aria-haspopup="listbox"
@@ -48,7 +50,7 @@
         @if (_open)
         {
             <div class="crm-select__backdrop" @onclick="Close"></div>
-            <ul class="crm-select__menu" role="listbox" aria-multiselectable="@Multiple">
+            <ul class="crm-select__menu" role="listbox" aria-multiselectable="@Multiple" @ref="_menuRef">
                 @foreach (var item in Items)
                 {
                     var selected = IsSelected(item);
@@ -117,6 +119,11 @@
     private bool _touched;
     private bool _open;
 
+    private ElementReference _toggleRef;
+    private ElementReference _menuRef;
+    private IJSObjectReference? _module;
+    private bool _placed;
+
     private IReadOnlyCollection<TValue> SelectedValues => Values ?? [];
     // Для value-типов (Guid, int, enum) Value никогда не null — «не выбрано» = значение по умолчанию.
     private bool HasSelection        => Multiple
@@ -130,6 +137,30 @@
     {
         if (Required && FormContext is not null)
             FormContext.SetField(_fieldId, HasSelection);
+    }
+
+    // Открытое меню позиционируется фиксированно через JS, чтобы не обрезаться overflow-контейнерами
+    // (диалоги/скролл). Прогрессивное улучшение: в средах без JS (prerender/тесты) тихо пропускаем.
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (_open && !_placed)
+        {
+            _placed = true;
+            try
+            {
+                _module ??= await JS.InvokeAsync<IJSObjectReference>(
+                    "import", "./_content/Cheetah.AspNetCore.Blazor.Controls/CrmSelect.razor.js");
+                await _module.InvokeVoidAsync("place", _menuRef, _toggleRef);
+            }
+            catch
+            {
+                // JS недоступен (prerender/юнит-тесты) — оставляем CSS-fallback (absolute).
+            }
+        }
+        else if (!_open && _placed)
+        {
+            _placed = false;
+        }
     }
 
     private RenderFragment RenderItem(TValue item) => ItemTemplate is not null
@@ -206,5 +237,10 @@
 
     private void MarkTouched() => _touched = true;
 
-    public void Dispose() => FormContext?.UnregisterField(_fieldId);
+    public void Dispose()
+    {
+        FormContext?.UnregisterField(_fieldId);
+        if (_module is not null)
+            _ = _module.DisposeAsync().AsTask();
+    }
 }

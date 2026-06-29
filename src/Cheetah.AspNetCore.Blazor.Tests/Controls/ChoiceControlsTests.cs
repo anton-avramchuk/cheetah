@@ -6,6 +6,12 @@ namespace Cheetah.AspNetCore.Blazor.Tests.Controls;
 
 public class ChoiceControlsTests : BunitContext
 {
+    public ChoiceControlsTests()
+    {
+        // CrmSelect позиционирует открытое меню через JS (import + place) — в тестах JS мокаем мягко.
+        JSInterop.Mode = JSRuntimeMode.Loose;
+    }
+
     // ---- CrmCheckBox --------------------------------------------------------
 
     [Fact]
