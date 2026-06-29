@@ -17,16 +17,56 @@
 <CrmGrid TGridViewModel="TGridViewModel"
          TDetailsViewModel="TDetailsViewModel"
          TCreateViewModel="TCreateViewModel"
-         Title="@Title"
          Service="Service"
+         Title="@Title"
+         PageSize="PageSize"
          EditFormType="EditFormType"
-         CreateFormType="CreateFormType" />
+         CreateFormType="CreateFormType"
+         RowActions="RowActions"
+         ToolbarActions="ToolbarActions"
+         CreateModelFactory="CreateModelFactory"
+         AutoOpenCreate="AutoOpenCreate"
+         DialogWidthPx="DialogWidthPx"
+         ShowCreate="ShowCreate"
+         ShowEdit="ShowEdit"
+         ShowDelete="ShowDelete"
+         CreateButtonLabel="@CreateButtonLabel"
+         CreateDialogTitle="@CreateDialogTitle"
+         EditDialogTitle="@EditDialogTitle"
+         CreateUrl="@CreateUrl"
+         EditUrl="EditUrl"
+         OnCreated="OnCreated"
+         OnUpdated="OnUpdated"
+         OnDeleted="OnDeleted"
+         OnRowClick="OnRowClick" />
 
 @code {
     [Parameter, EditorRequired]
     public ICrudService<TGridViewModel, TDetailsViewModel, TCreateViewModel> Service { get; set; } = null!;
 
-    [Parameter, EditorRequired] public Type EditFormType { get; set; } = null!;
-    [Parameter, EditorRequired] public Type CreateFormType { get; set; } = null!;
-    [Parameter] public string Title { get; set; } = "Команды";
+    [Parameter] public Type?  EditFormType   { get; set; }
+    [Parameter] public Type?  CreateFormType { get; set; }
+    [Parameter] public string Title          { get; set; } = "Команды";
+    [Parameter] public int    PageSize       { get; set; } = 20;
+
+    [Parameter] public RenderFragment<TGridViewModel>? RowActions         { get; set; }
+    [Parameter] public RenderFragment?                 ToolbarActions     { get; set; }
+    [Parameter] public Func<TCreateViewModel>?         CreateModelFactory { get; set; }
+    [Parameter] public bool                            AutoOpenCreate     { get; set; }
+    [Parameter] public int?                            DialogWidthPx      { get; set; }
+
+    [Parameter] public bool   ShowCreate        { get; set; } = true;
+    [Parameter] public bool   ShowEdit          { get; set; } = true;
+    [Parameter] public bool   ShowDelete        { get; set; } = true;
+    [Parameter] public string CreateButtonLabel { get; set; } = "Создать";
+    [Parameter] public string CreateDialogTitle { get; set; } = "Создать";
+    [Parameter] public string EditDialogTitle   { get; set; } = "Редактировать";
+
+    [Parameter] public string?             CreateUrl { get; set; }
+    [Parameter] public Func<Guid, string>? EditUrl   { get; set; }
+
+    [Parameter] public EventCallback<Guid>           OnCreated  { get; set; }
+    [Parameter] public EventCallback<Guid>           OnUpdated  { get; set; }
+    [Parameter] public EventCallback<Guid>           OnDeleted  { get; set; }
+    [Parameter] public EventCallback<TGridViewModel> OnRowClick { get; set; }
 }
