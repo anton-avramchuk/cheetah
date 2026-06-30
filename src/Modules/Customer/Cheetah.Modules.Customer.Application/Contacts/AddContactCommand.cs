@@ -11,17 +11,18 @@ namespace Cheetah.Modules.Customer.Application.Contacts;
 public sealed record AddContactCommand<TCreateRequest>(Guid CustomerId, TCreateRequest Request) : ICommand<Guid>
     where TCreateRequest : CreateContactRequestBase;
 
-public class AddContactCommandHandler<TContact, TCreateRequest>
+public class AddContactCommandHandler<TContact, TCreateRequest, TPosition>
     : ICommandHandler<AddContactCommand<TCreateRequest>, Guid>
-    where TContact : ContactBase
+    where TContact : ContactBase<TPosition>
     where TCreateRequest : CreateContactRequestBase
+    where TPosition : PositionBase
 {
-    private readonly IContactFactory<TContact, TCreateRequest> _factory;
+    private readonly IContactFactory<TContact, TCreateRequest, TPosition> _factory;
     private readonly IRepository<TContact, Guid> _repository;
     private readonly IEventBus _eventBus;
 
     public AddContactCommandHandler(
-        IContactFactory<TContact, TCreateRequest> factory,
+        IContactFactory<TContact, TCreateRequest, TPosition> factory,
         IRepository<TContact, Guid> repository,
         IEventBus eventBus)
     {

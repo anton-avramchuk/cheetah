@@ -9,8 +9,9 @@ namespace Cheetah.Modules.Customer.Application.Contacts;
 /// <summary>Удалить контактное лицо (мягкое удаление).</summary>
 public sealed record RemoveContactCommand(Guid Id) : ICommand;
 
-public class RemoveContactCommandHandler<TContact> : ICommandHandler<RemoveContactCommand>
-    where TContact : ContactBase
+public class RemoveContactCommandHandler<TContact, TPosition> : ICommandHandler<RemoveContactCommand>
+    where TContact : ContactBase<TPosition>
+    where TPosition : PositionBase
 {
     private readonly IRepository<TContact, Guid> _repository;
     private readonly IEventBus _eventBus;

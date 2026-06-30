@@ -10,7 +10,7 @@ public abstract record ContactDtoBase
     public Guid Id { get; init; }
     public Guid CustomerId { get; init; }
     public string FullName { get; init; } = null!;
-    public string? Position { get; init; }
+    public Guid? PositionId { get; init; }
     public string? Email { get; init; }
     public string? Phone { get; init; }
     public DateTimeOffset? CreatedAt { get; init; }

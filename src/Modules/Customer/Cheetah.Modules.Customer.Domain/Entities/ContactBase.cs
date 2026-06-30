@@ -7,14 +7,24 @@ namespace Cheetah.Modules.Customer.Domain.Entities;
 /// <summary>
 /// Абстрактный базовый агрегат контактного лица клиента. Отдельный агрегат (не child-entity
 /// клиента) со ссылкой <see cref="CustomerId"/> — клиент остаётся лёгким, контакты листаются
-/// и изменяются независимо. Шаблонный модуль не инстанцирует его сам: наследник объявляет
-/// конкретный <c>sealed class Contact : ContactBase</c> со своей фабрикой и доп. полями.
+/// и изменяются независимо. Generic над типом должности <typeparamref name="TPosition"/>
+/// (наследник <see cref="PositionBase"/>): контакт ссылается на справочную должность по
+/// <see cref="PositionId"/> + строго типизированная навигация <see cref="Position"/>. Шаблонный
+/// модуль не инстанцирует его сам: наследник объявляет конкретный
+/// <c>sealed class Contact : ContactBase&lt;Position&gt;</c> со своей фабрикой и доп. полями.
 /// </summary>
-public abstract class ContactBase : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEntity, IRemovedAtEntity
+public abstract class ContactBase<TPosition> : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEntity, IRemovedAtEntity
+    where TPosition : PositionBase
 {
     public Guid CustomerId { get; private set; }
     public string FullName { get; private set; } = null!;
-    public string? Position { get; private set; }
+
+    /// <summary>Ссылка на должность-справочник (FK). Меняется через <see cref="ChangePosition"/>.</summary>
+    public Guid? PositionId { get; private set; }
+
+    /// <summary>Навигация на должность (заполняется EF при загрузке); домен меняет только <see cref="PositionId"/>.</summary>
+    public TPosition? Position { get; private set; }
+
     public Email? Email { get; private set; }
     public Phone? Phone { get; private set; }
 
@@ -28,7 +38,7 @@ public abstract class ContactBase : AggregateRoot<Guid>, ICreateAtEntity, IUpdat
     /// Заводит инварианты нового контактного лица и событие добавления. Вызывается фабрикой
     /// наследника. Контакты передаются строками и валидируются через VO.
     /// </summary>
-    protected void InitializeCore(Guid id, Guid customerId, string fullName, string? position, string? email, string? phone)
+    protected void InitializeCore(Guid id, Guid customerId, string fullName, Guid? positionId, string? email, string? phone)
     {
         if (customerId == Guid.Empty)
             throw new ArgumentException("CustomerId cannot be empty.", nameof(customerId));
@@ -36,7 +46,7 @@ public abstract class ContactBase : AggregateRoot<Guid>, ICreateAtEntity, IUpdat
         Id = id;
         CustomerId = customerId;
         SetFullName(fullName);
-        Position = NormalizeOptional(position);
+        PositionId = positionId;
         Email = ParseEmail(email);
         Phone = ParsePhone(phone);
         AddDomainEvent(new ContactAddedEvent(Id, CustomerId, FullName));
@@ -48,7 +58,7 @@ public abstract class ContactBase : AggregateRoot<Guid>, ICreateAtEntity, IUpdat
         AddDomainEvent(new ContactRenamedEvent(Id, FullName));
     }
 
-    public void ChangePosition(string? position) => Position = NormalizeOptional(position);
+    public void ChangePosition(Guid? positionId) => PositionId = positionId;
 
     public void ChangeContacts(string? email, string? phone)
     {
@@ -71,9 +81,6 @@ public abstract class ContactBase : AggregateRoot<Guid>, ICreateAtEntity, IUpdat
         ArgumentException.ThrowIfNullOrWhiteSpace(fullName);
         FullName = fullName.Trim();
     }
-
-    private static string? NormalizeOptional(string? value)
-        => string.IsNullOrWhiteSpace(value) ? null : value.Trim();
 
     private static Email? ParseEmail(string? value)
         => string.IsNullOrWhiteSpace(value) ? null : Cheetah.Core.Domain.ValueObjects.Email.Create(value);

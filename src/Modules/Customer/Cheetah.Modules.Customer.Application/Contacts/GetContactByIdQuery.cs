@@ -10,14 +10,15 @@ namespace Cheetah.Modules.Customer.Application.Contacts;
 public sealed record GetContactByIdQuery<TDto>(Guid Id) : IQuery<TDto?>
     where TDto : ContactDtoBase;
 
-public class GetContactByIdQueryHandler<TContact, TDto> : IQueryHandler<GetContactByIdQuery<TDto>, TDto?>
-    where TContact : ContactBase
+public class GetContactByIdQueryHandler<TContact, TDto, TPosition> : IQueryHandler<GetContactByIdQuery<TDto>, TDto?>
+    where TContact : ContactBase<TPosition>
     where TDto : ContactDtoBase
+    where TPosition : PositionBase
 {
     private readonly IRepository<TContact, Guid> _repository;
-    private readonly IContactProjector<TContact, TDto> _projector;
+    private readonly IContactProjector<TContact, TDto, TPosition> _projector;
 
-    public GetContactByIdQueryHandler(IRepository<TContact, Guid> repository, IContactProjector<TContact, TDto> projector)
+    public GetContactByIdQueryHandler(IRepository<TContact, Guid> repository, IContactProjector<TContact, TDto, TPosition> projector)
     {
         _repository = repository;
         _projector = projector;

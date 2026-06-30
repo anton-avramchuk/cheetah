@@ -18,11 +18,12 @@ public static class CustomerInfrastructureServiceCollectionExtensions
     /// <see cref="IRepository{TCustomer,Guid}"/> и <see cref="IRepository{TContact,Guid}"/>.
     /// Вызывается из инфраструктурного модуля наследника.
     /// </summary>
-    public static IServiceCollection AddCustomerInfrastructure<TContext, TCustomer, TContact>(
+    public static IServiceCollection AddCustomerInfrastructure<TContext, TCustomer, TContact, TPosition>(
         this IServiceCollection services)
-        where TContext : CustomerDbContextBase<TContext, TCustomer, TContact>
+        where TContext : CustomerDbContextBase<TContext, TCustomer, TContact, TPosition>
         where TCustomer : CustomerBase
-        where TContact : ContactBase
+        where TContact : ContactBase<TPosition>
+        where TPosition : PositionBase
     {
         services.AddApplicationDbContext<TContext>();
         services.AddScoped<TContext>();
@@ -30,6 +31,7 @@ public static class CustomerInfrastructureServiceCollectionExtensions
         services.Configure<CrmDbContextOptions>(options => { options.UseNpgsql<TContext>(); });
         services.AddScoped<IRepository<TCustomer, Guid>, EfRepository<TContext, TCustomer, Guid>>();
         services.AddScoped<IRepository<TContact, Guid>, EfRepository<TContext, TContact, Guid>>();
+        services.AddScoped<IRepository<TPosition, Guid>, EfRepository<TContext, TPosition, Guid>>();
         return services;
     }
 }

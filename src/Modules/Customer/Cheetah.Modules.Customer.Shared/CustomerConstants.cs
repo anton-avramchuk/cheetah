@@ -16,11 +16,11 @@ public static class CustomerConstants
 
     // Контактные лица клиента (отдельный агрегат со ссылкой CustomerId).
     public const int MaxFullNameLength = 256;
-    public const int MaxPositionLength = 128;
 
     public const string DefaultSchema = "customer";
     public const string DefaultTableName = "Customers";
     public const string DefaultContactsTableName = "Contacts";
+    public const string DefaultPositionsTableName = "Positions";
 
     public const string DefaultRoutePrefix = "api/customers";
 

@@ -8,7 +8,7 @@ namespace Cheetah.Modules.Customer.Contracts;
 public abstract record CreateContactRequestBase
 {
     public string FullName { get; init; } = null!;
-    public string? Position { get; init; }
+    public Guid? PositionId { get; init; }
     public string? Email { get; init; }
     public string? Phone { get; init; }
 }

@@ -11,10 +11,11 @@ namespace Cheetah.Modules.Customer.Application.Contacts;
 public sealed record UpdateContactCommand<TUpdateRequest>(Guid Id, TUpdateRequest Request) : ICommand
     where TUpdateRequest : UpdateContactRequestBase;
 
-public class UpdateContactCommandHandler<TContact, TUpdateRequest>
+public class UpdateContactCommandHandler<TContact, TUpdateRequest, TPosition>
     : ICommandHandler<UpdateContactCommand<TUpdateRequest>>
-    where TContact : ContactBase
+    where TContact : ContactBase<TPosition>
     where TUpdateRequest : UpdateContactRequestBase
+    where TPosition : PositionBase
 {
     private readonly IRepository<TContact, Guid> _repository;
     private readonly IEventBus _eventBus;
@@ -31,7 +32,7 @@ public class UpdateContactCommandHandler<TContact, TUpdateRequest>
             ?? throw new CustomerValidationException($"Contact '{command.Id}' not found");
 
         contact.Rename(command.Request.FullName);
-        contact.ChangePosition(command.Request.Position);
+        contact.ChangePosition(command.Request.PositionId);
         contact.ChangeContacts(command.Request.Email, command.Request.Phone);
         await _repository.SaveChangesAsync(ct);
 

@@ -6,8 +6,9 @@ using Cheetah.Modules.Customer.Domain.Entities;
 namespace Cheetah.Modules.Customer.Domain.Specifications;
 
 /// <summary>Контактные лица указанного клиента (по умолчанию — только не удалённые).</summary>
-public sealed class ContactsByCustomerSpecification<TContact> : Specification<TContact>
-    where TContact : ContactBase
+public sealed class ContactsByCustomerSpecification<TContact, TPosition> : Specification<TContact>
+    where TContact : ContactBase<TPosition>
+    where TPosition : PositionBase
 {
     private readonly Guid _customerId;
     private readonly bool _includeRemoved;
@@ -25,8 +26,9 @@ public sealed class ContactsByCustomerSpecification<TContact> : Specification<TC
 }
 
 /// <summary>Контактное лицо с указанным email.</summary>
-public sealed class ContactByEmailSpecification<TContact> : Specification<TContact>
-    where TContact : ContactBase
+public sealed class ContactByEmailSpecification<TContact, TPosition> : Specification<TContact>
+    where TContact : ContactBase<TPosition>
+    where TPosition : PositionBase
 {
     private readonly Email _email;
     public ContactByEmailSpecification(string email) => _email = Email.Create(email);

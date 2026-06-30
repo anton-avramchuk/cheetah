@@ -17,7 +17,7 @@ public class ContactCommandHandlerTests
     [Fact]
     public async Task Add_CreatesSavesAndPublishesAddedEvent()
     {
-        var handler = new AddContactCommandHandler<TestContact, TestCreateContactRequest>(
+        var handler = new AddContactCommandHandler<TestContact, TestCreateContactRequest, TestPosition>(
             new TestContactFactory(), _repo.Object, _eventBus.Object);
 
         var id = await handler.HandleAsync(new AddContactCommand<TestCreateContactRequest>(
@@ -34,7 +34,7 @@ public class ContactCommandHandlerTests
     {
         _repo.Setup(r => r.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((TestContact?)null);
-        var handler = new UpdateContactCommandHandler<TestContact, TestUpdateContactRequest>(_repo.Object, _eventBus.Object);
+        var handler = new UpdateContactCommandHandler<TestContact, TestUpdateContactRequest, TestPosition>(_repo.Object, _eventBus.Object);
 
         await Should.ThrowAsync<CustomerValidationException>(() =>
             handler.HandleAsync(new UpdateContactCommand<TestUpdateContactRequest>(
@@ -46,13 +46,14 @@ public class ContactCommandHandlerTests
     {
         var contact = TestContact.Create(CustomerId, "John");
         _repo.Setup(r => r.GetByIdAsync(contact.Id, It.IsAny<CancellationToken>())).ReturnsAsync(contact);
-        var handler = new UpdateContactCommandHandler<TestContact, TestUpdateContactRequest>(_repo.Object, _eventBus.Object);
+        var handler = new UpdateContactCommandHandler<TestContact, TestUpdateContactRequest, TestPosition>(_repo.Object, _eventBus.Object);
 
+        var newPositionId = Guid.NewGuid();
         await handler.HandleAsync(new UpdateContactCommand<TestUpdateContactRequest>(
-            contact.Id, new TestUpdateContactRequest { FullName = "Jane", Position = "CTO", Email = "j@x.io" }));
+            contact.Id, new TestUpdateContactRequest { FullName = "Jane", PositionId = newPositionId, Email = "j@x.io" }));
 
         contact.FullName.ShouldBe("Jane");
-        contact.Position.ShouldBe("CTO");
+        contact.PositionId.ShouldBe(newPositionId);
         contact.Email!.Value.ShouldBe("j@x.io");
         _repo.Verify(r => r.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
         _eventBus.Verify(b => b.PublishAsync(It.Is<IEvent>(e => e is ContactRenamedEvent), It.IsAny<CancellationToken>()), Times.Once);
@@ -63,7 +64,7 @@ public class ContactCommandHandlerTests
     {
         var contact = TestContact.Create(CustomerId, "John");
         _repo.Setup(r => r.GetByIdAsync(contact.Id, It.IsAny<CancellationToken>())).ReturnsAsync(contact);
-        var handler = new RemoveContactCommandHandler<TestContact>(_repo.Object, _eventBus.Object);
+        var handler = new RemoveContactCommandHandler<TestContact, TestPosition>(_repo.Object, _eventBus.Object);
 
         await handler.HandleAsync(new RemoveContactCommand(contact.Id));
 

@@ -17,7 +17,7 @@ public class ContactQueryHandlerTests
     {
         _repo.Setup(r => r.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((TestContact?)null);
-        var handler = new GetContactByIdQueryHandler<TestContact, TestContactDto>(_repo.Object, _projector);
+        var handler = new GetContactByIdQueryHandler<TestContact, TestContactDto, TestPosition>(_repo.Object, _projector);
 
         var dto = await handler.HandleAsync(new GetContactByIdQuery<TestContactDto>(Guid.NewGuid()));
 
@@ -27,9 +27,10 @@ public class ContactQueryHandlerTests
     [Fact]
     public async Task GetById_Found_ProjectsDto()
     {
-        var contact = TestContact.Create(CustomerId, "John", "CEO", "a@b.io");
+        var positionId = Guid.NewGuid();
+        var contact = TestContact.Create(CustomerId, "John", positionId, "a@b.io");
         _repo.Setup(r => r.GetByIdAsync(contact.Id, It.IsAny<CancellationToken>())).ReturnsAsync(contact);
-        var handler = new GetContactByIdQueryHandler<TestContact, TestContactDto>(_repo.Object, _projector);
+        var handler = new GetContactByIdQueryHandler<TestContact, TestContactDto, TestPosition>(_repo.Object, _projector);
 
         var dto = await handler.HandleAsync(new GetContactByIdQuery<TestContactDto>(contact.Id));
 
@@ -37,7 +38,7 @@ public class ContactQueryHandlerTests
         dto!.Id.ShouldBe(contact.Id);
         dto.CustomerId.ShouldBe(CustomerId);
         dto.FullName.ShouldBe("John");
-        dto.Position.ShouldBe("CEO");
+        dto.PositionId.ShouldBe(positionId);
         dto.Email.ShouldBe("a@b.io");
     }
 
@@ -51,7 +52,7 @@ public class ContactQueryHandlerTests
         };
         _repo.Setup(r => r.GetAllAsync(It.IsAny<ISpecification<TestContact>?>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(items);
-        var handler = new ListContactsByCustomerQueryHandler<TestContact, TestContactDto>(_repo.Object, _projector);
+        var handler = new ListContactsByCustomerQueryHandler<TestContact, TestContactDto, TestPosition>(_repo.Object, _projector);
 
         var result = await handler.HandleAsync(new ListContactsByCustomerQuery<TestContactDto>(CustomerId));
 

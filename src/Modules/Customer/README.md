@@ -48,7 +48,7 @@ Tests: Domain.Tests, Application.Tests
 | Тип | Сборка | Роль |
 |---|---|---|
 | `CustomerBase : AggregateRoot<Guid>` | Domain | агрегат клиента; `InitializeCore`, `Rename`, `ChangeContacts`, `AssignOwner`, `Archive`, `Activate`, `Deactivate` |
-| `ContactBase : AggregateRoot<Guid>` | Domain | агрегат контактного лица (`CustomerId`, `FullName`, `Position?`, `Email?`, `Phone?`); `InitializeCore`, `Rename`, `ChangePosition`, `ChangeContacts`, `Remove` |
+| `ContactBase : AggregateRoot<Guid>` | Domain | агрегат контактного лица (`CustomerId`, `FullName`, `PositionId?` — ссылка на справочник должностей наследника, `Email?`, `Phone?`); `InitializeCore`, `Rename`, `ChangePosition`, `ChangeContacts`, `Remove` |
 | `CustomerByEmail/ByIds/ByOwner/ActiveCustomers Specification<TCustomer>` | Domain | generic-спецификации фильтрации клиентов |
 | `ContactsByCustomer/ByEmail Specification<TContact>` | Domain | generic-спецификации фильтрации контактов |
 | `CustomerDtoBase`/`ContactDtoBase` + `Create`/`Update…RequestBase` | Contracts | абстрактные record (контакты — `string?`) |
@@ -129,7 +129,7 @@ public sealed class Contact : ContactBase
     public static Contact Create(Guid customerId, CreateContactRequest r)
     {
         var c = new Contact();
-        c.InitializeCore(Guid.NewGuid(), customerId, r.FullName, r.Position, r.Email, r.Phone);
+        c.InitializeCore(Guid.NewGuid(), customerId, r.FullName, r.PositionId, r.Email, r.Phone);
         return c;
     }
 }
@@ -144,7 +144,7 @@ public sealed class ContactProjector : IContactProjector<Contact, ContactDto>
 {
     public ContactDto ToDto(Contact c) => new()
     {
-        Id = c.Id, CustomerId = c.CustomerId, FullName = c.FullName, Position = c.Position,
+        Id = c.Id, CustomerId = c.CustomerId, FullName = c.FullName, PositionId = c.PositionId,
         Email = c.Email?.Value, Phone = c.Phone?.Value, CreatedAt = c.CreatedAt
     };
 }

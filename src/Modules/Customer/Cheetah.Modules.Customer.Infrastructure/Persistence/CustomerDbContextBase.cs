@@ -17,13 +17,15 @@ namespace Cheetah.Modules.Customer.Infrastructure.Persistence;
 /// <c>[ConnectionStringName]</c>).
 /// </summary>
 [ConnectionStringName(CustomerConstants.ConnectionStringName)]
-public abstract class CustomerDbContextBase<TContext, TCustomer, TContact> : CrmDbContext<TContext>
+public abstract class CustomerDbContextBase<TContext, TCustomer, TContact, TPosition> : CrmDbContext<TContext>
     where TContext : DbContext
     where TCustomer : CustomerBase
-    where TContact : ContactBase
+    where TContact : ContactBase<TPosition>
+    where TPosition : PositionBase
 {
     public DbSet<TCustomer> Customers => Set<TCustomer>();
     public DbSet<TContact> Contacts => Set<TContact>();
+    public DbSet<TPosition> Positions => Set<TPosition>();
 
     protected CustomerDbContextBase(DbContextOptions<TContext> options) : base(options)
     {
@@ -33,6 +35,7 @@ public abstract class CustomerDbContextBase<TContext, TCustomer, TContact> : Crm
     {
         base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfiguration(CreateCustomerConfiguration());
+        modelBuilder.ApplyConfiguration(CreatePositionConfiguration());
         modelBuilder.ApplyConfiguration(CreateContactConfiguration());
     }
 
@@ -41,4 +44,7 @@ public abstract class CustomerDbContextBase<TContext, TCustomer, TContact> : Crm
 
     /// <summary>Конкретная конфигурация сущности контактного лица, поставляемая наследником.</summary>
     protected abstract IEntityTypeConfiguration<TContact> CreateContactConfiguration();
+
+    /// <summary>Конкретная конфигурация справочной должности, поставляемая наследником.</summary>
+    protected abstract IEntityTypeConfiguration<TPosition> CreatePositionConfiguration();
 }

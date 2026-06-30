@@ -10,9 +10,9 @@ namespace Cheetah.Modules.Customer.Infrastructure;
 
 /// <summary>
 /// Инфраструктура шаблонного модуля Customer: абстрактные базы EF
-/// (<see cref="Persistence.CustomerDbContextBase{TContext,TCustomer,TContact}"/>,
+/// (<see cref="Persistence.CustomerDbContextBase{TContext,TCustomer,TContact,TPosition}"/>,
 /// <see cref="Persistence.Configurations.CustomerConfigurationBase{TCustomer}"/>) и generic-регистрация
-/// через <c>AddCustomerInfrastructure&lt;TContext,TCustomer&gt;()</c>. Конкретный DbContext, конфигурацию
+/// через <c>AddCustomerInfrastructure&lt;TContext,TCustomer,TContact,TPosition&gt;()</c>. Конкретный DbContext, конфигурацию
 /// сущностей и миграции создаёт наследник.
 /// </summary>
 [DependsOn(typeof(CoreModule),

@@ -14,28 +14,29 @@ public static class CustomerContactsServiceCollectionExtensions
     /// конкретной реализации. Вызывается из прикладного модуля наследника наряду с
     /// <c>AddCustomerApplication</c> (контакты — опциональны).
     /// </summary>
-    public static IServiceCollection AddCustomerContacts<TContact, TCreateRequest, TUpdateRequest, TDto, TFactory, TProjector>(
+    public static IServiceCollection AddCustomerContacts<TContact, TCreateRequest, TUpdateRequest, TDto, TFactory, TProjector, TPosition>(
         this IServiceCollection services)
-        where TContact : ContactBase
+        where TContact : ContactBase<TPosition>
         where TCreateRequest : CreateContactRequestBase
         where TUpdateRequest : UpdateContactRequestBase
         where TDto : ContactDtoBase
-        where TFactory : class, IContactFactory<TContact, TCreateRequest>
-        where TProjector : class, IContactProjector<TContact, TDto>
+        where TFactory : class, IContactFactory<TContact, TCreateRequest, TPosition>
+        where TProjector : class, IContactProjector<TContact, TDto, TPosition>
+        where TPosition : PositionBase
     {
-        services.AddScoped<IContactFactory<TContact, TCreateRequest>, TFactory>();
-        services.AddScoped<IContactProjector<TContact, TDto>, TProjector>();
+        services.AddScoped<IContactFactory<TContact, TCreateRequest, TPosition>, TFactory>();
+        services.AddScoped<IContactProjector<TContact, TDto, TPosition>, TProjector>();
 
         services.AddScoped<ICommandHandler<AddContactCommand<TCreateRequest>, Guid>,
-            AddContactCommandHandler<TContact, TCreateRequest>>();
+            AddContactCommandHandler<TContact, TCreateRequest, TPosition>>();
         services.AddScoped<ICommandHandler<UpdateContactCommand<TUpdateRequest>>,
-            UpdateContactCommandHandler<TContact, TUpdateRequest>>();
+            UpdateContactCommandHandler<TContact, TUpdateRequest, TPosition>>();
         services.AddScoped<ICommandHandler<RemoveContactCommand>,
-            RemoveContactCommandHandler<TContact>>();
+            RemoveContactCommandHandler<TContact, TPosition>>();
         services.AddScoped<IQueryHandler<GetContactByIdQuery<TDto>, TDto?>,
-            GetContactByIdQueryHandler<TContact, TDto>>();
+            GetContactByIdQueryHandler<TContact, TDto, TPosition>>();
         services.AddScoped<IQueryHandler<ListContactsByCustomerQuery<TDto>, IReadOnlyList<TDto>>,
-            ListContactsByCustomerQueryHandler<TContact, TDto>>();
+            ListContactsByCustomerQueryHandler<TContact, TDto, TPosition>>();
 
         return services;
     }

@@ -11,8 +11,9 @@ namespace Cheetah.Modules.Customer.Infrastructure.Persistence.Configurations;
 /// общие колонки, VO-конвертеры (<see cref="Email"/>/<see cref="Phone"/> ↔ строка) и индекс по
 /// <c>CustomerId</c>. Наследник наследует её и добавляет свои поля через <see cref="ConfigureCustom"/>.
 /// </summary>
-public abstract class ContactConfigurationBase<TContact> : IEntityTypeConfiguration<TContact>
-    where TContact : ContactBase
+public abstract class ContactConfigurationBase<TContact, TPosition> : IEntityTypeConfiguration<TContact>
+    where TContact : ContactBase<TPosition>
+    where TPosition : PositionBase
 {
     protected virtual string TableName => CustomerConstants.DefaultContactsTableName;
     protected virtual string Schema => CustomerConstants.DefaultSchema;
@@ -30,9 +31,6 @@ public abstract class ContactConfigurationBase<TContact> : IEntityTypeConfigurat
             .HasMaxLength(CustomerConstants.MaxFullNameLength)
             .IsRequired();
 
-        builder.Property(x => x.Position)
-            .HasMaxLength(CustomerConstants.MaxPositionLength);
-
         // VO-конвертеры: для null конвертер не вызывается (nullable-колонки работают как есть),
         // поэтому разыменование e!/p! здесь безопасно.
         builder.Property(x => x.Email)
@@ -44,6 +42,13 @@ public abstract class ContactConfigurationBase<TContact> : IEntityTypeConfigurat
             .HasMaxLength(CustomerConstants.MaxPhoneLength);
 
         builder.HasIndex(x => x.CustomerId);
+
+        // Должность — ссылка на справочник (FK + навигация). Индекс по PositionId EF создаёт сам.
+        // Удаление должности обнуляет ссылку у контактов (SetNull), а не каскадит.
+        builder.HasOne(x => x.Position)
+            .WithMany()
+            .HasForeignKey(x => x.PositionId)
+            .OnDelete(DeleteBehavior.SetNull);
 
         ConfigureCustom(builder);
     }

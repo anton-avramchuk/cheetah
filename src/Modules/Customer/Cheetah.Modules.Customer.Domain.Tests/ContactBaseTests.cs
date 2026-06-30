@@ -6,16 +6,17 @@ namespace Cheetah.Modules.Customer.Domain.Tests;
 public class ContactBaseTests
 {
     private static readonly Guid CustomerId = Guid.NewGuid();
+    private static readonly Guid PositionId = Guid.NewGuid();
 
     [Fact]
     public void Create_SetsFields_AndRaisesAddedEvent()
     {
-        var contact = TestContact.Create(CustomerId, "John Doe", "CEO", "john@acme.io", "+12025550123");
+        var contact = TestContact.Create(CustomerId, "John Doe", PositionId, "john@acme.io", "+12025550123");
 
         contact.Id.ShouldNotBe(Guid.Empty);
         contact.CustomerId.ShouldBe(CustomerId);
         contact.FullName.ShouldBe("John Doe");
-        contact.Position.ShouldBe("CEO");
+        contact.PositionId.ShouldBe(PositionId);
         contact.Email!.Value.ShouldBe("john@acme.io");
         contact.Phone!.Value.ShouldBe("+12025550123");
 
@@ -40,11 +41,11 @@ public class ContactBaseTests
     }
 
     [Fact]
-    public void Create_TrimsNameAndPosition_BlankPositionBecomesNull()
+    public void Create_TrimsName_AndKeepsNullPosition()
     {
-        var contact = TestContact.Create(CustomerId, "  John  ", "   ");
+        var contact = TestContact.Create(CustomerId, "  John  ");
         contact.FullName.ShouldBe("John");
-        contact.Position.ShouldBeNull();
+        contact.PositionId.ShouldBeNull();
     }
 
     [Fact]
