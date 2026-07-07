@@ -1,0 +1,35 @@
+@namespace Cheetah.AspNetCore.Blazor.Controls
+
+@* Семантическая статус-пилюля с точкой. Variant: success/danger/warning/info/secondary.
+   Для строк-статусов вариант удобно получать через StatusTone.Classify(...). *@
+<span class="crm-status crm-status-@Variant @Class">
+    @if (Dot)
+    {
+        <span class="crm-status-dot"></span>
+    }
+    @if (ChildContent is not null)
+    {
+        @ChildContent
+    }
+    else
+    {
+        @Text
+    }
+</span>
+
+@code {
+    /// <summary>Семантический вариант: success / danger / warning / info / secondary.</summary>
+    [Parameter] public string Variant { get; set; } = "secondary";
+
+    /// <summary>Текст пилюли (если не задан ChildContent).</summary>
+    [Parameter] public string Text { get; set; } = string.Empty;
+
+    /// <summary>Содержимое пилюли (перекрывает Text).</summary>
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>Показывать цветную точку слева. По умолчанию true.</summary>
+    [Parameter] public bool Dot { get; set; } = true;
+
+    /// <summary>Доп. CSS-классы.</summary>
+    [Parameter] public string Class { get; set; } = string.Empty;
+}

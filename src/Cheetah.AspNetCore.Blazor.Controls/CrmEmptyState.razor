@@ -1,0 +1,45 @@
+@namespace Cheetah.AspNetCore.Blazor.Controls
+
+@* Пустое состояние: иконка + заголовок + подсказка + опциональные действия (ChildContent). *@
+<div class="crm-empty-state @Class">
+    @if (IconContent is not null)
+    {
+        <div class="crm-empty-icon">@IconContent</div>
+    }
+    else if (!string.IsNullOrEmpty(Icon))
+    {
+        <div class="crm-empty-icon"><i class="bi @Icon"></i></div>
+    }
+    @if (!string.IsNullOrEmpty(Title))
+    {
+        <div class="crm-empty-title">@Title</div>
+    }
+    @if (!string.IsNullOrEmpty(Description))
+    {
+        <div class="crm-empty-desc">@Description</div>
+    }
+    @if (ChildContent is not null)
+    {
+        <div class="crm-empty-actions">@ChildContent</div>
+    }
+</div>
+
+@code {
+    /// <summary>Имя иконки Bootstrap Icons (например «bi-inbox»). Игнорируется, если задан IconContent.</summary>
+    [Parameter] public string Icon { get; set; } = string.Empty;
+
+    /// <summary>Произвольная иконка/иллюстрация вместо Bootstrap-иконки.</summary>
+    [Parameter] public RenderFragment? IconContent { get; set; }
+
+    /// <summary>Заголовок пустого состояния.</summary>
+    [Parameter] public string Title { get; set; } = string.Empty;
+
+    /// <summary>Пояснение под заголовком.</summary>
+    [Parameter] public string Description { get; set; } = string.Empty;
+
+    /// <summary>Действия (например кнопка-призыв). Рендерятся под текстом.</summary>
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>Доп. CSS-классы.</summary>
+    [Parameter] public string Class { get; set; } = string.Empty;
+}

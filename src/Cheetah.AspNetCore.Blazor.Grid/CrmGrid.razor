@@ -81,7 +81,31 @@
                         @onclick="@(() => OnRowClick.InvokeAsync(capturedRow))">
                         @foreach (var col in _columns)
                         {
-                            <td>@GetValue(capturedRow, col.PropertyName)</td>
+                            <td>
+                                @if (ColumnTemplates is not null && ColumnTemplates.TryGetValue(col.PropertyName, out var template))
+                                {
+                                    @template(capturedRow)
+                                }
+                                else
+                                {
+                                    var cell = GridCellDefault.Describe(GetValue(capturedRow, col.PropertyName));
+                                    @switch (cell.Kind)
+                                    {
+                                        case GridCellKind.Muted:
+                                            <span class="crm-cell-muted">@cell.Text</span>
+                                            break;
+                                        case GridCellKind.BoolTrue:
+                                            <span class="crm-status crm-status-success"><span class="crm-status-dot"></span>@cell.Text</span>
+                                            break;
+                                        case GridCellKind.BoolFalse:
+                                            <span class="crm-status crm-status-secondary"><span class="crm-status-dot"></span>@cell.Text</span>
+                                            break;
+                                        default:
+                                            @cell.Text
+                                            break;
+                                    }
+                                }
+                            </td>
                         }
                         @if (ShowActionsColumn)
                         {
@@ -138,6 +162,14 @@
 
     /// <summary>Optional extra per-row action buttons rendered before the built-in edit/delete buttons.</summary>
     [Parameter] public RenderFragment<TGridViewModel>? RowActions { get; set; }
+
+    /// <summary>
+    /// Пер-колоночные шаблоны ячеек (ключ — имя свойства из <c>[GridColumn]</c>). Если для колонки
+    /// задан шаблон, он рендерится вместо дефолта — так строятся «богатые» строки (аватар, контакты,
+    /// статус-пилюли). Колонки без шаблона используют <see cref="GridCellDefault"/> (bool→пилюля,
+    /// пусто→«—», даты форматируются).
+    /// </summary>
+    [Parameter] public IReadOnlyDictionary<string, RenderFragment<TGridViewModel>>? ColumnTemplates { get; set; }
 
     /// <summary>Optional extra toolbar content rendered after the "Create" button.</summary>
     [Parameter] public RenderFragment? ToolbarActions { get; set; }

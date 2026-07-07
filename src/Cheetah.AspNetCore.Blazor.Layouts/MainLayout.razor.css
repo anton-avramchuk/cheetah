@@ -268,7 +268,8 @@
 
 .content-inner {
     padding: 28px 32px;
-    max-width: 1400px;
+    max-width: 1320px;
+    margin-inline: auto;
 }
 
 /* ===== Blazor Error UI ===== */

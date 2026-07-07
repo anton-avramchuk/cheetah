@@ -1,0 +1,21 @@
+@namespace Cheetah.AspNetCore.Blazor.Controls
+
+@* Круглый аватар с инициалами и детерминированным цветом фона по имени. *@
+<span class="crm-avatar @Class"
+      style="width:@(Size)px;height:@(Size)px;font-size:@(FontSize)px;background:@Background;"
+      title="@Name" aria-hidden="true">@Initials</span>
+
+@code {
+    /// <summary>Имя, из которого берутся инициалы и цвет.</summary>
+    [Parameter] public string? Name { get; set; }
+
+    /// <summary>Диаметр в пикселях. По умолчанию 36.</summary>
+    [Parameter] public int Size { get; set; } = 36;
+
+    /// <summary>Доп. CSS-классы.</summary>
+    [Parameter] public string Class { get; set; } = string.Empty;
+
+    private string Initials => AvatarText.Initials(Name);
+    private string Background => AvatarText.Background(Name);
+    private int FontSize => (int)Math.Round(Size * 0.4);
+}
