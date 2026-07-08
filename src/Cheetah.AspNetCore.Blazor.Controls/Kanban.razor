@@ -7,7 +7,8 @@
     {
         var col = column;
         var cards = CardsSelector(col).ToList();
-        <div class="crm-kanban-column" @ondragover:preventDefault="true" @ondrop="() => OnDropAsync(col)">
+        <div class="crm-kanban-column @(IsDropTarget(col) ? "is-drop-target" : "")"
+             @ondragover:preventDefault="true" @ondragover="() => OnDragOver(col)" @ondrop="() => OnDropAsync(col)">
             <div class="crm-kanban-column-head" style="@HeadStyle(col)">
                 @if (ColumnHeaderTemplate is not null)
                 {
@@ -22,7 +23,7 @@
                     var canDrag = CanDragCard?.Invoke(c) ?? true;
                     <div class="crm-kanban-card @(canDrag ? "" : "crm-kanban-card-locked")"
                          draggable="@canDrag.ToString().ToLowerInvariant()"
-                         @ondragstart="() => OnDragStart(c, col)">
+                         @ondragstart="() => OnDragStart(c, col)" @ondragend="OnDragEnd">
                         @CardTemplate(c)
                     </div>
                 }
@@ -58,6 +59,7 @@
 
     private TCard? _draggedCard;
     private TColumn? _sourceColumn;
+    private TColumn? _overColumn;
 
     private void OnDragStart(TCard card, TColumn column)
     {
@@ -66,12 +68,36 @@
         _sourceColumn = column;
     }
 
+    // Наведение перетаскиваемой карточки на колонку — подсвечиваем её как валидную цель (drop-плейсхолдер).
+    private void OnDragOver(TColumn column)
+    {
+        if (_draggedCard is null || EqualityComparer<TColumn>.Default.Equals(_overColumn, column))
+            return;
+        _overColumn = column;
+        StateHasChanged();
+    }
+
+    // Конец перетаскивания (в т.ч. отмена/дроп мимо колонки) — сбрасываем состояние и подсветку.
+    private void OnDragEnd()
+    {
+        _draggedCard = default;
+        _sourceColumn = default;
+        _overColumn = default;
+    }
+
+    // Колонка — валидная цель дропа, если тащим карточку и это не исходная колонка.
+    private bool IsDropTarget(TColumn column)
+        => _draggedCard is not null
+           && EqualityComparer<TColumn>.Default.Equals(_overColumn, column)
+           && !EqualityComparer<TColumn>.Default.Equals(_sourceColumn, column);
+
     private async Task OnDropAsync(TColumn target)
     {
         var card = _draggedCard;
         var source = _sourceColumn;
         _draggedCard = default;
         _sourceColumn = default;
+        _overColumn = default;
 
         if (card is null || source is null) return;
         if (EqualityComparer<TColumn>.Default.Equals(source, target)) return; // та же колонка — игнор

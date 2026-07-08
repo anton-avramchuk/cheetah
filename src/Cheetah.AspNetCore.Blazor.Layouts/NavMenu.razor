@@ -28,6 +28,10 @@
                                     <i class="@item.Icon nav-icon"></i>
                                 }
                                 <span class="nav-text">@item.Label</span>
+                                @if (!string.IsNullOrEmpty(item.Badge))
+                                {
+                                    <span class="nav-badge">@item.Badge</span>
+                                }
                                 <i class="bi bi-chevron-down nav-chevron"></i>
                             </button>
                             <div class="nav-group-children">
@@ -53,6 +57,10 @@
                                 <i class="@item.Icon nav-icon"></i>
                             }
                             <span class="nav-text">@item.Label</span>
+                            @if (!string.IsNullOrEmpty(item.Badge))
+                            {
+                                <span class="nav-badge">@item.Badge</span>
+                            }
                         </a>
                     }
                 }

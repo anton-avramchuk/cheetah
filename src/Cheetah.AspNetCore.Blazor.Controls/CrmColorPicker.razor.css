@@ -1,0 +1,70 @@
+/* Колор-пикер: нативный свотч (input[type=color]) + текстовое HEX-поле + опц. пресеты.
+   Цвета — токены хоста с литеральными фолбэками (обе темы / bare-cheetah). */
+.crm-colorpicker {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.crm-colorpicker-swatch {
+    width: 42px;
+    height: 38px;
+    padding: 0;
+    border: 1px solid var(--border-color, #d1d5db);
+    border-radius: 8px;
+    background: transparent;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+.crm-colorpicker-swatch:disabled {
+    cursor: default;
+    opacity: .6;
+}
+/* Убираем дефолтную рамку внутреннего свотча в WebKit/Gecko — скругляем «плитку» цвета. */
+.crm-colorpicker-swatch::-webkit-color-swatch-wrapper { padding: 3px; }
+.crm-colorpicker-swatch::-webkit-color-swatch { border: none; border-radius: 5px; }
+.crm-colorpicker-swatch::-moz-color-swatch { border: none; border-radius: 5px; }
+
+.crm-colorpicker-hex {
+    flex: 1;
+    min-width: 0;
+    text-transform: lowercase;
+    font-family: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
+}
+
+.crm-colorpicker.is-invalid .crm-colorpicker-hex {
+    border-color: var(--accent-danger, #dc3545);
+}
+
+.crm-colorpicker-presets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+}
+.crm-colorpicker-preset {
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    border: 1px solid var(--border-color, #d1d5db);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: transform .12s ease;
+}
+.crm-colorpicker-preset:hover {
+    transform: scale(1.12);
+}
+.crm-colorpicker-preset.is-selected {
+    outline: 2px solid var(--accent-primary, #6366f1);
+    outline-offset: 1px;
+}
+.crm-colorpicker-preset:disabled {
+    cursor: default;
+    opacity: .6;
+}
+
+.crm-colorpicker-feedback {
+    margin-top: 4px;
+    font-size: 0.875rem;
+    color: var(--accent-danger, #dc3545);
+}

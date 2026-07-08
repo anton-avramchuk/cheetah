@@ -8,6 +8,9 @@ public class MenuItem
     public string? Url { get; set; }
     public int Order { get; set; }
 
+    /// <summary>Необязательный бейдж-счётчик у пункта (например число непрочитанных). Пусто — не рендерится.</summary>
+    public string? Badge { get; set; }
+
     /// <summary>Если задано — пункт виден только пользователю с этим разрешением (claim типа permission) или роли admin.</summary>
     public string? RequiredPermission { get; set; }
 

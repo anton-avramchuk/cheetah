@@ -65,6 +65,36 @@
     color: var(--accent-primary);
 }
 
+/* Акцентная полоса у активного пункта верхнего уровня (у дочерних роль индикатора играет точка). */
+::deep .nav-item.active:not(.nav-child)::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 60%;
+    border-radius: 0 3px 3px 0;
+    background: var(--accent-primary);
+}
+
+/* Бейдж-счётчик пункта меню (текст на акцентном фоне — белый в обеих темах, акцент одинаков). */
+::deep .nav-badge {
+    min-width: 18px;
+    height: 18px;
+    padding: 0 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 700;
+    line-height: 1;
+    color: #fff;
+    background: var(--accent-primary);
+    border-radius: 9px;
+    flex-shrink: 0;
+}
+
 /* ===== Nav Icon ===== */
 ::deep .nav-icon {
     font-size: 1.05rem;

@@ -1,0 +1,18 @@
+/* Бейдж-счётчик на заголовке таба (CrmTabPanel.Badge). Текст на акцентном фоне — белый в обеих
+   темах (акцент одинаков светлая/тёмная). */
+.crm-tab-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 6px;
+    margin-left: 6px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    line-height: 1;
+    color: #fff;
+    background: var(--accent-primary);
+    border-radius: 9px;
+    vertical-align: middle;
+}

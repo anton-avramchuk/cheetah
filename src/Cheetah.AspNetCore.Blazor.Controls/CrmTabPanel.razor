@@ -15,6 +15,9 @@
     [Parameter] public string Title    { get; set; } = string.Empty;
     [Parameter] public bool   Disabled { get; set; }
 
+    /// <summary>Необязательный бейдж-счётчик на заголовке таба (например число элементов). Пусто — не рендерится.</summary>
+    [Parameter] public string? Badge   { get; set; }
+
     /// <summary>
     /// Deferred (lazy) initialization. When <c>true</c>, the content is not created until
     /// the tab is activated for the first time, and is then kept alive (hidden via CSS) so
@@ -32,10 +35,11 @@
 
     private bool ShouldRenderContent => LazyEffective ? _hasBeenActivated : IsActive;
 
-    protected override void OnInitialized() => Parent.RegisterTab(Key, Title, Disabled);
+    protected override void OnInitialized() => Parent.RegisterTab(Key, Title, Disabled, Badge);
 
     protected override void OnParametersSet()
     {
         if (IsActive) _hasBeenActivated = true;
+        Parent.UpdateTab(Key, Title, Disabled, Badge);
     }
 }

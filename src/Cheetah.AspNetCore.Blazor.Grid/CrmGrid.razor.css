@@ -8,7 +8,7 @@
     align-items: center;
     padding: 1.25rem 1.5rem;
     border-bottom: 1px solid var(--border-color);
-    background: #fff;
+    background: var(--surface, #fff);
 }
 
 ::deep .crm-grid-title {
@@ -63,7 +63,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 1rem 1.5rem;
-    background: #fff;
+    background: var(--surface, #fff);
     border-top: 1px solid var(--border-color);
 }
 

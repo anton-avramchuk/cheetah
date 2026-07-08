@@ -15,6 +15,10 @@
                         type="button"
                         @onclick="() => Activate(t.Key)">
                     @t.Title
+                    @if (!string.IsNullOrEmpty(t.Badge))
+                    {
+                        <span class="crm-tab-badge">@t.Badge</span>
+                    }
                 </button>
             </li>
         }
@@ -27,7 +31,13 @@
 </div>
 
 @code {
-    internal record TabInfo(string Key, string Title, bool Disabled);
+    internal sealed class TabInfo(string key, string title, bool disabled, string? badge)
+    {
+        public string Key { get; } = key;
+        public string Title { get; set; } = title;
+        public bool Disabled { get; set; } = disabled;
+        public string? Badge { get; set; } = badge;
+    }
 
     [Parameter] public RenderFragment? ChildContent { get; set; }
     [Parameter] public string Label { get; set; } = string.Empty;
@@ -48,14 +58,28 @@
     private string _active = string.Empty;
     private readonly List<TabInfo> _tabs = [];
 
-    internal void RegisterTab(string key, string title, bool disabled)
+    internal void RegisterTab(string key, string title, bool disabled, string? badge)
     {
         if (_tabs.All(t => t.Key != key))
         {
-            _tabs.Add(new TabInfo(key, title, disabled));
+            _tabs.Add(new TabInfo(key, title, disabled, badge));
             if (_active == string.Empty) _active = key;
             StateHasChanged();
         }
+    }
+
+    // Обновление динамических атрибутов таба (заголовок/бейдж/disabled) после регистрации —
+    // вызывается панелью из OnParametersSet, чтобы счётчик на табе жил и менялся во времени.
+    internal void UpdateTab(string key, string title, bool disabled, string? badge)
+    {
+        var tab = _tabs.FirstOrDefault(t => t.Key == key);
+        if (tab is null || (tab.Title == title && tab.Disabled == disabled && tab.Badge == badge))
+            return;
+
+        tab.Title = title;
+        tab.Disabled = disabled;
+        tab.Badge = badge;
+        StateHasChanged();
     }
 
     internal bool IsActive(string key) => key == _active;

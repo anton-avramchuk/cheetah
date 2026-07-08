@@ -29,6 +29,13 @@ public class MenuItemBuilder
         return this;
     }
 
+    /// <summary>Задать бейдж-счётчик у пункта (например число непрочитанных). Пусто/null — бейдж не рендерится.</summary>
+    public MenuItemBuilder WithBadge(string? badge)
+    {
+        _item.Badge = badge;
+        return this;
+    }
+
     public MenuItemBuilder RequirePermission(string permission)
     {
         _item.RequiredPermission = permission;

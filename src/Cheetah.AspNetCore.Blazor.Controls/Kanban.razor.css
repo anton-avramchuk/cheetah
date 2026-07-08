@@ -1,18 +1,40 @@
+/* Доска канбан. Цвета — через дизайн-токены хоста с литеральными фолбэками (работает и без токенов).
+   Фон-подложка краевых теней настраивается через --kanban-bg. */
 .crm-kanban {
+    --kanban-bg: var(--surface, #fff);
     display: flex;
     gap: .75rem;
     overflow-x: auto;
     padding-bottom: .5rem;
-    align-items: flex-start;
+    align-items: stretch; /* колонки равной высоты */
+
+    /* Краевые тени горизонтального скролла (классический трюк «cover + shadow»):
+       cover-градиенты цвета подложки прокручиваются с контентом (local) и прячут тень у краёв,
+       radial-тени зафиксированы у видимых краёв (scroll) и проявляются при прокрутке. */
+    background:
+        linear-gradient(to right, var(--kanban-bg), transparent) 0 0 / 28px 100% no-repeat,
+        linear-gradient(to left, var(--kanban-bg), transparent) 100% 0 / 28px 100% no-repeat,
+        radial-gradient(farthest-side at 0 50%, rgba(0, 0, 0, .18), transparent) 0 0 / 14px 100% no-repeat,
+        radial-gradient(farthest-side at 100% 50%, rgba(0, 0, 0, .18), transparent) 100% 0 / 14px 100% no-repeat;
+    background-attachment: local, local, scroll, scroll;
 }
 
 .crm-kanban-column {
     flex: 0 0 240px;
-    background: #f3f4f6;
+    background: var(--surface-2, #f3f4f6);
     border-radius: 8px;
     display: flex;
     flex-direction: column;
-    max-height: calc(100vh - 200px);
+    height: calc(100vh - 220px); /* фикс-высота: все колонки одинаковые, тело скроллится внутри */
+    transition: outline-color .15s ease, background .15s ease;
+    outline: 2px dashed transparent;
+    outline-offset: -2px;
+}
+
+/* Колонка-цель дропа: пунктирная акцентная рамка + лёгкая заливка (drop-плейсхолдер). */
+.crm-kanban-column.is-drop-target {
+    outline-color: var(--accent-primary, #6366f1);
+    background: var(--hover-bg, #eef2ff);
 }
 
 .crm-kanban-column-head {
@@ -25,11 +47,12 @@
     font-size: .85rem;
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
-    border-bottom: 3px solid #d1d5db;
+    border-bottom: 3px solid var(--border-color, #d1d5db);
 }
 
 .crm-kanban-count {
-    background: rgba(0, 0, 0, .08);
+    background: var(--hover-bg, rgba(0, 0, 0, .08));
+    color: var(--text-secondary, #4b5563);
     border-radius: 999px;
     padding: 0 .5rem;
     font-size: .75rem;
@@ -47,8 +70,8 @@
 }
 
 .crm-kanban-card {
-    background: #fff;
-    border: 1px solid #e5e7eb;
+    background: var(--surface, #fff);
+    border: 1px solid var(--border-color, #e5e7eb);
     border-radius: 6px;
     padding: .55rem .65rem;
     box-shadow: 0 1px 2px rgba(0, 0, 0, .05);

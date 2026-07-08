@@ -1,0 +1,117 @@
+@namespace Cheetah.AspNetCore.Blazor.Controls
+@implements IDisposable
+
+<div class="mb-3">
+    @if (!string.IsNullOrEmpty(Label))
+    {
+        <label class="form-label @(Required ? "crm-label-required" : "")">@Label</label>
+    }
+    <div class="crm-colorpicker @(ShowError ? "is-invalid" : "")">
+        <input type="color"
+               class="crm-colorpicker-swatch"
+               value="@SwatchValue"
+               disabled="@(Disabled || ReadOnly)"
+               @oninput="OnSwatchInput"
+               @onchange="MarkTouched"
+               aria-label="@(string.IsNullOrEmpty(Label) ? "Выбор цвета" : Label)" />
+        <input type="text"
+               class="form-control crm-colorpicker-hex @Class"
+               value="@Value"
+               placeholder="@(string.IsNullOrEmpty(Placeholder) ? "#rrggbb" : Placeholder)"
+               disabled="@Disabled"
+               readonly="@ReadOnly"
+               maxlength="7"
+               spellcheck="false"
+               @onchange="OnHexChange" />
+    </div>
+    @if (Presets is { Count: > 0 })
+    {
+        <div class="crm-colorpicker-presets">
+            @foreach (var preset in Presets)
+            {
+                var p = preset;
+                <button type="button"
+                        class="crm-colorpicker-preset @(string.Equals(p, Value, StringComparison.OrdinalIgnoreCase) ? "is-selected" : "")"
+                        style="background:@p"
+                        title="@p"
+                        aria-label="@p"
+                        disabled="@(Disabled || ReadOnly)"
+                        @onclick="() => SelectPresetAsync(p)"></button>
+            }
+        </div>
+    }
+    @if (!string.IsNullOrEmpty(Error))
+    {
+        <div class="crm-colorpicker-feedback">@Error</div>
+    }
+    else if (ShowValidationError)
+    {
+        <div class="crm-colorpicker-feedback">Поле обязательно для заполнения</div>
+    }
+    @if (!string.IsNullOrEmpty(Hint) && !ShowError)
+    {
+        <div class="form-text">@Hint</div>
+    }
+</div>
+
+@code {
+    [CascadingParameter] public DialogFormContext? FormContext { get; set; }
+
+    [Parameter] public string?  Value       { get; set; }
+    [Parameter] public string   Label       { get; set; } = string.Empty;
+    [Parameter] public string   Placeholder { get; set; } = string.Empty;
+    [Parameter] public string?  Error       { get; set; }
+    [Parameter] public string   Hint        { get; set; } = string.Empty;
+    [Parameter] public string   Class       { get; set; } = string.Empty;
+    [Parameter] public bool     Disabled    { get; set; }
+    [Parameter] public bool     ReadOnly    { get; set; }
+    [Parameter] public bool     Required    { get; set; }
+
+    /// <summary>Необязательный набор предустановленных цветов-свотчей (значения вида <c>#rrggbb</c>).</summary>
+    [Parameter] public IReadOnlyList<string>? Presets { get; set; }
+
+    [Parameter] public EventCallback<string?> ValueChanged { get; set; }
+
+    private readonly string _fieldId = Guid.NewGuid().ToString("N");
+    private bool _touched;
+
+    // Нативный <input type=color> требует валидный #rrggbb; для невалидного/пустого — чёрный.
+    private string SwatchValue => ColorHex.IsValid(Value) ? Value!.ToLowerInvariant() : "#000000";
+
+    private bool RequiredInvalid     => Required && string.IsNullOrWhiteSpace(Value);
+    private bool ShowValidationError => RequiredInvalid && _touched;
+    private bool ShowError           => !string.IsNullOrEmpty(Error) || ShowValidationError;
+
+    protected override void OnInitialized()
+    {
+        if (Required && FormContext is not null)
+            FormContext.SetField(_fieldId, !string.IsNullOrWhiteSpace(Value));
+    }
+
+    // Свотч отдаёт готовый #rrggbb — коммитим как есть.
+    private Task OnSwatchInput(ChangeEventArgs e) => CommitAsync(e.Value?.ToString());
+
+    // Текстовый ввод коммитим на change (blur/enter), приводя к каноничному виду.
+    private Task OnHexChange(ChangeEventArgs e)
+    {
+        _touched = true;
+        return CommitAsync(ColorHex.Normalize(e.Value?.ToString()));
+    }
+
+    private Task SelectPresetAsync(string preset)
+    {
+        _touched = true;
+        return CommitAsync(preset);
+    }
+
+    private async Task CommitAsync(string? value)
+    {
+        if (Required && FormContext is not null)
+            FormContext.SetField(_fieldId, !string.IsNullOrWhiteSpace(value));
+        await ValueChanged.InvokeAsync(value);
+    }
+
+    private void MarkTouched() => _touched = true;
+
+    public void Dispose() => FormContext?.UnregisterField(_fieldId);
+}

@@ -16,7 +16,7 @@
     padding: 0 6px;
     border: 1px solid var(--border-color, #e5e7ee);
     border-radius: var(--radius-sm, 6px);
-    background: #fff;
+    background: var(--surface, #fff);
     color: var(--text-primary, #1e293b);
     font-size: 13px;
     font-weight: 500;
@@ -84,7 +84,7 @@
     padding: 0 24px 0 8px;
     border: 1px solid var(--border-color, #e5e7ee);
     border-radius: var(--radius-sm, 6px);
-    background: #fff;
+    background: var(--surface, #fff);
     color: var(--text-primary, #1e293b);
     font-size: 13px;
     cursor: pointer;
