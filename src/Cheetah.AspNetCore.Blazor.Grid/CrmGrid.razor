@@ -77,8 +77,8 @@
                 @foreach (var row in _items)
                 {
                     var capturedRow = row;
-                    <tr class="@(OnRowClick.HasDelegate ? "crm-grid-row-clickable" : null)"
-                        @onclick="@(() => OnRowClick.InvokeAsync(capturedRow))">
+                    <tr class="@(RowClickable ? "crm-grid-row-clickable" : null)"
+                        @onclick="@(() => OnRowClickAsync(capturedRow))">
                         @foreach (var col in _columns)
                         {
                             <td>
@@ -205,6 +205,13 @@
     /// <summary>Optional row-click handler (e.g. open a details page). Action buttons stop propagation.</summary>
     [Parameter] public EventCallback<TGridViewModel> OnRowClick { get; set; }
 
+    /// <summary>
+    /// When true, clicking a row triggers the same action as the row's edit button — navigate to
+    /// <see cref="EditUrl"/> if set, otherwise open the edit dialog. Takes precedence over
+    /// <see cref="OnRowClick"/>. Action buttons still stop propagation.
+    /// </summary>
+    [Parameter] public bool EditOnRowClick { get; set; }
+
     /// <summary>Enables click-to-sort on column headers (per-column опт-аут — <see cref="GridColumnAttribute.Sortable"/>). Default true.</summary>
     [Parameter] public bool Sortable { get; set; } = true;
 
@@ -224,6 +231,13 @@
     private string? _sortDir;
 
     private bool CanSort(ColumnInfo col) => Sortable && col.Sortable;
+
+    // Строка кликабельна, если задан обработчик клика или включён режим правки по клику.
+    private bool RowClickable => OnRowClick.HasDelegate || EditOnRowClick;
+
+    // Клик по строке: режим правки (навигация/диалог как у кнопки-карандаша) имеет приоритет.
+    private Task OnRowClickAsync(TGridViewModel row)
+        => EditOnRowClick ? OnEditClickAsync(row.Id) : OnRowClick.InvokeAsync(row);
 
     private DialogDimension? DialogWidth => DialogWidthPx is { } px ? new DialogDimension.Pixels(px) : null;
 
