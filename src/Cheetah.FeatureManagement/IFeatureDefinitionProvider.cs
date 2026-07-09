@@ -25,7 +25,8 @@ public sealed record FeatureDefinition(
     bool Enabled,
     FeatureValueType ValueType,
     IReadOnlyList<TargetingRuleDefinition> Rules,
-    IReadOnlyList<VariantDefinition> Variants)
+    IReadOnlyList<VariantDefinition> Variants,
+    string? ParentKey = null)
 {
     public static FeatureDefinition Disabled(string key)
         => new(key, false, FeatureValueType.Bool, [], []);

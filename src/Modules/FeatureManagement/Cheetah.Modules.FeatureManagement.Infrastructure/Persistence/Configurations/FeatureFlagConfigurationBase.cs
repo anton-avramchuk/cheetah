@@ -27,9 +27,11 @@ public abstract class FeatureFlagConfigurationBase<TFlag> : IEntityTypeConfigura
         builder.Property(x => x.Name).HasMaxLength(FeatureManagementConstants.MaxNameLength).IsRequired();
         builder.Property(x => x.OwnerService).HasMaxLength(FeatureManagementConstants.MaxOwnerServiceLength).IsRequired();
         builder.Property(x => x.ValueType).HasConversion<int>();
+        builder.Property(x => x.ParentKey).HasMaxLength(FeatureManagementConstants.MaxKeyLength);
 
         builder.HasIndex(x => x.Key).IsUnique();          // ключ — стабильный контракт
         builder.HasIndex(x => x.OwnerService);
+        builder.HasIndex(x => x.ParentKey);               // обход потомков конкретного родителя
 
         // Backing-поля (_rules/_variants/_overrides) находит конвенция; явный HasField на приватных
         // полях базового класса EF не разрешает.

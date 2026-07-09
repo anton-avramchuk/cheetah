@@ -8,6 +8,9 @@ public class FeatureManagerTests
     private static FeatureManager Manager(FeatureDefinition def, params IFeatureFilter[] filters)
         => new(new FakeDefinitionProvider(def), filters);
 
+    private static FeatureManager Manager(FeatureDefinition[] defs, params IFeatureFilter[] filters)
+        => new(new FakeDefinitionProvider(defs), filters);
+
     [Fact]
     public async Task Unregistered_flag_is_disabled()
     {
@@ -141,6 +144,83 @@ public class FeatureManagerTests
         var mgr = Manager(def);
 
         (await mgr.GetVariantAsync("exp")).ShouldBeNull();
+    }
+
+    // ── Каскад родитель→потомок ──────────────────────────────────────────────────────────────
+
+    [Fact]
+    public async Task Disabled_parent_disables_child_even_if_child_enabled_without_rules()
+    {
+        var parent = new FeatureDefinition("Vacancy", Enabled: false, FeatureValueType.Bool, [], []);
+        var child = new FeatureDefinition("Vacancy.Teams", Enabled: true, FeatureValueType.Bool, [], [], ParentKey: "Vacancy");
+        var mgr = Manager([parent, child]);
+
+        (await mgr.IsEnabledAsync("Vacancy.Teams")).ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task Enabled_parent_lets_child_own_rules_decide()
+    {
+        var parent = new FeatureDefinition("Vacancy", Enabled: true, FeatureValueType.Bool, [], []);
+        var child = new FeatureDefinition("Vacancy.Teams", Enabled: true, FeatureValueType.Bool, [], [], ParentKey: "Vacancy");
+        var mgr = Manager([parent, child]);
+
+        (await mgr.IsEnabledAsync("Vacancy.Teams")).ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task Three_level_chain_disabled_at_top_disables_leaf()
+    {
+        var top = new FeatureDefinition("A", Enabled: false, FeatureValueType.Bool, [], []);
+        var mid = new FeatureDefinition("A.B", Enabled: true, FeatureValueType.Bool, [], [], ParentKey: "A");
+        var leaf = new FeatureDefinition("A.B.C", Enabled: true, FeatureValueType.Bool, [], [], ParentKey: "A.B");
+        var mgr = Manager([top, mid, leaf]);
+
+        (await mgr.IsEnabledAsync("A.B.C")).ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task Three_level_chain_all_enabled_leaf_follows_own_rules()
+    {
+        var top = new FeatureDefinition("A", Enabled: true, FeatureValueType.Bool, [], []);
+        var mid = new FeatureDefinition("A.B", Enabled: true, FeatureValueType.Bool, [], [], ParentKey: "A");
+        var leaf = new FeatureDefinition("A.B.C", Enabled: true, FeatureValueType.Bool, [], [], ParentKey: "A.B");
+        var mgr = Manager([top, mid, leaf]);
+
+        (await mgr.IsEnabledAsync("A.B.C")).ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task Missing_parent_definition_is_failsafe_disabled()
+    {
+        // Родитель заявлен (ParentKey), но не зарегистрирован в провайдере — битые/рассинхронизированные
+        // данные не должны раскатывать фичу на всех.
+        var child = new FeatureDefinition("orphan.child", Enabled: true, FeatureValueType.Bool, [], [], ParentKey: "orphan.missing");
+        var mgr = Manager([child]);
+
+        (await mgr.IsEnabledAsync("orphan.child")).ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task Cyclic_parent_chain_does_not_hang_and_is_disabled()
+    {
+        // На случай, если валидация циклов на записи была обойдена — движок не должен зависнуть.
+        var a = new FeatureDefinition("cyc.a", Enabled: true, FeatureValueType.Bool, [], [], ParentKey: "cyc.b");
+        var b = new FeatureDefinition("cyc.b", Enabled: true, FeatureValueType.Bool, [], [], ParentKey: "cyc.a");
+        var mgr = Manager([a, b]);
+
+        (await mgr.IsEnabledAsync("cyc.a")).ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task Disabled_parent_disables_child_variant_evaluation()
+    {
+        var parent = new FeatureDefinition("Exp", Enabled: false, FeatureValueType.Bool, [], []);
+        var child = new FeatureDefinition("Exp.Variant", Enabled: true, FeatureValueType.Variant, [],
+            [new VariantDefinition("control", "0", 1)], ParentKey: "Exp");
+        var mgr = Manager([parent, child]);
+
+        (await mgr.GetVariantAsync("Exp.Variant", new FeatureContext { UserId = Guid.NewGuid() })).ShouldBeNull();
     }
 
     [Fact]

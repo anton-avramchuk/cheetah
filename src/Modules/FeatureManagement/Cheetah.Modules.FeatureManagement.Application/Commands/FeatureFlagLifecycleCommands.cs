@@ -21,6 +21,9 @@ public sealed record SetTargetingCommand(string Key, IReadOnlyList<TargetingRule
 /// <summary>Установить/заменить override для тенанта.</summary>
 public sealed record SetTenantOverrideCommand(string Key, Guid TenantId, bool Enabled, IReadOnlyList<TargetingRuleDto> Rules) : ICommand;
 
+/// <summary>Сменить/снять родителя флага (каскад). <c>ParentKey == null</c> — сделать флаг верхнего уровня.</summary>
+public sealed record SetParentFeatureFlagCommand(string Key, string? ParentKey) : ICommand;
+
 // ── Базовый хендлер: загрузка по ключу + публикация событий ─────────────────────────────────
 
 public abstract class FeatureFlagCommandHandlerBase<TFlag>
@@ -96,6 +99,49 @@ public sealed class SetTenantOverrideCommandHandler<TFlag>(IFeatureFlagRepositor
         var flag = await LoadAsync(command.Key, includeChildren: true, ct);
         var rulesJson = command.Rules.Count > 0 ? TargetingRuleMapper.SerializeRules(command.Rules) : null;
         flag.SetTenantOverride(TenantOverride.Create(flag.Id, command.TenantId, command.Enabled, rulesJson));
+        await SaveAndPublishAsync(flag, ct);
+    }
+}
+
+public sealed class SetParentFeatureFlagCommandHandler<TFlag>(IFeatureFlagRepository<TFlag> repository, IEventBus eventBus)
+    : FeatureFlagCommandHandlerBase<TFlag>(repository, eventBus), ICommandHandler<SetParentFeatureFlagCommand>
+    where TFlag : FeatureFlagBase
+{
+    /// <summary>Максимальная глубина цепочки родителей — защита от случайно оставшихся циклов в данных.</summary>
+    private const int MaxDepth = 32;
+
+    public async ValueTask HandleAsync(SetParentFeatureFlagCommand command, CancellationToken ct = default)
+    {
+        var flag = await LoadAsync(command.Key, includeChildren: false, ct);
+
+        if (command.ParentKey is { } parentKey)
+        {
+            if (string.Equals(parentKey, command.Key, StringComparison.Ordinal))
+                throw new InvalidOperationException("Флаг не может быть родителем самому себе.");
+
+            // Строим карту Key -> ParentKey по всему графу флагов, чтобы обнаружить цикл ДО записи:
+            // если, поднимаясь от предполагаемого родителя вверх по цепочке, встретим ключ самого
+            // флага — новая связь замкнёт цикл.
+            var all = await Repository.ListAsync(spec: null, includeChildren: false, ct);
+            var parentByKey = all.ToDictionary(f => f.Key, f => f.ParentKey, StringComparer.Ordinal);
+
+            if (!parentByKey.ContainsKey(parentKey))
+                throw new EntityNotFoundException(nameof(FeatureFlagBase), parentKey);
+
+            var current = parentKey;
+            for (var depth = 0; current is not null; depth++)
+            {
+                if (depth >= MaxDepth)
+                    throw new InvalidOperationException($"Цепочка родителей флага '{parentKey}' слишком длинная.");
+                if (string.Equals(current, command.Key, StringComparison.Ordinal))
+                    throw new InvalidOperationException(
+                        $"Флаг '{parentKey}' не может стать родителем '{command.Key}' — это создаст цикл.");
+
+                parentByKey.TryGetValue(current, out current);
+            }
+        }
+
+        flag.SetParent(command.ParentKey);
         await SaveAndPublishAsync(flag, ct);
     }
 }

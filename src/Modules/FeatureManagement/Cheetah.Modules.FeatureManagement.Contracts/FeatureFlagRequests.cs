@@ -14,6 +14,15 @@ public abstract record CreateFeatureFlagRequestBase
     public string OwnerService { get; init; } = null!;
     public FeatureValueType ValueType { get; init; } = FeatureValueType.Bool;
     public IReadOnlyList<FeatureVariantDto> Variants { get; init; } = [];
+
+    /// <summary>Ключ родительского флага (каскад) или <c>null</c> — флаг верхнего уровня.</summary>
+    public string? ParentKey { get; init; }
+}
+
+/// <summary>Запрос смены родителя флага (каскад). <c>null</c> — снять родителя (сделать верхнего уровня).</summary>
+public abstract record SetParentFeatureFlagRequestBase
+{
+    public string? ParentKey { get; init; }
 }
 
 /// <summary>Базовый запрос смены таргетинга (полная замена набора правил).</summary>

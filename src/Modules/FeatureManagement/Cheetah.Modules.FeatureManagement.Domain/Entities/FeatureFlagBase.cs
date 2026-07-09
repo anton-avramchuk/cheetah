@@ -25,6 +25,14 @@ public abstract class FeatureFlagBase : AggregateRoot<Guid>, ICreateAtEntity, IU
     public string? Description { get; protected set; }
     public string OwnerService { get; protected set; } = null!;
 
+    /// <summary>
+    /// Ключ родительского флага (каскад): если у родителя <see cref="Enabled"/> == false, этот флаг
+    /// и все его потомки оцениваются как выключенные независимо от собственных правил таргетинга.
+    /// <c>null</c> — флаг верхнего уровня. Валидация циклов — на уровне Application (нужен обзор
+    /// всего графа флагов, недоступный агрегату).
+    /// </summary>
+    public string? ParentKey { get; protected set; }
+
     /// <summary>Kill-switch: мгновенно выключает фичу глобально, минуя весь таргетинг.</summary>
     public bool Enabled { get; protected set; }
 
@@ -73,6 +81,30 @@ public abstract class FeatureFlagBase : AggregateRoot<Guid>, ICreateAtEntity, IU
         Name = name.Trim();
         Description = description;
         ValueType = valueType;
+    }
+
+    /// <summary>
+    /// Задаёт/снимает родителя (каскад). Проверка отсутствия цикла — на вызывающей стороне
+    /// (Application-хендлер, у которого есть доступ ко всему графу флагов через репозиторий).
+    /// Публикует <see cref="FeatureFlagChangedIntegrationEvent"/> — меняется эффективное значение.
+    /// </summary>
+    public virtual void SetParent(string? parentKey)
+    {
+        if (parentKey is not null)
+        {
+            parentKey = parentKey.Trim();
+            if (parentKey.Length == 0)
+                parentKey = null;
+        }
+
+        if (string.Equals(parentKey, Key, StringComparison.Ordinal))
+            throw new InvalidOperationException("Флаг не может быть родителем самому себе.");
+
+        if (ParentKey == parentKey)
+            return;
+
+        ParentKey = parentKey;
+        AddDomainEvent(new FeatureFlagChangedIntegrationEvent(Key, null));
     }
 
     public virtual void Enable()

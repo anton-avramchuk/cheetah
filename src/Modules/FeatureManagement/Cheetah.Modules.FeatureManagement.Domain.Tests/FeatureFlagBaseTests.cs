@@ -90,6 +90,51 @@ public class FeatureFlagBaseTests
     }
 
     [Fact]
+    public void SetParent_assigns_and_raises_changed()
+    {
+        var flag = NewFlag();
+        flag.ClearDomainEvents();
+
+        flag.SetParent("deals");
+
+        flag.ParentKey.ShouldBe("deals");
+        flag.DomainEvents.OfType<FeatureFlagChangedIntegrationEvent>().ShouldHaveSingleItem();
+    }
+
+    [Fact]
+    public void SetParent_same_value_is_idempotent_no_event()
+    {
+        var flag = NewFlag();
+        flag.SetParent("deals");
+        flag.ClearDomainEvents();
+
+        flag.SetParent("deals");
+
+        flag.DomainEvents.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void SetParent_null_clears_parent()
+    {
+        var flag = NewFlag();
+        flag.SetParent("deals");
+        flag.ClearDomainEvents();
+
+        flag.SetParent(null);
+
+        flag.ParentKey.ShouldBeNull();
+        flag.DomainEvents.OfType<FeatureFlagChangedIntegrationEvent>().ShouldHaveSingleItem();
+    }
+
+    [Fact]
+    public void SetParent_self_reference_throws()
+    {
+        var flag = NewFlag();
+
+        Should.Throw<InvalidOperationException>(() => flag.SetParent(flag.Key));
+    }
+
+    [Fact]
     public void Initialize_rejects_blank_key()
     {
         Should.Throw<ArgumentException>(() => TestFeatureFlag.Create("  ", "Name", "svc"));

@@ -56,10 +56,18 @@ public sealed class FeatureManager : IFeatureManager
         return def is null ? (false, null) : await EvaluateCoreAsync(def, ctx, ct);
     }
 
+    /// <summary>Максимальная глубина обхода цепочки родителей — защита от цикла в данных.</summary>
+    private const int MaxParentDepth = 32;
+
     private async ValueTask<(bool Enabled, string? Variant)> EvaluateCoreAsync(FeatureDefinition def, FeatureContext ctx, CancellationToken ct)
     {
         // Kill-switch минует весь таргетинг.
         if (!def.Enabled)
+            return (false, null);
+
+        // Каскад: выключенный родитель (на любом уровне цепочки) выключает потомка независимо от
+        // его собственных правил. Правила самого потомка проверяются, только если ВСЕ предки включены.
+        if (!await IsAncestryEnabledAsync(def, ctx, ct))
             return (false, null);
 
         var rules = def.Rules;
@@ -83,6 +91,28 @@ public sealed class FeatureManager : IFeatureManager
 
         // Ни одно правило не сработало.
         return (false, null);
+    }
+
+    /// <summary>Проверяет, что все предки <paramref name="def"/> по цепочке <c>ParentKey</c> включены
+    /// (kill-switch каждого — родительские правила таргетинга на решение потомка не влияют, важен
+    /// только <c>Enabled</c>). Отсутствующий/зациклённый предок — fail-safe, трактуется как выключенный
+    /// (чтобы битые данные не раскатывали фичу на всех).</summary>
+    private async ValueTask<bool> IsAncestryEnabledAsync(FeatureDefinition def, FeatureContext ctx, CancellationToken ct)
+    {
+        var parentKey = def.ParentKey;
+        for (var depth = 0; parentKey is not null; depth++)
+        {
+            if (depth >= MaxParentDepth)
+                return false;
+
+            var parent = await _provider.GetAsync(parentKey, ctx.TenantId, ct);
+            if (parent is null || !parent.Enabled)
+                return false;
+
+            parentKey = parent.ParentKey;
+        }
+
+        return true;
     }
 
     private static string? PickWeightedVariant(FeatureDefinition def, FeatureContext ctx)

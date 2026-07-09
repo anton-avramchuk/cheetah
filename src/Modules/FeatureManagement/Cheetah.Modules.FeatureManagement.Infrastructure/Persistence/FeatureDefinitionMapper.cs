@@ -22,7 +22,7 @@ internal static class FeatureDefinitionMapper
         if (tenantId is { } tid && flag.Overrides.FirstOrDefault(o => o.TenantId == tid) is { } ov)
         {
             var overrideRules = ParseOverrideRules(ov.RulesJson);
-            return new FeatureDefinition(flag.Key, ov.Enabled, flag.ValueType, overrideRules, variants);
+            return new FeatureDefinition(flag.Key, ov.Enabled, flag.ValueType, overrideRules, variants, flag.ParentKey);
         }
 
         var rules = flag.Rules
@@ -33,7 +33,7 @@ internal static class FeatureDefinitionMapper
 
         // Неактивный флаг трактуется как выключенный.
         var enabled = flag.Enabled && flag.IsActive;
-        return new FeatureDefinition(flag.Key, enabled, flag.ValueType, rules, variants);
+        return new FeatureDefinition(flag.Key, enabled, flag.ValueType, rules, variants, flag.ParentKey);
     }
 
     private static IReadOnlyDictionary<string, object?> ParseParameters(string? json)

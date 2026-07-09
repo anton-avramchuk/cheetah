@@ -40,6 +40,7 @@ public abstract class FeatureFlagEndpointsBase<TCreateRequest, TDto>
         routes.MapPost($"{p}/{{key}}/disable", DisableAsync).WithName("DisableFeatureFlag").WithTags(Tag);
         routes.MapPut($"{p}/{{key}}/targeting", SetTargetingAsync).WithName("SetFeatureTargeting").WithTags(Tag);
         routes.MapPut($"{p}/{{key}}/tenants/{{tenantId:guid}}", SetTenantOverrideAsync).WithName("SetFeatureTenantOverride").WithTags(Tag);
+        routes.MapPut($"{p}/{{key}}/parent", SetParentAsync).WithName("SetFeatureParent").WithTags(Tag);
 
         // Оценка (для потребителей без локальной реплики).
         routes.MapPost($"{p}/evaluate", EvaluateAsync).WithName("EvaluateFeatures").WithTags(Tag);
@@ -113,6 +114,12 @@ public abstract class FeatureFlagEndpointsBase<TCreateRequest, TDto>
         [FromServices] IDispatcher dispatcher, CancellationToken ct)
         => SendAsync(dispatcher, new SetTenantOverrideCommand(key, tenantId, body.Enabled, body.Rules), ct);
 
+    /// <summary>Сменить/снять родителя флага (каскад). 404 — родитель не найден, 400 — цикл/самоссылка.</summary>
+    protected virtual Task<IResult> SetParentAsync(
+        [FromRoute] string key, [FromBody] SetParentBody body,
+        [FromServices] IDispatcher dispatcher, CancellationToken ct)
+        => SendAsync(dispatcher, new SetParentFeatureFlagCommand(key, body.ParentKey), ct);
+
     protected virtual async Task<IResult> EvaluateAsync(
         [FromBody] EvaluateFeaturesRequest request, [FromServices] IDispatcher dispatcher, CancellationToken ct)
     {
@@ -133,6 +140,11 @@ public abstract class FeatureFlagEndpointsBase<TCreateRequest, TDto>
         {
             return Results.NotFound(new { error = ex.Message });
         }
+        catch (InvalidOperationException ex)
+        {
+            // Цикл/самоссылка в иерархии родителей — ошибка запроса, не сервера.
+            return Results.BadRequest(new { error = ex.Message });
+        }
     }
 }
 
@@ -144,6 +156,9 @@ public sealed record SetTargetingBody(IReadOnlyList<TargetingRuleDto> Rules);
 
 /// <summary>Тело override тенанта.</summary>
 public sealed record SetTenantOverrideBody(bool Enabled, IReadOnlyList<TargetingRuleDto> Rules);
+
+/// <summary>Тело смены родителя. <c>ParentKey == null</c> — снять родителя.</summary>
+public sealed record SetParentBody(string? ParentKey);
 
 /// <summary>Тело батч-оценки.</summary>
 public sealed record EvaluateFeaturesRequest(IReadOnlyList<string> Keys, FeatureContext? Context);

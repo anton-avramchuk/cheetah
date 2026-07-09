@@ -39,6 +39,7 @@ public sealed class FeatureFlagProjector : IFeatureFlagProjector<FeatureFlag, Fe
         Name = flag.Name,
         Description = flag.Description,
         OwnerService = flag.OwnerService,
+        ParentKey = flag.ParentKey,
         Enabled = flag.Enabled,
         ValueType = flag.ValueType,
         IsActive = flag.IsActive,

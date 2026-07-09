@@ -33,6 +33,8 @@ public class CreateFeatureFlagCommandHandler<TFlag, TCreateRequest>
     public async ValueTask<Guid> HandleAsync(CreateFeatureFlagCommand<TCreateRequest> command, CancellationToken ct = default)
     {
         var flag = _factory.Create(command.Request);
+        // Новый флаг ни на кого не ссылается — цикл при создании невозможен, проверка графа не нужна.
+        flag.SetParent(command.Request.ParentKey);
         _repository.Add(flag);
 
         // Публикация ДО SaveChanges: OutboxEventBus пишет в outbox того же DbContext —

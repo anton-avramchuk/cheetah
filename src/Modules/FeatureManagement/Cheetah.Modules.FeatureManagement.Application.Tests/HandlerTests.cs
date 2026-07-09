@@ -73,6 +73,80 @@ public class HandlerTests
     }
 
     [Fact]
+    public async Task SetParent_assigns_and_publishes_changed()
+    {
+        var parent = TestFlag.Create("Vacancy", "Vacancy", "vacancy");
+        var child = TestFlag.Create("Vacancy.Teams", "Teams", "vacancy");
+        var repo = new InMemoryFlagRepository(parent, child);
+        var bus = new RecordingEventBus();
+        var handler = new SetParentFeatureFlagCommandHandler<TestFlag>(repo, bus);
+
+        await handler.HandleAsync(new SetParentFeatureFlagCommand("Vacancy.Teams", "Vacancy"));
+
+        child.ParentKey.ShouldBe("Vacancy");
+        bus.Published.OfType<FeatureFlagChangedIntegrationEvent>().ShouldHaveSingleItem();
+    }
+
+    [Fact]
+    public async Task SetParent_missing_parent_throws_not_found()
+    {
+        var child = TestFlag.Create("Vacancy.Teams", "Teams", "vacancy");
+        var repo = new InMemoryFlagRepository(child);
+        var handler = new SetParentFeatureFlagCommandHandler<TestFlag>(repo, new RecordingEventBus());
+
+        await Should.ThrowAsync<Cheetah.Core.Domain.Exceptions.EntityNotFoundException>(
+            () => handler.HandleAsync(new SetParentFeatureFlagCommand("Vacancy.Teams", "does-not-exist")).AsTask());
+    }
+
+    [Fact]
+    public async Task SetParent_direct_cycle_is_rejected()
+    {
+        // A.ParentKey = B, теперь пытаемся сделать B.ParentKey = A — прямой цикл.
+        var a = TestFlag.Create("A", "A", "svc");
+        var b = TestFlag.Create("B", "B", "svc");
+        var repo = new InMemoryFlagRepository(a, b);
+        await new SetParentFeatureFlagCommandHandler<TestFlag>(repo, new RecordingEventBus())
+            .HandleAsync(new SetParentFeatureFlagCommand("A", "B"));
+
+        var handler = new SetParentFeatureFlagCommandHandler<TestFlag>(repo, new RecordingEventBus());
+        await Should.ThrowAsync<InvalidOperationException>(
+            () => handler.HandleAsync(new SetParentFeatureFlagCommand("B", "A")).AsTask());
+    }
+
+    [Fact]
+    public async Task SetParent_indirect_cycle_through_chain_is_rejected()
+    {
+        // A -> B -> C, пытаемся сделать A родителем C (C.Parent = A) — замкнёт цикл A<-B<-C<-A.
+        var a = TestFlag.Create("A", "A", "svc");
+        var b = TestFlag.Create("B", "B", "svc");
+        var c = TestFlag.Create("C", "C", "svc");
+        var repo = new InMemoryFlagRepository(a, b, c);
+        var bus = new RecordingEventBus();
+        await new SetParentFeatureFlagCommandHandler<TestFlag>(repo, bus)
+            .HandleAsync(new SetParentFeatureFlagCommand("A", "B"));
+        await new SetParentFeatureFlagCommandHandler<TestFlag>(repo, bus)
+            .HandleAsync(new SetParentFeatureFlagCommand("B", "C"));
+
+        var handler = new SetParentFeatureFlagCommandHandler<TestFlag>(repo, bus);
+        await Should.ThrowAsync<InvalidOperationException>(
+            () => handler.HandleAsync(new SetParentFeatureFlagCommand("C", "A")).AsTask());
+    }
+
+    [Fact]
+    public async Task SetParent_null_clears_parent()
+    {
+        var parent = TestFlag.Create("Vacancy", "Vacancy", "vacancy");
+        var child = TestFlag.Create("Vacancy.Teams", "Teams", "vacancy");
+        child.SetParent("Vacancy");
+        var repo = new InMemoryFlagRepository(parent, child);
+        var handler = new SetParentFeatureFlagCommandHandler<TestFlag>(repo, new RecordingEventBus());
+
+        await handler.HandleAsync(new SetParentFeatureFlagCommand("Vacancy.Teams", null));
+
+        child.ParentKey.ShouldBeNull();
+    }
+
+    [Fact]
     public async Task GetByKey_projects_to_dto()
     {
         var flag = TestFlag.Create("deals.kanban-v2", "Kanban v2", "deals");

@@ -15,6 +15,7 @@ public abstract record FeatureFlagDtoBase : ICrmResponse
     public string Name { get; init; } = null!;
     public string? Description { get; init; }
     public string OwnerService { get; init; } = null!;
+    public string? ParentKey { get; init; }
     public bool Enabled { get; init; }
     public FeatureValueType ValueType { get; init; }
     public bool IsActive { get; init; }

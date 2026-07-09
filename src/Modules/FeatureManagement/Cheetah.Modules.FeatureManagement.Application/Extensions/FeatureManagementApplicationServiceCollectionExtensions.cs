@@ -33,6 +33,7 @@ public static class FeatureManagementApplicationServiceCollectionExtensions
         services.AddScoped<ICommandHandler<DisableFeatureFlagCommand>, DisableFeatureFlagCommandHandler<TFlag>>();
         services.AddScoped<ICommandHandler<SetTargetingCommand>, SetTargetingCommandHandler<TFlag>>();
         services.AddScoped<ICommandHandler<SetTenantOverrideCommand>, SetTenantOverrideCommandHandler<TFlag>>();
+        services.AddScoped<ICommandHandler<SetParentFeatureFlagCommand>, SetParentFeatureFlagCommandHandler<TFlag>>();
         services.AddScoped<ICommandHandler<SyncFeatureRegistryCommand>,
             SyncFeatureRegistryCommandHandler<TFlag, TCreateRequest>>();
 
