@@ -35,6 +35,7 @@
         <Project Path="src/Cheetah.Backend.Events.InMemory/Cheetah.Backend.Events.InMemory.csproj" />
         <Project Path="src/Cheetah.Contracts/Cheetah.Contracts.csproj" />
         <Project Path="src/Cheetah.Core.Cache/Cheetah.Core.Cache.csproj" />
+        <Project Path="src/Cheetah.Core.Cache.Tests/Cheetah.Core.Cache.Tests.csproj" />
         <Project Path="src/Cheetah.Core.Diagnostic/Cheetah.Core.Diagnostic.csproj" />
         <Project Path="src/Cheetah.Core.Diagnostic.AspNetCore/Cheetah.Core.Diagnostic.AspNetCore.csproj" />
         <Project Path="src/Cheetah.Core.CQRS/Cheetah.Core.CQRS.csproj" />
