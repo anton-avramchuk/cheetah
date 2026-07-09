@@ -1,0 +1,72 @@
+syntax = "proto3";
+
+option csharp_namespace = "Cheetah.Modules.FeatureManagement.Grpc.Protos";
+
+package cheetah.modules.featuremanagement.v1;
+
+// Горячий межсервисный путь FeatureManagement (дублирует REST /evaluate и /definitions):
+// батч-оценка флагов и снимок определений для локальной реплики потребителя.
+service FeatureCatalog {
+  // Батч-оценка флагов в контексте субъекта (анти-N+1) — для потребителей без локальной реплики.
+  rpc Evaluate (EvaluateFeaturesProtoRequest) returns (EvaluateFeaturesProtoReply);
+
+  // Полный снимок определений — pull для RemoteFeatureDefinitionProvider при старте потребителя.
+  rpc PullDefinitions (PullDefinitionsProtoRequest) returns (FeatureDefinitionsProtoReply);
+}
+
+// Контекст оценки (соответствует FeatureContext абстракции).
+message FeatureContextProto {
+  optional string user_id = 1;   // Guid строкой
+  optional string tenant_id = 2; // Guid строкой
+  repeated string roles = 3;
+  // Произвольные атрибуты для JsonLogic/пользовательских фильтров;
+  // значение — JSON-энкоднутый скаляр/объект (как в jsonb-параметрах правил).
+  map<string, string> attributes_json = 4;
+}
+
+message EvaluateFeaturesProtoRequest {
+  repeated string keys = 1;
+  FeatureContextProto context = 2;
+}
+
+message FeatureEvaluationProto {
+  bool enabled = 1;
+  optional string variant = 2;
+}
+
+message EvaluateFeaturesProtoReply {
+  map<string, FeatureEvaluationProto> results = 1;
+}
+
+message PullDefinitionsProtoRequest {
+  optional string tenant_id = 1; // Guid строкой; пусто — глобальные определения
+}
+
+// Соответствует TargetingRuleDefinition движка.
+message TargetingRuleProto {
+  int32 order = 1;
+  string filter_name = 2;
+  map<string, string> parameters_json = 3; // значения — JSON-энкоднутые
+  optional string result_variant = 4;
+  bool negate = 5;
+}
+
+// Соответствует VariantDefinition движка.
+message VariantDefProto {
+  string name = 1;
+  optional string value = 2;
+  int32 weight = 3;
+}
+
+// Соответствует FeatureDefinition движка (плоское read-определение).
+message FeatureDefinitionProto {
+  string key = 1;
+  bool enabled = 2;
+  int32 value_type = 3; // FeatureValueType: 0 = Bool, 1 = Variant
+  repeated TargetingRuleProto rules = 4;
+  repeated VariantDefProto variants = 5;
+}
+
+message FeatureDefinitionsProtoReply {
+  repeated FeatureDefinitionProto definitions = 1;
+}

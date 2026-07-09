@@ -348,6 +348,8 @@
         <Project Path="src/Modules/FeatureManagement/Cheetah.Modules.FeatureManagement.Domain/Cheetah.Modules.FeatureManagement.Domain.csproj" />
         <Project Path="src/Modules/FeatureManagement/Cheetah.Modules.FeatureManagement.Domain.Tests/Cheetah.Modules.FeatureManagement.Domain.Tests.csproj" />
         <Project Path="src/Modules/FeatureManagement/Cheetah.Modules.FeatureManagement.DomainEvents/Cheetah.Modules.FeatureManagement.DomainEvents.csproj" />
+        <Project Path="src/Modules/FeatureManagement/Cheetah.Modules.FeatureManagement.Grpc.Tests/Cheetah.Modules.FeatureManagement.Grpc.Tests.csproj" />
+        <Project Path="src/Modules/FeatureManagement/Cheetah.Modules.FeatureManagement.Grpc/Cheetah.Modules.FeatureManagement.Grpc.csproj" />
         <Project Path="src/Modules/FeatureManagement/Cheetah.Modules.FeatureManagement.Infrastructure/Cheetah.Modules.FeatureManagement.Infrastructure.csproj" />
         <Project Path="src/Modules/FeatureManagement/Cheetah.Modules.FeatureManagement.Shared/Cheetah.Modules.FeatureManagement.Shared.csproj" />
     </Folder>

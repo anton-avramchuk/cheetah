@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <OutputType>Library</OutputType>
+        <NoDefaultLaunchSettingsFile>true</NoDefaultLaunchSettingsFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\..\Cheetah.AspNetCore\Cheetah.AspNetCore.csproj" />
+        <ProjectReference Include="..\..\..\Cheetah.Backend.Grpc\Cheetah.Backend.Grpc.csproj" />
+        <ProjectReference Include="..\..\..\Cheetah.Core\Cheetah.Core.csproj" />
+        <ProjectReference Include="..\..\..\Cheetah.Core.CQRS\Cheetah.Core.CQRS.csproj" />
+        <ProjectReference Include="..\..\..\Cheetah.FeatureManagement\Cheetah.FeatureManagement.csproj" />
+        <ProjectReference Include="..\Cheetah.Modules.FeatureManagement.Application\Cheetah.Modules.FeatureManagement.Application.csproj" />
+        <ProjectReference Include="..\Cheetah.Modules.FeatureManagement.Contracts\Cheetah.Modules.FeatureManagement.Contracts.csproj" />
+        <ProjectReference Include="..\..\..\Cheetah.Generators.Module\Cheetah.Generators.Module.csproj"
+                          ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Grpc.AspNetCore" />
+        <PackageReference Include="Grpc.Tools">
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <!-- GrpcServices="Both": клиентский stub нужен тестам (и потребителям для реплики). -->
+        <Protobuf Include="Protos\featurecatalog.proto" GrpcServices="Both" />
+    </ItemGroup>
+
+</Project>
