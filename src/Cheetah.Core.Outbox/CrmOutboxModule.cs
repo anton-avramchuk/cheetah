@@ -44,7 +44,11 @@ public partial class CrmOutboxModule : CrmModule
     /// </summary>
     private static void RebindEventBus(IServiceCollection services)
     {
-        var existing = services.LastOrDefault(s => s.ServiceType == typeof(IEventBus));
+        // Пропускаем keyed-регистрации (например, [FromKeyedServices(EventBusKeys.Redis)] IEventBus,
+        // которую CrmBackendEventsRedisModule добавляет ПОСЛЕ обычной): у них ServiceType тоже
+        // IEventBus, но нет обычных ImplementationType/Factory/Instance — LastOrDefault без фильтра
+        // подхватывал бы keyed-дескриптор вместо настоящей регистрации транспорта.
+        var existing = services.LastOrDefault(s => s.ServiceType == typeof(IEventBus) && !s.IsKeyedService);
         if (existing is null)
         {
             throw new InvalidOperationException(
