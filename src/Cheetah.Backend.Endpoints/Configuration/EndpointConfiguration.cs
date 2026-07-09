@@ -15,6 +15,7 @@ public sealed class EndpointConfiguration
     internal bool IsDeprecated { get; private set; }
     internal BrowserCacheSettings? CacheControl { get; private set; }
     internal RateLimitSettings? RateLimit { get; private set; }
+    internal string? FeatureKey { get; private set; }
 
     public EndpointConfiguration WithName(string name)
     {
@@ -108,6 +109,18 @@ public sealed class EndpointConfiguration
     public EndpointConfiguration WithRateLimit(long limit, TimeSpan window, RateLimitKeySource keySource = RateLimitKeySource.UserOrIp)
     {
         RateLimit = new RateLimitSettings(limit, window, keySource);
+        return this;
+    }
+
+    /// <summary>
+    /// Прячет эндпоинт за фич-флагом (<c>Cheetah.FeatureManagement</c>): выключенный или
+    /// незарегистрированный флаг → 404 («фича не существует»). Если система флагов не подключена
+    /// (нет <c>IFeatureDefinitionProvider</c>) — гейт прозрачен, эндпоинт работает как раньше.
+    /// </summary>
+    /// <param name="featureKey">Ключ флага <c>"{service}.{feature}"</c>, напр. <c>"deals.kanban-v2"</c>.</param>
+    public EndpointConfiguration RequireFeature(string featureKey)
+    {
+        FeatureKey = featureKey;
         return this;
     }
 }

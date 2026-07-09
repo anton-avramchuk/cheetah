@@ -640,6 +640,11 @@ public class EndpointRegistrationGenerator : IIncrementalGenerator
         sb.AppendLine("        {");
         sb.AppendLine("            builder.AddEndpointFilter(new global::Cheetah.Backend.Endpoints.Http.RateLimitFilter(rateLimit));");
         sb.AppendLine("        }");
+        sb.AppendLine();
+        sb.AppendLine("        if (!string.IsNullOrEmpty(endpoint.FeatureKey))");
+        sb.AppendLine("        {");
+        sb.AppendLine("            builder.AddEndpointFilter(new global::Cheetah.Backend.Endpoints.Http.FeatureGateFilter(endpoint.FeatureKey!));");
+        sb.AppendLine("        }");
         sb.AppendLine("    }");
     }
 

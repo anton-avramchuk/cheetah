@@ -11,6 +11,7 @@
       <ProjectReference Include="..\Cheetah.Core.CQRS\Cheetah.Core.CQRS.csproj" />
       <ProjectReference Include="..\Cheetah.Core\Cheetah.Core.csproj" />
       <ProjectReference Include="..\Cheetah.RateLimit\Cheetah.RateLimit.csproj" />
+      <ProjectReference Include="..\Cheetah.FeatureManagement\Cheetah.FeatureManagement.csproj" />
     </ItemGroup>
 
 </Project>

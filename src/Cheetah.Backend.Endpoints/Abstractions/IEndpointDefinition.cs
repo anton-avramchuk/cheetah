@@ -70,4 +70,10 @@ public interface IEndpointDefinition
     /// null means no rate limiting on this endpoint.
     /// </summary>
     RateLimitSettings? RateLimit { get; }
+
+    /// <summary>
+    /// Фич-флаг, за которым спрятан эндпоинт (Cheetah.FeatureManagement).
+    /// null — эндпоинт не гейтится.
+    /// </summary>
+    string? FeatureKey { get; }
 }
