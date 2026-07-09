@@ -1,6 +1,8 @@
 using Cheetah.Core;
 using Cheetah.Core.Modularity;
 using Cheetah.Expressions.JsonLogic;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Cheetah.FeatureManagement;
 
@@ -20,5 +22,12 @@ public partial class CrmFeatureManagementModule : CrmModule
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
         RegisterServices(context.Services);
+
+        // Fallback: если хост не подключает ни Infrastructure (БД+кэш), ни Client (UseRemoteReplica),
+        // IFeatureManager всё равно должен резолвиться (иначе валидация DI роняет хост, который лишь
+        // транзитивно зависит от движка — например, через RequireFeature в Cheetah.Backend.Endpoints).
+        // TryAdd — конкретный источник, если хост его подключает, регистрируется поверх обычным Add
+        // и побеждает при резолве.
+        context.Services.TryAddScoped<IFeatureDefinitionProvider, NullFeatureDefinitionProvider>();
     }
 }
