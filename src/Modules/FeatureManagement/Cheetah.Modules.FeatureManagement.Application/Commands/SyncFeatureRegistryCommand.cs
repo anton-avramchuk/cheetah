@@ -51,13 +51,14 @@ public class SyncFeatureRegistryCommandHandler<TFlag, TCreateRequest>
             }
         }
 
-        await _repository.SaveChangesAsync(ct);
-
+        // Публикация ДО SaveChanges: события создания ложатся в outbox той же транзакцией.
         foreach (var flag in created)
         {
             foreach (var e in flag.DomainEvents)
                 await _eventBus.PublishAsync(e, ct);
             flag.ClearDomainEvents();
         }
+
+        await _repository.SaveChangesAsync(ct);
     }
 }

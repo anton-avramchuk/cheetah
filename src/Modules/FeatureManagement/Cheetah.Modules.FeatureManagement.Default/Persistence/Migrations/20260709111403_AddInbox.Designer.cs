@@ -3,6 +3,7 @@ using System;
 using Cheetah.Modules.FeatureManagement.Default.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Cheetah.Modules.FeatureManagement.Default.Persistence.Migrations
 {
     [DbContext(typeof(FeatureManagementDbContext))]
-    partial class FeatureManagementDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260709111403_AddInbox")]
+    partial class AddInbox
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

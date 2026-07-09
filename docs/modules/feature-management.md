@@ -832,8 +832,11 @@ services.AddFeatureManagement()                 // абстракция: IFeatur
 **Фаза 6 — интеграция**
 17. ✅ Подписка-инвалидатор кэша через шину (`CheetahFeatureManagementDefaultModule.OnApplicationInitialization`
     → `eventBus.Subscribe<…, FeatureCacheInvalidator>()`); реплика потребителя — `CrmFeatureManagementClientModule`.
-18. ⏳ Follow-up: аудит изменений через `Cheetah.Audit`; идемпотентность подписки через `Cheetah.Core.Inbox`;
-    транзакционный Outbox; gRPC; end-to-end пилот `deals.kanban-v2` на живой БД/шине.
+18. ✅ Аудит изменений через `Cheetah.Audit`; транзакционный Outbox; gRPC (`evaluate`/`registry`,
+    `Cheetah.Modules.FeatureManagement.Grpc`); идемпотентность подписки `FeatureCacheInvalidator` через
+    `Cheetah.Core.Inbox` (`IdempotentFeatureCacheInvalidator<TContext,TEvent>`, миграция `AddInbox`) —
+    повторная доставка `Changed`/`Toggled` (retry шины) не вызывает повторную инвалидацию.
+    Follow-up: end-to-end пилот `deals.kanban-v2` на живой БД/шине.
 
 **Фаза 7 — финал**
 19. ✅ README обеих сборок: `src/Cheetah.FeatureManagement/README.md` (абстракция, движок, `IFeatureFilter`,
@@ -868,7 +871,7 @@ FeatureFlagToggledIntegrationEvent(string Key, bool Enabled) : EventBase;
 | `Cheetah.Core.Cache` (`ICacheService`) | горячее чтение определений флагов + инвалидация |
 | `Cheetah.Expressions.JsonLogic` | фильтр `JsonLogic` (условия таргетинга над `Attributes`) |
 | `Cheetah.Core.Tenants` | `TenantOverride` (tenant-scope флагов) |
-| `Cheetah.Core.Inbox` (опц.) | идемпотентность подписки-инвалидатора |
+| `Cheetah.Core.Inbox` | идемпотентность подписки-инвалидатора (`IdempotentFeatureCacheInvalidator`) |
 | `CrmEntityFrameworkModule` + `…PostgreSqlModule` | EF Core + Npgsql |
 | `Cheetah.Backend.Endpoints` + `Cheetah.Generators.Endpoints` | декларативные эндпоинты |
 | `Cheetah.Permissions` | авторизация админки/реестра |

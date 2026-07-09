@@ -49,9 +49,13 @@ public partial class CheetahFeatureManagementDefaultModule : CrmModule
     {
         new FeatureFlagEndpoints().Map(context.GetRouteBuilder());
 
-        // Инвалидация кэша определений по событиям (в кластере — через общую шину).
+        // Инвалидация кэша определений по событиям (в кластере — через общую шину). Идемпотентно
+        // через Inbox: повторная доставка одного EventId (retry шины) не вызывает повторную
+        // инвалидацию — см. IdempotentFeatureCacheInvalidator.
         var eventBus = context.ServiceProvider.GetRequiredService<IEventBus>();
-        eventBus.Subscribe<FeatureFlagChangedIntegrationEvent, FeatureCacheInvalidator>();
-        eventBus.Subscribe<FeatureFlagToggledIntegrationEvent, FeatureCacheInvalidator>();
+        eventBus.Subscribe<FeatureFlagChangedIntegrationEvent,
+            IdempotentFeatureCacheInvalidator<FeatureManagementDbContext, FeatureFlagChangedIntegrationEvent>>();
+        eventBus.Subscribe<FeatureFlagToggledIntegrationEvent,
+            IdempotentFeatureCacheInvalidator<FeatureManagementDbContext, FeatureFlagToggledIntegrationEvent>>();
     }
 }

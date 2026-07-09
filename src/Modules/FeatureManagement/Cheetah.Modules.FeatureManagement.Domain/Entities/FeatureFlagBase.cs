@@ -1,3 +1,4 @@
+using Cheetah.Audit;
 using Cheetah.Core.Domain;
 using Cheetah.FeatureManagement;
 using Cheetah.Modules.FeatureManagement.DomainEvents;
@@ -9,7 +10,9 @@ namespace Cheetah.Modules.FeatureManagement.Domain.Entities;
 /// объявляет <c>sealed class FeatureFlag : FeatureFlagBase</c> со своей фабрикой (через
 /// <see cref="InitializeCore"/>) и доп. полями (например, <c>JiraTicket</c>, <c>OwnerTeam</c>).
 /// Это структурная точка расширяемости; поведенческая — plugin-фильтры <c>IFeatureFilter</c>.
+/// <para><c>[Auditable]</c> наследуется: изменения sealed-флага наследника тоже попадают в аудит.</para>
 /// </summary>
+[Auditable]
 public abstract class FeatureFlagBase : AggregateRoot<Guid>, ICreateAtEntity, IUpdatedAtEntity
 {
     private readonly List<TargetingRule> _rules = new();

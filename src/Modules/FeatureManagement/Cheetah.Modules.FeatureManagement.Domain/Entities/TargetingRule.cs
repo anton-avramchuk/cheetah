@@ -1,3 +1,4 @@
+using Cheetah.Audit;
 using Cheetah.Core.Domain;
 
 namespace Cheetah.Modules.FeatureManagement.Domain.Entities;
@@ -6,7 +7,10 @@ namespace Cheetah.Modules.FeatureManagement.Domain.Entities;
 /// Правило таргетинга (child агрегата <see cref="FeatureFlagBase"/>). Конкретный тип: расширяемость
 /// таргетинга достигается не наследованием правила, а plugin-фильтрами (<c>IFeatureFilter</c>) —
 /// <see cref="FilterName"/> + произвольные <see cref="ParametersJson"/> уже открыты.
+/// <para><c>[Auditable]</c>: смена таргетинга мутирует только детей (сам флаг не Modified),
+/// поэтому аудит правил ведётся на уровне child-сущности.</para>
 /// </summary>
+[Auditable]
 public sealed class TargetingRule : Entity<Guid>
 {
     public Guid FlagId { get; private set; }

@@ -34,12 +34,14 @@ public class CreateFeatureFlagCommandHandler<TFlag, TCreateRequest>
     {
         var flag = _factory.Create(command.Request);
         _repository.Add(flag);
-        await _repository.SaveChangesAsync(ct);
 
+        // Публикация ДО SaveChanges: OutboxEventBus пишет в outbox того же DbContext —
+        // флаг и события коммитятся атомарно.
         foreach (var e in flag.DomainEvents)
             await _eventBus.PublishAsync(e, ct);
         flag.ClearDomainEvents();
 
+        await _repository.SaveChangesAsync(ct);
         return flag.Id;
     }
 }

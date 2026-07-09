@@ -3,6 +3,7 @@ using System;
 using Cheetah.Modules.FeatureManagement.Default.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Cheetah.Modules.FeatureManagement.Default.Persistence.Migrations
 {
     [DbContext(typeof(FeatureManagementDbContext))]
-    partial class FeatureManagementDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260709033218_OutboxAndAudit")]
+    partial class OutboxAndAudit
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -86,31 +89,6 @@ namespace Cheetah.Modules.FeatureManagement.Default.Persistence.Migrations
                         .HasDatabaseName("IX_AuditEntries_Entity");
 
                     b.ToTable("AuditEntries", (string)null);
-                });
-
-            modelBuilder.Entity("Cheetah.Core.Inbox.InboxMessage", b =>
-                {
-                    b.Property<Guid>("EventId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("ConsumerName")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.Property<string>("EventType")
-                        .IsRequired()
-                        .HasMaxLength(512)
-                        .HasColumnType("character varying(512)");
-
-                    b.Property<DateTimeOffset>("ReceivedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("EventId", "ConsumerName");
-
-                    b.HasIndex("ReceivedAt")
-                        .HasDatabaseName("IX_InboxMessages_ReceivedAt");
-
-                    b.ToTable("InboxMessages", (string)null);
                 });
 
             modelBuilder.Entity("Cheetah.Core.Outbox.DeadLetterMessage", b =>

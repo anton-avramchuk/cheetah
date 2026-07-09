@@ -1,8 +1,10 @@
+using Cheetah.Audit;
 using Cheetah.Core.Domain;
 
 namespace Cheetah.Modules.FeatureManagement.Domain.Entities;
 
 /// <summary>Вариант A/B (child агрегата) с весом для детерминированного распределения.</summary>
+[Auditable]
 public sealed class FeatureVariantDef : Entity<Guid>
 {
     public Guid FlagId { get; private set; }

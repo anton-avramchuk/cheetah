@@ -1,3 +1,4 @@
+using Cheetah.Audit;
 using Cheetah.Core.Domain;
 
 namespace Cheetah.Modules.FeatureManagement.Domain.Entities;
@@ -6,6 +7,7 @@ namespace Cheetah.Modules.FeatureManagement.Domain.Entities;
 /// Переопределение флага для конкретного тенанта (child агрегата). При оценке override тенанта
 /// смотрится раньше глобального правила.
 /// </summary>
+[Auditable]
 public sealed class TenantOverride : Entity<Guid>
 {
     public Guid FlagId { get; private set; }

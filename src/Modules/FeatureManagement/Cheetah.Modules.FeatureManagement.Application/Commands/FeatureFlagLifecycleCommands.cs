@@ -41,10 +41,13 @@ public abstract class FeatureFlagCommandHandlerBase<TFlag>
 
     protected async ValueTask SaveAndPublishAsync(TFlag flag, CancellationToken ct)
     {
-        await Repository.SaveChangesAsync(ct);
+        // Публикуем ДО SaveChanges: OutboxEventBus кладёт события в OutboxMessages того же
+        // DbContext, и один SaveChangesAsync коммитит флаг + outbox-строки атомарно.
         foreach (var e in flag.DomainEvents)
             await _eventBus.PublishAsync(e, ct);
         flag.ClearDomainEvents();
+
+        await Repository.SaveChangesAsync(ct);
     }
 }
 
