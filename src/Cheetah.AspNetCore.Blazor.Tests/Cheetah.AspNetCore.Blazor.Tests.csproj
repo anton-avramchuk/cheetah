@@ -27,6 +27,7 @@
         <ProjectReference Include="..\Cheetah.AspNetCore.Blazor.Dialogs\Cheetah.AspNetCore.Blazor.Dialogs.csproj" />
         <ProjectReference Include="..\Cheetah.AspNetCore.Blazor.Theme\Cheetah.AspNetCore.Blazor.Theme.csproj" />
         <ProjectReference Include="..\Cheetah.AspNetCore.Blazor.Navigation\Cheetah.AspNetCore.Blazor.Navigation.csproj" />
+        <ProjectReference Include="..\Cheetah.AspNetCore.Blazor.Layouts\Cheetah.AspNetCore.Blazor.Layouts.csproj" />
         <ProjectReference Include="..\Cheetah.AspNetCore.Blazor.Grid\Cheetah.AspNetCore.Blazor.Grid.csproj" />
         <ProjectReference Include="..\Cheetah.Core.Domain\Cheetah.Core.Domain.csproj" />
         <ProjectReference Include="..\Cheetah.Core.Grid\Cheetah.Core.Grid.csproj" />

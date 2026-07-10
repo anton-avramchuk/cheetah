@@ -41,6 +41,38 @@ public partial class AppBootstrapperModule : CrmModule { ... }
 4) Сборки с маршрутизируемыми страницами подключаются в `Program.cs` хоста через
    `AddAdditionalAssemblies(typeof(...).Assembly)` — это требование Blazor, не специфика модуля.
 
+## Гейт страницы фич-флагом
+
+Аналог серверного `MapGet(...).RequireFeature("key")` (тот отвечает 404) для роутинга компонентов.
+Пометьте страницу атрибутом и оберните `AuthorizeRouteView` в `FeatureGate`:
+
+```razor
+@* страница *@
+@page "/vacancies/teams"
+@attribute [RequireFeature("Vacancy.Teams")]
+```
+
+```razor
+@* Routes.razor хоста *@
+<Found Context="routeData">
+    <FeatureGate RouteData="routeData">
+        <AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(AppLayout)">
+            <NotAuthorized><RedirectToLogin /></NotAuthorized>
+        </AuthorizeRouteView>
+    </FeatureGate>
+</Found>
+```
+
+Выключенная фича → страница рендерится как «не найдено» (`NotFoundPage`; переопределяется параметром
+`Disabled`), то есть фичи как будто не существует. Пока флаг проверяется, не рендерится ничего —
+иначе страница мелькнёт и исчезнет. Сам атрибут без `FeatureGate` ничего не гейтит.
+
+Состояние флага берётся из шва `IFeatureVisibilityEvaluator` (`Blazor.Abstractions`) — того же, что
+фильтрует пункты меню. Без реализации (дефолтный `NullFeatureVisibilityEvaluator`) все страницы видны:
+fail-open, как у серверного `FeatureGateFilter`, когда флаги не подключены.
+
+> Скрытая страница — не защита данных, а UX: гейтить нужно и API, который она дёргает.
+
 ## Зависимости
 
 - `Cheetah.Core`, `Cheetah.AspNetCore.Blazor.Abstractions`, `Cheetah.AspNetCore.Blazor.Navigation`,

@@ -1,11 +1,12 @@
 using System.Security.Claims;
+using Cheetah.AspNetCore.Blazor.Abstractions;
 using Cheetah.AspNetCore.Blazor.Navigation.Models;
 
 namespace Cheetah.AspNetCore.Blazor.Navigation;
 
 /// <summary>
 /// Правила видимости пункта меню: право (<see cref="IMenuAccessEvaluator"/>) И фича
-/// (<see cref="IMenuFeatureEvaluator"/>). Вынесено из <c>NavMenu</c> отдельно, чтобы правила
+/// (<see cref="IFeatureVisibilityEvaluator"/>). Вынесено из <c>NavMenu</c> отдельно, чтобы правила
 /// покрывались юнит-тестами и переиспользовались (палитра команд, хабы).
 /// </summary>
 public static class MenuVisibility
@@ -16,7 +17,7 @@ public static class MenuVisibility
     /// <see cref="CanSee"/> работает синхронно и не ходит по сети.
     /// </summary>
     public static async Task<IReadOnlySet<string>> CollectDisabledAsync(
-        Menu menu, IMenuFeatureEvaluator evaluator, CancellationToken ct = default)
+        Menu menu, IFeatureVisibilityEvaluator evaluator, CancellationToken ct = default)
     {
         var required = new SortedSet<string>(StringComparer.Ordinal);
         foreach (var section in menu.Sections)

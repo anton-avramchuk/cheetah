@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Cheetah.AspNetCore.Blazor.Abstractions;
 using Cheetah.AspNetCore.Blazor.Navigation;
 using Cheetah.AspNetCore.Blazor.Navigation.Models;
 using Shouldly;
@@ -90,7 +91,7 @@ public class MenuVisibilityTests
         asked.Order().ShouldBe(["Off", "On"]);
     }
 
-    private sealed class StubEvaluator(List<string> asked, Func<string, bool> enabled) : IMenuFeatureEvaluator
+    private sealed class StubEvaluator(List<string> asked, Func<string, bool> enabled) : IFeatureVisibilityEvaluator
     {
         public ValueTask<bool> IsEnabledAsync(string feature, CancellationToken ct = default)
         {

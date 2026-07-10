@@ -8,7 +8,7 @@
 @inject INavigationMenuService NavigationMenuService
 @inject AuthenticationStateProvider AuthProvider
 @inject IMenuAccessEvaluator Access
-@inject IMenuFeatureEvaluator Features
+@inject Cheetah.AspNetCore.Blazor.Abstractions.IFeatureVisibilityEvaluator Features
 
 <nav class="sidebar-nav">
     @foreach (var menuSection in _menu.Sections)

@@ -1,0 +1,48 @@
+@using System.Reflection
+@using Cheetah.AspNetCore.Blazor.Abstractions
+@inject IFeatureVisibilityEvaluator Features
+
+@* Пока фича не проверена — не рендерим страницу вовсе, иначе она мелькнёт и исчезнет. *@
+@if (_allowed is true)
+{
+    @ChildContent
+}
+else if (_allowed is false)
+{
+    @(Disabled ?? DefaultDisabled)
+}
+
+@code {
+    /// <summary>Маршрут текущей страницы: из него берётся <see cref="RequireFeatureAttribute"/>.</summary>
+    [Parameter, EditorRequired] public RouteData RouteData { get; set; } = null!;
+
+    /// <summary>Что рендерить, когда фича включена (обычно <c>AuthorizeRouteView</c>).</summary>
+    [Parameter, EditorRequired] public RenderFragment ChildContent { get; set; } = null!;
+
+    /// <summary>Что рендерить, когда фича выключена. По умолчанию — страница «не найдено».</summary>
+    [Parameter] public RenderFragment? Disabled { get; set; }
+
+    // null — ещё проверяем.
+    private bool? _allowed;
+    private Type? _checkedPageType;
+
+    private static readonly RenderFragment DefaultDisabled = builder =>
+    {
+        builder.OpenComponent<NotFoundPage>(0);
+        builder.CloseComponent();
+    };
+
+    protected override async Task OnParametersSetAsync()
+    {
+        // RouteData пересоздаётся на каждую навигацию — переспрашиваем только при смене страницы.
+        if (_checkedPageType == RouteData.PageType) return;
+        _checkedPageType = RouteData.PageType;
+
+        var feature = ResolveFeature(RouteData.PageType);
+        _allowed = feature is null || await Features.IsEnabledAsync(feature);
+    }
+
+    /// <summary>Ключ фичи, за которой спрятана страница, либо null. Вынесено ради юнит-тестов.</summary>
+    public static string? ResolveFeature(Type pageType)
+        => pageType.GetCustomAttribute<RequireFeatureAttribute>(inherit: true)?.Feature;
+}
