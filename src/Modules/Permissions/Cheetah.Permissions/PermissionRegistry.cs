@@ -17,11 +17,11 @@ public sealed class PermissionRegistry
 
     public bool Contains(string key) => _items.ContainsKey(key);
 
-    public void Add(string key, string? description, string? module)
+    public void Add(string key, string? description, string? module, string? feature = null)
     {
         if (string.IsNullOrWhiteSpace(key))
             throw new ArgumentException("Permission key cannot be empty", nameof(key));
-        _items[key] = new PermissionDescriptor(key, description ?? "", module ?? "");
+        _items[key] = new PermissionDescriptor(key, description ?? "", module ?? "", feature);
     }
 
     public void Add(PermissionDescriptor descriptor)
@@ -61,6 +61,6 @@ public sealed class PermissionRegistry
     {
         var attr = member.GetCustomAttribute<PermissionAttribute>();
         if (attr is not null)
-            Add(attr.Key, attr.Description, attr.Module ?? fallbackModule);
+            Add(attr.Key, attr.Description, attr.Module ?? fallbackModule, attr.Feature);
     }
 }

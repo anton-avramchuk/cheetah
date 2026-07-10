@@ -47,7 +47,7 @@ public sealed class RemoteRegistrySyncService : IHostedService
         {
             try
             {
-                var items = group.Select(d => new PermissionDefinitionDto(d.Key, d.Description, d.Module)).ToArray();
+                var items = group.Select(d => new PermissionDefinitionDto(d.Key, d.Description, d.Module, d.Feature)).ToArray();
                 await client.SyncAsync(new RegistrySyncRequest(group.Key, items), cancellationToken);
                 _logger.LogInformation("Synced {Count} permissions for module {Module}", items.Length, group.Key);
             }

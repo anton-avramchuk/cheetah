@@ -8,6 +8,7 @@ using Cheetah.Core.EntityFramework.Migrations;
 using Cheetah.Core.EntityFramework.PostgreSql;
 using Cheetah.Core.EntityFramework.PostgreSql.Extensions;
 using Cheetah.Core.Modularity;
+using Cheetah.FeatureManagement;
 using Cheetah.Permissions.Catalog.DataAccess;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -21,6 +22,10 @@ namespace Cheetah.Permissions.Catalog;
 /// Зависимость: Cheetah.Permissions (core). В микросервисе, где каталог НЕ нужен,
 /// этот модуль НЕ подключают — подключают только Cheetah.Permissions + Catalog.Client
 /// для отсылки своих permissions по сети.
+///
+/// <see cref="CrmFeatureManagementModule"/> нужен для <c>ListPermissionsQuery</c>: permissions,
+/// привязанные к фиче, прячутся, пока она выключена. Без источника определений флагов модуль
+/// подставляет <c>NullFeatureDefinitionProvider</c> — тогда «фичи нет» и такие permissions скрыты.
 /// </summary>
 [DependsOn(typeof(CoreModule),
     typeof(CrmCQRSCoreModule),
@@ -28,6 +33,7 @@ namespace Cheetah.Permissions.Catalog;
     typeof(CrmDomainModule),
     typeof(CrmEntityFrameworkModule),
     typeof(CrmEntityFrameworkPostgreSqlModule),
+    typeof(CrmFeatureManagementModule),
     typeof(CrmPermissionsModule))]
 public partial class CrmPermissionsCatalogModule : CrmModule
 {

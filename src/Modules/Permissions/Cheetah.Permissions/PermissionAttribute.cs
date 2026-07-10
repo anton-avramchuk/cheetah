@@ -29,6 +29,13 @@ public sealed class PermissionAttribute : Attribute
     /// </summary>
     public string? Module { get; init; }
 
+    /// <summary>
+    /// Опциональный ключ фич-флага, к которому привязан permission. Пока фича выключена — или если
+    /// такого флага вообще нет в каталоге — permission не показывается в каталоге
+    /// (админу нечего назначать: функциональности не существует). Permission без фичи виден всегда.
+    /// </summary>
+    public string? Feature { get; init; }
+
     public PermissionAttribute(string key, string description = "")
     {
         if (string.IsNullOrWhiteSpace(key))

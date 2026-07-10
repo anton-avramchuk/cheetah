@@ -216,6 +216,27 @@ public static class DailyReports { }
 public const string Sign = "Documents.Sign";
 ```
 
+### Привязка к фич-флагу
+
+Permission можно привязать к фиче. Пока фича выключена — **или если такого флага вообще нет** в
+каталоге фич — permission не отдаётся в списке каталога: админу нечего назначать, функциональности
+не существует. Permission без `Feature` виден всегда.
+
+```csharp
+[Permission("Vacancy.Teams.View", "Видеть команды вакансии", Feature = "Vacancy.Teams")]
+public const string TeamsView = "Vacancy.Teams.View";
+```
+
+Фильтрует `ListPermissionsQuery` через `IFeatureManager`: незаведённый флаг он трактует как
+выключенный, поэтому «фичи нет» и «фича выключена» ведут себя одинаково (fail-closed). Если хост
+не подключил источник определений флагов, работает `NullFeatureDefinitionProvider` — все флаги
+выключены, и permissions с `Feature` не показываются. Хосту без фич-флагов просто не следует
+привязывать permissions к фичам.
+
+> Это про **выдачу прав в UI**, а не про проверку. `IPermissionAuthorizer` по-прежнему смотрит
+> только на claims: если право уже выдано, а фичу потом выключили — доступ останется.
+> Сам функционал за фичей гейтите `RequireFeature` на эндпоинте.
+
 ### Ручная регистрация
 
 Если нужно зарегистрировать что-то без атрибута (например, динамические permissions):

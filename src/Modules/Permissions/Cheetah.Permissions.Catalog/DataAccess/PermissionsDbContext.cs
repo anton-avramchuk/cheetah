@@ -28,6 +28,7 @@ public class PermissionDefinitionConfiguration : IEntityTypeConfiguration<Permis
         builder.Property(x => x.Id).HasMaxLength(256);
         builder.Property(x => x.Description).HasMaxLength(1024).IsRequired();
         builder.Property(x => x.Module).HasMaxLength(256).IsRequired();
+        builder.Property(x => x.Feature).HasMaxLength(256);
         builder.HasIndex(x => x.Module);
     }
 }

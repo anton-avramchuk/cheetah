@@ -20,6 +20,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Cheetah.Permissions\Cheetah.Permissions.csproj" />
+        <ProjectReference Include="..\Cheetah.Permissions.Catalog\Cheetah.Permissions.Catalog.csproj" />
     </ItemGroup>
 
     <ItemGroup>

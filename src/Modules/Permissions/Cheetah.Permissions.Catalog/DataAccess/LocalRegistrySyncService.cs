@@ -56,8 +56,8 @@ public sealed class LocalRegistrySyncService : IHostedService
 
         foreach (var d in _registry.All)
         {
-            if (existing.TryGetValue(d.Key, out var pd)) pd.Update(d.Description, d.Module);
-            else repository.Add(PermissionDefinition.Create(d.Key, d.Description, d.Module));
+            if (existing.TryGetValue(d.Key, out var pd)) pd.Update(d.Description, d.Module, d.Feature);
+            else repository.Add(PermissionDefinition.Create(d.Key, d.Description, d.Module, d.Feature));
         }
 
         await repository.SaveChangesAsync(cancellationToken);

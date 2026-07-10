@@ -11,6 +11,9 @@ public static class OrderPermissions
 {
     [Permission("Test.Order.Cancel", "Отмена заказа")]
     public const string Cancel = "Test.Order.Cancel";
+
+    [Permission("Test.Order.Split", "Разделение заказа", Feature = "Orders.Split")]
+    public const string Split = "Test.Order.Split";
 }
 
 public class PermissionRegistryTests
@@ -54,6 +57,16 @@ public class PermissionRegistryTests
         var registry = new PermissionRegistry();
         registry.Add("explicit", "", "ExplicitModule");
         registry.All.Single().Module.ShouldBe("ExplicitModule");
+    }
+
+    [Fact]
+    public void ScanAssemblies_Carries_Feature_From_Attribute()
+    {
+        var registry = new PermissionRegistry();
+        registry.ScanAssemblies(new[] { Assembly.GetExecutingAssembly() });
+
+        registry.All.Single(d => d.Key == "Test.Order.Split").Feature.ShouldBe("Orders.Split");
+        registry.All.Single(d => d.Key == "Test.Order.Cancel").Feature.ShouldBeNull();
     }
 
     [Fact]

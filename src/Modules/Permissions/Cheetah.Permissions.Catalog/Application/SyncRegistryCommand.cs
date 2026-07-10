@@ -29,9 +29,9 @@ public class SyncRegistryCommandHandler : ICommandHandler<SyncRegistryCommand>
         foreach (var item in command.Items)
         {
             if (existing.TryGetValue(item.Key, out var pd))
-                pd.Update(item.Description, command.Module);
+                pd.Update(item.Description, command.Module, item.Feature);
             else
-                _repository.Add(PermissionDefinition.Create(item.Key, item.Description, command.Module));
+                _repository.Add(PermissionDefinition.Create(item.Key, item.Description, command.Module, item.Feature));
         }
 
         await _repository.SaveChangesAsync(ct);
