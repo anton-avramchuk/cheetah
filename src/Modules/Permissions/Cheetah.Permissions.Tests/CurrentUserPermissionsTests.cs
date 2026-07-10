@@ -3,17 +3,24 @@ using Cheetah.Permissions;
 using Microsoft.AspNetCore.Http;
 using Shouldly;
 
+using StubFeatureManager = Cheetah.Permissions.Tests.PermissionAuthorizerTests.StubFeatureManager;
+
 namespace Cheetah.Permissions.Tests;
 
 public class CurrentUserPermissionsTests
 {
-    private static ICurrentUserPermissions Build(ClaimsPrincipal? user)
+    private static ICurrentUserPermissions Build(
+        ClaimsPrincipal? user, Action<PermissionRegistry>? declare = null, Func<string, bool>? featureEnabled = null)
     {
         var accessor = new HttpContextAccessor();
         if (user is not null)
             accessor.HttpContext = new DefaultHttpContext { User = user };
 
-        return new CurrentUserPermissions(new ClaimPermissionAuthorizer(), accessor);
+        var registry = new PermissionRegistry();
+        declare?.Invoke(registry);
+        var authorizer = new ClaimPermissionAuthorizer(registry, new StubFeatureManager(featureEnabled ?? (_ => true)));
+
+        return new CurrentUserPermissions(authorizer, accessor);
     }
 
     private static ClaimsPrincipal User(params string[] permissions)
@@ -23,37 +30,40 @@ public class CurrentUserPermissionsTests
     }
 
     [Fact]
-    public void Has_True_When_Claim_Present()
-    {
-        var sut = Build(User("Documents.Sign"));
-        sut.Has("Documents.Sign").ShouldBeTrue();
-    }
+    public async Task Has_True_When_Claim_Present()
+        => (await Build(User("Documents.Sign")).HasAsync("Documents.Sign")).ShouldBeTrue();
 
     [Fact]
-    public void Has_False_When_Claim_Missing()
-    {
-        var sut = Build(User("Documents.Read"));
-        sut.Has("Documents.Sign").ShouldBeFalse();
-    }
+    public async Task Has_False_When_Claim_Missing()
+        => (await Build(User("Documents.Read")).HasAsync("Documents.Sign")).ShouldBeFalse();
 
     [Fact]
-    public void Has_False_When_No_HttpContext()
-    {
-        var sut = Build(user: null);
-        sut.Has("Documents.Sign").ShouldBeFalse();
-    }
+    public async Task Has_False_When_No_HttpContext()
+        => (await Build(user: null).HasAsync("Documents.Sign")).ShouldBeFalse();
 
     [Fact]
-    public void Require_Throws_When_Permission_Missing()
+    public async Task Require_Throws_When_Permission_Missing()
     {
         var sut = Build(User());
-        Should.Throw<UnauthorizedAccessException>(() => sut.Require("Documents.Sign"));
+        await Should.ThrowAsync<UnauthorizedAccessException>(async () => await sut.RequireAsync("Documents.Sign"));
     }
 
     [Fact]
-    public void Require_Does_Not_Throw_When_Permission_Present()
+    public async Task Require_Does_Not_Throw_When_Permission_Present()
     {
         var sut = Build(User("Documents.Sign"));
-        Should.NotThrow(() => sut.Require("Documents.Sign"));
+        await Should.NotThrowAsync(async () => await sut.RequireAsync("Documents.Sign"));
+    }
+
+    /// <summary>Guard внутри хендлера обязан отзывать право так же, как эндпоинт.</summary>
+    [Fact]
+    public async Task Require_Throws_When_Permissions_Feature_Is_Disabled()
+    {
+        var sut = Build(
+            User("Vacancy.Teams.View"),
+            declare: r => r.Add("Vacancy.Teams.View", "", "Vacancy", feature: "Vacancy.Teams"),
+            featureEnabled: _ => false);
+
+        await Should.ThrowAsync<UnauthorizedAccessException>(async () => await sut.RequireAsync("Vacancy.Teams.View"));
     }
 }

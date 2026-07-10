@@ -227,15 +227,22 @@ Permission можно привязать к фиче. Пока фича выкл
 public const string TeamsView = "Vacancy.Teams.View";
 ```
 
-Фильтрует `ListPermissionsQuery` через `IFeatureManager`: незаведённый флаг он трактует как
-выключенный, поэтому «фичи нет» и «фича выключена» ведут себя одинаково (fail-closed). Если хост
-не подключил источник определений флагов, работает `NullFeatureDefinitionProvider` — все флаги
-выключены, и permissions с `Feature` не показываются. Хосту без фич-флагов просто не следует
-привязывать permissions к фичам.
+Привязка действует в двух местах:
 
-> Это про **выдачу прав в UI**, а не про проверку. `IPermissionAuthorizer` по-прежнему смотрит
-> только на claims: если право уже выдано, а фичу потом выключили — доступ останется.
-> Сам функционал за фичей гейтите `RequireFeature` на эндпоинте.
+1. **Каталог** (`ListPermissionsQuery`) — permission не показывается в списке: админу нечего назначать.
+2. **Проверка доступа** (`IPermissionAuthorizer`, а значит и `.RequirePermission()`, и
+   `ICurrentUserPermissions`) — право **не действует**, даже если claim уже выдан. Выключение фичи
+   отзывает доступ, включение возвращает; перевыдавать claims не нужно.
+
+Незаведённый флаг `IFeatureManager` трактует как выключенный, поэтому «фичи нет» и «фича выключена»
+ведут себя одинаково (fail-closed). Если хост не подключил источник определений флагов, работает
+`NullFeatureDefinitionProvider` — все флаги выключены, и permissions с `Feature` пропадают. Хосту
+без фич-флагов просто не следует привязывать permissions к фичам.
+
+Привязку permission → фича авторизатор берёт из `PermissionRegistry`, то есть из объявлений
+**этого процесса**. Permission, объявленный в другом сервисе, реестру неизвестен — гейтить его
+нечем, проверка идёт по одним claims (fail-open). Гейтите такой функционал `RequireFeature`
+на его собственном эндпоинте.
 
 ### Ручная регистрация
 
@@ -323,7 +330,8 @@ app.MapDelete("/api/contracts/{id}", DeleteContract)
 ```
 
 Под капотом — `PermissionPolicyProvider` создаёт policy с `PermissionRequirement`,
-`PermissionAuthorizationHandler` проверяет `user.HasClaim("permission", value)`.
+`PermissionAuthorizationHandler` проверяет `user.HasClaim("permission", value)` и — если permission
+привязан к фиче — что фича включена.
 
 ### 2. В Command/Query handler — `ICurrentUserPermissions`
 
@@ -347,20 +355,24 @@ public class SignContractCommandHandler : ICommandHandler<SignContractCommand>
     public async ValueTask HandleAsync(SignContractCommand cmd, CancellationToken ct)
     {
         // 1) Простая проверка
-        if (!_perms.Has(ContractPermissions.Sign))
+        if (!await _perms.HasAsync(ContractPermissions.Sign, ct))
             throw new ForbiddenException();
 
         // 2) Или удобный guard (бросает UnauthorizedAccessException)
-        _perms.Require(ContractPermissions.Sign);
+        await _perms.RequireAsync(ContractPermissions.Sign, ct);
 
         // 3) Несколько прав
-        if (!_perms.HasAny(new[] { ContractPermissions.Sign, "Admin.Override" }))
+        if (!await _perms.HasAnyAsync([ContractPermissions.Sign, "Admin.Override"], ct))
             throw new ForbiddenException();
 
         // ... бизнес-логика
     }
 }
 ```
+
+Проверки асинхронны, потому что permission может быть привязан к фич-флагу, а движок флагов
+асинхронен. В процессе-потребителе определения флагов лежат в in-memory реплике, так что проверка
+не ходит по сети.
 
 **Когда у HTTP-контекста нет пользователя** (background-сервис, фоновое задание) —
 все методы возвращают `false`. Для таких мест используйте `IPermissionAuthorizer`
@@ -374,8 +386,8 @@ public class SignContractCommandHandler : ICommandHandler<SignContractCommand>
 ```csharp
 public class TokenInspector(IPermissionAuthorizer authorizer)
 {
-    public bool CanSign(ClaimsPrincipal principal)
-        => authorizer.Has(principal, ContractPermissions.Sign);
+    public ValueTask<bool> CanSignAsync(ClaimsPrincipal principal)
+        => authorizer.HasAsync(principal, ContractPermissions.Sign);
 }
 ```
 

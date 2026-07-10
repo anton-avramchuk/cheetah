@@ -13,12 +13,14 @@ namespace Cheetah.Permissions;
 /// {
 ///     public async Task HandleAsync(...)
 ///     {
-///         if (!perms.Has(ContractPermissions.Sign))
-///             throw new ForbiddenException();
+///         await perms.RequireAsync(ContractPermissions.Sign);
 ///         // ...
 ///     }
 /// }
 /// </code>
+///
+/// Методы асинхронны, потому что permission может быть привязан к фич-флагу, а движок флагов
+/// асинхронен: выключенная фича отзывает право, даже если claim выдан.
 ///
 /// За пределами HTTP-запроса (background-сервис, фоновое задание) пользователя нет —
 /// все методы возвращают <c>false</c>. Для тех мест используйте <see cref="IPermissionAuthorizer"/>
@@ -27,19 +29,19 @@ namespace Cheetah.Permissions;
 public interface ICurrentUserPermissions
 {
     /// <summary>Истинно, если у текущего пользователя есть указанный permission.</summary>
-    bool Has(string permission);
+    ValueTask<bool> HasAsync(string permission, CancellationToken ct = default);
 
     /// <summary>Истинно, если у текущего пользователя есть ВСЕ указанные permissions.</summary>
-    bool HasAll(IEnumerable<string> permissions);
+    ValueTask<bool> HasAllAsync(IEnumerable<string> permissions, CancellationToken ct = default);
 
     /// <summary>Истинно, если у текущего пользователя есть ХОТЯ БЫ ОДИН из указанных.</summary>
-    bool HasAny(IEnumerable<string> permissions);
+    ValueTask<bool> HasAnyAsync(IEnumerable<string> permissions, CancellationToken ct = default);
 
     /// <summary>
     /// Бросает <see cref="UnauthorizedAccessException"/>, если у текущего пользователя
     /// нет указанного permission. Удобно использовать как guard в начале метода.
     /// </summary>
-    void Require(string permission);
+    ValueTask RequireAsync(string permission, CancellationToken ct = default);
 }
 
 public sealed class CurrentUserPermissions : ICurrentUserPermissions
@@ -55,27 +57,27 @@ public sealed class CurrentUserPermissions : ICurrentUserPermissions
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public bool Has(string permission)
+    public ValueTask<bool> HasAsync(string permission, CancellationToken ct = default)
     {
         var user = _httpContextAccessor.HttpContext?.User;
-        return user is not null && _authorizer.Has(user, permission);
+        return user is null ? ValueTask.FromResult(false) : _authorizer.HasAsync(user, permission, ct);
     }
 
-    public bool HasAll(IEnumerable<string> permissions)
+    public ValueTask<bool> HasAllAsync(IEnumerable<string> permissions, CancellationToken ct = default)
     {
         var user = _httpContextAccessor.HttpContext?.User;
-        return user is not null && _authorizer.HasAll(user, permissions);
+        return user is null ? ValueTask.FromResult(false) : _authorizer.HasAllAsync(user, permissions, ct);
     }
 
-    public bool HasAny(IEnumerable<string> permissions)
+    public ValueTask<bool> HasAnyAsync(IEnumerable<string> permissions, CancellationToken ct = default)
     {
         var user = _httpContextAccessor.HttpContext?.User;
-        return user is not null && _authorizer.HasAny(user, permissions);
+        return user is null ? ValueTask.FromResult(false) : _authorizer.HasAnyAsync(user, permissions, ct);
     }
 
-    public void Require(string permission)
+    public async ValueTask RequireAsync(string permission, CancellationToken ct = default)
     {
-        if (!Has(permission))
+        if (!await HasAsync(permission, ct))
             throw new UnauthorizedAccessException($"Permission required: {permission}");
     }
 }

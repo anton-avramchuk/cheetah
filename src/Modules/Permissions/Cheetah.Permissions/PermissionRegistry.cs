@@ -17,6 +17,14 @@ public sealed class PermissionRegistry
 
     public bool Contains(string key) => _items.ContainsKey(key);
 
+    /// <summary>
+    /// Ключ фич-флага, за которым спрятан permission, либо null — permission не привязан к фиче
+    /// ИЛИ вовсе не объявлен в этом процессе (реестр видит только свои сборки). В обоих случаях
+    /// проверка прав идёт по одним claims: чужой permission гейтить нечем.
+    /// </summary>
+    public string? GetFeature(string key)
+        => _items.TryGetValue(key, out var descriptor) ? descriptor.Feature : null;
+
     public void Add(string key, string? description, string? module, string? feature = null)
     {
         if (string.IsNullOrWhiteSpace(key))

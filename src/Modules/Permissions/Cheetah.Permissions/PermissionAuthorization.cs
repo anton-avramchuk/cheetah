@@ -17,12 +17,11 @@ public sealed class PermissionAuthorizationHandler : AuthorizationHandler<Permis
     private readonly IPermissionAuthorizer _authorizer;
     public PermissionAuthorizationHandler(IPermissionAuthorizer authorizer) => _authorizer = authorizer;
 
-    protected override Task HandleRequirementAsync(
+    protected override async Task HandleRequirementAsync(
         AuthorizationHandlerContext context, PermissionRequirement requirement)
     {
-        if (_authorizer.Has(context.User, requirement.Permission))
+        if (await _authorizer.HasAsync(context.User, requirement.Permission))
             context.Succeed(requirement);
-        return Task.CompletedTask;
     }
 }
 
