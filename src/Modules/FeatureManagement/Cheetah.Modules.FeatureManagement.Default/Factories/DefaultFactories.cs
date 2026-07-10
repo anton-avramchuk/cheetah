@@ -21,6 +21,8 @@ public sealed class FeatureFlagFactory : IFeatureFlagFactory<FeatureFlag, Create
     public FeatureFlag CreateFromDescriptor(FeatureDefinitionDescriptor descriptor)
     {
         var flag = FeatureFlag.Create(descriptor.Key, descriptor.Name, descriptor.OwnerService, descriptor.ValueType, descriptor.Description);
+        if (descriptor.ParentKey is not null)
+            flag.SetParent(descriptor.ParentKey);
         if (descriptor.Variants is { Count: > 0 })
             flag.SetVariants(descriptor.Variants.Select(name => FeatureVariantDef.Create(flag.Id, name, null, 0)));
         return flag;

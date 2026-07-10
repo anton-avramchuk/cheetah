@@ -49,13 +49,24 @@ CQRS, эндпоинты `api/features/*` и подписывает инвали
 ```csharp
 services.AddFeatureManagementClient(o => o.BaseUrl = cfg["Features:Url"])
         .UseRemoteReplica()              // локальная in-memory реплика (горячий путь без сети)
-        .RegisterFeatures(reg => reg.Add("deals.kanban-v2", "Kanban v2",
-                                          x => x.ValueType = FeatureValueType.Bool));
+        .RegisterFeatures(reg => reg
+            .Add("deals", "Модуль сделок")
+            .Add("deals.kanban-v2", "Kanban v2", x =>
+            {
+                x.ValueType = FeatureValueType.Bool;
+                x.ParentKey = "deals";   // каскад: выключённый родитель гасит потомка
+            }));
 ```
 
 `FeatureClientHostedService` при старте регистрирует флаги в каталоге и делает первый pull реплики
 (`ContinueOnFailure` — недоступность каталога не валит хост). Реплика обновляется по событиям
 `FeatureFlagChanged/Toggled` с шины. Подробнее — раздел §2.1 плана.
+
+Синхронизация идемпотентна и **не трогает** `Enabled`/таргетинг существующего флага — рестарт сервиса
+не сбрасывает настройки админа. `ParentKey` — исключение: объявленный кодом родитель применяется и к
+существующему флагу, чтобы иерархия воспроизводилась на любой БД. Дескриптор **без** родителя связь не
+снимает: код её не объявлял, значит и не отменяет (родителя, выставленного руками в админке, рестарт
+не ломает).
 
 ## Эндпоинты
 

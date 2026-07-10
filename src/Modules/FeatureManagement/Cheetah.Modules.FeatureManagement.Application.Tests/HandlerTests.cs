@@ -73,6 +73,83 @@ public class HandlerTests
     }
 
     [Fact]
+    public async Task Sync_applies_declared_parent_to_new_flag()
+    {
+        var repo = new InMemoryFlagRepository();
+        var handler = new SyncFeatureRegistryCommandHandler<TestFlag, TestCreateRequest>(
+            repo, new TestFactory(), new RecordingEventBus());
+
+        await handler.HandleAsync(new SyncFeatureRegistryCommand(
+        [
+            new FeatureDefinitionDescriptor("Vacancy.Teams", "Командный режим", "Vacancy", ParentKey: "Teams")
+        ]));
+
+        (await repo.GetByKeyAsync("Vacancy.Teams", false))!.ParentKey.ShouldBe("Teams");
+    }
+
+    [Fact]
+    public async Task Sync_applies_declared_parent_to_existing_flag_and_publishes_changed()
+    {
+        var existing = TestFlag.Create("Vacancy.Teams", "Командный режим", "Vacancy");
+        existing.Enable();
+        var repo = new InMemoryFlagRepository(existing);
+        var bus = new RecordingEventBus();
+        var handler = new SyncFeatureRegistryCommandHandler<TestFlag, TestCreateRequest>(repo, new TestFactory(), bus);
+
+        await handler.HandleAsync(new SyncFeatureRegistryCommand(
+        [
+            new FeatureDefinitionDescriptor("Vacancy.Teams", "Командный режим", "Vacancy", ParentKey: "Teams")
+        ]));
+
+        existing.ParentKey.ShouldBe("Teams");
+        existing.Enabled.ShouldBeTrue(); // kill-switch по-прежнему не трогаем
+        // Меняется эффективное значение флага — реплики потребителей обязаны инвалидироваться.
+        bus.Published.OfType<FeatureFlagChangedIntegrationEvent>().ShouldHaveSingleItem().Key.ShouldBe("Vacancy.Teams");
+    }
+
+    /// <summary>
+    /// Дескриптор без родителя не должен сбрасывать связь, выставленную админом руками:
+    /// код декларирует родителя, только когда явно его объявил.
+    /// </summary>
+    [Fact]
+    public async Task Sync_without_declared_parent_keeps_manual_parent()
+    {
+        var existing = TestFlag.Create("Vacancy.Teams", "Командный режим", "Vacancy");
+        existing.SetParent("Teams");
+        existing.ClearDomainEvents();
+        var repo = new InMemoryFlagRepository(existing);
+        var bus = new RecordingEventBus();
+        var handler = new SyncFeatureRegistryCommandHandler<TestFlag, TestCreateRequest>(repo, new TestFactory(), bus);
+
+        await handler.HandleAsync(new SyncFeatureRegistryCommand(
+        [
+            new FeatureDefinitionDescriptor("Vacancy.Teams", "Командный режим", "Vacancy")
+        ]));
+
+        existing.ParentKey.ShouldBe("Teams");
+        bus.Published.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task Sync_is_idempotent_for_already_declared_parent()
+    {
+        var existing = TestFlag.Create("Vacancy.Teams", "Командный режим", "Vacancy");
+        existing.SetParent("Teams");
+        existing.ClearDomainEvents();
+        var repo = new InMemoryFlagRepository(existing);
+        var bus = new RecordingEventBus();
+        var handler = new SyncFeatureRegistryCommandHandler<TestFlag, TestCreateRequest>(repo, new TestFactory(), bus);
+
+        await handler.HandleAsync(new SyncFeatureRegistryCommand(
+        [
+            new FeatureDefinitionDescriptor("Vacancy.Teams", "Командный режим", "Vacancy", ParentKey: "Teams")
+        ]));
+
+        // Ничего не изменилось — событий нет, реплики не дёргаем на каждом рестарте сервиса.
+        bus.Published.ShouldBeEmpty();
+    }
+
+    [Fact]
     public async Task SetParent_assigns_and_publishes_changed()
     {
         var parent = TestFlag.Create("Vacancy", "Vacancy", "vacancy");

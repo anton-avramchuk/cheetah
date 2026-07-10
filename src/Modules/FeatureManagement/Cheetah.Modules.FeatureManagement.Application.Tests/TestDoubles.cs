@@ -31,7 +31,11 @@ internal sealed class TestFactory : IFeatureFlagFactory<TestFlag, TestCreateRequ
         => TestFlag.Create(request.Key, request.Name, request.OwnerService, request.ValueType, request.Description);
 
     public TestFlag CreateFromDescriptor(FeatureDefinitionDescriptor d)
-        => TestFlag.Create(d.Key, d.Name, d.OwnerService, d.ValueType, d.Description);
+    {
+        var flag = TestFlag.Create(d.Key, d.Name, d.OwnerService, d.ValueType, d.Description);
+        if (d.ParentKey is not null) flag.SetParent(d.ParentKey);
+        return flag;
+    }
 }
 
 internal sealed class TestProjector : IFeatureFlagProjector<TestFlag, TestDto>

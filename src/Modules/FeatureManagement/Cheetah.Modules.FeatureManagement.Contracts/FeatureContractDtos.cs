@@ -19,6 +19,11 @@ public sealed record FeatureEvaluationDto(bool Enabled, string? Variant);
 /// <summary>
 /// Дескриптор флага для реестра: сервис декларирует свои флаги при старте (как Permissions.Catalog/Tags).
 /// Идемпотентный upsert метаданных — НЕ трогает ручные <c>Enabled</c>/таргетинг существующего флага.
+/// <para>
+/// <paramref name="ParentKey"/> — родитель в каскаде, объявленный кодом. Если задан, он применяется и к
+/// существующему флагу (связь воспроизводится на любой БД). Если <c>null</c> — родитель, выставленный
+/// админом руками, сохраняется: код не объявлял связь, значит и не отменяет её.
+/// </para>
 /// </summary>
 public sealed record FeatureDefinitionDescriptor(
     string Key,
@@ -26,4 +31,5 @@ public sealed record FeatureDefinitionDescriptor(
     string OwnerService,
     FeatureValueType ValueType = FeatureValueType.Bool,
     string? Description = null,
-    IReadOnlyList<string>? Variants = null);
+    IReadOnlyList<string>? Variants = null,
+    string? ParentKey = null);

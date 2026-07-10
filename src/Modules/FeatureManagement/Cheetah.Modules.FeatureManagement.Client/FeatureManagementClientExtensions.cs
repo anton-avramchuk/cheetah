@@ -28,6 +28,9 @@ public sealed class FeatureDescriptorOptions
     public FeatureValueType ValueType { get; set; } = FeatureValueType.Bool;
     public string? Description { get; set; }
     public IReadOnlyList<string>? Variants { get; set; }
+
+    /// <summary>Родитель в каскаде: выключенный родитель гасит этот флаг. Null — верхний уровень.</summary>
+    public string? ParentKey { get; set; }
 }
 
 /// <summary>Билдер клиента FeatureManagement для дальнейшей настройки (реплика, флаги).</summary>
@@ -91,7 +94,8 @@ public static class FeatureManagementClientExtensions
             var o = new FeatureDescriptorOptions();
             configure?.Invoke(o);
             var ownerService = key.Contains('.') ? key[..key.IndexOf('.')] : key;
-            Descriptors.Add(new FeatureDefinitionDescriptor(key, name, ownerService, o.ValueType, o.Description, o.Variants));
+            Descriptors.Add(new FeatureDefinitionDescriptor(
+                key, name, ownerService, o.ValueType, o.Description, o.Variants, o.ParentKey));
             return this;
         }
     }
