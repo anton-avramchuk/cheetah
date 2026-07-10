@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Cheetah.Audit.EntityFrameworkCore;
 
@@ -10,13 +11,20 @@ namespace Cheetah.Audit.EntityFrameworkCore;
 public sealed class EfAuditSink<TContext> : IAuditSink
     where TContext : DbContext, IAuditDbContext
 {
-    private readonly TContext _context;
+    private readonly IServiceProvider _serviceProvider;
 
-    public EfAuditSink(TContext context) => _context = context;
+    /// <remarks>
+    /// TContext резолвится лениво, а не через конструктор: sink строится в составе AuditInterceptor,
+    /// который сам резолвится при конфигурации DbContextOptions&lt;TContext&gt;. Инъекция контекста
+    /// замкнула бы DI в цикл (options -> interceptor -> sink -> context -> options).
+    /// </remarks>
+    public EfAuditSink(IServiceProvider serviceProvider) => _serviceProvider = serviceProvider;
 
     public ValueTask EmitAsync(IReadOnlyList<AuditEntry> entries, CancellationToken cancellationToken = default)
     {
-        _context.AuditEntries.AddRange(entries);
+        // К моменту вызова (SavingChanges) контекст уже создан и закэширован в scope — тот же экземпляр.
+        var context = _serviceProvider.GetRequiredService<TContext>();
+        context.AuditEntries.AddRange(entries);
         // SaveChanges не вызываем — interceptor отдаёт нам управление ДО SaveChanges,
         // и наши записи уезжают вместе с агрегатом.
         return ValueTask.CompletedTask;
