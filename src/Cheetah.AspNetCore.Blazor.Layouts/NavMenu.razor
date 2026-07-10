@@ -8,6 +8,7 @@
 @inject INavigationMenuService NavigationMenuService
 @inject AuthenticationStateProvider AuthProvider
 @inject IMenuAccessEvaluator Access
+@inject IMenuFeatureEvaluator Features
 
 <nav class="sidebar-nav">
     @foreach (var menuSection in _menu.Sections)
@@ -74,6 +75,9 @@
     private HashSet<string> _expandedGroups = new();
     private ClaimsPrincipal _user = new(new ClaimsIdentity());
 
+    // Фичи, выключенные на момент построения меню. Считаются один раз (рендер синхронный).
+    private IReadOnlySet<string> _disabledFeatures = new HashSet<string>();
+
     // Нормализованный URL активного пункта (самое специфичное совпадение для текущего пути).
     private string? _activeUrl;
 
@@ -81,23 +85,14 @@
     {
         _user = (await AuthProvider.GetAuthenticationStateAsync()).User;
         _menu = await NavigationMenuService.GetMenuAsync(Constants.MainMenuId);
+        _disabledFeatures = await MenuVisibility.CollectDisabledAsync(_menu, Features);
         UpdateActive(NavigationManager.Uri);
         UpdateExpandedGroups(NavigationManager.Uri);
         NavigationManager.LocationChanged += OnLocationChanged;
     }
 
-    // Пункт виден, если нет требования либо у пользователя есть нужное разрешение.
-    // Для группы дополнительно требуется хотя бы один видимый дочерний пункт.
-    private bool CanSee(MenuItem item)
-    {
-        if (!Access.CanSee(_user, item.RequiredPermission))
-            return false;
-
-        if (item.IsGroup)
-            return item.Children.Any(CanSee);
-
-        return true;
-    }
+    // Пункт виден, если у пользователя есть нужное разрешение И включена нужная фича (см. MenuVisibility).
+    private bool CanSee(MenuItem item) => MenuVisibility.CanSee(item, _user, Access, _disabledFeatures);
 
     private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
     {

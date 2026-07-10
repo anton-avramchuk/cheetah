@@ -22,6 +22,12 @@ Constants.MainMenuId  // "main" — основное боковое меню
 
 Контроль видимости пунктов по правам — через шов `IMenuAccessEvaluator` (`CanSee(ClaimsPrincipal, requiredPermission)`); реализация поставляется приложением/модулем Identity, сам Navigation от Identity не зависит. Тип claim-а разрешения — `Constants.PermissionClaimType`.
 
+Видимость по фич-флагам — второй шов, `IMenuFeatureEvaluator` (`IsEnabledAsync(feature)`), реализуемый приложением поверх `IFeatureManager`; Navigation так же не зависит от FeatureManagement. По умолчанию зарегистрирован `NullMenuFeatureEvaluator` (все фичи включены), поэтому хост без движка флагов работает как раньше. Пункт прячется через `.RequireFeature("Vacancy.Teams")`.
+
+Оба правила складываются в `MenuVisibility`: пункт виден, если выполнены **и** право, **и** фича; выключенная фича на группе гасит её целиком вместе с детьми. Состояние фич считается один раз при построении меню (`MenuVisibility.CollectDisabledAsync`) — по одному запросу на различный ключ, дальше `CanSee` синхронна.
+
+> Меню — это не защита: скрытый пункт не мешает открыть URL напрямую. Страницу гейтите отдельно.
+
 ## Модель меню
 
 ```
@@ -133,3 +139,4 @@ public partial class MyModule : CrmModule
 - Без `Microsoft.AspNetCore.App`: это чистый сервисный модуль (рендеринг меню — в `Cheetah.AspNetCore.Blazor.Layouts`/`NavMenu`).
 - DI генерируется из `[Export]`; `IMenuContributorProvider`/`INavigationMenuService` — `Singleton`.
 - Шов `IMenuAccessEvaluator` реализуется приложением (Identity); без реализации все пункты считаются видимыми (зависит от провайдера).
+- Шов `IMenuFeatureEvaluator` реализуется приложением (поверх `IFeatureManager`); дефолт — `NullMenuFeatureEvaluator` через `TryAdd`, все фичи включены.

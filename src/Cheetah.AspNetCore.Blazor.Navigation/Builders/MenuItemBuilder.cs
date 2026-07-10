@@ -42,6 +42,13 @@ public class MenuItemBuilder
         return this;
     }
 
+    /// <summary>Спрятать пункт, пока фича выключена (ключ фич-флага, например <c>"Vacancy.Teams"</c>).</summary>
+    public MenuItemBuilder RequireFeature(string feature)
+    {
+        _item.RequiredFeature = feature;
+        return this;
+    }
+
     public MenuItemBuilder AddChild(string id, string label, Action<MenuItemBuilder> configure)
     {
         var child = new MenuItemBuilder(id, label);

@@ -14,6 +14,13 @@ public class MenuItem
     /// <summary>Если задано — пункт виден только пользователю с этим разрешением (claim типа permission) или роли admin.</summary>
     public string? RequiredPermission { get; set; }
 
+    /// <summary>
+    /// Если задано — пункт виден, только пока включена эта фича (ключ фич-флага). Выключенная фича
+    /// гасит и пункт-группу целиком, вместе с детьми. Гейт на самой странице этим не заменяется:
+    /// пункт исчезнет из меню, но URL останется рабочим.
+    /// </summary>
+    public string? RequiredFeature { get; set; }
+
     public List<MenuItem> Children { get; set; } = new();
 
     public bool IsGroup => Children.Count > 0;
