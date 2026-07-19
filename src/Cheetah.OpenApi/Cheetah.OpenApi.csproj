@@ -12,6 +12,8 @@
 
     <ItemGroup>
       <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+      <!-- Явная ссылка поднимает транзитивную 2.0.0 (GHSA-v5pm-xwqc-g5wc, high). -->
+      <PackageReference Include="Microsoft.OpenApi" />
     </ItemGroup>
 
     <ItemGroup>
