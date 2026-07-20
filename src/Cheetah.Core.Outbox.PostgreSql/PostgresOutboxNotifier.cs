@@ -37,8 +37,22 @@ public sealed class PostgresOutboxNotifier : BackgroundService, IOutboxNotifier
     public async ValueTask WaitForSignalAsync(CancellationToken cancellationToken)
     {
         var signal = Volatile.Read(ref _signal);
-        using var registration = cancellationToken.Register(static s => ((TaskCompletionSource)s!).TrySetResult(), signal);
-        await signal.Task;
+
+        if (!cancellationToken.CanBeCanceled)
+        {
+            await signal.Task;
+            return;
+        }
+
+        // Отмена завершает СВОЙ tcs, а не общий сигнал. Раньше отменённое ожидание переводило
+        // общий TaskCompletionSource в completed, и все следующие ожидания возвращались мгновенно:
+        // OutboxProcessor (он отменяет связанный токен после каждой итерации) переставал спать
+        // и опрашивал базу в тесном цикле — гигабайты логов за прогон.
+        var cancelled = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        using var registration = cancellationToken.Register(
+            static s => ((TaskCompletionSource)s!).TrySetResult(), cancelled);
+
+        await Task.WhenAny(signal.Task, cancelled.Task);
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -96,7 +110,7 @@ public sealed class PostgresOutboxNotifier : BackgroundService, IOutboxNotifier
         Pulse();
     }
 
-    private void Pulse()
+    internal void Pulse()
     {
         var fresh = NewSignal();
         var old = Interlocked.Exchange(ref _signal, fresh);

@@ -21,4 +21,11 @@
         <ProjectReference Include="..\Cheetah.Generators.Module\Cheetah.Generators.Module.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
     </ItemGroup>
 
+    <ItemGroup>
+        <!-- Тесты дёргают Pulse() напрямую: поведение ожидания проверяется без живого Postgres. -->
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+            <_Parameter1>Cheetah.Core.Outbox.PostgreSql.Tests</_Parameter1>
+        </AssemblyAttribute>
+    </ItemGroup>
+
 </Project>
