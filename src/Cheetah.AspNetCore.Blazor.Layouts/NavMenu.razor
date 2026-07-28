@@ -8,6 +8,7 @@
 @inject INavigationMenuService NavigationMenuService
 @inject AuthenticationStateProvider AuthProvider
 @inject IMenuAccessEvaluator Access
+@inject IMenuChangeNotifier MenuChanges
 @inject Cheetah.AspNetCore.Blazor.Abstractions.IFeatureVisibilityEvaluator Features
 
 <nav class="sidebar-nav">
@@ -84,11 +85,25 @@
     protected override async Task OnInitializedAsync()
     {
         _user = (await AuthProvider.GetAuthenticationStateAsync()).User;
+        await ReloadMenuAsync();
+        NavigationManager.LocationChanged += OnLocationChanged;
+        // Пункты из данных (например, вакансии пользователя) меняются в течение сессии — тогда
+        // тот, кто их менял, зовёт IMenuChangeNotifier, и меню пересобирается.
+        MenuChanges.MenuChanged += OnMenuChangedAsync;
+    }
+
+    private async Task ReloadMenuAsync()
+    {
         _menu = await NavigationMenuService.GetMenuAsync(Constants.MainMenuId);
         _disabledFeatures = await MenuVisibility.CollectDisabledAsync(_menu, Features);
         UpdateActive(NavigationManager.Uri);
         UpdateExpandedGroups(NavigationManager.Uri);
-        NavigationManager.LocationChanged += OnLocationChanged;
+    }
+
+    private async Task OnMenuChangedAsync()
+    {
+        await ReloadMenuAsync();
+        await InvokeAsync(StateHasChanged);
     }
 
     // Пункт виден, если у пользователя есть нужное разрешение И включена нужная фича (см. MenuVisibility).
@@ -146,5 +161,9 @@
             _expandedGroups.Add(groupId);
     }
 
-    public void Dispose() => NavigationManager.LocationChanged -= OnLocationChanged;
+    public void Dispose()
+    {
+        NavigationManager.LocationChanged -= OnLocationChanged;
+        MenuChanges.MenuChanged -= OnMenuChangedAsync;
+    }
 }
