@@ -4,7 +4,12 @@ using Cheetah.AspNetCore.Blazor.Navigation.Models;
 
 namespace Cheetah.AspNetCore.Blazor.Navigation;
 
-[Export(LifetimeType.Singleton, typeof(INavigationMenuService))]
+/// <summary>
+/// Собирает меню из контрибьюторов. Scoped, а не Singleton: контрибьютор может брать пункты из
+/// данных текущего пользователя (список его вакансий, избранное) — для этого ему нужны scoped-
+/// зависимости, недоступные из корневого контейнера. Меню строится заново на каждый вызов.
+/// </summary>
+[Export(LifetimeType.Scoped, typeof(INavigationMenuService))]
 public class NavigationMenuService : INavigationMenuService
 {
     private readonly IMenuContributorProvider _contributorProvider;
