@@ -1,7 +1,6 @@
-using System.Security.Claims;
 using Cheetah.AspNetCore.Blazor.Auth.Abstractions;
+using Cheetah.AspNetCore.Blazor.Auth.Spa;
 using Cheetah.AspNetCore.Blazor.Auth.Tokens;
-using Cheetah.Core.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
@@ -42,7 +41,7 @@ public static class BffAuthEndpoints
             var sessionId = Guid.NewGuid().ToString("N");
             await tokenStore.StoreAsync(sessionId, result.Tokens, ct);
 
-            var principal = BuildPrincipal(result.User, sessionId);
+            var principal = SpaSessionPrincipal.Build(result.User, sessionId);
             await httpContext.SignInAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme,
                 principal,
@@ -66,32 +65,5 @@ public static class BffAuthEndpoints
         }).DisableAntiforgery();
 
         return endpoints;
-    }
-
-    private static ClaimsPrincipal BuildPrincipal(BffUser user, string sessionId)
-    {
-        var claims = new List<Claim>
-        {
-            new(ApplicationClaimTypes.UserId, user.Id),
-            new(ApplicationClaimTypes.UserName, user.UserName),
-            new(BffClaimTypes.SessionId, sessionId),
-        };
-
-        if (!string.IsNullOrEmpty(user.Email))
-            claims.Add(new Claim(ApplicationClaimTypes.Email, user.Email));
-
-        if (user.Roles is not null)
-            claims.AddRange(user.Roles.Select(r => new Claim(ApplicationClaimTypes.Role, r)));
-
-        if (user.AdditionalClaims is not null)
-            claims.AddRange(user.AdditionalClaims);
-
-        var identity = new ClaimsIdentity(
-            claims,
-            CookieAuthenticationDefaults.AuthenticationScheme,
-            ApplicationClaimTypes.UserName,
-            ApplicationClaimTypes.Role);
-
-        return new ClaimsPrincipal(identity);
     }
 }
