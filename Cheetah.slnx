@@ -69,6 +69,7 @@
         <Project Path="src/Cheetah.Core.Outbox.OpenTelemetry/Cheetah.Core.Outbox.OpenTelemetry.csproj" />
         <Project Path="src/Cheetah.Core.Outbox.PostgreSql/Cheetah.Core.Outbox.PostgreSql.csproj" />
         <Project Path="src/Cheetah.Core.Grid/Cheetah.Core.Grid.csproj" />
+        <Project Path="src/Cheetah.Core.Grid.Tests/Cheetah.Core.Grid.Tests.csproj" />
         <Project Path="src/Cheetah.Core.Security/Cheetah.Core.Security.csproj" />
         <Project Path="src/Cheetah.Core.Specification/Cheetah.Core.Specification.csproj" />
         <Project Path="src/Cheetah.Core.StateMachine/Cheetah.Core.StateMachine.csproj" />
