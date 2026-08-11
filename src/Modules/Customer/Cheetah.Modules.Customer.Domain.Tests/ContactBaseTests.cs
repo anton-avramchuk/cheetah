@@ -74,6 +74,56 @@ public class ContactBaseTests
         changed.Phone.ShouldBe("+12025550199");
     }
 
+    /// <summary>
+    /// Мессенджеры — такие же значимые типы, как почта и телефон: приводятся к канону при записи.
+    /// Ник копируют из профиля вместе с адресом страницы, поэтому «t.me/john» и «@John» — это одно
+    /// и то же значение.
+    /// </summary>
+    [Fact]
+    public void ChangeContacts_CanonicalizesMessengers()
+    {
+        var contact = TestContact.Create(CustomerId, "John");
+
+        contact.ChangeContacts("j@acme.io", "+12025550199", "https://t.me/JohnDoe", "wa.me/+12025550199");
+
+        contact.Telegram!.Value.ShouldBe("johndoe");
+        contact.WhatsApp!.Value.ShouldBe("+12025550199");
+    }
+
+    [Fact]
+    public void Create_TakesMessengers()
+    {
+        var contact = TestContact.Create(CustomerId, "John", telegram: "@john_doe", whatsApp: "+12025550199");
+
+        contact.Telegram!.Value.ShouldBe("john_doe");
+        contact.WhatsApp!.Value.ShouldBe("+12025550199");
+    }
+
+    /// <summary>
+    /// Не присланный мессенджер очищается, а не остаётся прежним: способы связи правят формой, где
+    /// все поля видны сразу, и «пусто» там значит «убрали».
+    /// </summary>
+    [Fact]
+    public void ChangeContacts_WithoutMessengers_ClearsThem()
+    {
+        var contact = TestContact.Create(CustomerId, "John", telegram: "@john_doe", whatsApp: "+12025550199");
+
+        contact.ChangeContacts("j@acme.io", "+12025550199");
+
+        contact.Telegram.ShouldBeNull();
+        contact.WhatsApp.ShouldBeNull();
+    }
+
+    /// <summary>Негодное значение — исключение: мусор не должен доехать до кнопки «написать».</summary>
+    [Fact]
+    public void ChangeContacts_RejectsGarbageMessengers()
+    {
+        var contact = TestContact.Create(CustomerId, "John");
+
+        Should.Throw<ArgumentException>(() => contact.ChangeContacts(null, null, "@a", null));
+        Should.Throw<ArgumentException>(() => contact.ChangeContacts(null, null, null, "написать в ватсап"));
+    }
+
     [Fact]
     public void Remove_SetsRemovedAt_AndRaisesEvent()
     {

@@ -14,6 +14,9 @@ public static class CustomerConstants
     public const int MaxEmailLength = 320;
     public const int MaxPhoneLength = 32;
 
+    /// <summary>32 знака — предел самого Telegram; ник хранится без «@», так что запас не нужен.</summary>
+    public const int MaxTelegramLength = 32;
+
     // Контактные лица клиента (отдельный агрегат со ссылкой CustomerId).
     public const int MaxFullNameLength = 256;
 

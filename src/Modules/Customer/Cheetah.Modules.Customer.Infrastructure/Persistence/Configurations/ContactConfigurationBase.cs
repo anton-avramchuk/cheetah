@@ -41,6 +41,16 @@ public abstract class ContactConfigurationBase<TContact, TPosition> : IEntityTyp
             .HasConversion(p => p!.Value, v => Phone.Create(v))
             .HasMaxLength(CustomerConstants.MaxPhoneLength);
 
+        // Мессенджеры — теми же конвертерами: в базе строка, в домене значимый тип. Значит, в
+        // колонке не может лежать то, чего фабрика не примет, — иначе первое же чтение упадёт.
+        builder.Property(x => x.Telegram)
+            .HasConversion(t => t!.Value, v => Telegram.Create(v))
+            .HasMaxLength(CustomerConstants.MaxTelegramLength);
+
+        builder.Property(x => x.WhatsApp)
+            .HasConversion(w => w!.Value, v => WhatsApp.Create(v))
+            .HasMaxLength(CustomerConstants.MaxPhoneLength);
+
         builder.HasIndex(x => x.CustomerId);
 
         // Должность — ссылка на справочник (FK + навигация). Индекс по PositionId EF создаёт сам.

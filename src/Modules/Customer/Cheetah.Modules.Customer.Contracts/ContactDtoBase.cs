@@ -13,5 +13,11 @@ public abstract record ContactDtoBase
     public Guid? PositionId { get; init; }
     public string? Email { get; init; }
     public string? Phone { get; init; }
+
+    /// <summary>Ник Telegram без «@» — ссылку «написать» строит интерфейс.</summary>
+    public string? Telegram { get; init; }
+
+    /// <summary>Номер WhatsApp: по форме телефон, но способ связи другой.</summary>
+    public string? WhatsApp { get; init; }
     public DateTimeOffset? CreatedAt { get; init; }
 }

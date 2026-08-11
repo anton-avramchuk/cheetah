@@ -8,10 +8,17 @@ public sealed class TestContact : ContactBase<TestPosition>
     private TestContact() { }
 
     public static TestContact Create(
-        Guid customerId, string fullName, Guid? positionId = null, string? email = null, string? phone = null)
+        Guid customerId,
+        string fullName,
+        Guid? positionId = null,
+        string? email = null,
+        string? phone = null,
+        string? telegram = null,
+        string? whatsApp = null)
     {
         var contact = new TestContact();
-        contact.InitializeCore(Guid.NewGuid(), customerId, fullName, positionId, email, phone);
+        contact.InitializeCore(
+            Guid.NewGuid(), customerId, fullName, positionId, email, phone, telegram, whatsApp);
         return contact;
     }
 }
