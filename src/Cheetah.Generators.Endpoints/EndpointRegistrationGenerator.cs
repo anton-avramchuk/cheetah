@@ -12,6 +12,7 @@ public class EndpointRegistrationGenerator : IIncrementalGenerator
     private const string ErrorCode = "ENDPGEN001";
     private const string ErrorCategory = nameof(EndpointRegistrationGenerator);
     private const string GridResultTypeName = "Cheetah.Contracts.Responses.GridResult";
+    private const string GridRequestTypeName = "Cheetah.Contracts.Requests.GridRequest";
 
     // Base endpoint types to look for
     private static readonly string[] EndpointBaseTypes = new[]
@@ -304,21 +305,57 @@ public class EndpointRegistrationGenerator : IIncrementalGenerator
         };
     }
 
+
+    /// <summary>
+    /// Наследуется ли запрос от <c>GridRequest</c>. Такой запрос несёт фильтр и сортировку деревом
+    /// (<c>filter[filters][0][field]=...</c>), а это не биндится штатным разбором строки запроса: сложное
+    /// свойство ASP.NET уводит в тело, и GET-эндпоинт роняет приложение на старте ("Body was inferred").
+    /// </summary>
+    private static bool IsGridRequest(ITypeSymbol request)
+    {
+        for (var type = request as INamedTypeSymbol; type != null; type = type.BaseType)
+        {
+            if (type.ToDisplayString() == GridRequestTypeName)
+                return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Параметры и первая строка тела для GET-эндпоинта: грид-запрос разбирается из HttpContext, всё
+    /// остальное — штатным <c>[AsParameters]</c>. Так любой GET умеет принимать грид-фильтр, а не только
+    /// список: тем же фильтром считаются, например, счётчики значений фильтров рядом со списком.
+    /// </summary>
+    private static (string Parameters, string? Binding) GetRequestBinding(ITypeSymbol request)
+    {
+        var tRequest = request.ToDisplayString();
+        var services = "[FromServices] IDispatcher dispatcher, [FromServices] IObjectMapper mapper, CancellationToken cancellationToken";
+
+        return IsGridRequest(request)
+            ? ($"HttpContext httpContext, {services}", $"var request = httpContext.BindGridRequest<{tRequest}>();")
+            : ($"[AsParameters] {tRequest} request, {services}", null);
+    }
+
     private static (string, (string, List<string>), List<string>) GenerateQueryEndpoint(ImmutableArray<ITypeSymbol> typeArgs)
     {
-        var tRequest = typeArgs[0].ToDisplayString();
         var tQuery = typeArgs[1].ToDisplayString();
         var tQueryResult = typeArgs[2].ToDisplayString();
         var tResponse = typeArgs[3].ToDisplayString();
 
-        var parameters = $"[AsParameters] {tRequest} request, [FromServices] IDispatcher dispatcher, [FromServices] IObjectMapper mapper, CancellationToken cancellationToken";
-        var body = new List<string>
+        var (parameters, binding) = GetRequestBinding(typeArgs[0]);
+        var body = new List<string>();
+
+        if (binding != null)
+            body.Add(binding);
+
+        body.AddRange(new[]
         {
             $"var query = mapper.Map<{tQuery}>(request);",
             $"var result = await dispatcher.QueryAsync<{tQuery}, {tQueryResult}>(query, cancellationToken);",
             $"var response = mapper.Map<{tResponse}>(result);",
             "return Results.Ok(response);"
-        };
+        });
 
         var produces = new List<string>
         {
@@ -330,7 +367,6 @@ public class EndpointRegistrationGenerator : IIncrementalGenerator
 
     private static (string, (string, List<string>), List<string>) GenerateQueryOrNotFoundEndpoint(ImmutableArray<ITypeSymbol> typeArgs)
     {
-        var tRequest = typeArgs[0].ToDisplayString();
         var tQuery = typeArgs[1].ToDisplayString();
         var tQueryResult = typeArgs[2].ToDisplayString();
         var tResponse = typeArgs[3].ToDisplayString();
@@ -339,8 +375,13 @@ public class EndpointRegistrationGenerator : IIncrementalGenerator
         // call must use the nullable result type to match the IQuery<T> constraint exactly.
         var tQueryResultNullable = tQueryResult.EndsWith("?") ? tQueryResult : $"{tQueryResult}?";
 
-        var parameters = $"[AsParameters] {tRequest} request, [FromServices] IDispatcher dispatcher, [FromServices] IObjectMapper mapper, CancellationToken cancellationToken";
-        var body = new List<string>
+        var (parameters, binding) = GetRequestBinding(typeArgs[0]);
+        var body = new List<string>();
+
+        if (binding != null)
+            body.Add(binding);
+
+        body.AddRange(new[]
         {
             $"var query = mapper.Map<{tQuery}>(request);",
             $"var result = await dispatcher.QueryAsync<{tQuery}, {tQueryResultNullable}>(query, cancellationToken);",
@@ -350,7 +391,7 @@ public class EndpointRegistrationGenerator : IIncrementalGenerator
             "",
             $"var response = mapper.Map<{tResponse}>(result);",
             "return Results.Ok(response);"
-        };
+        });
 
         var produces = new List<string>
         {
@@ -363,19 +404,23 @@ public class EndpointRegistrationGenerator : IIncrementalGenerator
 
     private static (string, (string, List<string>), List<string>) GenerateQueryCollectionEndpoint(ImmutableArray<ITypeSymbol> typeArgs)
     {
-        var tRequest = typeArgs[0].ToDisplayString();
         var tQuery = typeArgs[1].ToDisplayString();
         var tQueryResult = typeArgs[2].ToDisplayString();
         var tResponse = typeArgs[3].ToDisplayString();
 
-        var parameters = $"[AsParameters] {tRequest} request, [FromServices] IDispatcher dispatcher, [FromServices] IObjectMapper mapper, CancellationToken cancellationToken";
-        var body = new List<string>
+        var (parameters, binding) = GetRequestBinding(typeArgs[0]);
+        var body = new List<string>();
+
+        if (binding != null)
+            body.Add(binding);
+
+        body.AddRange(new[]
         {
             $"var query = mapper.Map<{tQuery}>(request);",
             $"var results = await dispatcher.QueryAsync<{tQuery}, System.Collections.Generic.IReadOnlyList<{GetCollectionItemType(tQueryResult)}>>(query, cancellationToken);",
             $"var responses = mapper.Map<System.Collections.Generic.IReadOnlyList<{tResponse}>>(results);",
             "return Results.Ok(responses);"
-        };
+        });
 
         var produces = new List<string>
         {
