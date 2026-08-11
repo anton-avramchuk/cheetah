@@ -19,3 +19,18 @@ public abstract class DeleteCommandEndpoint<TRequest, TCommand>
 {
     public sealed override HttpMethod Method => HttpMethod.Delete;
 }
+
+/// <summary>
+/// DELETE endpoint that returns a body: 200 OK with the result of the command.
+///
+/// Нужен там, где удаление отменяемо: ответ несёт состояние после удаления и токен отмены, иначе
+/// вызывающему пришлось бы дочитывать его вторым запросом — а откатывать было бы нечем.
+/// </summary>
+public abstract class DeleteCommandWithResultEndpoint<TRequest, TCommand, TCommandResult, TResponse>
+    : EndpointBase<TRequest, TResponse>
+    where TRequest : ICrmRequest
+    where TCommand : ICommand<TCommandResult>
+    where TResponse : ICrmResponse
+{
+    public sealed override HttpMethod Method => HttpMethod.Delete;
+}

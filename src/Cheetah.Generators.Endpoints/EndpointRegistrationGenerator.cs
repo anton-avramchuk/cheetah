@@ -301,6 +301,9 @@ public class EndpointRegistrationGenerator : IIncrementalGenerator
             "Cheetah.Backend.Endpoints.Http.DeleteCommandEndpoint`2" =>
                 GenerateDeleteCommandEndpoint(typeArgs),
 
+            "Cheetah.Backend.Endpoints.Http.DeleteCommandWithResultEndpoint`4" =>
+                GenerateDeleteCommandWithResultEndpoint(typeArgs),
+
             _ => throw new InvalidOperationException($"Unknown endpoint type: {baseTypeName}")
         };
     }
@@ -626,6 +629,35 @@ public class EndpointRegistrationGenerator : IIncrementalGenerator
         var produces = new List<string>
         {
             "builder.Produces(StatusCodes.Status204NoContent);",
+            "builder.Produces(StatusCodes.Status404NotFound);"
+        };
+
+        return ("MapDelete", (parameters, body), produces);
+    }
+
+    /// <summary>
+    /// DELETE с телом ответа: удаление, у которого есть отмена, обязано вернуть и состояние после
+    /// себя, и токен отката — иначе вызывающий дочитывал бы их вторым запросом.
+    /// </summary>
+    private static (string, (string, List<string>), List<string>) GenerateDeleteCommandWithResultEndpoint(ImmutableArray<ITypeSymbol> typeArgs)
+    {
+        var tRequest = typeArgs[0].ToDisplayString();
+        var tCommand = typeArgs[1].ToDisplayString();
+        var tCommandResult = typeArgs[2].ToDisplayString();
+        var tResponse = typeArgs[3].ToDisplayString();
+
+        var parameters = $"[AsParameters] {tRequest} request, [FromServices] IDispatcher dispatcher, [FromServices] IObjectMapper mapper, CancellationToken cancellationToken";
+        var body = new List<string>
+        {
+            $"var command = mapper.Map<{tCommand}>(request);",
+            $"var result = await dispatcher.SendAsync<{tCommand}, {tCommandResult}>(command, cancellationToken);",
+            $"var response = mapper.Map<{tResponse}>(result);",
+            "return Results.Ok(response);"
+        };
+
+        var produces = new List<string>
+        {
+            $"builder.Produces<{tResponse}>(StatusCodes.Status200OK);",
             "builder.Produces(StatusCodes.Status404NotFound);"
         };
 
