@@ -27,7 +27,8 @@ public class EndpointRegistrationGenerator : IIncrementalGenerator
         "Cheetah.Backend.Endpoints.Http.UpdateCommandEndpoint`2",
         "Cheetah.Backend.Endpoints.Http.UpdateCommandWithResultEndpoint`4",
         "Cheetah.Backend.Endpoints.Http.PatchCommandEndpoint`2",
-        "Cheetah.Backend.Endpoints.Http.DeleteCommandEndpoint`2"
+        "Cheetah.Backend.Endpoints.Http.DeleteCommandEndpoint`2",
+        "Cheetah.Backend.Endpoints.Http.DeleteCommandWithResultEndpoint`4"
     };
 
     public void Initialize(IncrementalGeneratorInitializationContext context)
