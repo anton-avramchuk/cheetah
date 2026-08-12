@@ -20,6 +20,8 @@ public class EndpointRegistrationGenerator : IIncrementalGenerator
         "Cheetah.Backend.Endpoints.Http.QueryEndpoint`4",
         "Cheetah.Backend.Endpoints.Http.QueryOrNotFoundEndpoint`4",
         "Cheetah.Backend.Endpoints.Http.QueryCollectionEndpoint`4",
+        "Cheetah.Backend.Endpoints.Http.QueryWithBodyEndpoint`4",
+        "Cheetah.Backend.Endpoints.Http.QueryCollectionWithBodyEndpoint`4",
         "Cheetah.Backend.Endpoints.Http.QueryGridEndpoint`4",
         "Cheetah.Backend.Endpoints.Http.CommandEndpoint`2",
         "Cheetah.Backend.Endpoints.Http.CommandWithResultEndpoint`4",
@@ -279,6 +281,12 @@ public class EndpointRegistrationGenerator : IIncrementalGenerator
             "Cheetah.Backend.Endpoints.Http.QueryCollectionEndpoint`4" =>
                 GenerateQueryCollectionEndpoint(typeArgs),
 
+            "Cheetah.Backend.Endpoints.Http.QueryWithBodyEndpoint`4" =>
+                GenerateQueryWithBodyEndpoint(typeArgs),
+
+            "Cheetah.Backend.Endpoints.Http.QueryCollectionWithBodyEndpoint`4" =>
+                GenerateQueryCollectionWithBodyEndpoint(typeArgs),
+
             "Cheetah.Backend.Endpoints.Http.QueryGridEndpoint`4" =>
                 GenerateQueryGridEndpoint(typeArgs),
 
@@ -436,6 +444,63 @@ public class EndpointRegistrationGenerator : IIncrementalGenerator
         };
 
         return ("MapGet", (parameters, body), produces);
+    }
+
+    /// <summary>
+    /// POST-чтение: запрос приезжает телом, но выполняется как query. Тело обязательное — пустой
+    /// список идентификаторов это осмысленный запрос, а вот отсутствие тела означает ошибку вызова.
+    /// </summary>
+    private static (string, (string, List<string>), List<string>) GenerateQueryWithBodyEndpoint(ImmutableArray<ITypeSymbol> typeArgs)
+    {
+        var tRequest = typeArgs[0].ToDisplayString();
+        var tQuery = typeArgs[1].ToDisplayString();
+        var tQueryResult = typeArgs[2].ToDisplayString();
+        var tResponse = typeArgs[3].ToDisplayString();
+
+        var parameters = $"[FromBody] {tRequest} bodyRequest, HttpContext httpContext, [FromServices] IDispatcher dispatcher, [FromServices] IObjectMapper mapper, CancellationToken cancellationToken";
+        var body = new List<string>
+        {
+            "var request = httpContext.MergeRouteValuesInto(bodyRequest);",
+            $"var query = mapper.Map<{tQuery}>(request);",
+            $"var result = await dispatcher.QueryAsync<{tQuery}, {tQueryResult}>(query, cancellationToken);",
+            $"var response = mapper.Map<{tResponse}>(result);",
+            "return Results.Ok(response);"
+        };
+
+        var produces = new List<string>
+        {
+            $"builder.Produces<{tResponse}>(StatusCodes.Status200OK);",
+            "builder.Produces(StatusCodes.Status400BadRequest);"
+        };
+
+        return ("MapPost", (parameters, body), produces);
+    }
+
+    /// <summary>POST-чтение, отвечающее коллекцией: маркер ICrmResponse носит её элемент.</summary>
+    private static (string, (string, List<string>), List<string>) GenerateQueryCollectionWithBodyEndpoint(ImmutableArray<ITypeSymbol> typeArgs)
+    {
+        var tRequest = typeArgs[0].ToDisplayString();
+        var tQuery = typeArgs[1].ToDisplayString();
+        var tQueryResult = typeArgs[2].ToDisplayString();
+        var tResponse = typeArgs[3].ToDisplayString();
+
+        var parameters = $"[FromBody] {tRequest} bodyRequest, HttpContext httpContext, [FromServices] IDispatcher dispatcher, [FromServices] IObjectMapper mapper, CancellationToken cancellationToken";
+        var body = new List<string>
+        {
+            "var request = httpContext.MergeRouteValuesInto(bodyRequest);",
+            $"var query = mapper.Map<{tQuery}>(request);",
+            $"var results = await dispatcher.QueryAsync<{tQuery}, System.Collections.Generic.IReadOnlyList<{GetCollectionItemType(tQueryResult)}>>(query, cancellationToken);",
+            $"var responses = mapper.Map<System.Collections.Generic.IReadOnlyList<{tResponse}>>(results);",
+            "return Results.Ok(responses);"
+        };
+
+        var produces = new List<string>
+        {
+            $"builder.Produces<System.Collections.Generic.IReadOnlyList<{tResponse}>>(StatusCodes.Status200OK);",
+            "builder.Produces(StatusCodes.Status400BadRequest);"
+        };
+
+        return ("MapPost", (parameters, body), produces);
     }
 
     private static (string, (string, List<string>), List<string>) GenerateQueryGridEndpoint(ImmutableArray<ITypeSymbol> typeArgs)
