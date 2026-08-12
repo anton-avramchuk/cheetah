@@ -28,7 +28,8 @@ public class EndpointRegistrationGenerator : IIncrementalGenerator
         "Cheetah.Backend.Endpoints.Http.UpdateCommandWithResultEndpoint`4",
         "Cheetah.Backend.Endpoints.Http.PatchCommandEndpoint`2",
         "Cheetah.Backend.Endpoints.Http.DeleteCommandEndpoint`2",
-        "Cheetah.Backend.Endpoints.Http.DeleteCommandWithResultEndpoint`4"
+        "Cheetah.Backend.Endpoints.Http.DeleteCommandWithResultEndpoint`4",
+        "Cheetah.Backend.Endpoints.Http.UploadCommandEndpoint`4"
     };
 
     public void Initialize(IncrementalGeneratorInitializationContext context)
@@ -304,6 +305,9 @@ public class EndpointRegistrationGenerator : IIncrementalGenerator
 
             "Cheetah.Backend.Endpoints.Http.DeleteCommandWithResultEndpoint`4" =>
                 GenerateDeleteCommandWithResultEndpoint(typeArgs),
+
+            "Cheetah.Backend.Endpoints.Http.UploadCommandEndpoint`4" =>
+                GenerateUploadCommandEndpoint(typeArgs),
 
             _ => throw new InvalidOperationException($"Unknown endpoint type: {baseTypeName}")
         };
@@ -663,6 +667,39 @@ public class EndpointRegistrationGenerator : IIncrementalGenerator
         };
 
         return ("MapDelete", (parameters, body), produces);
+    }
+
+    /// <summary>
+    /// Загрузка файла: запрос приезжает формой (multipart/form-data), а не телом JSON — иначе файл
+    /// в него не положить. Дальше всё как у обычной команды с результатом.
+    ///
+    /// <c>DisableAntiforgery</c> обязателен: метаданные формы требуют middleware защиты от подделки,
+    /// и без него маршрут отвечает 500 ещё до обработчика.
+    /// </summary>
+    private static (string, (string, List<string>), List<string>) GenerateUploadCommandEndpoint(ImmutableArray<ITypeSymbol> typeArgs)
+    {
+        var tRequest = typeArgs[0].ToDisplayString();
+        var tCommand = typeArgs[1].ToDisplayString();
+        var tCommandResult = typeArgs[2].ToDisplayString();
+        var tResponse = typeArgs[3].ToDisplayString();
+
+        var parameters = $"[FromForm] {tRequest} request, [FromServices] IDispatcher dispatcher, [FromServices] IObjectMapper mapper, CancellationToken cancellationToken";
+        var body = new List<string>
+        {
+            $"var command = mapper.Map<{tCommand}>(request);",
+            $"var result = await dispatcher.SendAsync<{tCommand}, {tCommandResult}>(command, cancellationToken);",
+            $"var response = mapper.Map<{tResponse}>(result);",
+            "return Results.Ok(response);"
+        };
+
+        var produces = new List<string>
+        {
+            "builder.DisableAntiforgery();",
+            $"builder.Produces<{tResponse}>(StatusCodes.Status200OK);",
+            "builder.Produces(StatusCodes.Status400BadRequest);"
+        };
+
+        return ("MapPost", (parameters, body), produces);
     }
 
     private static string GetCollectionItemType(string collectionType)

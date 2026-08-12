@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <IsPackable>false</IsPackable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" />
+        <PackageReference Include="xunit" />
+        <PackageReference Include="xunit.runner.visualstudio" />
+        <PackageReference Include="Shouldly" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Cheetah.Generators.Endpoints\Cheetah.Generators.Endpoints.csproj" />
+        <ProjectReference Include="..\Cheetah.Backend.Endpoints\Cheetah.Backend.Endpoints.csproj" />
+        <ProjectReference Include="..\Cheetah.Contracts\Cheetah.Contracts.csproj" />
+        <ProjectReference Include="..\Cheetah.Core.CQRS\Cheetah.Core.CQRS.csproj" />
+        <ProjectReference Include="..\Cheetah.Core\Cheetah.Core.csproj" />
+    </ItemGroup>
+
+</Project>

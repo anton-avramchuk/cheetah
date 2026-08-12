@@ -11,7 +11,8 @@
 | `CommandEndpoint<TRequest, TCommand>` | POST, команда без результата → 204 |
 | `CommandWithResultEndpoint<...>` | POST, команда с результатом → 200 |
 | `CreateCommandEndpoint<TRequest, TCommand>` | POST создание → 201 + Location (`GetByIdRouteName`) |
-| `UpdateEndpoint`, `DeleteEndpoint` | PUT/DELETE |
+| `UploadCommandEndpoint<...>` | POST с файлом (multipart/form-data) → 200; `DisableAntiforgery` ставит генератор |
+| `UpdateEndpoint`, `DeleteEndpoint` | PUT/DELETE (`DeleteCommandWithResultEndpoint<...>` — DELETE с телом ответа) |
 | `QueryEndpoint<...>` | GET → 200 |
 | `QueryOrNotFoundEndpoint<...>` | GET → 404, если null |
 | `QueryCollectionEndpoint<...>` | GET коллекции |
@@ -43,6 +44,7 @@ public sealed class CreateOrderEndpoint : CreateCommandEndpoint<CreateOrderReque
 - **GET/DELETE** — `[AsParameters]`: поля DTO биндятся из маршрута (по имени) и query-строки.
 - **POST/PUT/PATCH** — `[FromBody]` + слияние маршрутных значений: параметры конструктора DTO, помеченные `[FromRoute]` (`Cheetah.Contracts.Attributes`), подставляются из пути. Тело их не несёт, поэтому один DTO покрывает и `{id}` в пути, и поля тела.
 - **POST-команды** (`CommandEndpoint`, `CommandWithResultEndpoint`) допускают **пустое тело** (`EmptyBodyBehavior.Allow`) — подэкшены вида `POST /events/{id}/cancel` без тела не падают с 400.
+- **Загрузка файла** (`UploadCommandEndpoint`) — `[FromForm]`: DTO объявляет `IFormFile`/`IFormFileCollection` своим свойством, а перевод файла в тип прикладного слоя пишется в профиле маппинга (команде HTTP-типы не нужны). Генератор ставит такому маршруту `DisableAntiforgery()` — без него метаданные формы требуют middleware защиты от подделки, и запрос отвечает 500 ещё до обработчика.
 
 ```csharp
 // POST api/calendar-events/{eventId}/reschedule — id из пути, остальное из тела
