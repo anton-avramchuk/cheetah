@@ -22,7 +22,18 @@ public partial class OpenApiModule : CrmModule
         var configuration = context.Services.GetConfiguration();
         var basePath = configuration["OpenApi:BasePath"] ?? "";
 
-        context.Services.AddOpenApi(options =>
+        // Имя документа настраивается: сервис, у которого документ называется иначе (BFF отдаёт
+        // «crm», под этим именем спека попадает во фронт), иначе получил бы ВТОРОЙ документ «v1» с
+        // теми же операциями — лишний файл при генерации спеки и лишняя страница в UI.
+        var documentName = configuration["OpenApi:DocumentName"] ?? OpenApiConstants.DefaultDocumentName;
+
+        // Оба обогащения по умолчанию включены — они и есть смысл модуля. Выключаются там, где
+        // документ описывает чужой контракт: у BFF списки принимают плоские параметры, и восемь
+        // grid-параметров в спеке означали бы восемь бесполезных аргументов в клиенте SPA.
+        var gridParameters = configuration.GetValue("OpenApi:GridParameters", true);
+        var schemaExamples = configuration.GetValue("OpenApi:SchemaExamples", true);
+
+        context.Services.AddOpenApi(documentName, options =>
         {
             options.AddSchemaTransformer((schema, ctx, ct) =>
             {
@@ -49,7 +60,7 @@ public partial class OpenApiModule : CrmModule
 
             options.AddOperationTransformer((operation, ctx, ct) =>
             {
-                if (ctx.Description.HttpMethod != "GET")
+                if (!gridParameters || ctx.Description.HttpMethod != "GET")
                     return Task.CompletedTask;
 
                 var isGrid = ctx.Description.ActionDescriptor.EndpointMetadata
@@ -75,7 +86,8 @@ public partial class OpenApiModule : CrmModule
 
             options.AddSchemaTransformer((schema, ctx, ct) =>
             {
-                if (schema.Example is not null
+                if (!schemaExamples
+                    || schema.Example is not null
                     || schema.Properties is null
                     || schema.Properties.Count == 0)
                     return Task.CompletedTask;

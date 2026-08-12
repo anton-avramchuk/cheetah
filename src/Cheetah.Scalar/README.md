@@ -27,4 +27,15 @@ public partial class MyAppModule : CrmModule { }
 services.Configure<ScalarModuleOptions>(o => o.OpenApiPath = "/openapi/v1.json");
 ```
 
+По умолчанию путь собирается из имени документа (`OpenApi:DocumentName`), так что для нестандартного
+имени достаточно конфигурации:
+
+```json
+{ "OpenApi": { "DocumentName": "crm" }, "Scalar": { "SecurityScheme": "None" } }
+```
+
+`Scalar:SecurityScheme: "None"` убирает Bearer и из документа, и из UI — это для сервиса, который
+пускает не по токену. У BFF, например, cookie-сессия: объявленный Bearer означал бы в спеке и на
+странице поле для токена, которого у него не бывает.
+
 Связка авторизации (`AllowAnonymous` на endpoint'ах) согласована с [Cheetah.Backend.Jwt](../Cheetah.Backend.Jwt/README.md) и [Cheetah.Backend.Endpoints](../Cheetah.Backend.Endpoints/README.md).
