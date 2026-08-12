@@ -740,6 +740,11 @@ public class EndpointRegistrationGenerator : IIncrementalGenerator
     ///
     /// <c>DisableAntiforgery</c> обязателен: метаданные формы требуют middleware защиты от подделки,
     /// и без него маршрут отвечает 500 ещё до обработчика.
+    ///
+    /// <c>Accepts</c> обязателен по неочевидной причине: без него ASP.NET выводит тип содержимого
+    /// из <c>[FromForm]</c> и объявляет в спеке ДВА варианта — multipart и x-www-form-urlencoded.
+    /// Файл вторым не передать, но генератор клиента об этом не знает и делает по функции на
+    /// вариант — у загрузки появляется двойник, отвечающий 415.
     /// </summary>
     private static (string, (string, List<string>), List<string>) GenerateUploadCommandEndpoint(ImmutableArray<ITypeSymbol> typeArgs)
     {
@@ -760,6 +765,7 @@ public class EndpointRegistrationGenerator : IIncrementalGenerator
         var produces = new List<string>
         {
             "builder.DisableAntiforgery();",
+            $"builder.Accepts<{tRequest}>(\"multipart/form-data\");",
             $"builder.Produces<{tResponse}>(StatusCodes.Status200OK);",
             "builder.Produces(StatusCodes.Status400BadRequest);"
         };

@@ -80,6 +80,21 @@ namespace Test.App
     }
 
     /// <summary>
+    /// Тип содержимого объявлен явно. Иначе ASP.NET выводит его из <c>[FromForm]</c> и пишет в
+    /// спеку ДВА варианта — multipart и x-www-form-urlencoded, — хотя файл вторым не передать.
+    /// Генератор клиента честно делает по функции на вариант, и у загрузки появляется двойник,
+    /// который отвечает 415.
+    /// </summary>
+    [Fact]
+    public void Upload_endpoint_accepts_multipart_only()
+    {
+        var generated = Run(UploadMarker);
+
+        generated.ShouldContain("builder.Accepts<Test.App.UploadFileRequest>(\"multipart/form-data\");");
+        generated.ShouldNotContain("x-www-form-urlencoded");
+    }
+
+    /// <summary>
     /// Ответ и «плохой запрос» объявлены: испорченный файл — это 400, и клиент разбирает его как
     /// ответ, а не как неизвестную ошибку.
     /// </summary>
