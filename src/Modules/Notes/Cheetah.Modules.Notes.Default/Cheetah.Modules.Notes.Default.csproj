@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <OutputType>Library</OutputType>
+        <NoDefaultLaunchSettingsFile>true</NoDefaultLaunchSettingsFile>
+        <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Cheetah.Modules.Notes.Domain\Cheetah.Modules.Notes.Domain.csproj" />
+        <ProjectReference Include="..\Cheetah.Modules.Notes.Contracts\Cheetah.Modules.Notes.Contracts.csproj" />
+        <ProjectReference Include="..\Cheetah.Modules.Notes.Application\Cheetah.Modules.Notes.Application.csproj" />
+        <ProjectReference Include="..\Cheetah.Modules.Notes.Infrastructure\Cheetah.Modules.Notes.Infrastructure.csproj" />
+        <ProjectReference Include="..\Cheetah.Modules.Notes.Api\Cheetah.Modules.Notes.Api.csproj" />
+        <ProjectReference Include="..\..\..\Cheetah.Mapping.Mapster\Cheetah.Mapping.Mapster.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\..\Cheetah.Generators.Module\Cheetah.Generators.Module.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
+        <ProjectReference Include="..\..\..\Cheetah.Generators.Endpoints\Cheetah.Generators.Endpoints.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.EntityFrameworkCore" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+    </ItemGroup>
+
+</Project>

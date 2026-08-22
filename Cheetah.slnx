@@ -175,6 +175,20 @@
         <Project Path="src/Modules/Booking/Cheetah.Modules.Booking.Infrastructure/Cheetah.Modules.Booking.Infrastructure.csproj" />
         <Project Path="src/Modules/Booking/Cheetah.Modules.Booking.Shared/Cheetah.Modules.Booking.Shared.csproj" />
     </Folder>
+    <Folder Name="/Modules/Notes/">
+        <Project Path="src/Modules/Notes/Cheetah.Modules.Notes.Api/Cheetah.Modules.Notes.Api.csproj" />
+        <Project Path="src/Modules/Notes/Cheetah.Modules.Notes.Application.Tests/Cheetah.Modules.Notes.Application.Tests.csproj" />
+        <Project Path="src/Modules/Notes/Cheetah.Modules.Notes.Application/Cheetah.Modules.Notes.Application.csproj" />
+        <Project Path="src/Modules/Notes/Cheetah.Modules.Notes.Client.Tests/Cheetah.Modules.Notes.Client.Tests.csproj" />
+        <Project Path="src/Modules/Notes/Cheetah.Modules.Notes.Client/Cheetah.Modules.Notes.Client.csproj" />
+        <Project Path="src/Modules/Notes/Cheetah.Modules.Notes.Contracts/Cheetah.Modules.Notes.Contracts.csproj" />
+        <Project Path="src/Modules/Notes/Cheetah.Modules.Notes.Default/Cheetah.Modules.Notes.Default.csproj" />
+        <Project Path="src/Modules/Notes/Cheetah.Modules.Notes.Domain.Tests/Cheetah.Modules.Notes.Domain.Tests.csproj" />
+        <Project Path="src/Modules/Notes/Cheetah.Modules.Notes.Domain/Cheetah.Modules.Notes.Domain.csproj" />
+        <Project Path="src/Modules/Notes/Cheetah.Modules.Notes.DomainEvents/Cheetah.Modules.Notes.DomainEvents.csproj" />
+        <Project Path="src/Modules/Notes/Cheetah.Modules.Notes.Infrastructure/Cheetah.Modules.Notes.Infrastructure.csproj" />
+        <Project Path="src/Modules/Notes/Cheetah.Modules.Notes.Shared/Cheetah.Modules.Notes.Shared.csproj" />
+    </Folder>
     <Folder Name="/Modules/NotesTimeline/">
         <Project Path="src/Modules/NotesTimeline/Cheetah.Modules.NotesTimeline.Api/Cheetah.Modules.NotesTimeline.Api.csproj" />
         <Project Path="src/Modules/NotesTimeline/Cheetah.Modules.NotesTimeline.Application.Tests/Cheetah.Modules.NotesTimeline.Application.Tests.csproj" />
