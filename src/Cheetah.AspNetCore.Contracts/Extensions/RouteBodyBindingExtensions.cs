@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -17,6 +18,8 @@ public static class RouteBodyBindingExtensions
     {
         PropertyNameCaseInsensitive = true
     };
+
+    private static readonly ConcurrentDictionary<Type, IEnumerable<(string Name, string RouteName)>> _routeBoundMembers = new();
 
     /// <summary>
     /// Deserializes the request body as JSON and injects route values for any
@@ -38,25 +41,7 @@ public static class RouteBodyBindingExtensions
             jsonObject = new JsonObject();
         }
 
-        // Inject route values for constructor parameters marked [FromRoute]
-        var ctor = typeof(TRequest).GetConstructors()
-            .MaxBy(c => c.GetParameters().Length);
-
-        if (ctor != null)
-        {
-            foreach (var param in ctor.GetParameters())
-            {
-                var fromRoute = param.GetCustomAttribute(typeof(FromRouteAttribute));
-                if (fromRoute == null || param.Name == null)
-                    continue;
-
-                var routeName = (fromRoute as FromRouteAttribute)?.Name ?? param.Name;
-                var routeValue = context.Request.RouteValues[routeName];
-
-                if (routeValue != null)
-                    jsonObject[param.Name] = JsonValue.Create(routeValue.ToString());
-            }
-        }
+        ApplyRouteValues<TRequest>(context, jsonObject);
 
         return jsonObject.Deserialize<TRequest>(_options);
     }
@@ -71,25 +56,57 @@ public static class RouteBodyBindingExtensions
     {
         var jsonObject = JsonSerializer.SerializeToNode(bodyRequest, _options)?.AsObject() ?? new JsonObject();
 
-        var ctor = typeof(TRequest).GetConstructors()
-            .MaxBy(c => c.GetParameters().Length);
-
-        if (ctor != null)
-        {
-            foreach (var param in ctor.GetParameters())
-            {
-                var fromRoute = param.GetCustomAttribute(typeof(FromRouteAttribute));
-                if (fromRoute == null || param.Name == null)
-                    continue;
-
-                var routeName = (fromRoute as FromRouteAttribute)?.Name ?? param.Name;
-                var routeValue = context.Request.RouteValues[routeName];
-
-                if (routeValue != null)
-                    jsonObject[param.Name] = JsonValue.Create(routeValue.ToString());
-            }
-        }
+        ApplyRouteValues<TRequest>(context, jsonObject);
 
         return jsonObject.Deserialize<TRequest>(_options)!;
     }
+
+    /// <summary>
+    /// Writes route values into <paramref name="jsonObject"/> for every member of
+    /// <typeparamref name="TRequest"/> marked <see cref="FromRouteAttribute"/> — both
+    /// positional record parameters and (possibly inherited) settable properties.
+    /// </summary>
+    private static void ApplyRouteValues<TRequest>(HttpContext context, JsonObject jsonObject)
+    {
+        foreach (var (name, routeName) in GetRouteBoundMembers(typeof(TRequest)))
+        {
+            var routeValue = context.Request.RouteValues[routeName];
+
+            if (routeValue != null)
+                jsonObject[name] = JsonValue.Create(routeValue.ToString());
+        }
+    }
+
+    private static IEnumerable<(string Name, string RouteName)> GetRouteBoundMembers(Type type)
+        => _routeBoundMembers.GetOrAdd(type, static t =>
+        {
+            var members = new List<(string, string)>();
+
+            var ctor = t.GetConstructors().MaxBy(c => c.GetParameters().Length);
+
+            if (ctor != null)
+            {
+                foreach (var param in ctor.GetParameters())
+                {
+                    if (param.Name == null)
+                        continue;
+
+                    if (param.GetCustomAttribute<FromRouteAttribute>() is { } fromRoute)
+                        members.Add((param.Name, fromRoute.Name ?? param.Name));
+                }
+            }
+
+            foreach (var property in t.GetProperties(BindingFlags.Public | BindingFlags.Instance))
+            {
+                if (property.GetCustomAttribute<FromRouteAttribute>() is not { } fromRoute)
+                    continue;
+
+                if (members.Exists(m => string.Equals(m.Item1, property.Name, StringComparison.OrdinalIgnoreCase)))
+                    continue;
+
+                members.Add((property.Name, fromRoute.Name ?? property.Name));
+            }
+
+            return members;
+        });
 }
