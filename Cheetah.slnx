@@ -81,6 +81,7 @@
         <Project Path="src/Cheetah.Mapping.Expressions.Protobuf/Cheetah.Mapping.Expressions.Protobuf.csproj" />
         <Project Path="src/Cheetah.Mapping.Expressions.Tests/Cheetah.Mapping.Expressions.Tests.csproj" />
         <Project Path="src/Cheetah.Mapping.Mapster/Cheetah.Mapping.Mapster.csproj" />
+        <Project Path="src/Cheetah.Mapping.Mapster.Tests/Cheetah.Mapping.Mapster.Tests.csproj" />
         <Project Path="src/Cheetah.Expressions/Cheetah.Expressions.csproj" />
         <Project Path="src/Cheetah.Expressions.JsonLogic/Cheetah.Expressions.JsonLogic.csproj" />
         <Project Path="src/Cheetah.Validation/Cheetah.Validation.csproj" />
