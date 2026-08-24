@@ -31,7 +31,11 @@ public sealed class PermissionAuthorizationHandler : AuthorizationHandler<Permis
 /// </summary>
 public sealed class PermissionPolicyProvider : IAuthorizationPolicyProvider
 {
-    public const string Prefix = "permission:";
+    /// <summary>
+    /// Префикс имени политики. Значение задано в ядре: ту же конвенцию использует генератор
+    /// эндпоинтов, вешая политики по <c>RequirePermissions(...)</c>.
+    /// </summary>
+    public const string Prefix = Cheetah.Core.Authorization.PermissionPolicy.Prefix;
 
     private readonly DefaultAuthorizationPolicyProvider _fallback;
 

@@ -5,6 +5,12 @@ public static class WorkflowConstants
 {
     public const string ConnectionStringName = "Workflow";
     public const string Schema = "workflow";
+
+    /// <summary>Размер страницы списков (правила, журнал прогонов) по умолчанию.</summary>
+    public const int DefaultPageSize = 50;
+
+    /// <summary>Потолок страницы: журнал срабатываний растёт неограниченно.</summary>
+    public const int MaxPageSize = 200;
 }
 
 /// <summary>Имена встроенных действий (совпадают с IWorkflowAction.Name и ActionDescriptor.Name).</summary>

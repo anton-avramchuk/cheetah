@@ -6,7 +6,6 @@
         <ProjectReference Include="..\..\..\Cheetah.Mapping.Core\Cheetah.Mapping.Core.csproj" />
         <ProjectReference Include="..\..\..\Cheetah.Core.Grid\Cheetah.Core.Grid.csproj" />
         <ProjectReference Include="..\..\..\Cheetah.Core\Cheetah.Core.csproj" />
-        <ProjectReference Include="..\Cheetah.Modules.Identity.Infrastructure\Cheetah.Modules.Identity.Infrastructure.csproj" />
         <ProjectReference Include="..\..\..\Cheetah.Generators.Module\Cheetah.Generators.Module.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
         <ProjectReference Include="..\Cheetah.Modules.Identity.Contracts\Cheetah.Modules.Identity.Contracts.csproj" />
         <ProjectReference Include="..\Cheetah.Modules.Identity.Domain\Cheetah.Modules.Identity.Domain.csproj" />
@@ -15,6 +14,9 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.EntityFrameworkCore" />
+        <!-- UserManager/RoleManager/IdentityResult: раньше приходили транзитивно через
+             Infrastructure, ссылку на которую слой приложения иметь не должен. -->
+        <PackageReference Include="Microsoft.Extensions.Identity.Core" />
     </ItemGroup>
 
 </Project>

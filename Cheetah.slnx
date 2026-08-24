@@ -78,6 +78,8 @@
         <Project Path="src/Cheetah.CQRS.Dispatcher/Cheetah.CQRS.Dispatcher.csproj" />
         <Project Path="src/Cheetah.Mapping.Core/Cheetah.Mapping.Core.csproj" />
         <Project Path="src/Cheetah.Mapping.Expressions/Cheetah.Mapping.Expressions.csproj" />
+        <Project Path="src/Cheetah.Mapping.Expressions.Protobuf/Cheetah.Mapping.Expressions.Protobuf.csproj" />
+        <Project Path="src/Cheetah.Mapping.Expressions.Tests/Cheetah.Mapping.Expressions.Tests.csproj" />
         <Project Path="src/Cheetah.Mapping.Mapster/Cheetah.Mapping.Mapster.csproj" />
         <Project Path="src/Cheetah.Expressions/Cheetah.Expressions.csproj" />
         <Project Path="src/Cheetah.Expressions.JsonLogic/Cheetah.Expressions.JsonLogic.csproj" />
@@ -370,7 +372,6 @@
         <Project Path="src/Modules/FeatureManagement/Cheetah.Modules.FeatureManagement.Infrastructure/Cheetah.Modules.FeatureManagement.Infrastructure.csproj" />
         <Project Path="src/Modules/FeatureManagement/Cheetah.Modules.FeatureManagement.Shared/Cheetah.Modules.FeatureManagement.Shared.csproj" />
     </Folder>
-    <Folder Name="/src/" />
     <Folder Name="/src/Modules/" />
     <Folder Name="/src/Modules/Identity/">
         <Project Path="src/Modules/Identity/Cheetah.Modules.Identity.Client.Tests/Cheetah.Modules.Identity.Client.Tests.csproj" />

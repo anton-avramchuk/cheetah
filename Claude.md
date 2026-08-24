@@ -306,7 +306,9 @@ Lifetimes: `Singleton`, `Scoped`, `Transient`
 - Use projection (`Select`) instead of full entities
 - Minimize allocations (`ArrayPool`, `Span<T>`, `Memory<T>`)
 - Use compiled queries for frequent operations
-- Always publish events AFTER `SaveChangesAsync()`
+- Publishing events: through the Outbox — BEFORE `SaveChangesAsync()`, so the outbox row is written
+  to the same `DbContext` and one commit persists the aggregate and the message atomically;
+  when publishing straight to the bus — AFTER `SaveChangesAsync()`
 
 ## 📋 Key Rules
 

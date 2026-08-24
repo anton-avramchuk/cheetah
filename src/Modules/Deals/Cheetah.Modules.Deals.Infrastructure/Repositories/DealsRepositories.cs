@@ -31,6 +31,9 @@ public class DealRepository : EfRepository<DealsDbContext, Deal, Guid>, IDealRep
         return await DbSet.AsNoTracking()
             .Where(spec.ToExpression())
             .OrderByDescending(d => d.CreatedAt)
+            // Тай-брейкер: у сделок одной пачки SaveChanges метка CreatedAt совпадает,
+            // без него страницы дублируют и теряют строки.
+            .ThenBy(d => d.Id)
             .Skip(skip)
             .Take(size)
             .ToListAsync(ct);

@@ -15,6 +15,7 @@ using Cheetah.Modules.Identity.Api.Middleware;
 using Cheetah.Modules.Identity.Api.Registration;
 using Cheetah.Modules.Identity.Api.ServiceClients;
 using Cheetah.Modules.Identity.Application;
+using Cheetah.Modules.Identity.Infrastructure;
 using Cheetah.Modules.Identity.Application.Commands;
 using Cheetah.Modules.Identity.Contracts;
 using Cheetah.Modules.Identity.Contracts.Requests;
@@ -39,6 +40,9 @@ namespace Cheetah.Modules.Identity.Api;
     typeof(CrmBackendCQRSModule),
     typeof(CrmBackendEndpointsModule),
     typeof(CrmBackendJwtModule),
+    // Инфраструктуру подключает Api, а не Application: слой приложения не должен зависеть
+    // от EF-сборки (правило 18), но кто-то в графе модулей обязан её зарегистрировать.
+    typeof(CrmIdentityCoreDataAccessModule),
     typeof(CheetahIdentityApplicationModule),
     typeof(CheetahIdentityContractsModule)
 )]

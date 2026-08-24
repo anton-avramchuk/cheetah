@@ -3,6 +3,7 @@ using Cheetah.Backend.Redis;
 using Cheetah.Core.Events;
 using Shouldly;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Moq;
 
@@ -39,7 +40,8 @@ public class CrmRedisEventBusTests
         _serviceProviderMock.Setup(x => x.GetService(typeof(IServiceScopeFactory)))
             .Returns(_serviceScopeFactoryMock.Object);
 
-        _eventBus = new CrmRedisEventBus(_redisEventBusMock.Object, _serviceProviderMock.Object, optionsMock);
+        _eventBus = new CrmRedisEventBus(_redisEventBusMock.Object, _serviceProviderMock.Object, optionsMock,
+            NullLogger<CrmRedisEventBus>.Instance);
     }
 
     [Fact]

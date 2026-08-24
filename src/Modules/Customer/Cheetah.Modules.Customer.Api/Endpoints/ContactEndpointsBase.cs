@@ -53,14 +53,18 @@ public abstract class ContactEndpointsBase<TCreateRequest, TUpdateRequest, TDto>
         }
     }
 
+    /// <remarks>
+    /// <paramref name="includeRemoved"/> — nullable: не-nullable значимый тип minimal API считает
+    /// обязательным query-параметром и отвечает 400 на запрос списка без него.
+    /// </remarks>
     protected virtual async Task<IResult> ListAsync(
         [FromRoute] Guid customerId,
-        [FromQuery] bool includeRemoved,
+        [FromQuery] bool? includeRemoved,
         [FromServices] IDispatcher dispatcher,
         CancellationToken ct)
     {
         var items = await dispatcher.QueryAsync<ListContactsByCustomerQuery<TDto>, IReadOnlyList<TDto>>(
-            new ListContactsByCustomerQuery<TDto>(customerId, includeRemoved), ct);
+            new ListContactsByCustomerQuery<TDto>(customerId, includeRemoved ?? false), ct);
         return Results.Ok(items);
     }
 

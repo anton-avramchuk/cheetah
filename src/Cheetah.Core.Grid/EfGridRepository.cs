@@ -64,17 +64,15 @@ public class EfGridRepository<TDbContext, TEntity, TKey> : EfRepository<TDbConte
         // 2. Get total count (after filtering, before pagination)
         var total = await queryable.CountAsync(ct);
 
-        // 3. Apply sorting
-        if (request.Sort.Count > 0)
-            queryable = ApplySorting(queryable, request.Sort, projection);
+        // 3. Apply sorting. Пагинация без ORDER BY недетерминирована, а метки времени
+        // одного SaveChanges совпадают у всей пачки — поэтому порядок всегда завершается Id.
+        queryable = ApplySorting(queryable, request.Sort, projection);
 
-        // 4. Apply pagination
-        if (request.PageSize > 0)
-        {
-            var page = Math.Max(1, request.Page);
-            var skip = (page - 1) * request.PageSize;
-            queryable = queryable.Skip(skip).Take(request.PageSize);
-        }
+        // 4. Apply pagination. Размер страницы нормализуется: клиент не должен уметь
+        // выгрузить таблицу целиком (pageSize=0 или заведомо огромное значение).
+        var pageSize = NormalizePageSize(request.PageSize);
+        var page = Math.Max(1, request.Page);
+        queryable = queryable.Skip((page - 1) * pageSize).Take(pageSize);
 
         // 5. Project to ViewModel and execute
         var projectedQuery = _mapper.ProjectTo<TViewModel>(queryable);
@@ -118,6 +116,14 @@ public class EfGridRepository<TDbContext, TEntity, TKey> : EfRepository<TDbConte
         return await _mapper.ProjectTo<TViewModel>(query).FirstOrDefaultAsync(ct);
     }
 
+    /// <summary>
+    /// Приводит размер страницы к <c>[1, <see cref="GridRequest.MaxPageSize"/>]</c>:
+    /// неположительный — к значению по умолчанию, слишком большой — к максимуму.
+    /// </summary>
+    internal static int NormalizePageSize(int pageSize) => pageSize <= 0
+        ? GridRequest.DefaultPageSize
+        : Math.Min(pageSize, GridRequest.MaxPageSize);
+
     private static IQueryable<TEntity> ApplySorting(
         IQueryable<TEntity> queryable,
         List<SortDescriptor> sortDescriptors,
@@ -149,7 +155,11 @@ public class EfGridRepository<TDbContext, TEntity, TKey> : EfRepository<TDbConte
             isFirst = false;
         }
 
-        return queryable;
+        // Тай-брейкер: без него строки с одинаковым значением сортировки распределяются
+        // по страницам произвольно — постраничный обход дублирует и теряет записи.
+        return isFirst
+            ? queryable.OrderBy(e => e.Id)
+            : ((IOrderedQueryable<TEntity>)queryable).ThenBy(e => e.Id);
     }
 }
 

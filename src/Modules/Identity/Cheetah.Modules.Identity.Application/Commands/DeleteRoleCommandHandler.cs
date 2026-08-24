@@ -1,6 +1,6 @@
 using Cheetah.Core.CQRS;
 using Cheetah.Core.Domain.Exceptions;
-using Cheetah.Modules.Identity.Infrastructure.Exceptions;
+using Cheetah.Modules.Identity.Application.Exceptions;
 using Cheetah.Modules.Identity.Domain;
 using Microsoft.AspNetCore.Identity;
 

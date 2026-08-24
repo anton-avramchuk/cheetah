@@ -1,12 +1,17 @@
+using System.Reflection;
 using Cheetah.Core.DependencyInjection;
 using Cheetah.Core.Events;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Cheetah.Backend.Events.InMemory;
 
 [Export(LifetimeType.Singleton, typeof(IEventBus))]
-public sealed class InMemoryEventBus(IServiceProvider serviceProvider) : IEventBus
+public sealed class InMemoryEventBus(IServiceProvider serviceProvider, ILogger<InMemoryEventBus>? logger = null) : IEventBus
 {
+    private readonly ILogger _logger = logger ?? NullLogger<InMemoryEventBus>.Instance;
+
     private readonly Dictionary<Type, List<Type>> _subscriptions = new();
     private readonly Lock _lock = new();
 
@@ -90,9 +95,14 @@ public sealed class InMemoryEventBus(IServiceProvider serviceProvider) : IEventB
                         break;
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                // TODO: Add logging
+                // Сбой одного подписчика не отменяет доставку остальным, но событие для него
+                // потеряно — без записи в лог такое расхождение состояний не расследовать.
+                // Рефлексия оборачивает исключение обработчика, поэтому разворачиваем причину.
+                _logger.LogError(ex is TargetInvocationException { InnerException: { } inner } ? inner : ex,
+                    "Event handler {HandlerType} failed for event {EventType}; the event was dropped.",
+                    handlerType.FullName, eventType.FullName);
             }
         }
     }

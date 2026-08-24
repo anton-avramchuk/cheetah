@@ -1,7 +1,6 @@
 using Cheetah.Backend.Rsa.Abstractions;
 using Cheetah.Core.CQRS;
 using Cheetah.Core.Grid;
-using Cheetah.Modules.Identity.Infrastructure;
 using Cheetah.Core.Modularity;
 using Cheetah.Mapping.Core;
 using Cheetah.Modules.Identity.Application.Services;
@@ -16,7 +15,6 @@ namespace Cheetah.Modules.Identity.Application;
     typeof(CrmCQRSCoreModule),
     typeof(CrmGridModule),
     typeof(CrmMappingCoreModule),
-    typeof(CrmIdentityCoreDataAccessModule),
     typeof(CheetahIdentityDomainModule),
     typeof(CheetahIdentityContractsModule),
     typeof(CheetahIdentityDomainEventsModule)

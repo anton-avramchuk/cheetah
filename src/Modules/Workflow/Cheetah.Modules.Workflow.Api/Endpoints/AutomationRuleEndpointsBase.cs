@@ -48,11 +48,13 @@ public abstract class AutomationRuleEndpointsBase<TCreateRequest, TDto>
 
     protected virtual async Task<IResult> ListAsync(
         [FromQuery] string? ownerService, [FromQuery] bool? onlyActive,
-        [FromQuery] int page, [FromQuery] int size,
+        [FromQuery] int? page, [FromQuery] int? size,
         [FromServices] IDispatcher dispatcher, CancellationToken ct)
     {
+        // page/size nullable: не-nullable значимый тип minimal API считает обязательным
+        // query-параметром и отвечает 400 на запрос списка без пагинации.
         var items = await dispatcher.QueryAsync<ListRulesQuery<TDto>, IReadOnlyList<TDto>>(
-            new ListRulesQuery<TDto>(ownerService, onlyActive, page, size <= 0 ? 50 : size), ct);
+            new ListRulesQuery<TDto>(ownerService, onlyActive, page ?? 0, size ?? 0), ct);
         return Results.Ok(items);
     }
 
@@ -93,11 +95,12 @@ public abstract class AutomationRuleEndpointsBase<TCreateRequest, TDto>
 
     protected virtual async Task<IResult> ListRunsAsync(
         [FromQuery] Guid? ruleId, [FromQuery] RunStatus? status,
-        [FromQuery] int page, [FromQuery] int size,
+        [FromQuery] int? page, [FromQuery] int? size,
         [FromServices] IDispatcher dispatcher, CancellationToken ct)
     {
+        // page/size nullable — см. ListAsync; нормализация границ живёт в обработчике запроса.
         var items = await dispatcher.QueryAsync<ListRunsQuery, IReadOnlyList<AutomationRunDto>>(
-            new ListRunsQuery(ruleId, status, page, size <= 0 ? 50 : size), ct);
+            new ListRunsQuery(ruleId, status, page ?? 0, size ?? 0), ct);
         return Results.Ok(items);
     }
 

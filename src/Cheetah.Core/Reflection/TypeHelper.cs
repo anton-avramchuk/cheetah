@@ -321,9 +321,11 @@ public static class TypeHelper
 
         var converter = TypeDescriptor.GetConverter(targetType);
 
+        // Floating point values are parsed with the invariant culture: the decimal separator
+        // must not depend on the current thread's locale.
         if (IsFloatingType(targetType))
         {
-            throw new NotImplementedException();
+            return converter.ConvertFromInvariantString(value);
         }
 
         return converter.ConvertFromString(value);

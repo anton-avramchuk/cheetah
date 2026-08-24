@@ -1,6 +1,6 @@
 using Cheetah.Core.Domain.Exceptions;
 using Cheetah.Modules.Identity.Application.Commands;
-using Cheetah.Modules.Identity.Infrastructure.Exceptions;
+using Cheetah.Modules.Identity.Application.Exceptions;
 using Microsoft.AspNetCore.Identity;
 using Moq;
 using Shouldly;

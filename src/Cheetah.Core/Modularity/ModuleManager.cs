@@ -60,9 +60,28 @@ public class ModuleManager(
         logger.LogInformation("Initialized all CRM modules.");
     }
 
-    public Task ShutdownModulesAsync(ApplicationShutdownContext context)
+    public virtual async Task ShutdownModulesAsync(ApplicationShutdownContext context)
     {
-        throw new NotImplementedException();
+        // Modules are shut down in reverse initialization order, so a module is torn down
+        // before the modules it depends on.
+        var modules = moduleContainer.Modules.Reverse().ToList();
+
+        foreach (var contributor in _lifecycleContributors)
+        {
+            foreach (var module in modules)
+            {
+                try
+                {
+                    await contributor.ShutdownAsync(context, module.Instance);
+                }
+                catch (Exception ex)
+                {
+                    throw new CrmException($"An error occurred during the shutdown {contributor.GetType().FullName} phase of the module {module.Type.AssemblyQualifiedName}: {ex.Message}. See the inner exception for details.", ex);
+                }
+            }
+        }
+
+        logger.LogInformation("Shut down all CRM modules.");
     }
 
     public void ShutdownModules(ApplicationShutdownContext context)
@@ -83,5 +102,7 @@ public class ModuleManager(
                 }
             }
         }
+
+        logger.LogInformation("Shut down all CRM modules.");
     }
 }

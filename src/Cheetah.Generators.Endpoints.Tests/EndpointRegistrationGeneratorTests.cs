@@ -107,6 +107,20 @@ namespace Test.App
         generated.ShouldContain("builder.Produces(StatusCodes.Status400BadRequest);");
     }
 
+    /// <summary>
+    /// Права, объявленные через <c>RequirePermissions</c>, обязаны превращаться в политики.
+    /// Раньше генератор их не читал вовсе: вызов компилировался, эндпоинт оставался открытым,
+    /// и ни ошибки, ни предупреждения — при том что README рекламирует это как способ защиты.
+    /// </summary>
+    [Fact]
+    public void Endpoint_applies_required_permissions_as_policies()
+    {
+        var generated = Run(UploadMarker);
+
+        generated.ShouldContain("foreach (var permission in endpoint.RequiredPermissions)");
+        generated.ShouldContain("global::Cheetah.Core.Authorization.PermissionPolicy.For(permission)");
+    }
+
     private static string Run(string marker)
     {
         var source = Preamble + marker;

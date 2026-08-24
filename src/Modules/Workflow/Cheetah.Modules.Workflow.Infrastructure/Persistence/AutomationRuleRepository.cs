@@ -32,6 +32,21 @@ public sealed class AutomationRuleRepository<TContext, TRule> : EfRepository<TCo
         return await query.ToListAsync(ct);
     }
 
+    public async ValueTask<IReadOnlyList<TRule>> ListPageAsync(
+        ISpecification<TRule>? spec, bool includeChildren, int skip, int take, CancellationToken ct = default)
+    {
+        var query = Query(includeChildren);
+        if (spec is not null)
+            query = query.Where(spec.ToExpression());
+
+        return await query
+            .OrderByDescending(r => r.CreatedAt)
+            .ThenBy(r => r.Id)
+            .Skip(skip)
+            .Take(take)
+            .ToListAsync(ct);
+    }
+
     private IQueryable<TRule> Query(bool includeChildren)
         => includeChildren
             ? DbSet.Include(r => r.Triggers).Include(r => r.Actions)

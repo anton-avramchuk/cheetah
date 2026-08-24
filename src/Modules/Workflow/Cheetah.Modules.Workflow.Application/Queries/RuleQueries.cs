@@ -1,5 +1,6 @@
 using Cheetah.Core.CQRS;
 using Cheetah.Core.DataAccess.Abstractions;
+using Cheetah.Core.Specification;
 using Cheetah.Modules.Workflow.Contracts;
 using Cheetah.Modules.Workflow.Domain.Entities;
 using Cheetah.Modules.Workflow.Domain.Repositories;
@@ -35,7 +36,7 @@ public sealed class GetRuleByIdQueryHandler<TRule, TDto>(
 }
 
 public sealed class ListRulesQueryHandler<TRule, TDto>(
-    IReadOnlyRepository<TRule, Guid> repository,
+    IAutomationRuleRepository<TRule> repository,
     IAutomationRuleProjector<TRule, TDto> projector)
     : IQueryHandler<ListRulesQuery<TDto>, IReadOnlyList<TDto>>
     where TRule : AutomationRuleBase
@@ -43,43 +44,58 @@ public sealed class ListRulesQueryHandler<TRule, TDto>(
 {
     public async ValueTask<IReadOnlyList<TDto>> HandleAsync(ListRulesQuery<TDto> query, CancellationToken ct = default)
     {
-        var spec = query.OwnerService is { Length: > 0 } owner
+        ISpecification<TRule>? spec = query.OwnerService is { Length: > 0 } owner
             ? new RulesByOwnerServiceSpecification<TRule>(owner)
             : null;
-        var rules = await repository.GetAllAsync(spec, ct);
 
-        IEnumerable<TRule> filtered = rules;
         if (query.OnlyActive is true)
-            filtered = filtered.Where(r => r.IsActive);
+        {
+            var active = new ActiveRulesSpecification<TRule>();
+            spec = spec is null ? active : spec.And(active);
+        }
 
-        return filtered
-            .Skip(Math.Max(0, query.Page) * Math.Max(1, query.Size))
-            .Take(Math.Max(1, query.Size))
-            .Select(projector.ToDto)
-            .ToArray();
+        // Отбор и срез — в БД: список правил не материализуется целиком.
+        var rules = await repository.ListPageAsync(
+            spec, includeChildren: true,
+            WorkflowPaging.NormalizeSkip(query.Page, query.Size),
+            WorkflowPaging.NormalizeTake(query.Size), ct);
+
+        return rules.Select(projector.ToDto).ToArray();
     }
 }
 
-public sealed class ListRunsQueryHandler(IReadOnlyRepository<AutomationRun, Guid> repository)
+public sealed class ListRunsQueryHandler(IAutomationRunReader reader)
     : IQueryHandler<ListRunsQuery, IReadOnlyList<AutomationRunDto>>
 {
     public async ValueTask<IReadOnlyList<AutomationRunDto>> HandleAsync(ListRunsQuery query, CancellationToken ct = default)
     {
-        var runs = await repository.GetAllAsync(null, ct);
+        ISpecification<AutomationRun>? spec = query.RuleId is { } ruleId
+            ? new RunsByRuleSpecification(ruleId)
+            : null;
 
-        IEnumerable<AutomationRun> filtered = runs;
-        if (query.RuleId is { } ruleId)
-            filtered = filtered.Where(r => r.RuleId == ruleId);
         if (query.Status is { } status)
-            filtered = filtered.Where(r => r.Status == status);
+        {
+            var byStatus = new RunsByStatusSpecification(status);
+            spec = spec is null ? byStatus : spec.And(byStatus);
+        }
 
-        return filtered
-            .OrderByDescending(r => r.CreatedAt)
-            .Skip(Math.Max(0, query.Page) * Math.Max(1, query.Size))
-            .Take(Math.Max(1, query.Size))
-            .Select(RunMapper.ToDto)
-            .ToArray();
+        // Журнал прогонов растёт неограниченно — читаем строго страницей из БД.
+        var runs = await reader.ListPageAsync(
+            spec,
+            WorkflowPaging.NormalizeSkip(query.Page, query.Size),
+            WorkflowPaging.NormalizeTake(query.Size), ct);
+
+        return runs.Select(RunMapper.ToDto).ToArray();
     }
+}
+
+/// <summary>Границы страницы: клиент не должен уметь запросить журнал целиком.</summary>
+internal static class WorkflowPaging
+{
+    public static int NormalizeTake(int size) => Math.Clamp(
+        size <= 0 ? WorkflowConstants.DefaultPageSize : size, 1, WorkflowConstants.MaxPageSize);
+
+    public static int NormalizeSkip(int page, int size) => Math.Max(0, page) * NormalizeTake(size);
 }
 
 internal static class RunMapper

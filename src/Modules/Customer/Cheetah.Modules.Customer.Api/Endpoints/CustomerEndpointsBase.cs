@@ -61,13 +61,17 @@ public abstract class CustomerEndpointsBase<TCreateRequest, TUpdateRequest, TDto
         return dto is null ? Results.NotFound() : Results.Ok(dto);
     }
 
+    /// <remarks>
+    /// <paramref name="activeOnly"/> — nullable: не-nullable значимый тип minimal API считает
+    /// обязательным query-параметром и отвечает 400 на запрос списка без него.
+    /// </remarks>
     protected virtual async Task<IResult> ListAsync(
-        [FromQuery] bool activeOnly,
+        [FromQuery] bool? activeOnly,
         [FromServices] IDispatcher dispatcher,
         CancellationToken ct)
     {
         var items = await dispatcher.QueryAsync<ListCustomersQuery<TDto>, IReadOnlyList<TDto>>(
-            new ListCustomersQuery<TDto>(activeOnly), ct);
+            new ListCustomersQuery<TDto>(activeOnly ?? false), ct);
         return Results.Ok(items);
     }
 

@@ -44,6 +44,25 @@ public sealed class ScheduledRulesSpecification<TRule>() : Specification<TRule>
         => r => r.IsActive && r.Triggers.Any(t => t.TriggerType == TriggerType.Schedule);
 }
 
+/// <summary>Только включённые правила (фильтр списка).</summary>
+public sealed class ActiveRulesSpecification<TRule>() : Specification<TRule>
+    where TRule : AutomationRuleBase
+{
+    public override Expression<Func<TRule, bool>> ToExpression() => r => r.IsActive;
+}
+
+/// <summary>Прогоны конкретного правила.</summary>
+public sealed class RunsByRuleSpecification(Guid ruleId) : Specification<AutomationRun>
+{
+    public override Expression<Func<AutomationRun, bool>> ToExpression() => r => r.RuleId == ruleId;
+}
+
+/// <summary>Прогоны в конкретном статусе.</summary>
+public sealed class RunsByStatusSpecification(RunStatus status) : Specification<AutomationRun>
+{
+    public override Expression<Func<AutomationRun, bool>> ToExpression() => r => r.Status == status;
+}
+
 /// <summary>Запуск правила по конкретному событию — для дедупа (бэкстоп — уникальный индекс (RuleId, EventId)).</summary>
 public sealed class RunByRuleAndEventSpecification(Guid ruleId, Guid eventId) : Specification<AutomationRun>
 {

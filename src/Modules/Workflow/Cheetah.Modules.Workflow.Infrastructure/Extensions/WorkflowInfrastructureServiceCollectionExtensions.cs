@@ -39,6 +39,9 @@ public static class WorkflowInfrastructureServiceCollectionExtensions
         services.AddScoped<IRepository<AutomationRun, Guid>>(sp => sp.GetRequiredService<EfRepository<TContext, AutomationRun, Guid>>());
         services.AddScoped<IReadOnlyRepository<AutomationRun, Guid>>(sp => sp.GetRequiredService<EfRepository<TContext, AutomationRun, Guid>>());
 
+        // Постраничное чтение журнала: отбор и срез в БД — материализовать журнал целиком нельзя.
+        services.AddScoped<IAutomationRunReader, EfAutomationRunReader<TContext>>();
+
         // Матчинг event → активные правила (кэш-индекс — follow-up).
         services.AddScoped<IRuleMatcher<TRule>, DbQueryRuleMatcher<TRule>>();
 

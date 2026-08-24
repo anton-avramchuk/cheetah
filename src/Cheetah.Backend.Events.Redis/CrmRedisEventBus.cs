@@ -2,6 +2,7 @@ using Cheetah.Backend.Redis;
 using Cheetah.Core.DependencyInjection;
 using Cheetah.Core.Events;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Cheetah.Backend.Events.Redis;
@@ -12,17 +13,20 @@ public sealed class CrmRedisEventBus : IEventBus
     private readonly IRedisEventBus _redisEventBus;
     private readonly IServiceProvider _serviceProvider;
     private readonly RedisEventBusOptions _options;
+    private readonly ILogger<CrmRedisEventBus> _logger;
     private readonly Dictionary<Type, List<Type>> _subscriptions = new();
     private readonly object _lock = new();
 
     public CrmRedisEventBus(
         IRedisEventBus redisEventBus,
         IServiceProvider serviceProvider,
-        IOptions<RedisEventBusOptions> options)
+        IOptions<RedisEventBusOptions> options,
+        ILogger<CrmRedisEventBus> logger)
     {
         _redisEventBus = redisEventBus;
         _serviceProvider = serviceProvider;
         _options = options.Value;
+        _logger = logger;
     }
 
     public async ValueTask PublishAsync<TEvent>(TEvent @event, CancellationToken cancellationToken = default)
@@ -94,10 +98,14 @@ public sealed class CrmRedisEventBus : IEventBus
                 {
                     await eventHandler.HandleAsync(@event, CancellationToken.None);
                 }
-                catch
+                catch (Exception ex)
                 {
-                    // TODO: Add logging
-                    // For now, continue processing other handlers
+                    // Остальные обработчики того же события всё равно отрабатывают: сбой одного
+                    // подписчика не должен отменять доставку другим. Но молча терять событие нельзя —
+                    // расхождение состояний между модулями иначе не расследовать.
+                    _logger.LogError(ex,
+                        "Event handler {HandlerType} failed for event {EventType}; the event was dropped.",
+                        handlerType.FullName, eventType.FullName);
                 }
             }
         }

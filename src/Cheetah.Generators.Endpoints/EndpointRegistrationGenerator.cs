@@ -807,6 +807,11 @@ public class EndpointRegistrationGenerator : IIncrementalGenerator
         sb.AppendLine("        foreach (var policy in endpoint.AuthorizationPolicies)");
         sb.AppendLine("            builder.RequireAuthorization(policy);");
         sb.AppendLine();
+        sb.AppendLine("        // Права превращаются в политики по конвенции \"permission:{право}\" —");
+        sb.AppendLine("        // их выдаёт PermissionPolicyProvider модуля Cheetah.Permissions.");
+        sb.AppendLine("        foreach (var permission in endpoint.RequiredPermissions)");
+        sb.AppendLine("            builder.RequireAuthorization(global::Cheetah.Core.Authorization.PermissionPolicy.For(permission));");
+        sb.AppendLine();
         sb.AppendLine("        if (endpoint.IsDeprecated)");
         sb.AppendLine("            builder.WithMetadata(new System.ObsoleteAttribute(\"This endpoint is deprecated\"));");
         sb.AppendLine();

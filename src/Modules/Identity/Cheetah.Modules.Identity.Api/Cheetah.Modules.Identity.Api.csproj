@@ -15,6 +15,7 @@
         <ProjectReference Include="..\..\..\Cheetah.Core\Cheetah.Core.csproj" />
         <ProjectReference Include="..\..\..\Cheetah.Scalar\Cheetah.Scalar.csproj" />
         <ProjectReference Include="..\Cheetah.Modules.Identity.Application\Cheetah.Modules.Identity.Application.csproj" />
+        <ProjectReference Include="..\Cheetah.Modules.Identity.Infrastructure\Cheetah.Modules.Identity.Infrastructure.csproj" />
         <ProjectReference Include="..\Cheetah.Modules.Identity.Contracts\Cheetah.Modules.Identity.Contracts.csproj" />
     </ItemGroup>
 
